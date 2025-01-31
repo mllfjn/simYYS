@@ -3,6 +3,7 @@ package com.mllfjn.simyys.starter.singleLine;
 import com.mllfjn.simyys.customnode.CustomTextField;
 import com.mllfjn.simyys.customnode.LabelChooser;
 import com.mllfjn.simyys.customnode.NameChooser;
+import com.mllfjn.simyys.customnode.SpecialChooser;
 import com.mllfjn.simyys.starter.CharacterPane;
 import com.mllfjn.simyys.starter.info.CharacterInfo;
 import javafx.scene.control.Button;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CharacterLine extends HBox {
-    NameChooser name = new NameChooser();
+    public NameChooser name = new NameChooser();
     CustomTextField speed = new CustomTextField();
     CustomTextField baseAttack = new CustomTextField();
     CustomTextField yuHunAttack = new CustomTextField();
@@ -29,11 +30,13 @@ public class CharacterLine extends HBox {
         Button deleteButton = new Button("删除");
         deleteButton.setOnAction(actionEvent -> characterPane.getChildren().remove(this));
         deleteButton.setPrefSize(75, 25);
-        for (int i = 0; i < special.length; i++) {
-            special[i] = new LabelChooser("");
-        }
 
         this.getChildren().addAll(deleteButton, name, speed, baseAttack, yuHunAttack, team, hp, defense, criticalRate, criticalMultiplier, mingZhong, diKang);
+
+        for (int i = 0; i < special.length; i++) {
+            special[i] = new SpecialChooser(this);
+            this.getChildren().add(special[i]);
+        }
     }
     public void fillData(CharacterInfo info) {
         this.name.setText(info.name);
@@ -47,10 +50,22 @@ public class CharacterLine extends HBox {
         this.criticalMultiplier.setText(info.criticalMultiplier);
         this.mingZhong.setText(info.mingZhong);
         this.diKang.setText(info.diKang);
-        this.special
+        for (int i = 0; i < info.special.size(); i++) {
+            if (i >= special.length || info.special.get(i) == null) {
+                break;
+            }
+            special[i].setText(info.special.get(i));
+        }
+
+        resetSpecial();
+
     }
 
     public CharacterInfo getCharacterInfo() {
+        ArrayList<String> specialText = new ArrayList<>();
+        for (LabelChooser labelChooser : this.special) {
+            specialText.add(labelChooser.getText());
+        }
         return new CharacterInfo(name.getText(),
                 speed.getText(),
                 baseAttack.getText(),
@@ -62,6 +77,27 @@ public class CharacterLine extends HBox {
                 criticalMultiplier.getText(),
                 mingZhong.getText(),
                 diKang.getText(),
-                special);
+                specialText);
+    }
+
+    public void resetSpecial() {
+        String[] existText = new String[3];
+        int count = 0;
+        for (int i = 0; i < special.length; i++) {
+            if (!special[i].getText().isEmpty() && !special[i].getText().equals("+")) {
+                existText[i] = special[i].getText();
+                count++;
+            }
+        }
+
+        for (int i = 0; i < special.length; i++) {
+            if (i < count) {
+                special[i].setText(existText[i]);
+            } else if (i == count) {
+                special[i].setText("+");
+            } else {
+                special[i].setText("");
+            }
+        }
     }
 }

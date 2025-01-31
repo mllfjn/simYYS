@@ -3,10 +3,9 @@ package com.mllfjn.simyys.customnode;
 import com.mllfjn.simyys.character.CharacterFactory;
 
 import java.util.Arrays;
-import java.util.Stack;
 import java.util.stream.Stream;
 
-public class FlagChangeLabel extends LabelChooser{
+public class FlagChangeChooser extends LabelChooser{
     /*public FlagChangeLabel() {
         String[] types = new String[CharacterFactory.characterType.length + 1];
         types[0] = "特殊";
@@ -18,15 +17,22 @@ public class FlagChangeLabel extends LabelChooser{
         super("不变",types,context);
 
     }*/
-    public FlagChangeLabel() {
-        super("不变",
-                Stream.concat(
-                        Stream.of("特殊"),
-                        Arrays.stream(CharacterFactory.characterType)
-                ).toArray(String[]::new),
-                Stream.concat(
-                        Stream.<String[]>of(new String[]{"不变", "取消"}),
-                        Arrays.stream(CharacterFactory.characterList)
-                ).toArray(String[][]::new));
+    public FlagChangeChooser() {
+        super("不变");
+    }
+
+    @Override
+    public String[] getTypeText() {
+        return Stream.concat(Stream.of("特殊"), Arrays.stream(CharacterFactory.characterType)).toArray(String[]::new);
+    }
+
+    @Override
+    public String[][] getList() {
+        return Stream.concat(Stream.<String[]>of(new String[]{"不变", "取消"}), Arrays.stream(CharacterFactory.characterList)).toArray(String[][]::new);
+    }
+
+    @Override
+    public String getChooseText() {
+        return "选择式神";
     }
 }

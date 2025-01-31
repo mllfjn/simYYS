@@ -13,7 +13,7 @@ public class CharacterPane extends VBox {
 
         final int width = 75;
         final int height = 25;
-        final String[] labelText = new String[]{"名称", "速度", "基础攻击", "御魂攻击", "队伍", "生命", "防御", "暴击率", "暴击伤害", "命中", "抵抗", "御魂/契灵/词条/其他"};
+        final String[] labelText = new String[]{"名称", "速度", "基础攻击", "御魂攻击", "队伍", "生命", "防御", "暴击率", "暴击伤害", "命中", "抵抗", "御魂/契灵/词条"};
 
         HBox controller = new HBox();
         Button button = new Button("添加式神");
@@ -52,4 +52,5 @@ public class CharacterPane extends VBox {
             return info;
         } else return null;
     }
+
 }

@@ -9,44 +9,49 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class LabelChooser extends Label {
-
+public abstract class LabelChooser extends Label {
     private static final int width = 75;
-    private static final int nameWidth = 100;
     private static final int height = 25;
-    public LabelChooser(String text, String[] types, String[][] context) {
+    public LabelChooser(String text) {
         super(text);
 
         this.setAlignment(Pos.CENTER);
         this.setPrefSize(width, height);
-        this.setOnMouseClicked(mouseEvent -> {
-            Stage stage = new Stage();
-            VBox root = new VBox(10);
-
-            for (int i = 0; i < types.length; i++) {
-                Label typeLabel = new Label(types[i]);
-                typeLabel.setAlignment(Pos.CENTER);
-                typeLabel.setPrefSize(nameWidth, height);
-                FlowPane flowPane = new FlowPane();
-                for (String s : context[i]) {
-                    Button button = new Button(s);
-                    button.setAlignment(Pos.CENTER);
-                    button.setPrefSize(nameWidth, height);
-                    button.setOnAction(event -> {
-                        this.setText(s);
-                        stage.close();
-                    });
-                    flowPane.getChildren().add(button);
-                }
-                BorderPane borderPane = new BorderPane();
-                borderPane.setLeft(typeLabel);
-                borderPane.setCenter(flowPane);
-                root.getChildren().add(borderPane);
-            }
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
-            stage.setTitle(text);
-            stage.show();
-        });
+        this.setOnMouseClicked(mouseEvent -> onMouseClicked());
     }
+
+    public void onMouseClicked() {
+        Stage stage = new Stage();
+        VBox root = new VBox(10);
+        String[] type = getTypeText();
+        String[][] list = getList();
+
+        for (int i = 0; i < type.length; i++) {
+            Label typeLabel = new Label(type[i]);
+            typeLabel.setAlignment(Pos.CENTER);
+            typeLabel.setPrefSize(100, 25);
+            FlowPane flowPane = new FlowPane();
+            for (String s : list[i]) {
+                Button button = new Button(s);
+                button.setAlignment(Pos.CENTER);
+                button.setPrefSize(100, 25);
+                button.setOnAction(event -> {
+                    this.setText(s);
+                    stage.close();
+                });
+                flowPane.getChildren().add(button);
+            }
+            BorderPane borderPane = new BorderPane();
+            borderPane.setLeft(typeLabel);
+            borderPane.setCenter(flowPane);
+            root.getChildren().add(borderPane);
+        }
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.setTitle(getChooseText());
+        stage.show();
+    }
+    public abstract String[] getTypeText();
+    public abstract String[][] getList();
+    public abstract String getChooseText();
 }

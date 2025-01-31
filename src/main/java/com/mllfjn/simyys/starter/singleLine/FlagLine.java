@@ -1,11 +1,10 @@
 package com.mllfjn.simyys.starter.singleLine;
 
 import com.mllfjn.simyys.customnode.CustomTextField;
-import com.mllfjn.simyys.customnode.FlagChangeLabel;
+import com.mllfjn.simyys.customnode.FlagChangeChooser;
 import com.mllfjn.simyys.customnode.NameChooser;
 import com.mllfjn.simyys.starter.FlagChangePane;
 import com.mllfjn.simyys.starter.info.FlagChangeInfo;
-import com.mllfjn.simyys.starter.info.SkillChangeInfo;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 
@@ -13,8 +12,8 @@ public class FlagLine extends HBox {
 
     NameChooser name = new NameChooser();
     CustomTextField timesToAct = new CustomTextField();
-    FlagChangeLabel redFlag = new FlagChangeLabel();
-    FlagChangeLabel greenFlag = new FlagChangeLabel();
+    FlagChangeChooser redFlag = new FlagChangeChooser();
+    FlagChangeChooser greenFlag = new FlagChangeChooser();
     public FlagLine(FlagChangePane flagChangePane) {
         super();
         Button deleteButton = new Button("删除");
