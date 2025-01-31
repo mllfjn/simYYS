@@ -10,7 +10,6 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class CharacterLine extends HBox {
     public NameChooser name = new NameChooser();

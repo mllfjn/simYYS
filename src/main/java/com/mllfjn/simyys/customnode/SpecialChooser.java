@@ -2,7 +2,6 @@ package com.mllfjn.simyys.customnode;
 
 import com.mllfjn.simyys.character.CharacterFactory;
 import com.mllfjn.simyys.starter.singleLine.CharacterLine;
-import javafx.scene.control.Label;
 
 import java.util.ArrayList;
 import java.util.Arrays;
