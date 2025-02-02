@@ -1,6 +1,12 @@
 package com.mllfjn.simyys.character;
 
 import com.mllfjn.simyys.character.SP.dayuan.daYuan;
+import com.mllfjn.simyys.character.SP.shenshe.ShenShe;
+import com.mllfjn.simyys.character.SSR.namei.NaMei;
+import com.mllfjn.simyys.character.SSR.qianji.QianJi;
+import com.mllfjn.simyys.character.SSR.xiaoyuan.XiaoYuan;
+import com.mllfjn.simyys.character.YYS.shenle.ShenLe;
+import com.mllfjn.simyys.character.mob.shenqilou.ShenQiLou;
 import com.mllfjn.simyys.starter.info.CharacterInfo;
 
 public class CharacterFactory {
@@ -37,6 +43,12 @@ public class CharacterFactory {
     public static Character createCharacter(CharacterInfo info) {
         Character character = switch (info.name) {
             case "纺愿缘结神" -> new daYuan();
+            case "神乐" -> new ShenLe();
+            case "千姬" -> new QianJi();
+            case "伊邪那美" -> new NaMei();
+            case "神堕八岐大蛇" -> new ShenShe();
+            case "缘结神" -> new XiaoYuan();
+            case "蜃气楼" -> new ShenQiLou();
             default -> null;
         };
 

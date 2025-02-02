@@ -9,4 +9,5 @@ module com.mllfjn.simyys {
     exports com.mllfjn.simyys;
     exports com.mllfjn.simyys.starter;
     exports com.mllfjn.simyys.starter.info;
+    exports com.mllfjn.simyys.character;
 }

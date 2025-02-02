@@ -8,7 +8,7 @@ public class Character {
     private int timesToAct;
     private double location;
     private int lockSkill;
-    private boolean isDead = false;
+    public boolean alive = true;
     private double baseHp;
     private double hp;
     private double baseAttack;
@@ -18,7 +18,7 @@ public class Character {
     private double criticalMultiplier;
     private double mingZhong;
     private double diKang;
-    private double speed;
+    public double speed;
 
 
 
@@ -29,5 +29,21 @@ public class Character {
 
     public void init(CharacterInfo characterInfo) {
 
+    }
+
+    public double getTTA() {
+        return (100 - location) / getSpeed();
+    }
+
+    public double getSpeed() {
+        return speed;
+    }
+
+    public double getLocation() {
+        return location;
+    }
+
+    public void setLocation(double newLocation) {
+        this.location = newLocation;
     }
 }
