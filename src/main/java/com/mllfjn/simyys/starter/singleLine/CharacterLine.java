@@ -19,10 +19,10 @@ public class CharacterLine extends HBox {
     CustomTextField team = new CustomTextField();
     CustomTextField hp = new CustomTextField();
     CustomTextField defense = new CustomTextField();
-    CustomTextField criticalRate = new CustomTextField();
-    CustomTextField criticalMultiplier = new CustomTextField();
-    CustomTextField mingZhong = new CustomTextField();
-    CustomTextField diKang = new CustomTextField();
+    CustomTextField critRate = new CustomTextField();
+    CustomTextField critPower = new CustomTextField();
+    CustomTextField effectHitRate = new CustomTextField();
+    CustomTextField effectResistRate = new CustomTextField();
     LabelChooser[] special = new LabelChooser[3];
     public CharacterLine(CharacterPane characterPane) {
         super();
@@ -30,7 +30,7 @@ public class CharacterLine extends HBox {
         deleteButton.setOnAction(actionEvent -> characterPane.getChildren().remove(this));
         deleteButton.setPrefSize(75, 25);
 
-        this.getChildren().addAll(deleteButton, name, speed, baseAttack, yuHunAttack, team, hp, defense, criticalRate, criticalMultiplier, mingZhong, diKang);
+        this.getChildren().addAll(deleteButton, name, speed, baseAttack, yuHunAttack, team, hp, defense, critRate, critPower, effectHitRate, effectResistRate);
 
         for (int i = 0; i < special.length; i++) {
             special[i] = new SpecialChooser(this);
@@ -45,10 +45,10 @@ public class CharacterLine extends HBox {
         this.team.setText(info.team);
         this.hp.setText(info.hp);
         this.defense.setText(info.defense);
-        this.criticalRate.setText(info.criticalRate);
-        this.criticalMultiplier.setText(info.criticalMultiplier);
-        this.mingZhong.setText(info.mingZhong);
-        this.diKang.setText(info.diKang);
+        this.critRate.setText(info.critRate);
+        this.critPower.setText(info.critPower);
+        this.effectHitRate.setText(info.effectHitRate);
+        this.effectResistRate.setText(info.effectResistRate);
         for (int i = 0; i < info.special.size(); i++) {
             if (i >= special.length || info.special.get(i) == null) {
                 break;
@@ -72,10 +72,10 @@ public class CharacterLine extends HBox {
                 team.getText(),
                 hp.getText(),
                 defense.getText(),
-                criticalRate.getText(),
-                criticalMultiplier.getText(),
-                mingZhong.getText(),
-                diKang.getText(),
+                critRate.getText(),
+                critPower.getText(),
+                effectHitRate.getText(),
+                effectResistRate.getText(),
                 specialText);
     }
 

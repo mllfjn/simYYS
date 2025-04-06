@@ -60,6 +60,8 @@ public class Initializer {
         scrollPane2.setPrefSize(skillChangePaneWidth, skillChangePaneHeight);
         scrollPane3.setPrefSize(flagChangePaneWidth, flagChangePaneHeight);
 
+        scrollPane3.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+
         BorderPane paneRight = new BorderPane();
         paneRight.setTop(scrollPane2);
         paneRight.setBottom(scrollPane3);

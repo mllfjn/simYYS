@@ -10,10 +10,10 @@ public class CharacterInfo {
     public String team;
     public String hp;
     public String defense;
-    public String criticalRate;
-    public String criticalMultiplier;
-    public String mingZhong;
-    public String diKang;
+    public String critRate;
+    public String critPower;
+    public String effectHitRate;
+    public String effectResistRate;
     public List<String> special;
 
     public CharacterInfo(String name,
@@ -23,10 +23,10 @@ public class CharacterInfo {
                          String team,
                          String hp,
                          String defense,
-                         String criticalRate,
-                         String criticalMultiplier,
-                         String mingZhong,
-                         String diKang,
+                         String critRate,
+                         String critPower,
+                         String effectHitRate,
+                         String effectResistRate,
                          List<String> special) {
         this.name = name;
         this.speed = speed;
@@ -35,10 +35,10 @@ public class CharacterInfo {
         this.team = team;
         this.hp = hp;
         this.defense = defense;
-        this.criticalRate = criticalRate;
-        this.criticalMultiplier = criticalMultiplier;
-        this.mingZhong = mingZhong;
-        this.diKang = diKang;
+        this.critRate = critRate;
+        this.critPower = critPower;
+        this.effectHitRate = effectHitRate;
+        this.effectResistRate = effectResistRate;
         this.special = special;
     }
 }
