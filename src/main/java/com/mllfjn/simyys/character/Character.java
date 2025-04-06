@@ -1,10 +1,13 @@
 package com.mllfjn.simyys.character;
 
 import com.mllfjn.simyys.starter.info.CharacterInfo;
+import com.mllfjn.simyys.state.State;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+
+import java.util.List;
 
 public class Character {
     public String name;
@@ -23,6 +26,7 @@ public class Character {
     private double effectHitRate;
     private double effectResistRate;
     private double speed;
+    private List<State> states;
 
 
     public Character(){

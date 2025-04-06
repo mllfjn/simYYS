@@ -1,4 +1,10 @@
 package com.mllfjn.simyys.state;
 
-public class State {
+import com.mllfjn.simyys.character.Character;
+
+public abstract class State {
+    Character comeFrom;
+    public State() {
+
+    }
 }

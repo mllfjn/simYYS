@@ -11,6 +11,7 @@ import com.mllfjn.simyys.customnode.CustomTextFlow;
 import com.mllfjn.simyys.starter.info.CharacterInfo;
 import com.mllfjn.simyys.starter.info.FlagChangeInfo;
 import com.mllfjn.simyys.starter.info.SkillChangeInfo;
+import com.mllfjn.simyys.utils.CharacterAdapter;
 import com.mllfjn.simyys.utils.RuntimeTypeAdapterFactory;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -69,6 +70,7 @@ public class BattlePane {
         log.setPrefWidth(400);
         root.setLeft(log);
 
+        gson = new GsonBuilder().registerTypeAdapterFactory(CharacterAdapter.getCharacterAdapter()).create();
     }
 
     private void configureTeamPane() {
@@ -253,7 +255,7 @@ public class BattlePane {
 
     private void prev() {
         if (!recorder.isEmpty()) {
-            Recorder prev = new Gson().fromJson(recorder.get(recorder.size() - 1), new TypeToken<Recorder>(){}.getType());
+            Recorder prev = gson.fromJson(recorder.get(recorder.size() - 1), new TypeToken<Recorder>(){}.getType());
             characters = prev.characters;
             characterActing = prev.characterActing;
             repaintActionBar();
@@ -262,7 +264,7 @@ public class BattlePane {
         }
     }
     private void next() {
-        recorder.add(new Gson().toJson(new Recorder(characters, characterActing)));
+        recorder.add(gson.toJson(new Recorder(characters, characterActing)));
 
         characterActing.act();
         getNextActor();
