@@ -1,3 +1,4 @@
+/*
 package com.mllfjn.simyys.utils;
 
 import com.mllfjn.simyys.character.Character;
@@ -21,3 +22,4 @@ public class CharacterAdapter {
                 .registerSubtype(ShenQiLou.class, "蜃气楼");
     }
 }
+*/

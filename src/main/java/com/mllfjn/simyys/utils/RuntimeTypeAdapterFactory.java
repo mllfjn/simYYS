@@ -1,3 +1,4 @@
+/*
 package com.mllfjn.simyys.utils;
 
 import com.google.gson.*;
@@ -56,10 +57,12 @@ public class RuntimeTypeAdapterFactory<T> implements TypeAdapterFactory {
 
                 if (jsonElement.isJsonObject()) {
                     JsonObject jsonObject = jsonElement.getAsJsonObject();
-                    /*if (jsonObject.has(typeFieldName)) {
+                    */
+/*if (jsonObject.has(typeFieldName)) {
                         throw new JsonParseException("Field '" + typeFieldName + "' already exists in JSON.");
                     }
-                    jsonObject.add(typeFieldName, new JsonPrimitive(typeName));*/
+                    jsonObject.add(typeFieldName, new JsonPrimitive(typeName));*//*
+
                     gson.toJson(jsonObject, out);
                 } else {
                     throw new JsonParseException("Expected a JSON object, got " + jsonElement);
@@ -86,4 +89,4 @@ public class RuntimeTypeAdapterFactory<T> implements TypeAdapterFactory {
             }
         };
     }
-}
+}*/

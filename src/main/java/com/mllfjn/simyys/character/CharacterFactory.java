@@ -32,14 +32,13 @@ public class CharacterFactory {
 
     public static Character createCharacter(CharacterInfo info) {
         Character character = switch (info.name) {
-            // 记得还要去gsonAdapter注册
-            case "纺愿缘结神" -> new DaYuan();
-            case "神乐" -> new ShenLe();
-            case "千姬" -> new QianJi();
-            case "伊邪那美" -> new NaMei();
-            case "神堕八岐大蛇" -> new ShenShe();
-            case "缘结神" -> new XiaoYuan();
-            case "蜃气楼" -> new ShenQiLou();
+            case DaYuan.privateName -> new DaYuan();
+            case ShenLe.privateName -> new ShenLe();
+            case QianJi.privateName -> new QianJi();
+            case NaMei.privateName -> new NaMei();
+            case ShenShe.privateName -> new ShenShe();
+            case XiaoYuan.privateName -> new XiaoYuan();
+            case ShenQiLou.privateName -> new ShenQiLou();
             default -> null;
         };
 

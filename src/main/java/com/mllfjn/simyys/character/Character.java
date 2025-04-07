@@ -1,15 +1,20 @@
 package com.mllfjn.simyys.character;
 
+import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.starter.info.CharacterInfo;
 import com.mllfjn.simyys.state.State;
+import com.mllfjn.simyys.trigger.Trigger;
+import com.mllfjn.simyys.trigger.TriggerSession;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
-public class Character {
+public class Character implements Serializable {
     public String name;
     public int team;
     private int timesToAct;
@@ -26,7 +31,7 @@ public class Character {
     private double effectHitRate;
     private double effectResistRate;
     private double speed;
-    private List<State> states;
+    private final List<State> states = new ArrayList<>();
 
 
     public Character(){
@@ -87,9 +92,15 @@ public class Character {
         this.location = newLocation;
     }
 
-    public void act() {
+    public void round(BattlePane battlePane) {
+        TriggerSession.trigger(battlePane, Trigger.BEFOREROUND, this.getStates());
 
+        act();
+
+        TriggerSession.trigger(battlePane, Trigger.AFTERROUND, this.getStates());
     }
+
+    private void act() {}
 
     public double getAttack() {
         return baseAttack + yuHunAttack;
@@ -132,10 +143,25 @@ public class Character {
     }
 
     public ObservableValue<? extends ObservableList<String>> getSkillListProperty() {
-        return setSkillListProperty();
+        return new SimpleListProperty<>(FXCollections.observableArrayList("妖术"));
     }
 
-    public ObservableValue<? extends ObservableList<String>> setSkillListProperty() {
-        return new SimpleListProperty<>(FXCollections.observableArrayList("妖术"));
-    };
+    public void useFrontSkill() {
+
+    }
+
+    public void addState(State newState) {
+        for (State state : states) {
+            if (state.name.equals(newState.name)) {
+                state.cover(newState);
+                return;
+            }
+        }
+
+        states.add(newState);
+    }
+
+    public List<State> getStates() {
+        return states;
+    }
 }

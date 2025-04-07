@@ -1,8 +1,5 @@
 package com.mllfjn.simyys;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.CharacterFactory;
 import com.mllfjn.simyys.character.CharacterIcon;
@@ -11,8 +8,7 @@ import com.mllfjn.simyys.customnode.CustomTextFlow;
 import com.mllfjn.simyys.starter.info.CharacterInfo;
 import com.mllfjn.simyys.starter.info.FlagChangeInfo;
 import com.mllfjn.simyys.starter.info.SkillChangeInfo;
-import com.mllfjn.simyys.utils.CharacterAdapter;
-import com.mllfjn.simyys.utils.RuntimeTypeAdapterFactory;
+import com.mllfjn.simyys.utils.Recorder;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -23,8 +19,10 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 public class BattlePane {
     CharacterInfo[] characterInfo;
@@ -37,9 +35,8 @@ public class BattlePane {
     CustomTextFlow log = new CustomTextFlow();
     HBox[] teamPane = new HBox[2];
     Character characterActing;
-    List<String> recorder = new ArrayList<>();
     boolean isControlRate = false;
-    Gson gson;
+    Stack<byte[]> recorder = new Stack<>();
     public BattlePane(Stage stage, CharacterInfo[] characterInfo, SkillChangeInfo[] skillChangeInfo, FlagChangeInfo[] flagChangeInfo) {
         this.characterInfo = characterInfo;
         this.skillChangeInfo = skillChangeInfo;
@@ -69,8 +66,6 @@ public class BattlePane {
 
         log.setPrefWidth(400);
         root.setLeft(log);
-
-        gson = new GsonBuilder().registerTypeAdapterFactory(CharacterAdapter.getCharacterAdapter()).create();
     }
 
     private void configureTeamPane() {
@@ -170,6 +165,11 @@ public class BattlePane {
         }
 
         getNextActor();
+
+        // 先机
+        for (Character character : characters) {
+            character.useFrontSkill();
+        }
     }
 
     private List<Character> getCharactersByLocation() {
@@ -255,18 +255,40 @@ public class BattlePane {
 
     private void prev() {
         if (!recorder.isEmpty()) {
-            Recorder prev = gson.fromJson(recorder.get(recorder.size() - 1), new TypeToken<Recorder>(){}.getType());
+//            Recorder prev = gson.fromJson(recorder.get(recorder.size() - 1), new TypeToken<Recorder>(){}.getType());
+            Recorder prev = null;
+            ByteArrayInputStream bis = new ByteArrayInputStream(recorder.pop());
+            try (ObjectInputStream ois = new ObjectInputStream(bis)){
+                prev = (Recorder) ois.readObject();
+            } catch (IOException | ClassNotFoundException e) {
+                System.out.println(e + "恢复时出错");
+            }
+            
+            if (prev == null) {
+                return;
+            }
             characters = prev.characters;
             characterActing = prev.characterActing;
             repaintActionBar();
-            recorder.remove(recorder.size() - 1);
-            System.out.println(characters);
+
+            System.out.println("已恢复上一步");
+            /*for (Character character : characters) {
+                System.out.println(character);
+            }*/
+            System.out.println(characters.get(1));
+            System.out.println(characters.get(1).getStates().get(0).belongTo);
         }
     }
     private void next() {
-        recorder.add(gson.toJson(new Recorder(characters, characterActing)));
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        try (ObjectOutputStream oos = new ObjectOutputStream(bos)){
+            oos.writeObject(new Recorder(characters, characterActing));
+        } catch (IOException e) {
+            System.out.println(e + "保存时出错");
+        }
+        recorder.push(bos.toByteArray());
 
-        characterActing.act();
+        characterActing.round(this);
         getNextActor();
         repaintActionBar();
     }
@@ -301,12 +323,4 @@ public class BattlePane {
         SHUNWEI;
     }
 
-    private class Recorder {
-        List<Character> characters;
-        Character characterActing;
-        public Recorder(List<Character> characters, Character characterActing) {
-            this.characters = characters;
-            this.characterActing = characterActing;
-        }
-    }
 }
