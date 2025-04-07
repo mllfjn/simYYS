@@ -23,6 +23,8 @@ module com.mllfjn.simyys {
     exports com.mllfjn.simyys.state;
     exports com.mllfjn.simyys.trigger;
     opens com.mllfjn.simyys.trigger to com.google.gson, javafx.fxml, org.testfx, org.testfx.junit5;
+    exports com.mllfjn.simyys.hit;
+    opens com.mllfjn.simyys.hit to com.google.gson, javafx.fxml, org.testfx, org.testfx.junit5;
 //    exports com.mllfjn.simyys.utils;
 //    opens com.mllfjn.simyys.utils to com.google.gson, javafx.fxml, org.testfx, org.testfx.junit5;
 
