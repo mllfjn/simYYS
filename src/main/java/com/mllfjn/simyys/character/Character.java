@@ -2,6 +2,7 @@ package com.mllfjn.simyys.character;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.starter.info.CharacterInfo;
+import com.mllfjn.simyys.state.AttackRecorder;
 import com.mllfjn.simyys.state.State;
 import com.mllfjn.simyys.trigger.Trigger;
 import com.mllfjn.simyys.trigger.TriggerSession;
@@ -13,11 +14,12 @@ import javafx.collections.ObservableList;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-public class Character implements Serializable {
+public class Character implements Serializable{
     public String name;
     public int team;
-    private int timesToAct;
+    public int timesToAct;
     private double location;
     private int lockSkill;
     public boolean alive = true;
@@ -31,7 +33,7 @@ public class Character implements Serializable {
     private double effectHitRate;
     private double effectResistRate;
     private double speed;
-    private final List<State> states = new ArrayList<>();
+    private List<State> states = new ArrayList<>();
 
 
     public Character(){
@@ -51,6 +53,8 @@ public class Character implements Serializable {
         this.critPower = Double.parseDouble(characterInfo.critPower);
         this.effectHitRate = Double.parseDouble(characterInfo.effectHitRate);
         this.effectResistRate = Double.parseDouble(characterInfo.effectResistRate);
+
+        addState(new AttackRecorder(this));
     }
 
     public static double getTTA(double distance, double speed) {
@@ -100,7 +104,9 @@ public class Character implements Serializable {
         TriggerSession.trigger(battlePane, Trigger.AFTERROUND, this.getStates());
     }
 
-    private void act() {}
+    private void act() {
+
+    }
 
     public double getAttack() {
         return baseAttack + yuHunAttack;
@@ -108,6 +114,10 @@ public class Character implements Serializable {
 
     public double getHp() {
         return hp;
+    }
+
+    public void setHp(double hp) {
+        this.hp = hp;
     }
 
     public double getMaxHp() {
@@ -137,10 +147,10 @@ public class Character implements Serializable {
     public void setLockSkill(int i) {
         this.lockSkill = i;
     }
-
     public int getLockSkill() {
-        return lockSkill;
+        return this.lockSkill;
     }
+
 
     public ObservableValue<? extends ObservableList<String>> getSkillListProperty() {
         return new SimpleListProperty<>(FXCollections.observableArrayList("妖术"));
@@ -148,6 +158,19 @@ public class Character implements Serializable {
 
     public void useFrontSkill() {
 
+    }
+
+    public AttackRecorder getAttackRecorder() {
+        return (AttackRecorder) getState(AttackRecorder.privateName);
+    }
+
+    public State getState(String name) {
+        for (State state : states) {
+            if (state.name.equals(name)) {
+                return state;
+            }
+        }
+        return null;
     }
 
     public void addState(State newState) {
@@ -163,5 +186,9 @@ public class Character implements Serializable {
 
     public List<State> getStates() {
         return states;
+    }
+
+    public void setStates(List<State> states) {
+        this.states = states;
     }
 }

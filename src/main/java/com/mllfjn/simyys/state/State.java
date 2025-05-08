@@ -1,5 +1,6 @@
 package com.mllfjn.simyys.state;
 
+import com.mllfjn.simyys.Attribute;
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.trigger.Trigger;
@@ -18,6 +19,18 @@ public abstract class State implements Serializable {
         this.belongTo = belongTo;
         this.stateType = stateType;
         this.stateForm = stateForm;
+
+        setName();
+    }
+
+    protected abstract void setName();
+
+    public boolean isAffectAttribute(Attribute attribute) {
+        return false;
+    }
+
+    public double getInfluence(Attribute attribute) {
+        return 0;
     }
 
     public boolean runnable(Trigger trigger) {

@@ -39,7 +39,7 @@ public class CustomTextFlowTest {
     @Test
     public void testAddTextWithColor() {
         CustomTextFlow ct = new CustomTextFlow();
-        ct.addText("攻击", CustomTextFlow.TextColor.ATTACK, 30);
+        ct.addText("攻击", CustomTextFlow.NumberType.ATTACK, 30);
         Platform.runLater(() -> {
             Text addedText = (Text) ct.textFlow.getChildren().get(0);
             assertEquals("攻击", addedText.getText(), "文本内容不匹配");
@@ -51,10 +51,10 @@ public class CustomTextFlowTest {
     // 测试枚举颜色值是否正确
     @Test
     public void testTextColorEnumValues() {
-        assertEquals(Color.BLACK, CustomTextFlow.TextColor.NORMAL.color, "NORMAL 颜色应为黑色");
-        assertEquals(Color.RED, CustomTextFlow.TextColor.ATTACK.color, "ATTACK 颜色应为红色");
-        assertEquals(Color.ORANGE, CustomTextFlow.TextColor.CRITICAL.color, "CRITICAL 颜色应为橙色");
-        assertEquals(Color.GREEN, CustomTextFlow.TextColor.HEAL.color, "Heal 颜色应为绿色");
+        assertEquals(Color.BLACK, CustomTextFlow.NumberType.NORMAL.color, "NORMAL 颜色应为黑色");
+        assertEquals(Color.RED, CustomTextFlow.NumberType.ATTACK.color, "ATTACK 颜色应为红色");
+        assertEquals(Color.ORANGE, CustomTextFlow.NumberType.CRITICAL.color, "CRITICAL 颜色应为橙色");
+        assertEquals(Color.GREEN, CustomTextFlow.NumberType.HEAL.color, "Heal 颜色应为绿色");
     }
 
     // 测试多次添加文本
@@ -62,7 +62,7 @@ public class CustomTextFlowTest {
     public void testMultipleAdditions() {
         CustomTextFlow ct = new CustomTextFlow();
         ct.addText("第一段");
-        ct.addText("第二段", CustomTextFlow.TextColor.HEAL, 30);
+        ct.addText("第二段", CustomTextFlow.NumberType.HEAL, 30);
         Platform.runLater(() -> {
             assertEquals(2, ct.textFlow.getChildren().size(), "应有两个文本节点");
             Text first = (Text) ct.textFlow.getChildren().get(0);

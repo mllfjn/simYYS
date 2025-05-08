@@ -8,9 +8,9 @@ import com.mllfjn.simyys.customnode.CustomTextFlow;
 import com.mllfjn.simyys.starter.info.CharacterInfo;
 import com.mllfjn.simyys.starter.info.FlagChangeInfo;
 import com.mllfjn.simyys.starter.info.SkillChangeInfo;
-import com.mllfjn.simyys.utils.Recorder;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -29,14 +29,15 @@ public class BattlePane {
     SkillChangeInfo[] skillChangeInfo;
     FlagChangeInfo[] flagChangeInfo;
     List<Character> characters;
+    Character[] autoTo = new Character[2];
     ActionBarType actionBarType = ActionBarType.SHUNWEI;
     BorderPane root = new BorderPane();
     AnchorPane actionBar = new AnchorPane();
     CustomTextFlow log = new CustomTextFlow();
     HBox[] teamPane = new HBox[2];
     Character characterActing;
-    boolean isControlRate = false;
     Stack<byte[]> recorder = new Stack<>();
+    boolean isControlRate = false;
     public BattlePane(Stage stage, CharacterInfo[] characterInfo, SkillChangeInfo[] skillChangeInfo, FlagChangeInfo[] flagChangeInfo) {
         this.characterInfo = characterInfo;
         this.skillChangeInfo = skillChangeInfo;
@@ -97,10 +98,14 @@ public class BattlePane {
         }
     }
 
-    private void setAutoTo(Character characterSelected) {
+    private void setAutoTo(CharacterIcon characterSelected) {
         // 相同队伍的其他角色取消标，该角色切换标
-        for (Character character : characters.stream().filter(character -> character.team == characterSelected.team).toList()) {
-
+        characterSelected.switchAuto(true);
+        for (Node node : teamPane[characterSelected.character.team].getChildren()) {
+            CharacterIcon characterIcon = (CharacterIcon) node;
+            if (characterIcon != characterSelected) {
+                characterIcon.switchAuto(false);
+            }
         }
     }
 
@@ -255,11 +260,13 @@ public class BattlePane {
 
     private void prev() {
         if (!recorder.isEmpty()) {
-//            Recorder prev = gson.fromJson(recorder.get(recorder.size() - 1), new TypeToken<Recorder>(){}.getType());
-            Recorder prev = null;
+            /*recorder.pop().recover(this);
+            repaintActionBar();*/
+
+            CharacterStackRecorder prev = null;
             ByteArrayInputStream bis = new ByteArrayInputStream(recorder.pop());
             try (ObjectInputStream ois = new ObjectInputStream(bis)){
-                prev = (Recorder) ois.readObject();
+                prev = (CharacterStackRecorder) ois.readObject();
             } catch (IOException | ClassNotFoundException e) {
                 System.out.println(e + "恢复时出错");
             }
@@ -270,19 +277,14 @@ public class BattlePane {
             characters = prev.characters;
             characterActing = prev.characterActing;
             repaintActionBar();
-
-            System.out.println("已恢复上一步");
-            /*for (Character character : characters) {
-                System.out.println(character);
-            }*/
-            System.out.println(characters.get(1));
-            System.out.println(characters.get(1).getStates().get(0).belongTo);
         }
+
+
     }
     private void next() {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try (ObjectOutputStream oos = new ObjectOutputStream(bos)){
-            oos.writeObject(new Recorder(characters, characterActing));
+            oos.writeObject(new CharacterStackRecorder(characters, characterActing));
         } catch (IOException e) {
             System.out.println(e + "保存时出错");
         }

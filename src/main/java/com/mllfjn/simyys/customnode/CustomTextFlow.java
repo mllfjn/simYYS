@@ -18,23 +18,23 @@ public class CustomTextFlow extends ScrollPane {
     }
 
     public void addText(String s) {
-        this.addText(s, TextColor.NORMAL, 20);
+        this.addText(s, NumberType.NORMAL, 20);
     }
 
-    public void addText(String s, TextColor color, double fontSize) {
+    public void addText(String s, NumberType color, double fontSize) {
         Text text = new Text(s);
         text.setFont(new Font(fontSize));
         text.setFill(color.color);
         textFlow.getChildren().add(text);
     }
 
-    public enum TextColor {
+    public enum NumberType {
         NORMAL(Color.BLACK),
         ATTACK(Color.RED),
         CRITICAL(Color.ORANGE),
         HEAL(Color.GREEN);
         final Color color;
-        TextColor(Color color) {
+        NumberType(Color color) {
             this.color = color;
         }
     }

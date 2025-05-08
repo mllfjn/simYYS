@@ -5,17 +5,21 @@ import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
+import java.net.URL;
+
 public class CharacterIcon extends VBox {
-    private final Character character;
-    Label stateLabel = new Label();
-    ProgressBar healthBar = new ProgressBar();
-    ComboBox<String> skillBox = new ComboBox<>();
-    Pane image;
-    Label[] info = new Label[8];
+    public final Character character;
+    private final Label stateLabel = new Label();
+    private final ProgressBar healthBar = new ProgressBar();
+    private final ComboBox<String> skillBox = new ComboBox<>();
+    private final Pane image;
+    private final Label[] info = new Label[8];
+    private final ImageView autoTo;
 
     public CharacterIcon(Character character, OnClickListener onClickListener) {
         super();
@@ -23,11 +27,10 @@ public class CharacterIcon extends VBox {
         this.setPadding(new Insets(0, 0, 40, 0));
         this.setAlignment(Pos.BOTTOM_CENTER);
 
-
         // 从下到上，分别是信息，技能选择，头像，生命，（盾），状态栏
         this.image = CharacterFactory.getImageByName(character.name, CharacterFactory.ImageSize.LARGE, Color.ORANGE, 5);
         image.setOnMouseClicked(event -> {
-            onClickListener.onClick(character);
+            onClickListener.onClick(this);
         });
 
         skillBox.valueProperty().addListener((obs, old, val) -> {
@@ -39,6 +42,17 @@ public class CharacterIcon extends VBox {
         healthBar.setMaxWidth(Double.MAX_VALUE);
         skillBox.setMaxWidth(Double.MAX_VALUE);
         stateLabel.setMaxWidth(Double.MAX_VALUE);
+
+        if (character.team % 2 == 0) {
+            healthBar.setStyle("-fx-accent: orange");
+            URL url = CharacterFactory.class.getResource("images/绿标.png");
+            this.autoTo = new ImageView(String.valueOf(url));
+        } else {
+            healthBar.setStyle("-fx-accent: red");
+            URL url = CharacterFactory.class.getResource("images/红标.png");
+            this.autoTo = new ImageView(String.valueOf(url));
+        }
+
 
         this.getChildren().addAll(
                 this.stateLabel ,
@@ -70,6 +84,14 @@ public class CharacterIcon extends VBox {
     }
 
     public interface OnClickListener {
-        void onClick(Character character);
+        void onClick(CharacterIcon characterIcon);
+    }
+    public void switchAuto (boolean switchOrCancel) {
+        // switch 为真时，如果不存在，添加
+        if (switchOrCancel && !this.getChildren().contains(this.autoTo)) {
+            this.getChildren().add(0, autoTo);
+        } else {
+            this.getChildren().remove(autoTo);
+        }
     }
 }
