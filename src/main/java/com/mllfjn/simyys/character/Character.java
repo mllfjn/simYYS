@@ -14,7 +14,6 @@ import javafx.collections.ObservableList;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class Character implements Serializable{
     public String name;
@@ -34,6 +33,8 @@ public class Character implements Serializable{
     private double effectResistRate;
     private double speed;
     private List<State> states = new ArrayList<>();
+
+    private transient CharacterIcon characterIcon;
 
 
     public Character(){
@@ -96,12 +97,12 @@ public class Character implements Serializable{
         this.location = newLocation;
     }
 
-    public void round(BattlePane battlePane) {
-        TriggerSession.trigger(battlePane, Trigger.BEFOREROUND, this.getStates());
+    public void round(BattlePane bp) {
+        TriggerSession.trigger(bp, Trigger.BEFOREROUND, this.getStates());
 
         act();
 
-        TriggerSession.trigger(battlePane, Trigger.AFTERROUND, this.getStates());
+        TriggerSession.trigger(bp, Trigger.AFTERROUND, this.getStates());
     }
 
     private void act() {
@@ -150,7 +151,17 @@ public class Character implements Serializable{
     public int getLockSkill() {
         return this.lockSkill;
     }
+    public void beHurt(BattlePane bp, double damage) {
+        this.hp -= damage;
+        if (this.hp <= 0) {
+            alive = false;
+            bp.characterDie(this);
+        }
+    }
 
+    public CharacterIcon getCharacterIcon() {
+        return characterIcon != null ? characterIcon : new CharacterIcon();
+    }
 
     public ObservableValue<? extends ObservableList<String>> getSkillListProperty() {
         return new SimpleListProperty<>(FXCollections.observableArrayList("妖术"));

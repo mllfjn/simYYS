@@ -12,9 +12,7 @@ public class CustomTextFlow extends ScrollPane {
         super();
         this.setContent(textFlow);
         this.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        this.widthProperty().addListener((obs, old, val) -> {
-            textFlow.setMaxWidth(val.doubleValue());
-        });
+        this.widthProperty().addListener((obs, old, val) -> textFlow.setMaxWidth(val.doubleValue()));
     }
 
     public void addText(String s) {

@@ -2,9 +2,7 @@ package com.mllfjn.simyys.starter;
 
 import com.mllfjn.simyys.customnode.CustomLabel;
 import com.mllfjn.simyys.starter.info.FlagChangeInfo;
-import com.mllfjn.simyys.starter.info.SkillChangeInfo;
 import com.mllfjn.simyys.starter.singleLine.FlagLine;
-import com.mllfjn.simyys.starter.singleLine.SkillLine;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;

@@ -37,7 +37,7 @@ public abstract class State implements Serializable {
         return false;
     }
 
-    public void run(Trigger trigger, BattlePane battlePane) {
+    public void run(Trigger trigger, BattlePane bp) {
 
     }
 
@@ -58,8 +58,8 @@ public abstract class State implements Serializable {
     }
 
     public enum StateForm{
-        ZHUANGTAI, // 状态,可以驱散
-        YINJI, // 印记,不可驱散
+        ZHUANG_TAI, // 状态,可以驱散
+        YIN_JI, // 印记,不可驱散
         SPECIAL // 特殊,指在游戏里没有显式定义
     }
 }

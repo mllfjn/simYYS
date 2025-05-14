@@ -17,7 +17,6 @@ public class CharacterIcon extends VBox {
     private final Label stateLabel = new Label();
     private final ProgressBar healthBar = new ProgressBar();
     private final ComboBox<String> skillBox = new ComboBox<>();
-    private final Pane image;
     private final Label[] info = new Label[8];
     private final ImageView autoTo;
 
@@ -28,14 +27,10 @@ public class CharacterIcon extends VBox {
         this.setAlignment(Pos.BOTTOM_CENTER);
 
         // 从下到上，分别是信息，技能选择，头像，生命，（盾），状态栏
-        this.image = CharacterFactory.getImageByName(character.name, CharacterFactory.ImageSize.LARGE, Color.ORANGE, 5);
-        image.setOnMouseClicked(event -> {
-            onClickListener.onClick(this);
-        });
+        Pane image = CharacterFactory.getImageByName(character.name, CharacterFactory.ImageSize.LARGE, Color.ORANGE, 5);
+        image.setOnMouseClicked(event -> onClickListener.onClick(this));
 
-        skillBox.valueProperty().addListener((obs, old, val) -> {
-            character.setLockSkill(skillBox.getSelectionModel().getSelectedIndex());
-        });
+        skillBox.valueProperty().addListener((obs, old, val) -> character.setLockSkill(skillBox.getSelectionModel().getSelectedIndex()));
         skillBox.itemsProperty().bind(character.getSkillListProperty());
         skillBox.getSelectionModel().select(0);
 
@@ -57,7 +52,7 @@ public class CharacterIcon extends VBox {
         this.getChildren().addAll(
                 this.stateLabel ,
                 this.healthBar,
-                this.image,
+                image,
                 this.skillBox
         );
         for (int i = 0; i < info.length; i++) {

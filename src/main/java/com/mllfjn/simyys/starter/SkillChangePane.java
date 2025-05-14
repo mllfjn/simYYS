@@ -1,10 +1,7 @@
 package com.mllfjn.simyys.starter;
 
 import com.mllfjn.simyys.customnode.CustomLabel;
-import com.mllfjn.simyys.customnode.NameChooser;
-import com.mllfjn.simyys.starter.info.CharacterInfo;
 import com.mllfjn.simyys.starter.info.SkillChangeInfo;
-import com.mllfjn.simyys.starter.singleLine.CharacterLine;
 import com.mllfjn.simyys.starter.singleLine.SkillLine;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;

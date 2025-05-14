@@ -25,19 +25,19 @@ import java.util.List;
 import java.util.Stack;
 
 public class BattlePane {
-    CharacterInfo[] characterInfo;
-    SkillChangeInfo[] skillChangeInfo;
-    FlagChangeInfo[] flagChangeInfo;
-    List<Character> characters;
-    Character[] autoTo = new Character[2];
-    ActionBarType actionBarType = ActionBarType.SHUNWEI;
-    BorderPane root = new BorderPane();
-    AnchorPane actionBar = new AnchorPane();
-    CustomTextFlow log = new CustomTextFlow();
-    HBox[] teamPane = new HBox[2];
-    Character characterActing;
-    Stack<byte[]> recorder = new Stack<>();
-    boolean isControlRate = false;
+    private final CharacterInfo[] characterInfo;
+    private final SkillChangeInfo[] skillChangeInfo;
+    private final FlagChangeInfo[] flagChangeInfo;
+    public List<Character> characters;
+    public Character[] autoTo = new Character[2];
+    private ActionBarType actionBarType = ActionBarType.SHUNWEI;
+    private final BorderPane root = new BorderPane();
+    private final AnchorPane actionBar = new AnchorPane();
+    private final CustomTextFlow log = new CustomTextFlow();
+    private final HBox[] teamPane = new HBox[2];
+    private Character characterActing;
+    private final Stack<byte[]> recorder = new Stack<>();
+    public boolean isControlRate = false;
     public BattlePane(Stage stage, CharacterInfo[] characterInfo, SkillChangeInfo[] skillChangeInfo, FlagChangeInfo[] flagChangeInfo) {
         this.characterInfo = characterInfo;
         this.skillChangeInfo = skillChangeInfo;
@@ -83,11 +83,10 @@ public class BattlePane {
         teamPane[1].setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, new BorderWidths(3))));
 
         VBox container = new VBox(teamPane[1], teamPane[0]);
-        container.setSpacing(10);
-        container.setPadding(new Insets(5));
-        // 高度是一半-5
-        teamPane[0].minHeightProperty().bind(root.heightProperty().divide(2).subtract(10));
-        teamPane[1].minHeightProperty().bind(root.heightProperty().divide(2).subtract(10));
+        //container.setSpacing(5);
+        container.setPadding(new Insets(3));
+        teamPane[0].minHeightProperty().bind(root.heightProperty().divide(2).subtract(5));
+        teamPane[1].minHeightProperty().bind(root.heightProperty().divide(2).subtract(5));
 
         ScrollPane scrollPane = new ScrollPane(container);
         scrollPane.setPrefWidth(1100);
@@ -118,9 +117,7 @@ public class BattlePane {
         跳过指定回合数*/
 
         CheckBox rateControl = new CheckBox("概率控制模式");
-        rateControl.selectedProperty().addListener((obs, old, val) -> {
-            this.isControlRate = val;
-        });
+        rateControl.selectedProperty().addListener((obs, old, val) -> this.isControlRate = val);
 
         Button prev = new Button("上一个");
         Button next = new Button("下一个");
@@ -187,7 +184,7 @@ public class BattlePane {
         }).toList();
     }
 
-    private List<Character> getCharactersByActionSort(int num) {
+    private List<Character> getCharactersByActionSort() {
         List<Character> rt = new ArrayList<>();
         List<Character> list = getCharactersAlive();
         int size = list.size();
@@ -199,7 +196,7 @@ public class BattlePane {
         }
 
         rt.add(characterActing);
-        for (int i = 1; i < num ; i++) {
+        for (int i = 1; i < 9; i++) {
             int min = 0;
             for (int j = 1; j < size; j++) {
                 if (Character.before(distance[j], speed[j], distance[min], speed[min])) {
@@ -228,7 +225,7 @@ public class BattlePane {
 
         if (actionBarType == ActionBarType.SHUNWEI) {
 
-            List<Character> list = getCharactersByActionSort(9);
+            List<Character> list = getCharactersByActionSort();
             Pane imageBig = CharacterFactory.getImageByName(list.get(0).name, CharacterFactory.ImageSize.BIG, color, strokeWidth);
             imageBig.setLayoutY( yOffset + 8 * CharacterFactory.ImageSize.SMALL.size );
             imageBig.setLayoutX(layoutXBig);
@@ -260,15 +257,13 @@ public class BattlePane {
 
     private void prev() {
         if (!recorder.isEmpty()) {
-            /*recorder.pop().recover(this);
-            repaintActionBar();*/
 
             CharacterStackRecorder prev = null;
             ByteArrayInputStream bis = new ByteArrayInputStream(recorder.pop());
             try (ObjectInputStream ois = new ObjectInputStream(bis)){
                 prev = (CharacterStackRecorder) ois.readObject();
             } catch (IOException | ClassNotFoundException e) {
-                System.out.println(e + "恢复时出错");
+                System.out.println("恢复时出错:" + e);
             }
             
             if (prev == null) {
@@ -286,7 +281,7 @@ public class BattlePane {
         try (ObjectOutputStream oos = new ObjectOutputStream(bos)){
             oos.writeObject(new CharacterStackRecorder(characters, characterActing));
         } catch (IOException e) {
-            System.out.println(e + "保存时出错");
+            System.out.println("保存时出错:" + e);
         }
         recorder.push(bos.toByteArray());
 
@@ -320,9 +315,14 @@ public class BattlePane {
         }
     }
 
+    public void characterDie(Character character) {
+        characters.remove(character);
+
+    }
+
     private enum ActionBarType {
         JINDU,
-        SHUNWEI;
+        SHUNWEI
     }
 
 }

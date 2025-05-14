@@ -1,4 +1,4 @@
-package com.mllfjn.simyys.character.SP.dayuan;
+package com.mllfjn.simyys.character.sp.dayuan;
 
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.state.State;
@@ -14,9 +14,5 @@ public class ShengTianZhiYuan_Chi extends State {
     protected void setName() {
         name = privateName;
     }
-/*
-    @Override
-    void setName() {
-        this.name = privateName;
-    }*/
+
 }

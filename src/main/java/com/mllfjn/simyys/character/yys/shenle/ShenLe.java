@@ -1,4 +1,4 @@
-package com.mllfjn.simyys.character.YYS.shenle;
+package com.mllfjn.simyys.character.yys.shenle;
 
 import com.mllfjn.simyys.character.Character;
 

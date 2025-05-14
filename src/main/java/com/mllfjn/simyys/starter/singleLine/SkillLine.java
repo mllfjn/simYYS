@@ -3,7 +3,6 @@ package com.mllfjn.simyys.starter.singleLine;
 import com.mllfjn.simyys.customnode.CustomTextField;
 import com.mllfjn.simyys.customnode.NameChooser;
 import com.mllfjn.simyys.starter.SkillChangePane;
-import com.mllfjn.simyys.starter.info.CharacterInfo;
 import com.mllfjn.simyys.starter.info.SkillChangeInfo;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;

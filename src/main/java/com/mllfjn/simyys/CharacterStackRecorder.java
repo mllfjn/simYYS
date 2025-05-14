@@ -6,23 +6,7 @@ import com.mllfjn.simyys.character.Character;
 import java.io.Serializable;
 import java.util.List;
 
-public class CharacterStackRecorder implements Serializable {/*
-    List<CharacterRecorderInfo> characterRecorderInfo = new ArrayList<>();
-    Character characterActing;
-    public Recorder(List<Character> characters, Character characterActing) {
-        for (Character character : characters) {
-            characterRecorderInfo.add(new CharacterRecorderInfo(character));
-        }
-        this.characterActing = characterActing;
-    }
-
-    public void recover(BattlePane battlePane) {
-        for (CharacterRecorderInfo info : characterRecorderInfo) {
-            info.recover();
-        }
-        battlePane.characterActing = characterActing;
-    }*/
-
+public class CharacterStackRecorder implements Serializable {
         public List<Character> characters;
         public Character characterActing;
         public CharacterStackRecorder(List<Character> characters, Character characterActing) {

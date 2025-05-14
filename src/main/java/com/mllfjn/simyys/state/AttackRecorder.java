@@ -5,7 +5,6 @@ import com.mllfjn.simyys.customnode.CustomTextFlow;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class AttackRecorder extends State{
     public static final String privateName = "攻击记录";

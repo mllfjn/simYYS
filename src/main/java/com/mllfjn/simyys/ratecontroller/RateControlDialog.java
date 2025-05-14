@@ -7,17 +7,15 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import java.util.List;
-
-public class RateControlDialog extends Stage {
+class RateControlDialog extends Stage {
     Return[] returns;
     ReturnSelector[] selectors;
-    public RateControlDialog(List<String> names, List<Double> rates, String effect ,Return[] returns) {
+    public RateControlDialog(String[] names, double[] rates, String effect ,Return[] returns) {
         super();
         this.returns = returns;
-        this.selectors = new ReturnSelector[names.size()];
-        for (int i = 0; i < names.size(); i++) {
-            this.selectors[i] = new ReturnSelector(names.get(i), rates.get(i), effect);
+        this.selectors = new ReturnSelector[names.length];
+        for (int i = 0; i < names.length; i++) {
+            this.selectors[i] = new ReturnSelector(names[i], rates[i], effect);
         }
 
         setupWindowBehavior();

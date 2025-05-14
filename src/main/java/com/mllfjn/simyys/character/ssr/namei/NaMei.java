@@ -1,4 +1,4 @@
-package com.mllfjn.simyys.character.SSR.namei;
+package com.mllfjn.simyys.character.ssr.namei;
 
 import com.mllfjn.simyys.character.Character;
 

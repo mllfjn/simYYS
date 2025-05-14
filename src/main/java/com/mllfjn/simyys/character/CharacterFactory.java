@@ -1,11 +1,11 @@
 package com.mllfjn.simyys.character;
 
-import com.mllfjn.simyys.character.SP.dayuan.DaYuan;
-import com.mllfjn.simyys.character.SP.shenshe.ShenShe;
-import com.mllfjn.simyys.character.SSR.namei.NaMei;
-import com.mllfjn.simyys.character.SSR.qianji.QianJi;
-import com.mllfjn.simyys.character.SSR.xiaoyuan.XiaoYuan;
-import com.mllfjn.simyys.character.YYS.shenle.ShenLe;
+import com.mllfjn.simyys.character.sp.dayuan.DaYuan;
+import com.mllfjn.simyys.character.sp.shenshe.ShenShe;
+import com.mllfjn.simyys.character.ssr.namei.NaMei;
+import com.mllfjn.simyys.character.ssr.qianji.QianJi;
+import com.mllfjn.simyys.character.ssr.xiaoyuan.XiaoYuan;
+import com.mllfjn.simyys.character.yys.shenle.ShenLe;
 import com.mllfjn.simyys.character.mob.shenqilou.ShenQiLou;
 import com.mllfjn.simyys.starter.info.CharacterInfo;
 import javafx.geometry.Insets;

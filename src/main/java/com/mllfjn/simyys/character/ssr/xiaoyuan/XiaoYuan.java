@@ -1,4 +1,4 @@
-package com.mllfjn.simyys.character.SSR.xiaoyuan;
+package com.mllfjn.simyys.character.ssr.xiaoyuan;
 
 import com.mllfjn.simyys.character.Character;
 

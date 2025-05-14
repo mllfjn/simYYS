@@ -1,4 +1,4 @@
-package com.mllfjn.simyys.character.SP.shenshe;
+package com.mllfjn.simyys.character.sp.shenshe;
 
 import com.mllfjn.simyys.character.Character;
 

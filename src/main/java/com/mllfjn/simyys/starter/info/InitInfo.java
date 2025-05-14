@@ -1,7 +1,5 @@
 package com.mllfjn.simyys.starter.info;
 
-import com.google.gson.Gson;
-
 public class InitInfo {
     CharacterInfo[] characterInfo;
     SkillChangeInfo[] skillChangeInfo;

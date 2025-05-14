@@ -28,15 +28,15 @@ public class TriggerSession {
         }
     }
 
-    public static void trigger(BattlePane battlePane, Trigger trigger, List<State> states) {
+    public static void trigger(BattlePane bp, Trigger trigger, List<State> states) {
         switch (trigger) {
-            case BEFOREROUND -> runByOrder(battlePane, states, trigger, orderBeforeRound);
-            case AFTERROUND -> runByOrder(battlePane, states, trigger, orderAfterRound);
-            default -> runByDefault(battlePane, states, trigger);
+            case BEFOREROUND -> runByOrder(bp, states, trigger, orderBeforeRound);
+            case AFTERROUND -> runByOrder(bp, states, trigger, orderAfterRound);
+            default -> runByDefault(bp, states, trigger);
         }
     }
 
-    private static void runByOrder(BattlePane battlePane, List<State> states, Trigger trigger, Map<String, Integer> order) {
+    private static void runByOrder(BattlePane bp, List<State> states, Trigger trigger, Map<String, Integer> order) {
         List<State> runByOrder = new ArrayList<>();
         List<State> runLater = new ArrayList<>();
         for (State state : states) {
@@ -52,18 +52,18 @@ public class TriggerSession {
         runByOrder.sort(Comparator.comparingInt(o -> order.get(o.name)));
 
         for (State state : runByOrder) {
-            state.run(trigger, battlePane);
+            state.run(trigger, bp);
         }
 
         for (State state : runLater) {
-            state.run(trigger, battlePane);
+            state.run(trigger, bp);
         }
     }
 
-    private static void runByDefault(BattlePane battlePane, List<State> states, Trigger trigger) {
+    private static void runByDefault(BattlePane bp, List<State> states, Trigger trigger) {
         for (State state : states) {
             if (state.runnable(trigger)) {
-                state.run(trigger, battlePane);
+                state.run(trigger, bp);
             }
         }
     }

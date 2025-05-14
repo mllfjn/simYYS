@@ -40,14 +40,6 @@ public class SpecialChooser extends LabelChooser{
             case MOB -> new String[][] {new String[]{"巧劲", "易碎", "咒术", "猛火", "狂风", "斗魂", "疾行"}};
             default -> null;
         };
-        /*String[][] rt;
-        switch (getType()) {
-            case typeShiShen : {
-
-            }
-            case typeYYS :
-            case typeMob :
-        }*/
     }
 
     @Override

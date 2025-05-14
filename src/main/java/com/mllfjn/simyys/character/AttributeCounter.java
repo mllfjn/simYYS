@@ -15,7 +15,8 @@ public class AttributeCounter {
         ));
     }
 
-    public static double getZengShang(List<State> states) {
+    public static double getZengShang(Character character) {
+        List<State> states = character.getStates();
         double[] add = new double[zengShang.size()];
         for (State state : states) {
             if (state.isAffectAttribute(Attribute.ZENGSHANG)) {

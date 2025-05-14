@@ -1,4 +1,4 @@
-package com.mllfjn.simyys.character.SP.dayuan;
+package com.mllfjn.simyys.character.sp.dayuan;
 
 import com.mllfjn.simyys.character.Character;
 
@@ -8,8 +8,4 @@ public class DaYuan extends Character {
 
     }
 
-    @Override
-    public void useFrontSkill() {
-        this.addState(new ShengTianZhiYuan_Chi(this, this));
-    }
 }

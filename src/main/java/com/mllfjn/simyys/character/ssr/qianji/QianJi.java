@@ -1,4 +1,4 @@
-package com.mllfjn.simyys.character.SSR.qianji;
+package com.mllfjn.simyys.character.ssr.qianji;
 
 import com.mllfjn.simyys.character.Character;
 

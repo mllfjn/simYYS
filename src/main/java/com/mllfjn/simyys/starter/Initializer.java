@@ -43,7 +43,7 @@ public class Initializer {
         saveButton.setOnAction(event -> saveDate(stage));
         loadButton.setOnAction(event -> loadData(stage));
         startButton.setOnAction(event -> {
-            BattlePane battlePane = new BattlePane(stage, characterPane.getInfo(), skillChangePane.getInfo(), flagChangePane.getInfo());
+            BattlePane bp = new BattlePane(stage, characterPane.getInfo(), skillChangePane.getInfo(), flagChangePane.getInfo());
         });
 
         controlPane.getChildren().addAll(saveButton, loadButton, startButton);
