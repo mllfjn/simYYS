@@ -30,8 +30,8 @@ public class TriggerSession {
 
     public static void trigger(BattlePane bp, Trigger trigger, List<State> states) {
         switch (trigger) {
-            case BEFOREROUND -> runByOrder(bp, states, trigger, orderBeforeRound);
-            case AFTERROUND -> runByOrder(bp, states, trigger, orderAfterRound);
+            case BEFORE_ROUND -> runByOrder(bp, states, trigger, orderBeforeRound);
+            case AFTER_ROUND -> runByOrder(bp, states, trigger, orderAfterRound);
             default -> runByDefault(bp, states, trigger);
         }
     }

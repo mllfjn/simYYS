@@ -18,7 +18,7 @@ public class AttackRecorder extends State{
     }
 
     @Override
-    protected void setName() {
+    public void setName() {
         name = privateName;
     }
 

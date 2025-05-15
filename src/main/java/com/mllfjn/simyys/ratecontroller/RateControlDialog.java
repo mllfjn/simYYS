@@ -10,7 +10,7 @@ import javafx.stage.Stage;
 class RateControlDialog extends Stage {
     Return[] returns;
     ReturnSelector[] selectors;
-    public RateControlDialog(String[] names, double[] rates, String effect ,Return[] returns) {
+    public RateControlDialog(String title, String[] names, double[] rates, String effect ,Return[] returns) {
         super();
         this.returns = returns;
         this.selectors = new ReturnSelector[names.length];
@@ -21,6 +21,7 @@ class RateControlDialog extends Stage {
         setupWindowBehavior();
         setupUI();
 
+        this.setTitle(title);
         this.showAndWait();
     }
 

@@ -1,15 +1,16 @@
-package com.mllfjn.simyys.character.sp.shenshe;
+package com.mllfjn.simyys.character.yys.shenle;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
+import com.mllfjn.simyys.character.sp.dayuan.DaYuan;
 import com.mllfjn.simyys.hit.AttackType;
 import com.mllfjn.simyys.hit.Hit;
 
 class SkillPuGong extends Skill {
-    public static String privateName = "灵魂惩戒";
-    private static final int[] multiplier = new int[]{0, 100, 105, 110, 115, 125};
+    public static String privateName = "伞击";
+    private static final int[] multiplier = new int[]{0, 100, 110, 120, 130, 140};
     public SkillPuGong(Character belongTo, int level) {
         super(belongTo, level);
     }

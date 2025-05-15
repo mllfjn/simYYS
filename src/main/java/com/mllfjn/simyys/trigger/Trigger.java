@@ -1,6 +1,7 @@
 package com.mllfjn.simyys.trigger;
 
 public enum Trigger {
-    BEFOREROUND, // 回合前
-    AFTERROUND // 回合后
+    BEFORE_ROUND, // 回合前
+    AFTER_ROUND, // 回合后
+    BE_HURT // 被攻击时
 }

@@ -28,7 +28,7 @@ public class CharacterIcon extends VBox {
 
         // 从下到上，分别是信息，技能选择，头像，生命，（盾），状态栏
         Pane image = CharacterFactory.getImageByName(character.name, CharacterFactory.ImageSize.LARGE, Color.ORANGE, 5);
-        image.setOnMouseClicked(event -> onClickListener.onClick(this));
+        image.setOnMouseClicked(event -> onClickListener.onClick(this.character));
 
         skillBox.valueProperty().addListener((obs, old, val) -> character.setLockSkill(skillBox.getSelectionModel().getSelectedIndex()));
         skillBox.itemsProperty().bind(character.getSkillListProperty());
@@ -47,6 +47,8 @@ public class CharacterIcon extends VBox {
             URL url = CharacterFactory.class.getResource("images/红标.png");
             this.autoTo = new ImageView(String.valueOf(url));
         }
+        setIsAuto(false);
+        this.getChildren().add(0, autoTo);
 
 
         this.getChildren().addAll(
@@ -79,14 +81,9 @@ public class CharacterIcon extends VBox {
     }
 
     public interface OnClickListener {
-        void onClick(CharacterIcon characterIcon);
+        void onClick(Character character);
     }
-    public void switchAuto (boolean switchOrCancel) {
-        // switch 为真时，如果不存在，添加
-        if (switchOrCancel && !this.getChildren().contains(this.autoTo)) {
-            this.getChildren().add(0, autoTo);
-        } else {
-            this.getChildren().remove(autoTo);
-        }
+    public void setIsAuto(boolean visible) {
+        autoTo.setVisible(visible);
     }
 }

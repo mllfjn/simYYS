@@ -8,4 +8,21 @@ public class DaYuan extends Character {
 
     }
 
+    @Override
+    public void initSelf(int[] skillLevels) {
+        getSkills().add(new SkillPuGong(this, skillLevels[0]));
+    }
+
+    @Override
+    public int[] getUseSkillOrder() {
+        return new int[0];
+    }
+    public void addShenLi(int i) {
+        ShenLi shenLi = (ShenLi) this.getState(ShenLi.privateName);
+        if (shenLi == null) {
+            shenLi = new ShenLi(this, this);
+            this.addState(shenLi);
+        }
+        shenLi.addCeng(i);
+    }
 }

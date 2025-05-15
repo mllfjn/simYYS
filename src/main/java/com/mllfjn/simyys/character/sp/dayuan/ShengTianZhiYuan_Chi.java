@@ -9,10 +9,8 @@ public class ShengTianZhiYuan_Chi extends State {
         super(belongTo, comeFrom, StateType.SPECIAL, StateForm.SPECIAL);
     }
 
-
     @Override
-    protected void setName() {
-        name = privateName;
+    public void setName() {
+        this.name = privateName;
     }
-
 }

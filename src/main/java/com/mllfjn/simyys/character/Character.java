@@ -1,6 +1,7 @@
 package com.mllfjn.simyys.character;
 
 import com.mllfjn.simyys.BattlePane;
+import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.starter.info.CharacterInfo;
 import com.mllfjn.simyys.state.AttackRecorder;
 import com.mllfjn.simyys.state.State;
@@ -15,7 +16,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Character implements Serializable{
+public abstract class Character implements Serializable{
     public String name;
     public int team;
     public int timesToAct;
@@ -32,16 +33,12 @@ public class Character implements Serializable{
     private double effectHitRate;
     private double effectResistRate;
     private double speed;
-    private List<State> states = new ArrayList<>();
+    private final List<State> states = new ArrayList<>();
+    private final List<Skill> skills = new ArrayList<>();
 
-    private transient CharacterIcon characterIcon;
+    public transient CharacterIcon characterIcon;
 
-
-    public Character(){
-
-    }
-
-    public void init(CharacterInfo characterInfo) {
+    public void init(CharacterInfo characterInfo, int[] skillLevels) {
         this.name = characterInfo.name;
         this.speed = Double.parseDouble(characterInfo.speed);
         this.baseAttack = Double.parseDouble(characterInfo.baseAttack);
@@ -55,8 +52,15 @@ public class Character implements Serializable{
         this.effectHitRate = Double.parseDouble(characterInfo.effectHitRate);
         this.effectResistRate = Double.parseDouble(characterInfo.effectResistRate);
 
+        // 锁妖术时锁定技能为0,没有对应技能.添加一个null
+        skills.add(null);
+
+        initSelf(skillLevels);
+
         addState(new AttackRecorder(this));
     }
+
+    public abstract void initSelf(int[] skillLevels);
 
     public static double getTTA(double distance, double speed) {
         return distance / speed;
@@ -97,17 +101,47 @@ public class Character implements Serializable{
         this.location = newLocation;
     }
 
+    public void increaseLocation(double increase) {
+        this.location += increase;
+    }
+
     public void round(BattlePane bp) {
-        TriggerSession.trigger(bp, Trigger.BEFOREROUND, this.getStates());
+        TriggerSession.trigger(bp, Trigger.BEFORE_ROUND, this.getStates());
 
-        act();
+        act(bp);
 
-        TriggerSession.trigger(bp, Trigger.AFTERROUND, this.getStates());
+        TriggerSession.trigger(bp, Trigger.AFTER_ROUND, this.getStates());
     }
 
-    private void act() {
+    private void act(BattlePane bp) {
+        // 锁定技能不为0时,检测是否可用,可用时使用,不可用时普攻
+        // 锁定技能为0时,根据技能顺序使用技能,无可用技能时普攻
 
+        if (lockSkill != 0 ) {
+            if (skills.get(lockSkill) != null && skills.get(lockSkill).canUse(bp)) {
+                useSkill(bp, lockSkill);
+                return;
+            }
+        } else {
+            int[] order = getUseSkillOrder();
+            for (int i : order) {
+                if (skills.size() > i && skills.get(i).canUse(bp)) {
+                    useSkill(bp, i);
+                    return;
+                }
+            }
+        }
+
+        useSkill(bp, 1);
     }
+
+    private void useSkill(BattlePane bp, int i) {
+        if (skills.size() > i) {
+            skills.get(i).use(bp);
+        }
+    }
+
+    public abstract int[] getUseSkillOrder();
 
     public double getAttack() {
         return baseAttack + yuHunAttack;
@@ -142,7 +176,7 @@ public class Character implements Serializable{
     }
 
     public double getEffectResistRate() {
-        return effectResistRate;
+        return AttributeCounter.getGeneralAttribute(Attribute.EFFECT_RESIST_RATE, effectResistRate, states);
     }
 
     public void setLockSkill(int i) {
@@ -159,17 +193,15 @@ public class Character implements Serializable{
         }
     }
 
-    public CharacterIcon getCharacterIcon() {
-        return characterIcon != null ? characterIcon : new CharacterIcon();
+    public void setCharacterIcon(CharacterIcon characterIcon) {
+        this.characterIcon = characterIcon;
     }
 
     public ObservableValue<? extends ObservableList<String>> getSkillListProperty() {
         return new SimpleListProperty<>(FXCollections.observableArrayList("妖术"));
     }
 
-    public void useFrontSkill() {
-
-    }
+    public void useFrontSkill() {}
 
     public AttackRecorder getAttackRecorder() {
         return (AttackRecorder) getState(AttackRecorder.privateName);
@@ -198,8 +230,7 @@ public class Character implements Serializable{
     public List<State> getStates() {
         return states;
     }
-
-    public void setStates(List<State> states) {
-        this.states = states;
+    public List<Skill> getSkills() {
+        return skills;
     }
 }

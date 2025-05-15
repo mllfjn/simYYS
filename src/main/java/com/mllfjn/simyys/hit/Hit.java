@@ -4,8 +4,10 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.AttributeCounter;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.ratecontroller.RateController;
+import com.mllfjn.simyys.state.State;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 public class Hit {
     BattlePane bp;
@@ -45,7 +47,7 @@ public class Hit {
 
         // 暴击
         if (baoJi) {
-            damage *= owner.getCritPower();
+            damage *= owner.getCritPower() / 100;
         }
 
         // 一般增伤乘区
@@ -58,12 +60,26 @@ public class Hit {
     public void heal() {
 
     }
+    public void effect(List<Character> targets, StateSupplier stateSupplier, int base, boolean controlRate) {
+        boolean[] mingZhong = RateController.mingZhong(owner, targets, base, controlRate);
+        for (int i = 0 ; i < targets.size(); i++) {
+            if (mingZhong[i]) {
+                effect(targets.get(i), stateSupplier);
+            }
+        }
+    }
 
-    public void effect() {
-
+    public void effect(Character target, StateSupplier stateSupplier, int base, boolean controlRate) {
+        if (RateController.mingZhong(owner, List.of(target), base, controlRate)[0]) {
+            effect(target, stateSupplier);
+        }
+    }
+    private void effect(Character target, StateSupplier stateSupplier) {
+        target.addState(stateSupplier.get(owner, target));
     }
 
     private class AttackRecorder {
 
     }
+
 }

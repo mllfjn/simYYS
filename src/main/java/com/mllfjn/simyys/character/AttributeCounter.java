@@ -1,6 +1,5 @@
 package com.mllfjn.simyys.character;
 
-import com.mllfjn.simyys.Attribute;
 import com.mllfjn.simyys.state.State;
 
 import java.util.ArrayList;
@@ -19,11 +18,11 @@ public class AttributeCounter {
         List<State> states = character.getStates();
         double[] add = new double[zengShang.size()];
         for (State state : states) {
-            if (state.isAffectAttribute(Attribute.ZENGSHANG)) {
+            if (state.isAffectAttribute(Attribute.ZENG_SHANG)) {
                 String name = state.name;
                 for (int i = 0; i < zengShang.size(); i++) {
                     if (zengShang.get(i).contains(name)) {
-                        add[i] += state.getInfluence(Attribute.ZENGSHANG);
+                        add[i] += state.getInfluence(Attribute.ZENG_SHANG);
                     }
                 }
             }
@@ -34,5 +33,14 @@ public class AttributeCounter {
             rt *= (1 + a);
         }
         return rt;
+    }
+
+    public static double getGeneralAttribute(Attribute attribute, double base, List<State> states) {
+        for (State state : states) {
+            if (state.isAffectAttribute(attribute)) {
+                base += state.getInfluence(attribute);
+            }
+        }
+        return base < 0 ? 0 : base;
     }
 }

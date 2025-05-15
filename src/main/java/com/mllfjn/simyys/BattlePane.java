@@ -10,7 +10,6 @@ import com.mllfjn.simyys.starter.info.FlagChangeInfo;
 import com.mllfjn.simyys.starter.info.SkillChangeInfo;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -33,7 +32,7 @@ public class BattlePane {
     private ActionBarType actionBarType = ActionBarType.SHUNWEI;
     private final BorderPane root = new BorderPane();
     private final AnchorPane actionBar = new AnchorPane();
-    private final CustomTextFlow log = new CustomTextFlow();
+    public final CustomTextFlow log = new CustomTextFlow();
     private final HBox[] teamPane = new HBox[2];
     private Character characterActing;
     private final Stack<byte[]> recorder = new Stack<>();
@@ -91,20 +90,35 @@ public class BattlePane {
         ScrollPane scrollPane = new ScrollPane(container);
         scrollPane.setPrefWidth(1100);
         root.setCenter(scrollPane);
-
-        for (Character character : characters) {
-            teamPane[character.team].getChildren().add(new CharacterIcon(character, this::setAutoTo));
-        }
+        reloadCharacterIcon();
     }
 
-    private void setAutoTo(CharacterIcon characterSelected) {
-        // 相同队伍的其他角色取消标，该角色切换标
-        characterSelected.switchAuto(true);
-        for (Node node : teamPane[characterSelected.character.team].getChildren()) {
-            CharacterIcon characterIcon = (CharacterIcon) node;
-            if (characterIcon != characterSelected) {
-                characterIcon.switchAuto(false);
+    private void reloadCharacterIcon() {
+        teamPane[0].getChildren().clear();
+        teamPane[1].getChildren().clear();
+        for (Character character : characters) {
+            CharacterIcon characterIcon = new CharacterIcon(character, this::setAutoTo);
+            character.setCharacterIcon(characterIcon);
+            teamPane[character.team].getChildren().add(characterIcon);
+        }
+    }
+    private void setAutoTo(Character characterSelected) {
+        // 如果没标任何人，给选择目标设置标
+        // 如果已有标，且和选择的目标不是一个，换到新目标
+        // 如果已有标，且和选择的目标是一个，取消标
+
+        if (autoTo[characterSelected.team] == null) {
+            autoTo[characterSelected.team] = characterSelected;
+            characterSelected.characterIcon.setIsAuto(true);
+        } else {
+            autoTo[characterSelected.team].characterIcon.setIsAuto(false);
+            if (autoTo[characterSelected.team] != characterSelected) {
+                characterSelected.characterIcon.setIsAuto(true);
+                autoTo[characterSelected.team] = characterSelected;
+            } else {
+                autoTo[characterSelected.team] = null;
             }
+
         }
     }
 
@@ -271,7 +285,18 @@ public class BattlePane {
             }
             characters = prev.characters;
             characterActing = prev.characterActing;
+            this.autoTo = prev.autoTo;
+
             repaintActionBar();
+            reloadCharacterIcon();
+
+            if (autoTo[0] != null) {
+                autoTo[0].characterIcon.setIsAuto(true);
+            }
+
+            if (autoTo[1] != null) {
+                autoTo[1].characterIcon.setIsAuto(true);
+            }
         }
 
 
@@ -279,7 +304,7 @@ public class BattlePane {
     private void next() {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try (ObjectOutputStream oos = new ObjectOutputStream(bos)){
-            oos.writeObject(new CharacterStackRecorder(characters, characterActing));
+            oos.writeObject(new CharacterStackRecorder(characters, characterActing, autoTo));
         } catch (IOException e) {
             System.out.println("保存时出错:" + e);
         }
@@ -288,6 +313,10 @@ public class BattlePane {
         characterActing.round(this);
         getNextActor();
         repaintActionBar();
+
+        for (Character character : characters) {
+            character.characterIcon.update();
+        }
     }
 
     private void getNextActor() {
@@ -305,8 +334,11 @@ public class BattlePane {
             }
         }
         next.setLocation(0);
+        next.timesToAct++;
 
         characterActing = next;
+
+        log.addTextTop(characterActing.name + "行动" + characterActing.timesToAct);
     }
 
     private void skip(int round) {
@@ -316,8 +348,12 @@ public class BattlePane {
     }
 
     public void characterDie(Character character) {
-        characters.remove(character);
+        removeCharacter(character);
+    }
 
+    private void removeCharacter(Character character) {
+        characters.remove(character);
+        teamPane[character.team].getChildren().remove(character.characterIcon);
     }
 
     private enum ActionBarType {

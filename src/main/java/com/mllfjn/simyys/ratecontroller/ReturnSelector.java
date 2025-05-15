@@ -1,5 +1,6 @@
 package com.mllfjn.simyys.ratecontroller;
 
+import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
@@ -14,6 +15,8 @@ public class ReturnSelector extends HBox {
     }
 
     private void configureDescribeLabel(String name, double rate) {
+        this.setSpacing(10);
+        this.setPadding(new Insets(10));
         Label nameLabel = new Label(name);
         Label rateLabel = new Label("概率" + rate);
         this.getChildren().addAll(nameLabel, rateLabel);
@@ -27,6 +30,8 @@ public class ReturnSelector extends HBox {
         yesBtn.setToggleGroup(group);
         defaultBtn.setToggleGroup(group);
         noBtn.setToggleGroup(group);
+
+        defaultBtn.setSelected(true);
 
         this.getChildren().addAll(yesBtn, defaultBtn, noBtn);
     }

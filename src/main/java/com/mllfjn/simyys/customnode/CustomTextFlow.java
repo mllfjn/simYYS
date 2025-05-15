@@ -13,15 +13,20 @@ public class CustomTextFlow extends ScrollPane {
         this.setContent(textFlow);
         this.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         this.widthProperty().addListener((obs, old, val) -> textFlow.setMaxWidth(val.doubleValue()));
+        textFlow.heightProperty().addListener((obs, old, val) -> setVvalue(1));
     }
 
     public void addText(String s) {
-        this.addText(s, NumberType.NORMAL, 20);
+        this.addText("\t" + s + "\n", NumberType.NORMAL, FontSize.NORMAL);
     }
 
-    public void addText(String s, NumberType color, double fontSize) {
+    public void addTextTop(String s) {
+        this.addText(s + "\n", NumberType.NORMAL, FontSize.BIG);
+    }
+
+    public void addText(String s, NumberType color, FontSize fontSize) {
         Text text = new Text(s);
-        text.setFont(new Font(fontSize));
+        text.setFont(new Font(fontSize.size));
         text.setFill(color.color);
         textFlow.getChildren().add(text);
     }
@@ -34,6 +39,16 @@ public class CustomTextFlow extends ScrollPane {
         final Color color;
         NumberType(Color color) {
             this.color = color;
+        }
+    }
+
+    public enum FontSize {
+        BIG(20),
+        NORMAL(15);
+
+        final double size;
+        FontSize(double size) {
+            this.size = size;
         }
     }
 }

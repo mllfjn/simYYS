@@ -43,7 +43,7 @@ public class CharacterFactory {
         };
 
         if (character != null) {
-            character.init(info);
+            character.init(info, new int[]{5, 5, 5});
         }
 
         return character;

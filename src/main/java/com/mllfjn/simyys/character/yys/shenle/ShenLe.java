@@ -7,4 +7,14 @@ public class ShenLe extends Character {
     public ShenLe() {
 
     }
+
+    @Override
+    public void initSelf(int[] skillLevels) {
+        getSkills().add(new SkillPuGong(this, skillLevels[0]));
+    }
+
+    @Override
+    public int[] getUseSkillOrder() {
+        return new int[0];
+    }
 }

@@ -7,4 +7,14 @@ public class NaMei extends Character {
     public NaMei() {
 
     }
+
+    @Override
+    public void initSelf(int[] skillLevels) {
+        getSkills().add(new SkillPuGong(this, skillLevels[0]));
+    }
+
+    @Override
+    public int[] getUseSkillOrder() {
+        return new int[0];
+    }
 }

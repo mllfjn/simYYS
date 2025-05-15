@@ -1,6 +1,6 @@
 package com.mllfjn.simyys.state;
 
-import com.mllfjn.simyys.Attribute;
+import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.trigger.Trigger;
@@ -23,7 +23,7 @@ public abstract class State implements Serializable {
         setName();
     }
 
-    protected abstract void setName();
+    public abstract void setName();
 
     public boolean isAffectAttribute(Attribute attribute) {
         return false;
