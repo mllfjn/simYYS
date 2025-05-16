@@ -12,6 +12,7 @@ public abstract class State implements Serializable {
     public final StateForm stateForm;
     private StateSettleType settleType = StateSettleType.NONE;
     private int restRound = 1;
+    public boolean tobeDelete = false;
 
 
     public State(Character belongTo, Character comeFrom, StateType stateType, StateForm stateForm) {
@@ -41,6 +42,20 @@ public abstract class State implements Serializable {
      */
     public void cover(State state) {
         restRound = Math.max(restRound, state.restRound);
+    }
+    public void pastRound() {
+        if (settleType != StateSettleType.CHI_XU) {
+            return;
+        }
+
+        restRound--;
+        if (restRound == 0) {
+            delete();
+        }
+    }
+
+    public void delete() {
+        tobeDelete = true;
     }
 
 }

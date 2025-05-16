@@ -1,9 +1,5 @@
 package com.mllfjn.simyys.guihuo;
-
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.state.Runnable;
-import com.mllfjn.simyys.trigger.Trigger;
 
 public class GuiHuo {
     private int max = 8;

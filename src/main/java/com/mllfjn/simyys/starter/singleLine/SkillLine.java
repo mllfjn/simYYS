@@ -21,9 +21,9 @@ public class SkillLine extends HBox {
     }
 
     public void fillData(SkillChangeInfo skillChangeInfo) {
-        this.name.setText(skillChangeInfo.name);
-        this.timesToAct.setText(skillChangeInfo.timesToAct);
-        this.lockSkill.setText(skillChangeInfo.lockSkill);
+        this.name.setText(skillChangeInfo.name());
+        this.timesToAct.setText(skillChangeInfo.timesToAct());
+        this.lockSkill.setText(skillChangeInfo.lockSkill());
     }
 
     public SkillChangeInfo getSkillChangeInfo() {

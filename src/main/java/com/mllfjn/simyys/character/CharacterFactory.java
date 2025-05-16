@@ -31,7 +31,7 @@ public class CharacterFactory {
     public static final String[] characterType = new String[]{"阴阳师", "SP", "SSR", "SR", "R", "N", "怪物"};
 
     public static Character createCharacter(CharacterInfo info) {
-        Character character = switch (info.name) {
+        Character character = switch (info.name()) {
             case DaYuan.privateName -> new DaYuan();
             case ShenLe.privateName -> new ShenLe();
             case QianJi.privateName -> new QianJi();

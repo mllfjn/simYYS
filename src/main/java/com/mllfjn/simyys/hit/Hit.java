@@ -73,7 +73,7 @@ public class Hit {
         }
     }
     private void effect(Character target, StateSupplier stateSupplier) {
-        target.addState(stateSupplier.get(owner, target));
+        target.addState(stateSupplier.get(target, owner));
     }
 
 }

@@ -182,7 +182,7 @@ public class BattlePane {
 
     private void init() {
         for (CharacterInfo info : characterInfo) {
-            if (Integer.parseInt(info.team) == 0 || Integer.parseInt(info.team) == 1 || Integer.parseInt(info.team) == -1) {
+            if (Integer.parseInt(info.team()) == 0 || Integer.parseInt(info.team()) == 1 || Integer.parseInt(info.team()) == -1) {
                 characters.add(CharacterFactory.createCharacter(info));
             }
         }

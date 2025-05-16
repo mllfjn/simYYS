@@ -15,6 +15,7 @@ import javafx.collections.ObservableList;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public abstract class Character implements Serializable{
@@ -41,18 +42,18 @@ public abstract class Character implements Serializable{
     public transient CharacterIcon characterIcon;
 
     public void init(CharacterInfo characterInfo, int[] skillLevels) {
-        this.name = characterInfo.name;
-        this.speed = Double.parseDouble(characterInfo.speed);
-        this.baseAttack = Double.parseDouble(characterInfo.baseAttack);
-        this.yuHunAttack = Double.parseDouble(characterInfo.yuHunAttack);
-        this.team = Integer.parseInt(characterInfo.team);
-        this.hp = Double.parseDouble(characterInfo.hp);
-        this.maxHp = Double.parseDouble(characterInfo.hp);
-        this.defense = Double.parseDouble(characterInfo.defense);
-        this.critRate = Double.parseDouble(characterInfo.critRate);
-        this.critPower = Double.parseDouble(characterInfo.critPower);
-        this.effectHitRate = Double.parseDouble(characterInfo.effectHitRate);
-        this.effectResistRate = Double.parseDouble(characterInfo.effectResistRate);
+        this.name = characterInfo.name();
+        this.speed = Double.parseDouble(characterInfo.speed());
+        this.baseAttack = Double.parseDouble(characterInfo.baseAttack());
+        this.yuHunAttack = Double.parseDouble(characterInfo.yuHunAttack());
+        this.team = Integer.parseInt(characterInfo.team());
+        this.hp = Double.parseDouble(characterInfo.hp());
+        this.maxHp = Double.parseDouble(characterInfo.hp());
+        this.defense = Double.parseDouble(characterInfo.defense());
+        this.critRate = Double.parseDouble(characterInfo.critRate());
+        this.critPower = Double.parseDouble(characterInfo.critPower());
+        this.effectHitRate = Double.parseDouble(characterInfo.effectHitRate());
+        this.effectResistRate = Double.parseDouble(characterInfo.effectResistRate());
 
         // 锁妖术时锁定技能为0,没有对应技能.添加一个null
         skills.add(null);
@@ -121,6 +122,18 @@ public abstract class Character implements Serializable{
         act(bp);
 
         TriggerSession.trigger(bp, Trigger.AFTER_ROUND, this.getStates());
+
+        Iterator<State> it = states.iterator();
+
+        for (State state : states) {
+            state.pastRound();
+        }
+
+        while (it.hasNext()) {
+            if (it.next().tobeDelete) {
+                it.remove();
+            }
+        }
     }
 
     private void act(BattlePane bp) {

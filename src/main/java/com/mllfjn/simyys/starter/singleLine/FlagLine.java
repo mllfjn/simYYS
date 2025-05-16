@@ -23,10 +23,10 @@ public class FlagLine extends HBox {
     }
 
     public void fillData(FlagChangeInfo flagChangeInfo) {
-        this.name.setText(flagChangeInfo.name);
-        this.timesToAct.setText(flagChangeInfo.timesToAct);
-        this.redFlag.setText(flagChangeInfo.redFlag);
-        this.greenFlag.setText(flagChangeInfo.greenFlag);
+        this.name.setText(flagChangeInfo.name());
+        this.timesToAct.setText(flagChangeInfo.timesToAct());
+        this.redFlag.setText(flagChangeInfo.redFlag());
+        this.greenFlag.setText(flagChangeInfo.greenFlag());
     }
 
     public FlagChangeInfo getFlagChangeInfo() {

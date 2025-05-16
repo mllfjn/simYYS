@@ -4,7 +4,6 @@ import com.mllfjn.simyys.state.AttributeModifier;
 import com.mllfjn.simyys.state.State;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class AttributeCounter {

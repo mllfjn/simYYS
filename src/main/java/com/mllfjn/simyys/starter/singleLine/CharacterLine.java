@@ -38,22 +38,22 @@ public class CharacterLine extends HBox {
         }
     }
     public void fillData(CharacterInfo info) {
-        this.name.setText(info.name);
-        this.speed.setText(info.speed);
-        this.baseAttack.setText(info.baseAttack);
-        this.yuHunAttack.setText(info.yuHunAttack);
-        this.team.setText(info.team);
-        this.hp.setText(info.hp);
-        this.defense.setText(info.defense);
-        this.critRate.setText(info.critRate);
-        this.critPower.setText(info.critPower);
-        this.effectHitRate.setText(info.effectHitRate);
-        this.effectResistRate.setText(info.effectResistRate);
-        for (int i = 0; i < info.special.size(); i++) {
-            if (i >= special.length || info.special.get(i) == null) {
+        this.name.setText(info.name());
+        this.speed.setText(info.speed());
+        this.baseAttack.setText(info.baseAttack());
+        this.yuHunAttack.setText(info.yuHunAttack());
+        this.team.setText(info.team());
+        this.hp.setText(info.hp());
+        this.defense.setText(info.defense());
+        this.critRate.setText(info.critRate());
+        this.critPower.setText(info.critPower());
+        this.effectHitRate.setText(info.effectHitRate());
+        this.effectResistRate.setText(info.effectResistRate());
+        for (int i = 0; i < info.special().size(); i++) {
+            if (i >= special.length || info.special().get(i) == null) {
                 break;
             }
-            special[i].setText(info.special.get(i));
+            special[i].setText(info.special().get(i));
         }
 
         resetSpecial();
