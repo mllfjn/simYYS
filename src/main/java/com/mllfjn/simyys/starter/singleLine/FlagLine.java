@@ -10,10 +10,10 @@ import javafx.scene.layout.HBox;
 
 public class FlagLine extends HBox {
 
-    NameChooser name = new NameChooser();
-    CustomTextField timesToAct = new CustomTextField();
-    FlagChangeChooser redFlag = new FlagChangeChooser();
-    FlagChangeChooser greenFlag = new FlagChangeChooser();
+    final NameChooser name = new NameChooser();
+    final CustomTextField timesToAct = new CustomTextField();
+    final FlagChangeChooser redFlag = new FlagChangeChooser();
+    final FlagChangeChooser greenFlag = new FlagChangeChooser();
     public FlagLine(FlagChangePane flagChangePane) {
         super();
         Button deleteButton = new Button("删除");

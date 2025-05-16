@@ -3,18 +3,18 @@ package com.mllfjn.simyys.starter.info;
 import java.util.List;
 
 public class CharacterInfo {
-    public String name;
-    public String speed;
-    public String baseAttack;
-    public String yuHunAttack;
-    public String team;
-    public String hp;
-    public String defense;
-    public String critRate;
-    public String critPower;
-    public String effectHitRate;
-    public String effectResistRate;
-    public List<String> special;
+    public final String name;
+    public final String speed;
+    public final String baseAttack;
+    public final String yuHunAttack;
+    public final String team;
+    public final String hp;
+    public final String defense;
+    public final String critRate;
+    public final String critPower;
+    public final String effectHitRate;
+    public final String effectResistRate;
+    public final List<String> special;
 
     public CharacterInfo(String name,
                          String speed,

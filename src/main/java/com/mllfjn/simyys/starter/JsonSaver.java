@@ -5,9 +5,9 @@ import com.mllfjn.simyys.starter.info.SkillChangeInfo;
 import com.mllfjn.simyys.starter.info.FlagChangeInfo;
 
 public class JsonSaver {
-    CharacterInfo[] characterInfo;
-    SkillChangeInfo[] skillChangeInfo;
-    FlagChangeInfo[] flagChangeInfo;
+    final CharacterInfo[] characterInfo;
+    final SkillChangeInfo[] skillChangeInfo;
+    final FlagChangeInfo[] flagChangeInfo;
     public JsonSaver(CharacterInfo[] characterInfo, SkillChangeInfo[] skillChangeInfo, FlagChangeInfo[] flagChangeInfo) {
         this.characterInfo = characterInfo;
         this.skillChangeInfo = skillChangeInfo;

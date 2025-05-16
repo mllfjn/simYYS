@@ -12,18 +12,18 @@ import javafx.scene.layout.HBox;
 import java.util.ArrayList;
 
 public class CharacterLine extends HBox {
-    public NameChooser name = new NameChooser();
-    CustomTextField speed = new CustomTextField();
-    CustomTextField baseAttack = new CustomTextField();
-    CustomTextField yuHunAttack = new CustomTextField();
-    CustomTextField team = new CustomTextField();
-    CustomTextField hp = new CustomTextField();
-    CustomTextField defense = new CustomTextField();
-    CustomTextField critRate = new CustomTextField();
-    CustomTextField critPower = new CustomTextField();
-    CustomTextField effectHitRate = new CustomTextField();
-    CustomTextField effectResistRate = new CustomTextField();
-    LabelChooser[] special = new LabelChooser[3];
+    public final NameChooser name = new NameChooser();
+    final CustomTextField speed = new CustomTextField();
+    final CustomTextField baseAttack = new CustomTextField();
+    final CustomTextField yuHunAttack = new CustomTextField();
+    final CustomTextField team = new CustomTextField();
+    final CustomTextField hp = new CustomTextField();
+    final CustomTextField defense = new CustomTextField();
+    final CustomTextField critRate = new CustomTextField();
+    final CustomTextField critPower = new CustomTextField();
+    final CustomTextField effectHitRate = new CustomTextField();
+    final CustomTextField effectResistRate = new CustomTextField();
+    final LabelChooser[] special = new LabelChooser[3];
     public CharacterLine(CharacterPane characterPane) {
         super();
         Button deleteButton = new Button("删除");

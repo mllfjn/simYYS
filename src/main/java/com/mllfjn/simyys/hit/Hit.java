@@ -8,8 +8,8 @@ import com.mllfjn.simyys.ratecontroller.RateController;
 import java.util.List;
 
 public class Hit {
-    BattlePane bp;
-    Character owner;
+    final BattlePane bp;
+    final Character owner;
     public Hit(BattlePane bp, Character owner) {
         this.bp = bp;
         this.owner = owner;
@@ -74,10 +74,6 @@ public class Hit {
     }
     private void effect(Character target, StateSupplier stateSupplier) {
         target.addState(stateSupplier.get(owner, target));
-    }
-
-    private class AttackRecorder {
-
     }
 
 }

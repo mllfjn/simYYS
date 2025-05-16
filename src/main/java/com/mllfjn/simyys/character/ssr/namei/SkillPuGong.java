@@ -8,7 +8,7 @@ import com.mllfjn.simyys.hit.AttackType;
 import com.mllfjn.simyys.hit.Hit;
 
 class SkillPuGong extends Skill {
-    public static String privateName = "湮灭";
+    public static final String privateName = "湮灭";
     private static final int[] multiplier = new int[]{0, 100, 105, 110, 115, 125};
     public SkillPuGong(Character belongTo, int level) {
         super(belongTo, level);

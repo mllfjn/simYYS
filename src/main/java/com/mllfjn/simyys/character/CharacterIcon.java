@@ -1,5 +1,6 @@
 package com.mllfjn.simyys.character;
 
+import com.mllfjn.simyys.state.Displayable;
 import com.mllfjn.simyys.state.State;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -81,8 +82,8 @@ public class CharacterIcon extends VBox {
 
         StringBuilder sb = new StringBuilder();
         for (State state : character.getStates()) {
-            if (state.isDisplayable()) {
-                sb.append(state.getDisplayText());
+            if (state instanceof Displayable d) {
+                sb.append(d.getText()).append(" ");
             }
         }
         this.stateLabel.setText(sb.toString());

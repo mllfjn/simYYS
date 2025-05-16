@@ -2,20 +2,24 @@ package com.mllfjn.simyys.character.ssr.namei;
 
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.state.State;
-import com.mllfjn.simyys.state.StateForm;
-import com.mllfjn.simyys.state.StateType;
+import com.mllfjn.simyys.state.*;
 
-public class DiaoLing extends State {
+public class DiaoLing extends State implements Displayable, AttributeModifier {
     public static final String privateName = "凋零";
 
     public DiaoLing(Character belongTo, Character comeFrom) {
         super(belongTo, comeFrom, StateType.GENERAL, StateForm.YIN_JI);
+        setSettleType(StateSettleType.CHI_XU, 1);
     }
 
     @Override
     public void setName() {
         name = privateName;
+    }
+
+    @Override
+    public String getText() {
+        return "凋零" + getRestRound();
     }
 
     @Override
@@ -25,16 +29,6 @@ public class DiaoLing extends State {
 
     @Override
     public double getInfluence(Attribute attribute) {
-        return -100;
-    }
-
-    @Override
-    public boolean isDisplayable() {
-        return true;
-    }
-
-    @Override
-    public String getDisplayText() {
-        return "凋零";
+        return attribute == Attribute.DEFENCE ? -100 : 0;
     }
 }

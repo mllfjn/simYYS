@@ -2,10 +2,10 @@ package com.mllfjn.simyys.starter.info;
 
 public class FlagChangeInfo {
 
-    public String name;
-    public String timesToAct;
-    public String redFlag;
-    public String greenFlag;
+    public final String name;
+    public final String timesToAct;
+    public final String redFlag;
+    public final String greenFlag;
 
     public FlagChangeInfo(String name, String timesToAct, String redFlag, String greenFlag) {
         this.name = name;

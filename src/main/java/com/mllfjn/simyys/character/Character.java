@@ -4,6 +4,7 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.starter.info.CharacterInfo;
 import com.mllfjn.simyys.state.AttackRecorder;
+import com.mllfjn.simyys.guihuo.MobGuiHuo;
 import com.mllfjn.simyys.state.State;
 import com.mllfjn.simyys.trigger.Trigger;
 import com.mllfjn.simyys.trigger.TriggerSession;
@@ -33,6 +34,7 @@ public abstract class Character implements Serializable{
     private double effectHitRate;
     private double effectResistRate;
     private double speed;
+    private boolean isMob;
     private final List<State> states = new ArrayList<>();
     private final List<Skill> skills = new ArrayList<>();
 
@@ -58,6 +60,13 @@ public abstract class Character implements Serializable{
         initSelf(skillLevels);
 
         addState(new AttackRecorder(this));
+
+
+        if (team < 0) {
+            team = -team;
+            isMob = true;
+            addState(new MobGuiHuo(this));
+        }
     }
 
     public abstract void initSelf(int[] skillLevels);
@@ -105,9 +114,10 @@ public abstract class Character implements Serializable{
         this.location += increase;
     }
 
-    public void round(BattlePane bp) {
+    public void beforeRound(BattlePane bp) {
         TriggerSession.trigger(bp, Trigger.BEFORE_ROUND, this.getStates());
-
+    }
+    public void round(BattlePane bp) {
         act(bp);
 
         TriggerSession.trigger(bp, Trigger.AFTER_ROUND, this.getStates());
@@ -160,7 +170,7 @@ public abstract class Character implements Serializable{
     }
 
     public double getDefense() {
-        return defense;
+        return AttributeCounter.getGeneralAttribute(Attribute.DEFENCE, defense, states);
     }
 
     public double getCritRate() {
@@ -177,6 +187,9 @@ public abstract class Character implements Serializable{
 
     public double getEffectResistRate() {
         return AttributeCounter.getGeneralAttribute(Attribute.EFFECT_RESIST_RATE, effectResistRate, states);
+    }
+    public boolean isMob() {
+        return isMob;
     }
 
     public void setLockSkill(int i) {

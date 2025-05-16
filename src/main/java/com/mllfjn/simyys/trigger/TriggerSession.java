@@ -1,6 +1,7 @@
 package com.mllfjn.simyys.trigger;
 
 import com.mllfjn.simyys.BattlePane;
+import com.mllfjn.simyys.state.Runnable;
 import com.mllfjn.simyys.state.State;
 
 import java.util.*;
@@ -10,14 +11,10 @@ public class TriggerSession {
     private static final Map<String, Integer> orderAfterRound = new HashMap<>();
     static {
         // 回合前状态执行顺序
-        List<String> beforeRound = Arrays.asList(
-
-        );
+        List<String> beforeRound = List.of();
 
         // 回合后状态执行顺序
-        List<String> afterRound = Arrays.asList(
-
-        );
+        List<String> afterRound = List.of();
 
         for (int i = 0; i < beforeRound.size(); i++) {
             orderBeforeRound.put(beforeRound.get(i), i);
@@ -37,33 +34,33 @@ public class TriggerSession {
     }
 
     private static void runByOrder(BattlePane bp, List<State> states, Trigger trigger, Map<String, Integer> order) {
-        List<State> runByOrder = new ArrayList<>();
-        List<State> runLater = new ArrayList<>();
+        List<Runnable> runByOrder = new ArrayList<>();
+        List<Runnable> runLater = new ArrayList<>();
         for (State state : states) {
-            if (state.runnable(trigger)) {
+            if (state instanceof Runnable r && r.runnable(trigger)) {
                 if (order.containsKey(state.name)) {
-                    runByOrder.add(state);
+                    runByOrder.add(r);
                 } else {
-                    runLater.add(state);
+                    runLater.add(r);
                 }
             }
         }
 
-        runByOrder.sort(Comparator.comparingInt(o -> order.get(o.name)));
+        runByOrder.sort(Comparator.comparingInt(o -> order.get(((State)o).name)));
 
-        for (State state : runByOrder) {
+        for (Runnable state : runByOrder) {
             state.run(trigger, bp);
         }
 
-        for (State state : runLater) {
+        for (Runnable state : runLater) {
             state.run(trigger, bp);
         }
     }
 
     private static void runByDefault(BattlePane bp, List<State> states, Trigger trigger) {
         for (State state : states) {
-            if (state.runnable(trigger)) {
-                state.run(trigger, bp);
+            if (state instanceof Runnable r && r.runnable(trigger)) {
+                r.run(trigger, bp);
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.mllfjn.simyys.character;
 
+import com.mllfjn.simyys.state.AttributeModifier;
 import com.mllfjn.simyys.state.State;
 
 import java.util.ArrayList;
@@ -9,20 +10,18 @@ import java.util.List;
 public class AttributeCounter {
     private static final List<List<String>> zengShang = new ArrayList<>();
     static {
-        zengShang.add(Arrays.asList( // 一般增伤
-
-        ));
+        // 一般增伤
+        zengShang.add(List.of());
     }
 
     public static double getZengShang(Character character) {
         List<State> states = character.getStates();
         double[] add = new double[zengShang.size()];
         for (State state : states) {
-            if (state.isAffectAttribute(Attribute.ZENG_SHANG)) {
-                String name = state.name;
+            if (state instanceof AttributeModifier a && a.isAffectAttribute(Attribute.ZENG_SHANG)) {
                 for (int i = 0; i < zengShang.size(); i++) {
-                    if (zengShang.get(i).contains(name)) {
-                        add[i] += state.getInfluence(Attribute.ZENG_SHANG);
+                    if (zengShang.get(i).contains(state.name)) {
+                        add[i] += a.getInfluence(Attribute.ZENG_SHANG);
                     }
                 }
             }
@@ -37,8 +36,8 @@ public class AttributeCounter {
 
     public static double getGeneralAttribute(Attribute attribute, double base, List<State> states) {
         for (State state : states) {
-            if (state.isAffectAttribute(attribute)) {
-                base += state.getInfluence(attribute);
+            if (state instanceof AttributeModifier a && a.isAffectAttribute(attribute)) {
+                base += a.getInfluence(attribute);
             }
         }
         return base < 0 ? 0 : base;

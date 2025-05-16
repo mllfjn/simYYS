@@ -5,6 +5,7 @@ import com.mllfjn.simyys.character.CharacterFactory;
 import com.mllfjn.simyys.character.CharacterIcon;
 import com.mllfjn.simyys.customnode.CustomTextField;
 import com.mllfjn.simyys.customnode.CustomTextFlow;
+import com.mllfjn.simyys.guihuo.GuiHuo;
 import com.mllfjn.simyys.starter.info.CharacterInfo;
 import com.mllfjn.simyys.starter.info.FlagChangeInfo;
 import com.mllfjn.simyys.starter.info.SkillChangeInfo;
@@ -37,6 +38,7 @@ public class BattlePane {
     private Character characterActing;
     private final Stack<byte[]> recorder = new Stack<>();
     public boolean isControlRate = false;
+    private final GuiHuo[] guiHuo = new GuiHuo[2];
     public BattlePane(Stage stage, CharacterInfo[] characterInfo, SkillChangeInfo[] skillChangeInfo, FlagChangeInfo[] flagChangeInfo) {
         this.characterInfo = characterInfo;
         this.skillChangeInfo = skillChangeInfo;
@@ -46,8 +48,6 @@ public class BattlePane {
 
         init();
         setupUI();
-
-//        gson = new GsonBuilder().registerTypeAdapterFactory(RuntimeTypeAdapterFactory.of())
     }
 
     private void setupUI() {
@@ -100,6 +100,13 @@ public class BattlePane {
             CharacterIcon characterIcon = new CharacterIcon(character, this::setAutoTo);
             character.setCharacterIcon(characterIcon);
             teamPane[character.team].getChildren().add(characterIcon);
+        }
+    }
+    public boolean canUseGuiHuo(Character character, int num) {
+        if (character.isMob()) {
+            return GuiHuo.mobCanUseGuiHuo(character, num);
+        } else {
+            return guiHuo[character.team].canUseGuiHuo(num);
         }
     }
     private void setAutoTo(Character characterSelected) {
@@ -175,7 +182,7 @@ public class BattlePane {
 
     private void init() {
         for (CharacterInfo info : characterInfo) {
-            if (Integer.parseInt(info.team) == 0 || Integer.parseInt(info.team) == 1) {
+            if (Integer.parseInt(info.team) == 0 || Integer.parseInt(info.team) == 1 || Integer.parseInt(info.team) == -1) {
                 characters.add(CharacterFactory.createCharacter(info));
             }
         }
@@ -327,16 +334,16 @@ public class BattlePane {
                 next = character;
             }
         }
-
         for (Character character : characters) {
             if (character != next) {
                 character.setLocation(character.getLocation() + character.getSpeed() * next.getTTA());
             }
         }
+        characterActing = next;
+
         next.setLocation(0);
         next.timesToAct++;
-
-        characterActing = next;
+        next.beforeRound(this);
 
         log.addTextTop(characterActing.name + "行动" + characterActing.timesToAct);
     }

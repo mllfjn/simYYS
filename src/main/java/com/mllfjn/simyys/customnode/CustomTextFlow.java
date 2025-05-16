@@ -7,7 +7,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
 public class CustomTextFlow extends ScrollPane {
-    TextFlow textFlow = new TextFlow();
+    final TextFlow textFlow = new TextFlow();
     public CustomTextFlow() {
         super();
         this.setContent(textFlow);

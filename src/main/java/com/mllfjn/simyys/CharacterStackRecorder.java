@@ -7,9 +7,9 @@ import java.io.Serializable;
 import java.util.List;
 
 public class CharacterStackRecorder implements Serializable {
-        public List<Character> characters;
-        public Character characterActing;
-        public Character[] autoTo = new Character[2];
+        public final List<Character> characters;
+        public final Character characterActing;
+        public Character[] autoTo;
         public CharacterStackRecorder(List<Character> characters, Character characterActing, Character[] autoTo) {
             this.characters = characters;
             this.characterActing = characterActing;

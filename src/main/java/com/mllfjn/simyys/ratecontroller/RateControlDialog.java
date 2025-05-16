@@ -11,9 +11,9 @@ import javafx.stage.Stage;
 import java.util.Map;
 
 class RateControlDialog extends Stage {
-    ReturnSelector[] selectors;
-    Map<Character, Integer> map;
-    Return[] result;
+    final ReturnSelector[] selectors;
+    final Map<Character, Integer> map;
+    final Return[] result;
 
     public RateControlDialog(String title, String effect, Map<Character, Integer> map, double[] rates, Return[] result) {
         super();
@@ -25,14 +25,6 @@ class RateControlDialog extends Stage {
         for (Character character : map.keySet()) {
             selectors[i++] = new ReturnSelector(character.name, rates[map.get(character)], effect);
         }
-        /*this.rates = rates;
-        this.result = result;
-
-        this.selectors = new ReturnSelector[rates.size()];
-        int i = 0;
-        for (Character character : rates.keySet()) {
-            selectors[i++] = new ReturnSelector(character.name, rates.get(character), effect);
-        }*/
 
         setupWindowBehavior();
         setupUI();
@@ -64,8 +56,5 @@ class RateControlDialog extends Stage {
         for (Character character : map.keySet()) {
             result[map.get(character)] = selectors[i++].getReturn();
         }
-        /*for (int i = 0; i < selectors.length; i++) {
-            returns[i] = selectors[i].getReturn();
-        }*/
     }
 }

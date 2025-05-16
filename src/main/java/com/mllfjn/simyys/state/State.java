@@ -1,18 +1,17 @@
 package com.mllfjn.simyys.state;
 
-import com.mllfjn.simyys.character.Attribute;
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.trigger.Trigger;
 
 import java.io.Serializable;
 
 public abstract class State implements Serializable {
     public String name;
-    public Character comeFrom;
-    public Character belongTo;
-    public StateType stateType;
-    public StateForm stateForm;
+    public final Character comeFrom;
+    public final Character belongTo;
+    public final StateType stateType;
+    public final StateForm stateForm;
+    private StateSettleType settleType = StateSettleType.NONE;
+    private int restRound = 1;
 
 
     public State(Character belongTo, Character comeFrom, StateType stateType, StateForm stateForm) {
@@ -24,23 +23,16 @@ public abstract class State implements Serializable {
         setName();
     }
 
+    public void setSettleType(StateSettleType settleType, int restRound) {
+        this.settleType = settleType;
+        this.restRound = restRound;
+    }
+
+    public int getRestRound() {
+        return restRound;
+    }
+
     public abstract void setName();
-
-    public boolean isAffectAttribute(Attribute attribute) {
-        return false;
-    }
-
-    public double getInfluence(Attribute attribute) {
-        return 0;
-    }
-
-    public boolean runnable(Trigger trigger) {
-        return false;
-    }
-
-    public void run(Trigger trigger, BattlePane bp) {
-
-    }
 
     /**
      * 用于覆盖状态
@@ -48,12 +40,7 @@ public abstract class State implements Serializable {
      * @param state 新的状态
      */
     public void cover(State state) {
-
+        restRound = Math.max(restRound, state.restRound);
     }
-
-    public boolean isDisplayable() {
-        return false;
-    }
-    public String getDisplayText() {return null;}
 
 }

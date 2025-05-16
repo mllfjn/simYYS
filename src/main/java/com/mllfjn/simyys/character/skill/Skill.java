@@ -31,7 +31,7 @@ public abstract class Skill implements Serializable {
     }
     public abstract void usePrivate(BattlePane bp);
     public boolean canUse(BattlePane bp) {
-        return true;
+        return coolDown == 0 && bp.canUseGuiHuo(belongTo, useGuiHuo);
     }
 
     public Character getBelongTo() {

@@ -2,11 +2,12 @@ package com.mllfjn.simyys.character.sp.dayuan;
 
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.state.AttributeModifier;
 import com.mllfjn.simyys.state.State;
 import com.mllfjn.simyys.state.StateForm;
 import com.mllfjn.simyys.state.StateType;
 
-public class ShenLi extends State {
+public class ShenLi extends State implements AttributeModifier {
     public static final String privateName = "神力";
     private int ceng;
 
@@ -33,6 +34,6 @@ public class ShenLi extends State {
 
     @Override
     public double getInfluence(Attribute attribute) {
-        return ceng * 20;
+        return attribute == Attribute.EFFECT_RESIST_RATE ? ceng * 20 : 0;
     }
 }
