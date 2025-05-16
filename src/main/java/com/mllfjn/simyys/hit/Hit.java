@@ -4,10 +4,8 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.AttributeCounter;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.ratecontroller.RateController;
-import com.mllfjn.simyys.state.State;
 
 import java.util.List;
-import java.util.function.Supplier;
 
 public class Hit {
     BattlePane bp;
@@ -16,15 +14,15 @@ public class Hit {
         this.bp = bp;
         this.owner = owner;
     }
-    public void attack(List<Character> targets, int multiplier, AttackType attackType) {
-        boolean[] baoJi = RateController.baoJi(owner, targets, bp.isControlRate);
+    public void attack(String skillName, List<Character> targets, int multiplier, AttackType attackType) {
+        boolean[] baoJi = RateController.baoJi(skillName, owner, targets, bp.isControlRate);
         for (int i = 0; i < targets.size(); i++) {
             attack(targets.get(i), multiplier, attackType, baoJi[i]);
         }
     }
 
-    public void attack(Character target, int multiplier, AttackType attackType) {
-        attack(target, multiplier, attackType, RateController.baoJi(owner, List.of(target), bp.isControlRate)[0]);
+    public void attack(String skillName, Character target, int multiplier, AttackType attackType) {
+        attack(target, multiplier, attackType, RateController.baoJi(skillName, owner, List.of(target), bp.isControlRate)[0]);
     }
 
     private void attack(Character target, int multiplier, AttackType attackType, boolean baoJi) {
@@ -60,8 +58,8 @@ public class Hit {
     public void heal() {
 
     }
-    public void effect(List<Character> targets, StateSupplier stateSupplier, int base, boolean controlRate) {
-        boolean[] mingZhong = RateController.mingZhong(owner, targets, base, controlRate);
+    public void effect(String stateName, List<Character> targets, int base, StateSupplier stateSupplier) {
+        boolean[] mingZhong = RateController.mingZhong(stateName, owner, targets, base, bp.isControlRate);
         for (int i = 0 ; i < targets.size(); i++) {
             if (mingZhong[i]) {
                 effect(targets.get(i), stateSupplier);
@@ -69,8 +67,8 @@ public class Hit {
         }
     }
 
-    public void effect(Character target, StateSupplier stateSupplier, int base, boolean controlRate) {
-        if (RateController.mingZhong(owner, List.of(target), base, controlRate)[0]) {
+    public void effect(String stateName, Character target, int base, StateSupplier stateSupplier) {
+        if (RateController.mingZhong(stateName, owner, List.of(target), base, bp.isControlRate)[0]) {
             effect(target, stateSupplier);
         }
     }

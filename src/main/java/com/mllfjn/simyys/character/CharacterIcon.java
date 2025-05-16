@@ -1,5 +1,6 @@
 package com.mllfjn.simyys.character;
 
+import com.mllfjn.simyys.state.State;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
@@ -77,7 +78,14 @@ public class CharacterIcon extends VBox {
         info[7].setText("抵抗:" + String.format("%.2f", character.getEffectResistRate()));
 
         this.healthBar.setProgress(character.getHp() / character.getMaxHp() );
-        this.stateLabel.setText(character.alive ? "存活" : "死亡");
+
+        StringBuilder sb = new StringBuilder();
+        for (State state : character.getStates()) {
+            if (state.isDisplayable()) {
+                sb.append(state.getDisplayText());
+            }
+        }
+        this.stateLabel.setText(sb.toString());
     }
 
     public interface OnClickListener {

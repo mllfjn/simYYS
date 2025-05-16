@@ -6,8 +6,6 @@ import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.hit.AttackType;
 import com.mllfjn.simyys.hit.Hit;
-import com.mllfjn.simyys.hit.StateSupplier;
-import com.mllfjn.simyys.state.State;
 
 class SkillPuGong extends Skill {
     public static String privateName = "湮灭";
@@ -22,8 +20,8 @@ class SkillPuGong extends Skill {
         lastUsedTarget = target.name;
 
         Hit hit = new Hit(bp, getBelongTo());
-        hit.attack(target, multiplier[getLevel()], AttackType.DAN_TI);
-        hit.effect(target, DiaoLing::new, 25, bp.isControlRate);
+        hit.attack(privateName, target, multiplier[getLevel()], AttackType.DAN_TI);
+        hit.effect(DiaoLing.privateName, target, 25, DiaoLing::new);
     }
 
     @Override

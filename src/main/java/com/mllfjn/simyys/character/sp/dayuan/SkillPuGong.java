@@ -20,7 +20,7 @@ class SkillPuGong extends Skill {
         lastUsedTarget = target.name;
 
         Hit hit = new Hit(bp, getBelongTo());
-        hit.attack(target, multiplier[getLevel()], AttackType.DAN_TI);
+        hit.attack(privateName, target, multiplier[getLevel()], AttackType.DAN_TI);
 
         if (getLevel() >= 5) {
             DaYuan daYuan = (DaYuan) getBelongTo();

@@ -14,6 +14,7 @@ public abstract class State implements Serializable {
     public StateType stateType;
     public StateForm stateForm;
 
+
     public State(Character belongTo, Character comeFrom, StateType stateType, StateForm stateForm) {
         this.comeFrom = comeFrom;
         this.belongTo = belongTo;
@@ -50,16 +51,9 @@ public abstract class State implements Serializable {
 
     }
 
-    public enum StateType{
-        BUFF, // 增益
-        DEBUFF, // 减益
-        GENERAL, // 通用
-        SPECIAL // 特殊,指在游戏里没有显式定义
+    public boolean isDisplayable() {
+        return false;
     }
+    public String getDisplayText() {return null;}
 
-    public enum StateForm{
-        ZHUANG_TAI, // 状态,可以驱散
-        YIN_JI, // 印记,不可驱散
-        SPECIAL // 特殊,指在游戏里没有显式定义
-    }
 }
