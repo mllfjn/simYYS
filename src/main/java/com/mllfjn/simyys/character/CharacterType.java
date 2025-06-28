@@ -8,6 +8,7 @@ public enum CharacterType {
     SHI_SHEN,
     YYS,
     MOB,
+    SUMMON,
     UNDEFINED;
 
     public static CharacterType getType(String name) {

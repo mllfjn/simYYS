@@ -7,11 +7,11 @@ import com.mllfjn.simyys.state.State;
 import com.mllfjn.simyys.state.StateForm;
 import com.mllfjn.simyys.state.StateType;
 
-public class ShenLi extends State implements AttributeModifier {
+class StateShenLi extends State implements AttributeModifier {
     public static final String privateName = "神力";
     private int ceng;
 
-    public ShenLi(Character belongTo, Character comeFrom) {
+    public StateShenLi(Character belongTo, Character comeFrom) {
         super(belongTo, comeFrom, StateType.BUFF, StateForm.YIN_JI);
     }
 

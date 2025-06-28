@@ -2,21 +2,24 @@ package com.mllfjn.simyys.character;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.skill.Skill;
+import com.mllfjn.simyys.determinant.ForbidDecrease;
+import com.mllfjn.simyys.determinant.ForbidIncrease;
 import com.mllfjn.simyys.starter.info.CharacterInfo;
 import com.mllfjn.simyys.state.AttackRecorder;
 import com.mllfjn.simyys.guihuo.MobGuiHuo;
 import com.mllfjn.simyys.state.State;
+import com.mllfjn.simyys.state.StateSettleType;
 import com.mllfjn.simyys.trigger.Trigger;
 import com.mllfjn.simyys.trigger.TriggerSession;
 import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.SimpleMapProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public abstract class Character implements Serializable{
     public String name;
@@ -35,10 +38,12 @@ public abstract class Character implements Serializable{
     private double effectHitRate;
     private double effectResistRate;
     private double speed;
-    private boolean isMob;
-    private final List<State> states = new ArrayList<>();
-    private final List<Skill> skills = new ArrayList<>();
+    private CharacterType type = CharacterType.SHI_SHEN;
 
+    private final List<State> states = new ArrayList<>();
+    private final List<State> maintainedStates = new ArrayList<>();
+//    private final Map<Integer, Skill> skills = new HashMap<>();
+    private final ObservableMap<Integer, Skill> skills = new SimpleMapProperty<>();
     public transient CharacterIcon characterIcon;
 
     public void init(CharacterInfo characterInfo, int[] skillLevels) {
@@ -55,9 +60,6 @@ public abstract class Character implements Serializable{
         this.effectHitRate = Double.parseDouble(characterInfo.effectHitRate());
         this.effectResistRate = Double.parseDouble(characterInfo.effectResistRate());
 
-        // 锁妖术时锁定技能为0,没有对应技能.添加一个null
-        skills.add(null);
-
         initSelf(skillLevels);
 
         addState(new AttackRecorder(this));
@@ -65,7 +67,7 @@ public abstract class Character implements Serializable{
 
         if (team < 0) {
             team = -team;
-            isMob = true;
+            type = CharacterType.MOB;
             addState(new MobGuiHuo(this));
         }
     }
@@ -111,8 +113,22 @@ public abstract class Character implements Serializable{
         this.location = newLocation;
     }
 
-    public void increaseLocation(double increase) {
-        this.location += increase;
+    public void increaseLocation(Character comeFrom, double increase) {
+        for (State state : states) {
+            if (state instanceof ForbidIncrease fi && fi.effective(comeFrom)) {
+                return;
+            }
+        }
+        this.location = Math.min(100, location + increase);
+    }
+
+    public void decreaseLocation(Character comeFrom, double decrease) {
+        for (State state : states) {
+            if (state instanceof ForbidDecrease) {
+                return;
+            }
+        }
+        this.location = Math.max(0, location - decrease);
     }
 
     public void beforeRound(BattlePane bp) {
@@ -123,17 +139,29 @@ public abstract class Character implements Serializable{
 
         TriggerSession.trigger(bp, Trigger.AFTER_ROUND, this.getStates());
 
-        Iterator<State> it = states.iterator();
+        // 危险：可能涉及状态删除
+        /*for (int i = states.size() - 1; i >= 0; i--) {
+            states.get(i).pastRound();
+        }*/
 
-        for (State state : states) {
-            state.pastRound();
-        }
-
-        while (it.hasNext()) {
-            if (it.next().tobeDelete) {
-                it.remove();
+        states.removeIf(state -> {
+            if (state.getSettleType() == StateSettleType.CHI_XU) {
+                state.setDuration(state.getDuration() - 1);
+                return state.getDuration() == 0;
             }
-        }
+            return false;
+        });
+
+        maintainedStates.removeIf(state -> {
+            state.setDuration(state.getDuration() - 1);
+            if (state.getDuration() == 0) {
+                state.delete();
+                return true;
+            }
+            return false;
+        });
+
+
     }
 
     private void act(BattlePane bp) {
@@ -148,7 +176,7 @@ public abstract class Character implements Serializable{
         } else {
             int[] order = getUseSkillOrder();
             for (int i : order) {
-                if (skills.size() > i && skills.get(i).canUse(bp)) {
+                if (skills.get(i).canUse(bp)) {
                     useSkill(bp, i);
                     return;
                 }
@@ -159,7 +187,7 @@ public abstract class Character implements Serializable{
     }
 
     private void useSkill(BattlePane bp, int i) {
-        if (skills.size() > i) {
+        if (skills.get(i) != null) {
             skills.get(i).use(bp);
         }
     }
@@ -202,7 +230,11 @@ public abstract class Character implements Serializable{
         return AttributeCounter.getGeneralAttribute(Attribute.EFFECT_RESIST_RATE, effectResistRate, states);
     }
     public boolean isMob() {
-        return isMob;
+        return type == CharacterType.MOB;
+    }
+
+    public boolean isSummon() {
+        return type == CharacterType.SUMMON;
     }
 
     public void setLockSkill(int i) {
@@ -253,10 +285,34 @@ public abstract class Character implements Serializable{
         states.add(newState);
     }
 
+    public void addMaintainedState(State state) {
+        maintainedStates.add(state);
+    }
+
+    public void removeMaintainedState(State state) {
+        maintainedStates.remove(state);
+    }
+
     public List<State> getStates() {
         return states;
     }
-    public List<Skill> getSkills() {
+    public Map<Integer, Skill> getSkills() {
         return skills;
+    }
+
+    public void deleteState(String privateName) {
+        for (State state : states) {
+            if (state.name.equals(privateName)) {
+                state.delete();
+                return;
+            }
+        }
+    }
+
+    public void setType(CharacterType type) {
+        this.type = type;
+    }
+    public void beForeDie() {
+
     }
 }

@@ -19,7 +19,7 @@ public class DiaoLing extends State implements Displayable, AttributeModifier {
 
     @Override
     public String getText() {
-        return "凋零" + getRestRound();
+        return "凋零" + getDuration();
     }
 
     @Override

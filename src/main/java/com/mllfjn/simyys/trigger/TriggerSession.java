@@ -58,6 +58,7 @@ public class TriggerSession {
     }
 
     private static void runByDefault(BattlePane bp, List<State> states, Trigger trigger) {
+        // 危险 可能涉及状态删除
         for (State state : states) {
             if (state instanceof Runnable r && r.runnable(trigger)) {
                 r.run(trigger, bp);

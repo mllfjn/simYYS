@@ -11,12 +11,12 @@ class SkillPuGong extends Skill {
     public static final String privateName = "伞击";
     private static final int[] multiplier = new int[]{0, 100, 110, 120, 130, 140};
     public SkillPuGong(Character belongTo, int level) {
-        super(belongTo, level);
+        super(belongTo, level, 0, 0);
     }
 
     @Override
     public void usePrivate(BattlePane bp) {
-        Character target = CharacterFinder.findPriorAuto(bp, CharacterFinder.findEnemy(getBelongTo()), CharacterFinder.Property.HP, CharacterFinder.Criteria.MIN);
+        Character target = CharacterFinder.findPriorAuto(bp, CharacterFinder.getEnemyTeam(getBelongTo()), CharacterFinder.Property.HP, CharacterFinder.Criteria.MIN);
         lastUsedTarget = target.name;
 
         Hit hit = new Hit(bp, getBelongTo());

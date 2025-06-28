@@ -363,6 +363,15 @@ public class BattlePane {
         teamPane[character.team].getChildren().remove(character.characterIcon);
     }
 
+    private boolean canSummon(int team) {
+        for (Character character : characters) {
+            if (character.team == team && character.isSummon()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private enum ActionBarType {
         JINDU,
         SHUNWEI

@@ -11,8 +11,7 @@ public abstract class State implements Serializable {
     public final StateType stateType;
     public final StateForm stateForm;
     private StateSettleType settleType = StateSettleType.NONE;
-    private int restRound = 1;
-    public boolean tobeDelete = false;
+    private int duration = 1;
 
 
     public State(Character belongTo, Character comeFrom, StateType stateType, StateForm stateForm) {
@@ -21,16 +20,29 @@ public abstract class State implements Serializable {
         this.stateType = stateType;
         this.stateForm = stateForm;
 
+
         setName();
     }
 
-    public void setSettleType(StateSettleType settleType, int restRound) {
+    public void setSettleType(StateSettleType settleType, int duration) {
         this.settleType = settleType;
-        this.restRound = restRound;
+        this.duration = duration;
+
+        if (settleType == StateSettleType.WEI_CHI) {
+            comeFrom.addMaintainedState(this);
+        }
     }
 
-    public int getRestRound() {
-        return restRound;
+    public StateSettleType getSettleType() {
+        return settleType;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int num) {
+        duration = num;
     }
 
     public abstract void setName();
@@ -41,21 +53,13 @@ public abstract class State implements Serializable {
      * @param state 新的状态
      */
     public void cover(State state) {
-        restRound = Math.max(restRound, state.restRound);
-    }
-    public void pastRound() {
-        if (settleType != StateSettleType.CHI_XU) {
-            return;
-        }
-
-        restRound--;
-        if (restRound == 0) {
-            delete();
-        }
+        duration = Math.max(duration, state.duration);
     }
 
     public void delete() {
-        tobeDelete = true;
+        belongTo.getStates().remove(this);
+        if (settleType == StateSettleType.WEI_CHI) {
+            comeFrom.removeMaintainedState(this);
+        }
     }
-
 }

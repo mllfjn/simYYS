@@ -10,7 +10,7 @@ public class NaMei extends Character {
 
     @Override
     public void initSelf(int[] skillLevels) {
-        getSkills().add(new SkillPuGong(this, skillLevels[0]));
+        getSkills().put(1, new SkillPuGong(this, skillLevels[0]));
     }
 
     @Override
