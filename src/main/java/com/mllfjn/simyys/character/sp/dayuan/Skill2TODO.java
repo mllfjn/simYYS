@@ -12,19 +12,25 @@ class Skill2TODO extends Skill {
     }
 
     @Override
-    public void setName() {
-        name = privateName;
+    public int getSkillID() {
+        return 2;
+    }
+
+    @Override
+    public String getName() {
+        return privateName;
     }
 
     @Override
     public void usePrivate(BattlePane bp) {
-        getBelongTo().deleteState(StateFlag.privateName);
-        getBelongTo().deleteState(StateSTChiTODO.privateName);
-        getBelongTo().deleteState(StateSTQingTODO.privateName);
+        StateFlagCombined state = (StateFlagCombined) getBelongTo().getState(StateFlagCombined.privateName);
+        state.from.deleteState(StateSTChiTODO.privateName);
+        state.from.deleteState(StateSTQingTODO.privateName);
+        state.delete();
     }
 
     @Override
     public boolean canUse(BattlePane bp) {
-        return super.canUse(bp) && getBelongTo().getState(StateFlag.privateName) != null;
+        return super.canUse(bp) && getBelongTo().getState(StateFlagCombined.privateName) == null;
     }
 }

@@ -1,7 +1,9 @@
 package com.mllfjn.simyys.guihuo;
 import com.mllfjn.simyys.character.Character;
 
-public class GuiHuo {
+import java.io.Serializable;
+
+public class GuiHuo implements Serializable {
     private int max = 8;
     private int now;
     private int increment = 3;
@@ -42,5 +44,10 @@ public class GuiHuo {
     public static boolean mobCanUseGuiHuo(Character character, int num) {
         MobGuiHuo guiHuo = (MobGuiHuo) character.getState(MobGuiHuo.privateName);
         return guiHuo.canUse(num);
+    }
+
+    public static void mobUseGuiHuo(Character character, int num) {
+        MobGuiHuo guiHuo = (MobGuiHuo) character.getState(MobGuiHuo.privateName);
+        guiHuo.useGuiHuo(num);
     }
 }

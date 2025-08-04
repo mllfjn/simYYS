@@ -10,11 +10,11 @@ public class XiaoYuan extends Character {
 
     @Override
     public void initSelf(int[] skillLevels) {
-        getSkills().put(1, new SkillPuGong(this, skillLevels[0]));
+        getSkills().add(new SkillPuGong(this, skillLevels[0]));
     }
 
     @Override
     public int[] getUseSkillOrder() {
-        return new int[0];
+        return null;
     }
 }

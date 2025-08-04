@@ -5,7 +5,7 @@ import com.mllfjn.simyys.character.Character;
 import java.util.*;
 
 public class RateController {
-    public static boolean[] weatherOrNot(String title, String effect, List<Character> targets, boolean rateControl, RateGetter rateGetter) {
+    public static boolean[] whetherOrNot(String title, String event, List<Character> targets, boolean rateControl, TotalRateCalc calc, RateGetter rateGetter) {
         // 首先根据传入的getter算法计算出每个的概率
         // 其中<=0的,直接算NO, >=100的直接算YES
         // 剩下概率性的, 如果rateControl为true,调用RateControlDialog得出结果
@@ -14,25 +14,31 @@ public class RateController {
         int size = targets.size();
         Return[] returns = new Return[size];
         double[] rates = new double[size];
-        Map<Character, Integer> map = new HashMap<>();
+        boolean[] tbd = new boolean[size];
 
+        int count = 0;
         for (int i = 0; i < size; i++) {
-            rates[i] = rateGetter.get(targets.get(i));
-            if (rates[i] <= 0) {
-                returns[i] = Return.NO;
-            } else if (rates[i] >= 100) {
-                returns[i] = Return.YES;
+            if (!targets.get(i).alive) {
+                returns[i] = Return.DEFAULT;
             } else {
-                if (rateControl) {
-                    map.put(targets.get(i), i);
+                rates[i] = rateGetter.get(targets.get(i));
+                if (rates[i] <= 0) {
+                    returns[i] = Return.NO;
+                } else if (rates[i] >= 100) {
+                    returns[i] = Return.YES;
                 } else {
-                    returns[i] = Return.DEFAULT;
+                    if (rateControl) {
+                        tbd[i] = true;
+                        count++;
+                    } else {
+                        returns[i] = Return.DEFAULT;
+                    }
                 }
             }
         }
 
-        if (!map.isEmpty()) {
-            new RateControlDialog(title, effect, map, rates, returns);
+        if (count > 0) {
+            new RateControlDialog(title, event, targets, tbd, rates, returns, count, calc);
         }
 
         boolean[] result = new boolean[size];
@@ -49,14 +55,14 @@ public class RateController {
         return result;
     }
 
-    public static boolean[] baoJi(String skillName, Character owner, List<Character> targets, boolean rateControl) {
-        return weatherOrNot("暴击控制-" + skillName, "暴击", targets, rateControl, (character) ->
+    public static boolean[] baoJi(String skillName, Character owner, List<Character> targets, boolean rateControl, TotalRateCalc calc) {
+        return whetherOrNot("暴击控制：" + owner.name + "-" + skillName, "暴击", targets, rateControl, calc, (character) ->
                 owner.getCritRate()
         );
     }
 
-    public static boolean[] mingZhong(String stateName, Character owner, List<Character> targets, int base, boolean rateControl) {
-        return weatherOrNot("命中控制-" + stateName, "命中", targets, rateControl,(character) ->
+    public static boolean[] mingZhong(String stateName, Character owner, List<Character> targets, int base, boolean rateControl, TotalRateCalc calc) {
+        return whetherOrNot("命中控制：" + owner.name + "-" + stateName, "命中", targets, rateControl, calc, character ->
                 base * (100 + owner.getEffectHitRate()) / (100 + character.getEffectResistRate())
         );
     }

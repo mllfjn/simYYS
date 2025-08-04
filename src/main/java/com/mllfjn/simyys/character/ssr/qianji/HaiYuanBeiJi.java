@@ -1,12 +1,12 @@
 package com.mllfjn.simyys.character.ssr.qianji;
 
+import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 
 public class HaiYuanBeiJi extends Character {
-    private final QianJi belongTo;
-    public HaiYuanBeiJi(QianJi belongTo) {
-        super();
-        this.belongTo = belongTo;
+    QianJi qianJi;
+    public HaiYuanBeiJi(QianJi qianJi) {
+        this.qianJi = qianJi;
     }
     @Override
     public void initSelf(int[] skillLevels) {
@@ -15,12 +15,16 @@ public class HaiYuanBeiJi extends Character {
 
     @Override
     public int[] getUseSkillOrder() {
-        return new int[0];
+        return null;
+    }
+
+    public static void addStack(BattlePane bp, int count) {
+
     }
 
     @Override
-    public void beForeDie() {
-        super.beForeDie();
-
+    public void beForeDie(BattlePane bp) {
+        super.beForeDie(bp);
+        qianJi.setHavePutDown(false);
     }
 }

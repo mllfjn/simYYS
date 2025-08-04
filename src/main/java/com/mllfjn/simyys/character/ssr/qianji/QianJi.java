@@ -1,6 +1,8 @@
 package com.mllfjn.simyys.character.ssr.qianji;
 
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.skill.Skill;
+import javafx.collections.ObservableList;
 
 public class QianJi extends Character {
     public static final String privateName = "千姬";
@@ -8,13 +10,14 @@ public class QianJi extends Character {
 
     @Override
     public void initSelf(int[] skillLevels) {
-        getSkills().put(1, new Skill1TODO(this, skillLevels[0]));
-        getSkills().put(3, new Skill3PutTODO(this, skillLevels[2]));
+        ObservableList<Skill> skills = getSkills();
+        skills.add(new Skill1TODO(this, skillLevels[0]));
+        skills.add(new Skill3PutTODO(this, skillLevels[2]));
     }
 
     @Override
     public int[] getUseSkillOrder() {
-        return new int[0];
+        return havePutDown ? null : new int[]{3};
     }
 
     public boolean isHavePutDown() {

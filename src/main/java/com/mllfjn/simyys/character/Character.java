@@ -2,8 +2,11 @@ package com.mllfjn.simyys.character;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.skill.Skill;
+import com.mllfjn.simyys.character.skill.SkillAuto;
+import com.mllfjn.simyys.customnode.TextFlowLog;
 import com.mllfjn.simyys.determinant.ForbidDecrease;
 import com.mllfjn.simyys.determinant.ForbidIncrease;
+import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.starter.info.CharacterInfo;
 import com.mllfjn.simyys.state.AttackRecorder;
 import com.mllfjn.simyys.guihuo.MobGuiHuo;
@@ -11,18 +14,15 @@ import com.mllfjn.simyys.state.State;
 import com.mllfjn.simyys.state.StateSettleType;
 import com.mllfjn.simyys.trigger.Trigger;
 import com.mllfjn.simyys.trigger.TriggerSession;
-import javafx.beans.property.SimpleListProperty;
-import javafx.beans.property.SimpleMapProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableMap;
 
 import java.io.Serializable;
 import java.util.*;
 
 public abstract class Character implements Serializable{
     public String name;
+    public transient CharacterIcon characterIcon;
     public int team;
     public int timesToAct;
     private double location;
@@ -42,9 +42,9 @@ public abstract class Character implements Serializable{
 
     private final List<State> states = new ArrayList<>();
     private final List<State> maintainedStates = new ArrayList<>();
-//    private final Map<Integer, Skill> skills = new HashMap<>();
-    private final ObservableMap<Integer, Skill> skills = new SimpleMapProperty<>();
-    public transient CharacterIcon characterIcon;
+    private transient ObservableList<Skill> skills;
+    private int[] skillLevels;
+    private transient Interactive interactive;
 
     public void init(CharacterInfo characterInfo, int[] skillLevels) {
         this.name = characterInfo.name();
@@ -60,10 +60,10 @@ public abstract class Character implements Serializable{
         this.effectHitRate = Double.parseDouble(characterInfo.effectHitRate());
         this.effectResistRate = Double.parseDouble(characterInfo.effectResistRate());
 
-        initSelf(skillLevels);
+        this.skillLevels = skillLevels;
+        getSkills();
 
         addState(new AttackRecorder(this));
-
 
         if (team < 0) {
             team = -team;
@@ -113,22 +113,24 @@ public abstract class Character implements Serializable{
         this.location = newLocation;
     }
 
-    public void increaseLocation(Character comeFrom, double increase) {
+    public void increaseLocation(BattlePane bp, Character from, double increase) {
         for (State state : states) {
-            if (state instanceof ForbidIncrease fi && fi.effective(comeFrom)) {
+            if (state instanceof ForbidIncrease fi && fi.effective(from)) {
                 return;
             }
         }
         this.location = Math.min(100, location + increase);
+        bp.log.addText("\t" + this.name + "行动提前" + increase + "%\n", TextFlowLog.TextType.INCREASE, TextFlowLog.TextColor.NORMAL, TextFlowLog.FontSize.NORMAL);
     }
 
-    public void decreaseLocation(Character comeFrom, double decrease) {
+    public void decreaseLocation(BattlePane bp, Character from, double decrease) {
         for (State state : states) {
             if (state instanceof ForbidDecrease) {
                 return;
             }
         }
         this.location = Math.max(0, location - decrease);
+        bp.log.addText("\t" + this.name + "行动推后" + decrease + "%\n", TextFlowLog.TextType.INCREASE, TextFlowLog.TextColor.NORMAL, TextFlowLog.FontSize.NORMAL);
     }
 
     public void beforeRound(BattlePane bp) {
@@ -140,9 +142,6 @@ public abstract class Character implements Serializable{
         TriggerSession.trigger(bp, Trigger.AFTER_ROUND, this.getStates());
 
         // 危险：可能涉及状态删除
-        /*for (int i = states.size() - 1; i >= 0; i--) {
-            states.get(i).pastRound();
-        }*/
 
         states.removeIf(state -> {
             if (state.getSettleType() == StateSettleType.CHI_XU) {
@@ -161,35 +160,41 @@ public abstract class Character implements Serializable{
             return false;
         });
 
-
+        getSkills().forEach(Skill::pastRound);
     }
 
     private void act(BattlePane bp) {
-        // 锁定技能不为0时,检测是否可用,可用时使用,不可用时普攻
-        // 锁定技能为0时,根据技能顺序使用技能,无可用技能时普攻
-
         if (lockSkill != 0 ) {
-            if (skills.get(lockSkill) != null && skills.get(lockSkill).canUse(bp)) {
-                useSkill(bp, lockSkill);
+            // 锁定技能不为0时,检测是否可用
+            if (useSkill(bp, lockSkill)) {
                 return;
             }
         } else {
+            // 锁定技能为0时,根据技能顺序使用技能
             int[] order = getUseSkillOrder();
-            for (int i : order) {
-                if (skills.get(i).canUse(bp)) {
-                    useSkill(bp, i);
-                    return;
+            if (order != null) {
+                for (int i : order) {
+                    if (useSkill(bp, i)) {
+                        return;
+                    }
                 }
             }
         }
 
+        // 无可用技能时普攻
         useSkill(bp, 1);
     }
 
-    private void useSkill(BattlePane bp, int i) {
-        if (skills.get(i) != null) {
-            skills.get(i).use(bp);
+    private boolean useSkill(BattlePane bp, int i) {
+        for (Skill skill : skills) {
+            if (skill.getSkillID() == i) {
+                if (skill.canUse(bp)) {
+                    skill.use(bp);
+                    return true;
+                }
+            }
         }
+        return false;
     }
 
     public abstract int[] getUseSkillOrder();
@@ -232,6 +237,9 @@ public abstract class Character implements Serializable{
     public boolean isMob() {
         return type == CharacterType.MOB;
     }
+    public boolean isYYS() {
+        return type == CharacterType.YYS;
+    }
 
     public boolean isSummon() {
         return type == CharacterType.SUMMON;
@@ -243,23 +251,27 @@ public abstract class Character implements Serializable{
     public int getLockSkill() {
         return this.lockSkill;
     }
-    public void beHurt(BattlePane bp, double damage) {
-        this.hp -= damage;
-        if (this.hp <= 0) {
-            alive = false;
-            bp.characterDie(this);
+    public Double beHurt(BattlePane bp, double damage) {
+        if (getHp() <= damage) {
+            // 预留免死的位置 比如青女坊，金盾
+            /*if (TriggerSession.preventDie(this.getStates())) {
+                return null;
+            }*/
+            beForeDie(bp);
+        } else {
+            this.hp -= damage;
         }
+        return damage;
     }
 
-    public void setCharacterIcon(CharacterIcon characterIcon) {
-        this.characterIcon = characterIcon;
+    public CharacterIcon getCharacterIcon(CharacterIcon.OnClickListener onClickListener) {
+        if (characterIcon == null) {
+            characterIcon = new CharacterIcon(this, onClickListener);
+        }
+        return characterIcon;
     }
 
-    public ObservableValue<? extends ObservableList<String>> getSkillListProperty() {
-        return new SimpleListProperty<>(FXCollections.observableArrayList("妖术"));
-    }
-
-    public void useFrontSkill() {}
+    public void useFrontSkill(BattlePane bp) {}
 
     public AttackRecorder getAttackRecorder() {
         return (AttackRecorder) getState(AttackRecorder.privateName);
@@ -283,6 +295,9 @@ public abstract class Character implements Serializable{
         }
 
         states.add(newState);
+        if (characterIcon != null) {
+            characterIcon.updateState();
+        }
     }
 
     public void addMaintainedState(State state) {
@@ -296,7 +311,11 @@ public abstract class Character implements Serializable{
     public List<State> getStates() {
         return states;
     }
-    public Map<Integer, Skill> getSkills() {
+    public ObservableList<Skill> getSkills() {
+        if (skills == null) {
+            skills = FXCollections.observableArrayList(SkillAuto.INSTANCE);
+            initSelf(skillLevels);
+        }
         return skills;
     }
 
@@ -307,12 +326,23 @@ public abstract class Character implements Serializable{
                 return;
             }
         }
+        if (characterIcon != null) {
+            characterIcon.updateState();
+        }
     }
 
     public void setType(CharacterType type) {
         this.type = type;
     }
-    public void beForeDie() {
 
+    public Interactive getHit(BattlePane bp) {
+        if (interactive == null) {
+            interactive = new Interactive(bp, this);
+        }
+        return interactive;
+    }
+    public void beForeDie(BattlePane bp) {
+        alive = false;
+        bp.removeCharacter(this);
     }
 }

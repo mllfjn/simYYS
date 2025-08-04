@@ -4,8 +4,8 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
-import com.mllfjn.simyys.hit.AttackType;
-import com.mllfjn.simyys.hit.Hit;
+import com.mllfjn.simyys.interactive.AttackType;
+import com.mllfjn.simyys.interactive.Interactive;
 
 class Skill4TODO extends Skill {
     public static final String privateName = "钳连击";
@@ -15,15 +15,20 @@ class Skill4TODO extends Skill {
     }
 
     @Override
-    public void setName() {
-        name = privateName;
+    public int getSkillID() {
+        return 4;
+    }
+
+    @Override
+    public String getName() {
+        return privateName;
     }
 
     @Override
     public void usePrivate(BattlePane bp) {
-        Hit hit = new Hit(bp, getBelongTo());
+        Interactive interactive = getBelongTo().getHit(bp);
         for (int i = 0; i < 4; i++) {
-            hit.attack(privateName, CharacterFinder.findEnemy(getBelongTo(), bp.characters), 100, AttackType.QUN_TI);
+            interactive.attack(privateName, CharacterFinder.findEnemy(getBelongTo(), bp.characters), 100, AttackType.QUN_TI);
         }
     }
 }

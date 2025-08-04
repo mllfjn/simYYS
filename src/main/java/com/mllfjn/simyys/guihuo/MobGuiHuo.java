@@ -30,12 +30,12 @@ public class MobGuiHuo extends State implements Runnable, Displayable {
 
     @Override
     public boolean runnable(Trigger trigger) {
-        return trigger == Trigger.BEFORE_ROUND;
+        return trigger == Trigger.BEFORE_ROUND && now < max;
     }
 
     @Override
     public void run(Trigger trigger, BattlePane bp) {
-        now = Math.min(now + 1, max);
+        now++;
     }
 
     @Override

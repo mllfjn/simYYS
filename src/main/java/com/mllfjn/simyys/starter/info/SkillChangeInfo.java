@@ -1,4 +1,6 @@
 package com.mllfjn.simyys.starter.info;
 
-public record SkillChangeInfo(String name, String timesToAct, String lockSkill) {
+import java.io.Serializable;
+
+public record SkillChangeInfo(String name, String timesToAct, String lockSkill) implements Serializable {
 }

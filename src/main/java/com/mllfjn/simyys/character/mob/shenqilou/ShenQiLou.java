@@ -2,6 +2,7 @@ package com.mllfjn.simyys.character.mob.shenqilou;
 
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
+import javafx.collections.ObservableList;
 
 import java.util.Map;
 
@@ -12,12 +13,12 @@ public class ShenQiLou extends Character {
 
     @Override
     public void initSelf(int[] skillLevels) {
-        Map<Integer, Skill> map = getSkills();
-        map.put(4, new Skill4TODO(this));
+        ObservableList<Skill> skills = getSkills();
+        skills.add(new Skill4TODO(this));
     }
 
     @Override
     public int[] getUseSkillOrder() {
-        return new int[0];
+        return new int[]{4};
     }
 }

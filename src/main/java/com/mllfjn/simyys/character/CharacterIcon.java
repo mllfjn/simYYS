@@ -1,5 +1,6 @@
 package com.mllfjn.simyys.character;
 
+import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.state.Displayable;
 import com.mllfjn.simyys.state.State;
 import javafx.geometry.Insets;
@@ -18,7 +19,7 @@ public class CharacterIcon extends VBox {
     public final Character character;
     private final Label stateLabel = new Label();
     private final ProgressBar healthBar = new ProgressBar();
-    private final ComboBox<String> skillBox = new ComboBox<>();
+    private final ComboBox<Skill> skillBox;
     private final Label[] info = new Label[8];
     private final ImageView autoTo;
 
@@ -32,10 +33,15 @@ public class CharacterIcon extends VBox {
         Pane image = CharacterFactory.getImageByName(character.name, CharacterFactory.ImageSize.LARGE, Color.ORANGE, 5);
         image.setOnMouseClicked(event -> onClickListener.onClick(this.character));
 
-        skillBox.valueProperty().addListener((obs, old, val) -> character.setLockSkill(skillBox.getSelectionModel().getSelectedIndex()));
-        skillBox.itemsProperty().bind(character.getSkillListProperty());
-        skillBox.getSelectionModel().select(0);
-
+        skillBox = new ComboBox<>(character.getSkills());
+        skillBox.valueProperty().addListener((obs, old, val) -> character.setLockSkill(val.getSkillID()));
+        for (Skill skill : skillBox.getItems()) {
+            if (skill.getSkillID() == character.getLockSkill()) {
+                skillBox.getSelectionModel().select(skill);
+            }
+            skillBox.getSelectionModel().select(character.getLockSkill());
+        }
+        
         healthBar.setMaxWidth(Double.MAX_VALUE);
         skillBox.setMaxWidth(Double.MAX_VALUE);
         stateLabel.setMaxWidth(Double.MAX_VALUE);
@@ -80,6 +86,10 @@ public class CharacterIcon extends VBox {
 
         this.healthBar.setProgress(character.getHp() / character.getMaxHp() );
 
+        updateState();
+    }
+
+    public void updateState() {
         StringBuilder sb = new StringBuilder();
         for (State state : character.getStates()) {
             if (state instanceof Displayable d) {
@@ -88,6 +98,7 @@ public class CharacterIcon extends VBox {
         }
         this.stateLabel.setText(sb.toString());
     }
+
 
     public interface OnClickListener {
         void onClick(Character character);

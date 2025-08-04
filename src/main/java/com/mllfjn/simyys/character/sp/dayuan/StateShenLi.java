@@ -2,29 +2,31 @@ package com.mllfjn.simyys.character.sp.dayuan;
 
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.state.AttributeModifier;
-import com.mllfjn.simyys.state.State;
-import com.mllfjn.simyys.state.StateForm;
-import com.mllfjn.simyys.state.StateType;
+import com.mllfjn.simyys.state.*;
 
-class StateShenLi extends State implements AttributeModifier {
+class StateShenLi extends State implements AttributeModifier, Displayable {
     public static final String privateName = "神力";
-    private int ceng;
+    private int stack;
 
-    public StateShenLi(Character belongTo, Character comeFrom) {
-        super(belongTo, comeFrom, StateType.BUFF, StateForm.YIN_JI);
+    public StateShenLi(Character belongTo, Character from) {
+        super(from, belongTo, StateType.BUFF, StateForm.YIN_JI);
+    }
+
+    public static void addStack(Character character, int count) {
+        StateShenLi shenLi = (StateShenLi) character.getState(privateName);
+        if (shenLi == null) {
+            shenLi = new StateShenLi(character, character);
+            character.addState(shenLi);
+        }
+        shenLi.stack += count;
+        if (shenLi.stack > 5) {
+            shenLi.stack = 5;
+        }
     }
 
     @Override
     public void setName() {
         this.name = privateName;
-    }
-
-    public void addCeng(int add) {
-        this.ceng += add;
-        if (ceng > 5) {
-            ceng = 5;
-        }
     }
 
     @Override
@@ -34,6 +36,11 @@ class StateShenLi extends State implements AttributeModifier {
 
     @Override
     public double getInfluence(Attribute attribute) {
-        return attribute == Attribute.EFFECT_RESIST_RATE ? ceng * 20 : 0;
+        return attribute == Attribute.EFFECT_RESIST_RATE ? stack * 20 : 0;
+    }
+
+    @Override
+    public String getText() {
+        return "神力" + stack;
     }
 }

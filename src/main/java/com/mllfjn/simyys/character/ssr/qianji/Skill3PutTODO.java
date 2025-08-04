@@ -12,12 +12,22 @@ public class Skill3PutTODO extends Skill {
     }
 
     @Override
-    public void setName() {
-        name = privateName;
+    public int getSkillID() {
+        return 3;
+    }
+
+    @Override
+    public boolean canUse(BattlePane bp) {
+        return super.canUse(bp) && !((QianJi) getBelongTo()).isHavePutDown() && bp.canSummon(getBelongTo().team);
+    }
+
+    @Override
+    public String getName() {
+        return privateName;
     }
 
     @Override
     public void usePrivate(BattlePane bp) {
-
+        ((QianJi) getBelongTo()).setHavePutDown(true);
     }
 }

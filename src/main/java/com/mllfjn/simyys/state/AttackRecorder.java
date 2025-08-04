@@ -1,7 +1,7 @@
 package com.mllfjn.simyys.state;
 
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.customnode.CustomTextFlow;
+import com.mllfjn.simyys.customnode.TextFlowLog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,11 +23,11 @@ public class AttackRecorder extends State{
     }
 
     public class NumberRecorder {
-        public final Character comeFrom;
-        public final CustomTextFlow.NumberType type;
+        public final Character from;
+        public final TextFlowLog.TextType type;
         public final double number;
-        public NumberRecorder(Character comeFrom, CustomTextFlow.NumberType type, double number) {
-            this.comeFrom = comeFrom;
+        public NumberRecorder(Character from, TextFlowLog.TextType type, double number) {
+            this.from = from;
             this.type = type;
             this.number = number;
         }

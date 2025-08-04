@@ -3,6 +3,7 @@ package com.mllfjn.simyys.starter;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.mllfjn.simyys.BattlePane;
+import com.mllfjn.simyys.CustomException;
 import com.mllfjn.simyys.starter.info.CharacterInfo;
 import com.mllfjn.simyys.starter.info.FlagChangeInfo;
 import com.mllfjn.simyys.starter.info.SkillChangeInfo;
@@ -43,7 +44,7 @@ public class Initializer {
         saveButton.setOnAction(event -> saveDate(stage));
         loadButton.setOnAction(event -> loadData(stage));
         startButton.setOnAction(event -> {
-            BattlePane bp = new BattlePane(stage, characterPane.getInfo(), skillChangePane.getInfo(), flagChangePane.getInfo());
+            BattlePane bp = new BattlePane(stage, () -> stage.setScene(scene), characterPane.getInfo(), skillChangePane.getInfo(), flagChangePane.getInfo());
         });
 
         controlPane.getChildren().addAll(saveButton, loadButton, startButton);
@@ -82,38 +83,57 @@ public class Initializer {
             directory.mkdir();
         }
         fileChooser.setInitialDirectory(directory);
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Json File", "*.json"));
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("队伍预设", "*.team"));
+//        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("队伍预设", "*.json"));
 
         File file = fileChooser.showOpenDialog(stage);
         if (file != null) {
             try (
                     FileInputStream fis = new FileInputStream(file);
+                    ObjectInputStream ois = new ObjectInputStream(fis)
+                    ) {
+                Saver saver = (Saver) ois.readObject();
+                for (CharacterInfo info : saver.characterInfo) {
+                    characterPane.addNewLine(info);
+                }
+
+                for (SkillChangeInfo info : saver.skillChangeInfo) {
+                    skillChangePane.addNewLine(info);
+                }
+
+                for (FlagChangeInfo info : saver.flagChangeInfo) {
+                    flagChangePane.addNewLine(info);
+                }
+            } catch (Exception e) {
+                CustomException.throwException("读取时出错");
+                e.printStackTrace();
+            }
+            /*try (
+                    FileInputStream fis = new FileInputStream(file);
                     InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
                     BufferedReader reader = new BufferedReader(isr)){
 
                 Gson gson = new Gson();
-                JsonSaver jsonSaver = gson.fromJson(reader, new TypeToken<JsonSaver>(){}.getType());
+                Saver saver = gson.fromJson(reader, new TypeToken<Saver>(){}.getType());
 
-                for (CharacterInfo info : jsonSaver.characterInfo) {
+                for (CharacterInfo info : saver.characterInfo) {
                     characterPane.addNewLine(info);
                 }
 
-                for (SkillChangeInfo info : jsonSaver.skillChangeInfo) {
+                for (SkillChangeInfo info : saver.skillChangeInfo) {
                     skillChangePane.addNewLine(info);
                 }
 
-                for (FlagChangeInfo info : jsonSaver.flagChangeInfo) {
+                for (FlagChangeInfo info : saver.flagChangeInfo) {
                     flagChangePane.addNewLine(info);
                 }
             } catch (IOException ignored) {
 
-            }
+            }*/
         }
     }
     private void saveDate(Stage stage) {
-        JsonSaver jsonSaver = new JsonSaver(characterPane.getInfo(), skillChangePane.getInfo(), flagChangePane.getInfo());
-        Gson gson = new Gson();
-        String json = gson.toJson(jsonSaver);
+        Saver saver = new Saver(characterPane.getInfo(), skillChangePane.getInfo(), flagChangePane.getInfo());
 
         FileChooser fileChooser = new FileChooser();
         File directory = new File("save");
@@ -121,11 +141,23 @@ public class Initializer {
             directory.mkdir();
         }
         fileChooser.setInitialDirectory(directory);
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Json File", "*.json"));
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("队伍预设", "*.team"));
 
         File file = fileChooser.showSaveDialog(stage);
 
         if (file != null) {
+            try (
+                    FileOutputStream fos = new FileOutputStream(file);
+                    ObjectOutputStream oos = new ObjectOutputStream(fos)
+            ) {
+                oos.writeObject(saver);
+            } catch (Exception e) {
+                CustomException.throwException("保存时出错");
+            }
+
+        }
+
+        /*if (file != null) {
             try (   // 使用 FileOutputStream 打开文件
                     FileOutputStream fos = new FileOutputStream(file);
                     // 创建 OutputStreamWriter，并指定 UTF-8 编码
@@ -136,7 +168,11 @@ public class Initializer {
             } catch (IOException ignored) {
 
             }
-        }
+        }*/
 
+    }
+
+    public interface Back {
+        void back();
     }
 }

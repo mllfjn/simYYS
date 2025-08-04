@@ -3,9 +3,11 @@ package com.mllfjn.simyys.character.skill;
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class CharacterFinder {
@@ -19,21 +21,20 @@ public class CharacterFinder {
         return bp.autoTo[team] == null ? find(bp.characters, team, property, criteria) : bp.autoTo[team];
     }
 
-    public static Character findPriorAuto(List<Character> list, Character autoTo, Property property, Criteria criteria) {
-        return list.contains(autoTo) ? autoTo : find(list, getTeammateTeam(autoTo), property, criteria);
+    public static Character findPriorAuto(List<Character> list, BattlePane bp, int team, Property property, Criteria criteria) {
+        return list.contains(bp.autoTo[team]) ? bp.autoTo[team] : find(list, team, property, criteria);
     }
 
     public static List<Character> findTeammate(Character character, List<Character> characters) {
-        return characters.stream().filter(character1 -> character1.team == character.team).toList();
+        return characters.stream().filter(character1 -> character1.team == character.team).collect(Collectors.toCollection(ArrayList::new));
     }
+
     public static int getEnemyTeam(Character character) {
         return character.team == 0 ? 1 : 0;
     }
-    public static int getTeammateTeam(Character character) {
-        return character.team == 0 ? 0 : 1;
-    }
+
     public static List<Character> findEnemy(Character character, List<Character> characters) {
-        return characters.stream().filter(character1 -> character1.team == character.team).toList();
+        return characters.stream().filter(character1 -> character1.team != character.team).collect(Collectors.toCollection(ArrayList::new));
     }
 
     public enum Property {

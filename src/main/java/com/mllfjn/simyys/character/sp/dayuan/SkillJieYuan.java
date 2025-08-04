@@ -15,13 +15,23 @@ abstract class SkillJieYuan extends Skill {
 
     @Override
     public boolean canUse(BattlePane bp) {
-        State chi = getBelongTo().getState(StateSTChiTODO.privateName);
-        State qing = getBelongTo().getState(StateSTQingTODO.privateName);
-        return super.canUse(bp) && chi == null && qing == null && getTarget(bp) != null;
+        return super.canUse(bp) && getBelongTo().getState(StateFlagCombined.privateName) == null && getTarget(bp) != null;
     }
 
     public Character getTarget(BattlePane bp) {
         List<Character> list = CharacterFinder.findTeammate(getBelongTo(), bp.characters);
-        return CharacterFinder.findPriorAuto(list, bp.autoTo[getBelongTo().team], CharacterFinder.Property.ATTACK, CharacterFinder.Criteria.MAX);
+        list.remove(getBelongTo());
+        return CharacterFinder.findPriorAuto(list, bp, getBelongTo().team, CharacterFinder.Property.ATTACK, CharacterFinder.Criteria.MAX);
     }
+
+    @Override
+    public void usePrivate(BattlePane bp) {
+        Character target = getTarget(bp);
+        lastUsedTarget = target;
+        jieYuan(target);
+        getBelongTo().addState(new StateFlagCombined(target, getBelongTo()));
+        StateShenLi.addStack(getBelongTo(), 2);
+    }
+
+    abstract void jieYuan(Character target);
 }

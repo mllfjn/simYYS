@@ -2,10 +2,11 @@ package com.mllfjn.simyys;
 
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.CharacterFactory;
-import com.mllfjn.simyys.character.CharacterIcon;
 import com.mllfjn.simyys.customnode.CustomTextField;
-import com.mllfjn.simyys.customnode.CustomTextFlow;
+import com.mllfjn.simyys.customnode.TextFlowLog;
 import com.mllfjn.simyys.guihuo.GuiHuo;
+import com.mllfjn.simyys.ratecontroller.TotalRateCalc;
+import com.mllfjn.simyys.starter.Initializer;
 import com.mllfjn.simyys.starter.info.CharacterInfo;
 import com.mllfjn.simyys.starter.info.FlagChangeInfo;
 import com.mllfjn.simyys.starter.info.SkillChangeInfo;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Stack;
 
 public class BattlePane {
+    private final Initializer.Back back;
     private final CharacterInfo[] characterInfo;
     private final SkillChangeInfo[] skillChangeInfo;
     private final FlagChangeInfo[] flagChangeInfo;
@@ -33,21 +35,27 @@ public class BattlePane {
     private ActionBarType actionBarType = ActionBarType.SHUNWEI;
     private final BorderPane root = new BorderPane();
     private final AnchorPane actionBar = new AnchorPane();
-    public final CustomTextFlow log = new CustomTextFlow();
+    public final TextFlowLog log = new TextFlowLog();
+    public final TotalRateCalc calc = new TotalRateCalc();
     private final HBox[] teamPane = new HBox[2];
     private Character characterActing;
     private final Stack<byte[]> recorder = new Stack<>();
     public boolean isControlRate = false;
-    private final GuiHuo[] guiHuo = new GuiHuo[2];
-    public BattlePane(Stage stage, CharacterInfo[] characterInfo, SkillChangeInfo[] skillChangeInfo, FlagChangeInfo[] flagChangeInfo) {
+    private GuiHuo[] guiHuo = new GuiHuo[2];
+    public BattlePane(Stage stage, Initializer.Back back, CharacterInfo[] characterInfo, SkillChangeInfo[] skillChangeInfo, FlagChangeInfo[] flagChangeInfo) {
+        this.back = back;
         this.characterInfo = characterInfo;
         this.skillChangeInfo = skillChangeInfo;
         this.flagChangeInfo = flagChangeInfo;
         this.characters = new ArrayList<>();
         stage.setScene(new Scene(root));
 
-        init();
         setupUI();
+        init();
+        repaintActionBar();
+
+        guiHuo[0] = new GuiHuo(4);
+        guiHuo[1] = new GuiHuo(4);
     }
 
     private void setupUI() {
@@ -90,16 +98,14 @@ public class BattlePane {
         ScrollPane scrollPane = new ScrollPane(container);
         scrollPane.setPrefWidth(1100);
         root.setCenter(scrollPane);
-        reloadCharacterIcon();
+//        reloadCharacterIcon();
     }
 
     private void reloadCharacterIcon() {
         teamPane[0].getChildren().clear();
         teamPane[1].getChildren().clear();
         for (Character character : characters) {
-            CharacterIcon characterIcon = new CharacterIcon(character, this::setAutoTo);
-            character.setCharacterIcon(characterIcon);
-            teamPane[character.team].getChildren().add(characterIcon);
+            teamPane[character.team].getChildren().add(character.getCharacterIcon(this::setAutoTo));
         }
     }
     public boolean canUseGuiHuo(Character character, int num) {
@@ -109,6 +115,15 @@ public class BattlePane {
             return guiHuo[character.team].canUseGuiHuo(num);
         }
     }
+
+    public void useGuiHuo(Character character, int num) {
+        if (character.isMob()) {
+            GuiHuo.mobUseGuiHuo(character, num);
+        } else {
+            guiHuo[character.team].useGuiHuo(num);
+        }
+    }
+
     private void setAutoTo(Character characterSelected) {
         // 如果没标任何人，给选择目标设置标
         // 如果已有标，且和选择的目标不是一个，换到新目标
@@ -140,12 +155,15 @@ public class BattlePane {
         CheckBox rateControl = new CheckBox("概率控制模式");
         rateControl.selectedProperty().addListener((obs, old, val) -> this.isControlRate = val);
 
-        Button prev = new Button("上一个");
-        Button next = new Button("下一个");
-        prev.setOnAction(event -> prev());
-        next.setOnAction(event -> next());
-        prev.setPrefSize(100, 25);
-        next.setPrefSize(100, 25);
+        Button prevBtn = new Button("上一个");
+        Button nextBtn = new Button("下一个");
+        Button backBtn = new Button("返回");
+        prevBtn.setOnAction(event -> prev());
+        nextBtn.setOnAction(event -> next());
+        backBtn.setOnAction(event -> back.back());
+        prevBtn.setPrefSize(100, 25);
+        nextBtn.setPrefSize(100, 25);
+        backBtn.setPrefSize(100, 25);
 
         CustomTextField round = new CustomTextField();
         Button skip = new Button("跳过回合");
@@ -154,14 +172,17 @@ public class BattlePane {
         round.setPrefSize(100, 25);
         skip.setPrefSize(100, 25);
 
+
         GridPane controller = new GridPane();
         controller.setPadding(new Insets(0, 0, 50, 0)); // 底部留空
 
         controller.add(rateControl, 0, 0);
-        controller.add(prev, 0, 1);
-        controller.add(next, 1, 1);
+        controller.add(calc, 1, 0);
+        controller.add(prevBtn, 0, 1);
+        controller.add(nextBtn, 1, 1);
         controller.add(round, 0, 2);
         controller.add(skip, 1, 2);
+        controller.add(backBtn, 0, 3);
 
         return controller;
     }
@@ -177,13 +198,12 @@ public class BattlePane {
             repaintActionBar();
         });
 //        actionBar.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, new BorderWidths(3))));
-        repaintActionBar();
     }
 
     private void init() {
         for (CharacterInfo info : characterInfo) {
             if (Integer.parseInt(info.team()) == 0 || Integer.parseInt(info.team()) == 1 || Integer.parseInt(info.team()) == -1) {
-                characters.add(CharacterFactory.createCharacter(info));
+                addCharacter(CharacterFactory.createCharacter(info));
             }
         }
 
@@ -191,10 +211,16 @@ public class BattlePane {
 
         // 先机
         for (Character character : characters) {
-            character.useFrontSkill();
+            character.useFrontSkill(this);
         }
+
+        log.characterAct(characterActing);
     }
 
+    private void addCharacter(Character character) {
+        characters.add(character);
+        teamPane[character.team].getChildren().add(character.getCharacterIcon(this::setAutoTo));
+    }
     private List<Character> getCharactersByLocation() {
         return getCharactersAlive().stream().sorted((o1, o2) -> {
             if (o1.getLocation() > o2.getLocation()) {
@@ -279,20 +305,25 @@ public class BattlePane {
     private void prev() {
         if (!recorder.isEmpty()) {
 
-            CharacterStackRecorder prev = null;
-            ByteArrayInputStream bis = new ByteArrayInputStream(recorder.pop());
-            try (ObjectInputStream ois = new ObjectInputStream(bis)){
-                prev = (CharacterStackRecorder) ois.readObject();
+            CharacterStack prev = null;
+            try (ByteArrayInputStream bis = new ByteArrayInputStream(recorder.pop());
+                 ObjectInputStream ois = new ObjectInputStream(bis)
+            ){
+                prev = (CharacterStack) ois.readObject();
             } catch (IOException | ClassNotFoundException e) {
-                System.out.println("恢复时出错:" + e);
+                System.out.println("恢复时出错:---------------------------------------");
+                e.printStackTrace(System.out);
             }
             
             if (prev == null) {
                 return;
             }
-            characters = prev.characters;
-            characterActing = prev.characterActing;
-            this.autoTo = prev.autoTo;
+
+            characters = prev.characters();
+            characterActing = prev.characterActing();
+            this.autoTo = prev.autoTo();
+            this.guiHuo = prev.guiHuos();
+            this.calc.setRate(prev.totalRate());
 
             repaintActionBar();
             reloadCharacterIcon();
@@ -304,21 +335,25 @@ public class BattlePane {
             if (autoTo[1] != null) {
                 autoTo[1].characterIcon.setIsAuto(true);
             }
-        }
 
+            log.prev();
+        }
 
     }
     private void next() {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        try (ObjectOutputStream oos = new ObjectOutputStream(bos)){
-            oos.writeObject(new CharacterStackRecorder(characters, characterActing, autoTo));
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
+             ObjectOutputStream oos = new ObjectOutputStream(bos)
+        ){
+            oos.writeObject(new CharacterStack(characters, characterActing, autoTo, guiHuo, calc.getRate()));
+            recorder.push(bos.toByteArray());
         } catch (IOException e) {
-            System.out.println("保存时出错:" + e);
+            System.out.println("保存时出错:-------------------------------");
+            e.printStackTrace(System.out);
         }
-        recorder.push(bos.toByteArray());
 
         characterActing.round(this);
         getNextActor();
+        log.characterAct(characterActing);
         repaintActionBar();
 
         for (Character character : characters) {
@@ -344,8 +379,6 @@ public class BattlePane {
         next.setLocation(0);
         next.timesToAct++;
         next.beforeRound(this);
-
-        log.addTextTop(characterActing.name + "行动" + characterActing.timesToAct);
     }
 
     private void skip(int round) {
@@ -354,22 +387,22 @@ public class BattlePane {
         }
     }
 
-    public void characterDie(Character character) {
-        removeCharacter(character);
-    }
-
-    private void removeCharacter(Character character) {
+    public void removeCharacter(Character character) {
         characters.remove(character);
         teamPane[character.team].getChildren().remove(character.characterIcon);
     }
 
-    private boolean canSummon(int team) {
+    public boolean canSummon(int team) {
         for (Character character : characters) {
             if (character.team == team && character.isSummon()) {
                 return false;
             }
         }
         return true;
+    }
+
+    public void addSummon(int team, Character character) {
+
     }
 
     private enum ActionBarType {

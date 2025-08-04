@@ -1,5 +1,7 @@
 package com.mllfjn.simyys.starter.info;
 
-public record FlagChangeInfo(String name, String timesToAct, String redFlag, String greenFlag) {
+import java.io.Serializable;
+
+public record FlagChangeInfo(String name, String timesToAct, String redFlag, String greenFlag) implements Serializable {
 
 }

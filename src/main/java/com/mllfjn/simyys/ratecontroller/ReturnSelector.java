@@ -4,27 +4,29 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 
-public class ReturnSelector extends HBox {
+public class ReturnSelector {
     private final ToggleGroup group = new ToggleGroup();
-    public ReturnSelector(String name, double rate, String effect) {
-        super();
-        configureDescribeLabel(name, rate);
-        configureRadioButton(effect);
+    private final double rate;
+    private final OnChange onChange;
+    ReturnSelector(GridPane root, int index, String name, double rate, String event, OnChange onChange) {
+        this.rate = rate;
+        this.onChange = onChange;
+        configureDescribeLabel(root, index, name, rate);
+        configureRadioButton(root, index, event);
     }
 
-    private void configureDescribeLabel(String name, double rate) {
-        this.setSpacing(10);
-        this.setPadding(new Insets(10));
+    private void configureDescribeLabel(GridPane root, int index, String name, double rate) {
         Label nameLabel = new Label(name);
         Label rateLabel = new Label("概率" + rate);
-        this.getChildren().addAll(nameLabel, rateLabel);
+        root.addRow(index, nameLabel, rateLabel);
     }
 
-    private void configureRadioButton(String effect) {
-        RadioButton yesBtn = new RadioButton(effect);
-        RadioButton noBtn = new RadioButton("不" + effect);
+    private void configureRadioButton(GridPane root, int index, String event) {
+        RadioButton yesBtn = new RadioButton(event);
+        RadioButton noBtn = new RadioButton("不" + event);
         RadioButton defaultBtn = new RadioButton("未指定");
 
         yesBtn.setToggleGroup(group);
@@ -32,8 +34,9 @@ public class ReturnSelector extends HBox {
         noBtn.setToggleGroup(group);
 
         defaultBtn.setSelected(true);
+        group.selectedToggleProperty().addListener((obs, old, val) -> onChange.call());
 
-        this.getChildren().addAll(yesBtn, defaultBtn, noBtn);
+        root.addRow(index, yesBtn, defaultBtn, noBtn);
     }
 
     public Return getReturn() {
@@ -41,6 +44,14 @@ public class ReturnSelector extends HBox {
             case 0 -> Return.YES;
             case 2 -> Return.NO;
             default -> Return.DEFAULT;
+        };
+    }
+
+    public double getCurrentRate() {
+        return switch (group.getToggles().indexOf(group.getSelectedToggle())) {
+            case 0 -> rate / 100;
+            case 2 -> 1 - rate / 100;
+            default -> 1;
         };
     }
 }

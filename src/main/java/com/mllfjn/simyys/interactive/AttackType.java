@@ -1,4 +1,4 @@
-package com.mllfjn.simyys.hit;
+package com.mllfjn.simyys.interactive;
 
 public enum AttackType {
     DAN_TI,

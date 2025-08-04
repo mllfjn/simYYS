@@ -1,4 +1,4 @@
-package com.mllfjn.simyys;
+/*package com.mllfjn.simyys;
 
 
 import com.mllfjn.simyys.character.Character;
@@ -15,4 +15,4 @@ public class CharacterStackRecorder implements Serializable {
             this.characterActing = characterActing;
             this.autoTo = autoTo;
         }
-}
+}*/

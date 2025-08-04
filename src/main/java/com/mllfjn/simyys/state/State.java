@@ -6,16 +6,15 @@ import java.io.Serializable;
 
 public abstract class State implements Serializable {
     public String name;
-    public final Character comeFrom;
+    public final Character from;
     public final Character belongTo;
     public final StateType stateType;
     public final StateForm stateForm;
     private StateSettleType settleType = StateSettleType.NONE;
     private int duration = 1;
 
-
-    public State(Character belongTo, Character comeFrom, StateType stateType, StateForm stateForm) {
-        this.comeFrom = comeFrom;
+    public State(Character from, Character belongTo, StateType stateType, StateForm stateForm) {
+        this.from = from;
         this.belongTo = belongTo;
         this.stateType = stateType;
         this.stateForm = stateForm;
@@ -29,7 +28,7 @@ public abstract class State implements Serializable {
         this.duration = duration;
 
         if (settleType == StateSettleType.WEI_CHI) {
-            comeFrom.addMaintainedState(this);
+            from.addMaintainedState(this);
         }
     }
 
@@ -59,7 +58,7 @@ public abstract class State implements Serializable {
     public void delete() {
         belongTo.getStates().remove(this);
         if (settleType == StateSettleType.WEI_CHI) {
-            comeFrom.removeMaintainedState(this);
+            from.removeMaintainedState(this);
         }
     }
 }

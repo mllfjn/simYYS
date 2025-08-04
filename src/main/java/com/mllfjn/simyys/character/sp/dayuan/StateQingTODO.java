@@ -8,8 +8,8 @@ import com.mllfjn.simyys.state.StateType;
 class StateQingTODO extends State {
     public static final String privateName = "尘缘·青";
 
-    public StateQingTODO(Character belongTo, Character comeFrom) {
-        super(belongTo, comeFrom, StateType.BUFF, StateForm.YIN_JI);
+    public StateQingTODO(Character from, Character belongTo) {
+        super(from, belongTo, StateType.BUFF, StateForm.YIN_JI);
     }
 
     @Override

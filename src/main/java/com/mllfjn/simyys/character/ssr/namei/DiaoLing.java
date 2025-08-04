@@ -7,8 +7,8 @@ import com.mllfjn.simyys.state.*;
 public class DiaoLing extends State implements Displayable, AttributeModifier {
     public static final String privateName = "凋零";
 
-    public DiaoLing(Character belongTo, Character comeFrom) {
-        super(belongTo, comeFrom, StateType.GENERAL, StateForm.YIN_JI);
+    public DiaoLing(Character belongTo, Character from) {
+        super(from, belongTo, StateType.GENERAL, StateForm.YIN_JI);
         setSettleType(StateSettleType.CHI_XU, 1);
     }
 

@@ -12,8 +12,13 @@ class Skill3TODO extends Skill {
     }
 
     @Override
-    public void setName() {
-        name = privateName;
+    public int getSkillID() {
+        return 3;
+    }
+
+    @Override
+    public String getName() {
+        return privateName;
     }
 
     @Override

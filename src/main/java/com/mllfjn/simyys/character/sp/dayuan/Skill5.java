@@ -11,15 +11,17 @@ class Skill5 extends SkillJieYuan {
     }
 
     @Override
-    public void setName() {
-        name = privateName;
+    public int getSkillID() {
+        return 5;
     }
 
     @Override
-    public void usePrivate(BattlePane bp) {
-        Character target = getTarget(bp);
-        lastUsedTarget = target.name;
+    public String getName() {
+        return privateName;
+    }
 
+    @Override
+    void jieYuan(Character target) {
         target.addState(new StateSTChiTODO(target, getBelongTo()));
     }
 }
