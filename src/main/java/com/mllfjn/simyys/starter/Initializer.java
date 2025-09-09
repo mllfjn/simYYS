@@ -1,9 +1,7 @@
 package com.mllfjn.simyys.starter;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.CustomException;
+import com.mllfjn.simyys.Utils;
 import com.mllfjn.simyys.starter.info.CharacterInfo;
 import com.mllfjn.simyys.starter.info.FlagChangeInfo;
 import com.mllfjn.simyys.starter.info.SkillChangeInfo;
@@ -17,7 +15,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 
 public class Initializer {
     CharacterPane characterPane;
@@ -105,8 +102,7 @@ public class Initializer {
                     flagChangePane.addNewLine(info);
                 }
             } catch (Exception e) {
-                CustomException.throwException("读取时出错");
-                e.printStackTrace();
+                Utils.throwException("读取时出错", e);
             }
             /*try (
                     FileInputStream fis = new FileInputStream(file);
@@ -152,7 +148,7 @@ public class Initializer {
             ) {
                 oos.writeObject(saver);
             } catch (Exception e) {
-                CustomException.throwException("保存时出错");
+                Utils.throwException("保存时出错", e);
             }
 
         }

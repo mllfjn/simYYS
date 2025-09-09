@@ -311,8 +311,7 @@ public class BattlePane {
             ){
                 prev = (CharacterStack) ois.readObject();
             } catch (IOException | ClassNotFoundException e) {
-                System.out.println("恢复时出错:---------------------------------------");
-                e.printStackTrace(System.out);
+                Utils.throwException("恢复时出错", e);
             }
             
             if (prev == null) {
@@ -347,8 +346,7 @@ public class BattlePane {
             oos.writeObject(new CharacterStack(characters, characterActing, autoTo, guiHuo, calc.getRate()));
             recorder.push(bos.toByteArray());
         } catch (IOException e) {
-            System.out.println("保存时出错:-------------------------------");
-            e.printStackTrace(System.out);
+            Utils.throwException("保存时出错", e);
         }
 
         characterActing.round(this);
