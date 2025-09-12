@@ -1,4 +1,4 @@
-package com.mllfjn.simyys.starter.propertygetter;
+package com.mllfjn.simyys.character.propertygetter;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;

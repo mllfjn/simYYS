@@ -3,10 +3,10 @@ package com.mllfjn.simyys.starter;
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.Utils;
 import com.mllfjn.simyys.character.CharacterFactory;
-import com.mllfjn.simyys.starter.propertygetter.PropertiesHolder;
-import com.mllfjn.simyys.starter.propertygetter.PropertiesMap;
-import com.mllfjn.simyys.starter.propertygetter.PropertyRequire;
-import com.mllfjn.simyys.starter.propertygetter.SerializableHolder;
+import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
+import com.mllfjn.simyys.character.propertygetter.PropertiesMap;
+import com.mllfjn.simyys.character.propertygetter.PropertyRequire;
+import com.mllfjn.simyys.character.propertygetter.SerializableHolder;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -15,6 +15,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.*;
@@ -44,7 +45,7 @@ public class Initializer {
         btnMoveUp.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         btnMoveDown.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
-        btnAdd.setOnAction(e -> addCharacter(items));
+        btnAdd.setOnAction(e -> addCharacter(stage, items));
         btnDelete.setOnAction(e -> {
             int index = lvList.getSelectionModel().getSelectedIndex();
             if (index >= 0 && index < items.size()) {
@@ -57,7 +58,7 @@ public class Initializer {
         btnModify.setOnAction(e -> {
             PropertiesHolder item = lvList.getSelectionModel().getSelectedItem();
             if (item != null) {
-                item.show();
+                item.show(stage);
                 lvList.refresh();
             }
         });
@@ -90,9 +91,12 @@ public class Initializer {
         stage.show();
     }
 
-    private void addCharacter(ObservableList<PropertiesHolder> items) {
+    private void addCharacter(Stage owner, ObservableList<PropertiesHolder> items) {
         Stage stageSelect = new Stage();
         GridPane gp = new GridPane();
+        gp.setPadding(new Insets(20));
+        gp.setHgap(10);
+        gp.setVgap(10);
         Set<String> labels = CharacterFactory.characterMap.keySet();
 
         int i = 0;
@@ -103,9 +107,8 @@ public class Initializer {
                 btn.setPrefWidth(100);
                 btn.setOnAction(event-> {
                     PropertiesHolder propertiesHolder = new PropertiesHolder(name, CharacterFactory.getProperties(name));
-                    propertiesHolder.show();
+                    propertiesHolder.show(stageSelect);
                     items.add(propertiesHolder);
-                    stageSelect.close();
                 });
                 tp.getChildren().add(btn);
             }
@@ -114,6 +117,9 @@ public class Initializer {
             i++;
         }
 
+        stageSelect.setTitle("添加角色");
+        stageSelect.initOwner(owner);
+        stageSelect.initModality(Modality.WINDOW_MODAL);
         stageSelect.setScene(new Scene(gp));
         stageSelect.showAndWait();
     }
@@ -174,12 +180,12 @@ public class Initializer {
                     String key = entry.getKey();
                     PropertyRequire require = item.map().remove(key);
                     if (require == null) {
-                        sj.add(item.name() + "新增属性：" + entry.getValue().getDesc());
+                        sj.add(item.name() + "新增属性：" + entry.getKey());
                         continue;
                     }
 
                     if (!entry.getValue().cover(require)) {
-                        sj.add(item.name() + "属性：" + require.getDesc() + "发生变更");
+                        sj.add(item.name() + "属性：" + entry.getKey() + "发生变更");
                     }
 
                 }

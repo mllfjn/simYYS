@@ -1,4 +1,4 @@
-package com.mllfjn.simyys.starter.propertygetter;
+package com.mllfjn.simyys.character.propertygetter;
 
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -9,9 +9,6 @@ import java.io.Serializable;
 
 public class PropertyInput extends PropertyRequire implements Serializable {
     private String value = "";
-    public PropertyInput(String desc) {
-        super(desc);
-    }
     public PropertyInput setValue(String value) {
         this.value = value;
         return this;
@@ -30,7 +27,7 @@ public class PropertyInput extends PropertyRequire implements Serializable {
     }
 
     @Override
-    public Node getNode() {
+    public Node getNode(String desc) {
         HBox node = new HBox();
         node.setSpacing(10);
         Label label = new Label(desc);
@@ -43,8 +40,21 @@ public class PropertyInput extends PropertyRequire implements Serializable {
     }
 
     @Override
+    public double getDouble() {
+        try {
+            return Double.parseDouble(value);
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+
+    @Override
+    public int getInt() {
+        return Integer.parseInt(value);
+    }
+
+    @Override
     public void toString(StringBuilder sb) {
-        super.toString(sb);
-        sb.append(desc).append(":").append(value == null || value.isEmpty() ? "无" : value);
+        sb.append(value == null || value.isEmpty() ? "无" : value);
     }
 }

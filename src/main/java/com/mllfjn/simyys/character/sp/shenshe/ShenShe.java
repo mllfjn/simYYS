@@ -1,8 +1,9 @@
 package com.mllfjn.simyys.character.sp.shenshe;
 
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.starter.propertygetter.PropertiesMap;
-import com.mllfjn.simyys.starter.propertygetter.PropertyInput;
+import com.mllfjn.simyys.character.PropertyKey;
+import com.mllfjn.simyys.character.propertygetter.PropertiesMap;
+import com.mllfjn.simyys.character.propertygetter.PropertyInput;
 import com.mllfjn.simyys.character.skill.Skill;
 import javafx.collections.ObservableList;
 
@@ -17,9 +18,10 @@ public class ShenShe extends Character {
     @Override
     public PropertiesMap getProperties() {
         PropertiesMap map = super.getProperties();
-        map.put("shenShe-skill1Level", new PropertyInput("技能1等级").setValue("5"));
-        map.put("shenShe-skill2Level", new PropertyInput("技能2等级").setValue("5"));
-        map.put("shenShe-skill3Level", new PropertyInput("技能3等级").setValue("5"));
+
+        ((PropertyInput) map.get(PropertyKey.GENERAL_BASE_ATTACK_KEY)).setValue("4153");
+
+        map.put(PropertyKey.SKILL_KEY, new PropertyInput().setValue("555"));
 
         return map;
     }
@@ -27,9 +29,11 @@ public class ShenShe extends Character {
     @Override
     public void init(PropertiesMap properties) {
         super.init(properties);
-        skill1Level = properties.get("shenShe-skill1Level").getInt();
-        skill2Level = properties.get("shenShe-skill2Level").getInt();
-        skill3Level = properties.get("shenShe-skill3Level").getInt();
+
+        int skillLevel = properties.get(PropertyKey.SKILL_KEY).getInt();
+        skill1Level = PropertyKey.getSkillLevel(skillLevel, 1);
+        skill2Level = PropertyKey.getSkillLevel(skillLevel, 2);
+        skill3Level = PropertyKey.getSkillLevel(skillLevel, 3);
     }
 
     @Override

@@ -1,8 +1,9 @@
 package com.mllfjn.simyys.character.ssr.xiaoyuan;
 
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.starter.propertygetter.PropertiesMap;
-import com.mllfjn.simyys.starter.propertygetter.PropertyInput;
+import com.mllfjn.simyys.character.PropertyKey;
+import com.mllfjn.simyys.character.propertygetter.PropertiesMap;
+import com.mllfjn.simyys.character.propertygetter.PropertyInput;
 import com.mllfjn.simyys.character.skill.Skill;
 import javafx.collections.ObservableList;
 
@@ -16,14 +17,16 @@ public class XiaoYuan extends Character {
     @Override
     public PropertiesMap getProperties() {
         PropertiesMap map = super.getProperties();
-        map.put("xiaoYuan-skill1Level", new PropertyInput("技能1等级").setValue("5"));
+        ((PropertyInput) map.get(PropertyKey.GENERAL_BASE_ATTACK_KEY)).setValue("2198");
+        map.put(PropertyKey.SKILL_KEY, new PropertyInput().setValue("515"));
         return map;
     }
 
     @Override
     public void init(PropertiesMap properties) {
         super.init(properties);
-        skill1Level = properties.get("xiaoYuan-skill1Level").getInt();
+        int skill = properties.get(PropertyKey.SKILL_KEY).getInt();
+        skill1Level = PropertyKey.getSkillLevel(skill, 1);
     }
 
     @Override

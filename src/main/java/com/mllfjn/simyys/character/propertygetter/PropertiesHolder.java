@@ -1,18 +1,19 @@
-package com.mllfjn.simyys.starter.propertygetter;
+package com.mllfjn.simyys.character.propertygetter;
 
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.Serializable;
+import java.util.Map;
 
 public record PropertiesHolder(String name, PropertiesMap map) implements Serializable {
-    public void show() {
+    public void show(Stage owner) {
         Stage stage = new Stage();
 
         TabPane tabPane = new TabPane();
@@ -26,6 +27,9 @@ public record PropertiesHolder(String name, PropertiesMap map) implements Serial
 
         tabPane.getTabs().addAll(tabProperty, tabSkill, tabFlag);
 
+        stage.setTitle(name);
+        stage.initOwner(owner);
+        stage.initModality(Modality.WINDOW_MODAL);
         stage.setWidth(600);
         stage.setHeight(800);
         stage.setScene(new Scene(tabPane));
@@ -37,9 +41,12 @@ public record PropertiesHolder(String name, PropertiesMap map) implements Serial
         vb.setPadding(new Insets(10, 20, 10, 20));
         vb.setSpacing(10);
 
-        for (PropertyRequire pr : map().values()) {
-            vb.getChildren().add(pr.getNode());
+        for (Map.Entry<String, PropertyRequire> entry : map.entrySet()) {
+            vb.getChildren().add(entry.getValue().getNode(entry.getKey()));
         }
+        /*for (PropertyRequire pr : map().values()) {
+            vb.getChildren().add(pr.getNode());
+        }*/
 
         return vb;
     }
@@ -48,8 +55,11 @@ public record PropertiesHolder(String name, PropertiesMap map) implements Serial
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("名称:").append(name);
-        for (PropertyRequire pr : map().values()) {
-            pr.toString(sb);
+
+        for (Map.Entry<String, PropertyRequire> entry : map().entrySet()) {
+            sb.append(entry.getKey()).append(":");
+            entry.getValue().toString(sb);
+            sb.append("\t");
         }
 
         return sb.toString();

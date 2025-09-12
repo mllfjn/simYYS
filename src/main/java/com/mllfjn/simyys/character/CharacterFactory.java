@@ -2,8 +2,8 @@ package com.mllfjn.simyys.character;
 
 import com.mllfjn.simyys.Utils;
 import com.mllfjn.simyys.character.mob.shenqilou.ShenQiLou;
-import com.mllfjn.simyys.starter.propertygetter.PropertiesHolder;
-import com.mllfjn.simyys.starter.propertygetter.PropertiesMap;
+import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
+import com.mllfjn.simyys.character.propertygetter.PropertiesMap;
 import com.mllfjn.simyys.character.sp.dayuan.DaYuan;
 import com.mllfjn.simyys.character.sp.shenshe.ShenShe;
 import com.mllfjn.simyys.character.ssr.namei.NaMei;

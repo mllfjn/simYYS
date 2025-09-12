@@ -1,8 +1,8 @@
-package com.mllfjn.simyys.starter.propertygetter;
+package com.mllfjn.simyys.character.propertygetter;
 
 import com.mllfjn.simyys.customnode.StringGroup;
-import javafx.collections.FXCollections;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -12,14 +12,35 @@ import javafx.scene.layout.TilePane;
 import javafx.stage.Stage;
 
 import java.io.Serializable;
-import java.util.List;
 
 public class PropertySelectSingle  extends PropertyRequire implements Serializable {
     private final StringGroup[] options;
     private String value;
-    public PropertySelectSingle(String desc, StringGroup[] options) {
-        super(desc);
+    public PropertySelectSingle(StringGroup[] options) {
         this.options = options;
+    }
+
+    public PropertySelectSingle(StringGroup options) {
+        this.options = new StringGroup[]{options};
+    }
+
+    @Override
+    public int getInt() {
+        if (options.length == 1) {
+            for (int i = 0; i < options[0].values().length; i++) {
+                if (options[0].values()[i].equals(value)) {
+                    return i;
+                }
+            }
+        }
+        return 0;
+    }
+
+    public void setValue(int i) {
+        if (options.length == 1) {
+            value = options[0].values()[i];
+        }
+
     }
 
     @Override
@@ -39,23 +60,26 @@ public class PropertySelectSingle  extends PropertyRequire implements Serializab
     }
 
     @Override
-    public Node getNode() {
+    public Node getNode(String desc) {
         if (options.length == 1 && options[0].values().length <= 5) {
-            return getSimpleComboBox();
+            return getSimpleComboBox(desc);
         }
-        return getSelectWindow();
+        return getSelectWindow(desc);
     }
 
-    private Node getSimpleComboBox() {
+    private Node getSimpleComboBox(String desc) {
         ComboBox<String> comboBox = new ComboBox<>();
         comboBox.getItems().addAll(options[0].values());
-        comboBox.getSelectionModel().select(0);
+        comboBox.getSelectionModel().selectedItemProperty().addListener((obs, old, val) -> value = val);
+        if (value != null && !value.isEmpty()) {
+            comboBox.getSelectionModel().select(value);
+        }
         HBox node = new HBox(new Label(desc), comboBox);
         node.setSpacing(10);
         return node;
     }
 
-    private Node getSelectWindow() {
+    private Node getSelectWindow(String desc) {
         HBox node = new HBox();
         node.setSpacing(10);
         Label descLbl = new Label(desc);
@@ -80,6 +104,7 @@ public class PropertySelectSingle  extends PropertyRequire implements Serializab
                 gp.add(new Label(options[i].label()), 0, i);
                 gp.add(tp, 1, i);
             }
+            stage.setScene(new Scene(gp));
             stage.showAndWait();
         });
 
@@ -89,7 +114,6 @@ public class PropertySelectSingle  extends PropertyRequire implements Serializab
 
     @Override
     public void toString(StringBuilder sb) {
-        super.toString(sb);
-        sb.append(desc).append(":").append(value);
+        sb.append(value == null ? "无" : value);
     }
 }

@@ -1,4 +1,4 @@
-package com.mllfjn.simyys.starter.propertygetter;
+package com.mllfjn.simyys.character.propertygetter;
 
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
@@ -7,9 +7,6 @@ import java.io.Serializable;
 
 public class PropertyCheck extends PropertyRequire implements Serializable {
     private boolean value;
-    public PropertyCheck(String desc) {
-        super(desc);
-    }
 
     @Override
     public boolean cover(PropertyRequire pr) {
@@ -29,8 +26,9 @@ public class PropertyCheck extends PropertyRequire implements Serializable {
     }
 
     @Override
-    public Node getNode() {
+    public Node getNode(String desc) {
         CheckBox node = new CheckBox(desc);
+        node.setMnemonicParsing(false);
         if (value) {
             node.setSelected(true);
         }
@@ -41,8 +39,6 @@ public class PropertyCheck extends PropertyRequire implements Serializable {
 
     @Override
     public void toString(StringBuilder sb) {
-        super.toString(sb);
-        sb.append(desc).append(":");
         if (value) {
             sb.append("是");
         } else {

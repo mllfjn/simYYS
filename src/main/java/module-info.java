@@ -25,8 +25,8 @@ module com.mllfjn.simyys {
     exports com.mllfjn.simyys.guihuo;
     exports com.mllfjn.simyys.determinant;
     exports com.mllfjn.simyys.ratecontroller;
-    exports com.mllfjn.simyys.starter.propertygetter;
-    opens com.mllfjn.simyys.starter.propertygetter to com.google.gson;
+    exports com.mllfjn.simyys.character.propertygetter;
+    opens com.mllfjn.simyys.character.propertygetter to com.google.gson;
     //opens com.mllfjn.simyys.character.skill to com.google.gson;
     //opens com.mllfjn.simyys.trigger to com.google.gson, javafx.fxml, org.testfx, org.testfx.junit5;
     //opens com.mllfjn.simyys.hit to com.google.gson, javafx.fxml, org.testfx, org.testfx.junit5;

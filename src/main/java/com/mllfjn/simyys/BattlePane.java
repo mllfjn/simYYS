@@ -2,12 +2,13 @@ package com.mllfjn.simyys;
 
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.CharacterFactory;
+import com.mllfjn.simyys.character.PropertyKey;
 import com.mllfjn.simyys.customnode.CustomTextField;
 import com.mllfjn.simyys.customnode.TextFlowLog;
 import com.mllfjn.simyys.guihuo.GuiHuo;
 import com.mllfjn.simyys.ratecontroller.TotalRateCalc;
 import com.mllfjn.simyys.starter.Initializer;
-import com.mllfjn.simyys.starter.propertygetter.PropertiesHolder;
+import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -28,7 +29,7 @@ public class BattlePane {
     private final List<PropertiesHolder> list;
     public List<Character> characters;
     public Character[] autoTo = new Character[2];
-    private ActionBarType actionBarType = ActionBarType.SHUNWEI;
+    private ActionBarType actionBarType = ActionBarType.SHUN_WEI;
     private final BorderPane root = new BorderPane();
     private final AnchorPane actionBar = new AnchorPane();
     public final TextFlowLog log = new TextFlowLog();
@@ -190,10 +191,10 @@ public class BattlePane {
     private void configureActionBar() {
         actionBar.setPrefWidth(200);
         actionBar.setOnMouseClicked(event -> {
-            if (actionBarType == ActionBarType.SHUNWEI) {
-                actionBarType = ActionBarType.JINDU;
+            if (actionBarType == ActionBarType.SHUN_WEI) {
+                actionBarType = ActionBarType.JIN_DU;
             } else {
-                actionBarType = ActionBarType.SHUNWEI;
+                actionBarType = ActionBarType.SHUN_WEI;
             }
             repaintActionBar();
         });
@@ -202,7 +203,7 @@ public class BattlePane {
 
     private void init() {
         for (PropertiesHolder holder : list) {
-            int team = holder.map().get(Character.GENERAL_TEAM_KEY).getInt();
+            int team = holder.map().get(PropertyKey.GENERAL_TEAM_KEY).getInt();
             if (team == 0 || team == 1) {
                 Character character = CharacterFactory.getCharacter(holder);
                 if (character != null) {
@@ -274,7 +275,7 @@ public class BattlePane {
 
         actionBar.getChildren().clear();
 
-        if (actionBarType == ActionBarType.SHUNWEI) {
+        if (actionBarType == ActionBarType.SHUN_WEI) {
 
             List<Character> list = getCharactersByActionSort();
             Pane imageBig = CharacterFactory.getImageByName(list.get(0).name, CharacterFactory.ImageSize.BIG, color, strokeWidth);
@@ -288,7 +289,7 @@ public class BattlePane {
                 actionBar.getChildren().add(imageSmall);
             }
 
-        } else if (actionBarType == ActionBarType.JINDU) {
+        } else if (actionBarType == ActionBarType.JIN_DU) {
             List<Character> list = getCharactersByLocation();
             for (int i = list.size() - 2; i >= 0; i--) {
                 Pane imageSmall = CharacterFactory.getImageByName(list.get(i).name, CharacterFactory.ImageSize.SMALL, color, strokeWidth);
@@ -408,8 +409,8 @@ public class BattlePane {
     }
 
     private enum ActionBarType {
-        JINDU,
-        SHUNWEI
+        JIN_DU,
+        SHUN_WEI
     }
 
 }

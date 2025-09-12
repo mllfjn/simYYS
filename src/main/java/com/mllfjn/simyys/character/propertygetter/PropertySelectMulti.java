@@ -1,7 +1,8 @@
-package com.mllfjn.simyys.starter.propertygetter;
+package com.mllfjn.simyys.character.propertygetter;
 
 import com.mllfjn.simyys.customnode.StringGroup;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -17,9 +18,11 @@ import java.util.StringJoiner;
 public class PropertySelectMulti  extends PropertyRequire implements Serializable {
     private String value;
     private final StringGroup[] options;
-    public PropertySelectMulti(String desc, StringGroup[] options) {
-        super(desc);
+    public PropertySelectMulti(StringGroup[] options) {
         this.options = options;
+    }
+    public PropertySelectMulti(StringGroup options) {
+        this.options = new StringGroup[]{options};
     }
 
     @Override
@@ -53,25 +56,28 @@ public class PropertySelectMulti  extends PropertyRequire implements Serializabl
     }
 
     @Override
-    public Node getNode() {
+    public Node getNode(String desc) {
         HBox node = new HBox();
         node.setSpacing(10);
 
         Label descLbl = new Label(desc);
         Label valueLbl = new Label();
         Button selectBtn = new Button("点击选择");
-        selectBtn.setOnAction(e -> openSelectDialog());
+        selectBtn.setOnAction(e -> openSelectDialog(valueLbl));
 
         node.getChildren().addAll(descLbl, valueLbl, selectBtn);
         return node;
     }
 
-    private void openSelectDialog() {
+    private void openSelectDialog(Label valueLbl) {
         Stage stage = new Stage();
         GridPane gp = new GridPane();
         gp.setHgap(10);
 
-        List<String> currentValues = List.of(value.split(","));
+        List<String> currentValues = null;
+        if (value != null && !value.isEmpty()) {
+            currentValues = List.of(value.split(","));
+        }
 
         CheckBox[][] cbs = new CheckBox[options.length][];
         for (int i = 0; i < options.length; i++) {
@@ -82,7 +88,7 @@ public class PropertySelectMulti  extends PropertyRequire implements Serializabl
                 CheckBox cb = new CheckBox(values[j]);
                 cbs[i][j] = cb;
 
-                if (currentValues.contains(values[j])) {
+                if (currentValues != null && currentValues.contains(values[j])) {
                     cb.setSelected(true);
                 }
 
@@ -103,14 +109,17 @@ public class PropertySelectMulti  extends PropertyRequire implements Serializabl
                 }
             }
             value = sj.toString();
+            valueLbl.setText(value);
+            stage.close();
         });
 
+        gp.add(confirmBtn, 1, options.length);
+
+        stage.setScene(new Scene(gp));
         stage.showAndWait();
     }
-
     @Override
     public void toString(StringBuilder sb) {
-        super.toString(sb);
-        sb.append(desc).append(":").append(value);
+        sb.append(value);
     }
 }

@@ -6,7 +6,7 @@ import com.mllfjn.simyys.character.Character;
 import java.io.Serializable;
 
 public abstract class Skill implements Serializable {
-    private final String[] SKILL_LABEL = new String[]{"普攻", "贰", "叁", "肆", "伍", "陆", "柒", "捌", "玖", "拾"};
+    public final String[] SKILL_LABEL = new String[]{"普攻", "贰", "叁", "肆", "伍", "陆", "柒", "捌", "玖", "拾"};
     private final Character belongTo;
     private final int level;
     public Character lastUsedTarget;

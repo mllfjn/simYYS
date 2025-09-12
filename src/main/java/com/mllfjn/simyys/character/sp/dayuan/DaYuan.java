@@ -2,8 +2,9 @@ package com.mllfjn.simyys.character.sp.dayuan;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.starter.propertygetter.PropertiesMap;
-import com.mllfjn.simyys.starter.propertygetter.PropertyInput;
+import com.mllfjn.simyys.character.PropertyKey;
+import com.mllfjn.simyys.character.propertygetter.PropertiesMap;
+import com.mllfjn.simyys.character.propertygetter.PropertyInput;
 import com.mllfjn.simyys.character.skill.Skill;
 import javafx.collections.ObservableList;
 
@@ -24,8 +25,10 @@ public class DaYuan extends Character {
     @Override
     public PropertiesMap getProperties() {
         PropertiesMap map = super.getProperties();
-        map.put("daYuan-skill1Level", new PropertyInput("技能1等级").setValue("5"));
-        map.put("daYuan-skill3Level", new PropertyInput("技能3等级").setValue("5"));
+
+        ((PropertyInput) map.get(PropertyKey.GENERAL_BASE_ATTACK_KEY)).setValue("2224");
+
+        map.put(PropertyKey.SKILL_KEY, new PropertyInput().setValue("515"));
 
         return map;
     }
@@ -33,9 +36,9 @@ public class DaYuan extends Character {
     @Override
     public void init(PropertiesMap properties) {
         super.init(properties);
-
-        skill1Level = properties.get("daYuan-skill1Level").getInt();
-        skill3Level = properties.get("daYuan-skill3Level").getInt();
+        int skillLevel = properties.get(PropertyKey.SKILL_KEY).getInt();
+        skill1Level = PropertyKey.getSkillLevel(skillLevel, 1);
+        skill3Level = PropertyKey.getSkillLevel(skillLevel, 3);
     }
 
     @Override

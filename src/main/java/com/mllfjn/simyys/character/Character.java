@@ -2,16 +2,16 @@ package com.mllfjn.simyys.character;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.customnode.StringGroup;
-import com.mllfjn.simyys.starter.propertygetter.PropertiesMap;
+import com.mllfjn.simyys.character.propertygetter.PropertiesMap;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.skill.SkillAuto;
 import com.mllfjn.simyys.customnode.TextFlowLog;
 import com.mllfjn.simyys.determinant.ForbidDecrease;
 import com.mllfjn.simyys.determinant.ForbidIncrease;
 import com.mllfjn.simyys.interactive.Interactive;
-import com.mllfjn.simyys.starter.propertygetter.PropertyCheck;
-import com.mllfjn.simyys.starter.propertygetter.PropertyInput;
-import com.mllfjn.simyys.starter.propertygetter.PropertySelectSingle;
+import com.mllfjn.simyys.character.propertygetter.PropertyCheck;
+import com.mllfjn.simyys.character.propertygetter.PropertyInput;
+import com.mllfjn.simyys.character.propertygetter.PropertySelectSingle;
 import com.mllfjn.simyys.state.AttackRecorder;
 import com.mllfjn.simyys.guihuo.MobGuiHuo;
 import com.mllfjn.simyys.state.State;
@@ -52,60 +52,46 @@ public abstract class Character implements Serializable{
     private transient ObservableList<Skill> skills;
     private transient Interactive interactive;
 
-    protected static final String GENERAL_SPEED_KEY = "general-speed";
-    protected static final String GENERAL_BASE_ATTACK_KEY = "general-baseAttack";
-    protected static final String GENERAL_YU_HUN_ATTACK_KEY = "general-yuHunAttack";
-    public static final String GENERAL_TEAM_KEY = "general-team";
-    protected static final String GENERAL_HP_KEY = "general-hp";
-    protected static final String GENERAL_DEFENSE_KEY = "general-defense";
-    protected static final String GENERAL_CRIT_RATE_KEY = "general-critRate";
-    protected static final String GENERAL_CRIT_POWER_KEY = "general-critPower";
-    protected static final String GENERAL_EFFECT_HIT_RATE_KEY = "general-effectHitRate";
-    protected static final String GENERAL_EFFECT_RESIST_RATE_KEY = "general-effectResistRate";
-    protected static final String GENERAL_MOB_KEY = "general-isMob";
-    protected static final String GENERAL_YYS_KEY = "general-isYYS";
-    protected static final String GENERAL_SUMMON_KEY = "general-isSummon";
-
     public PropertiesMap getProperties() {
         PropertiesMap map = new PropertiesMap();
-        map.put(GENERAL_SPEED_KEY, new PropertyInput("速度"));
-        map.put(GENERAL_BASE_ATTACK_KEY, new PropertyInput("基础攻击"));
-        map.put(GENERAL_YU_HUN_ATTACK_KEY, new PropertyInput("御魂攻击"));
-        map.put(GENERAL_TEAM_KEY, new PropertySelectSingle("队伍", new StringGroup[]{new StringGroup(null, new String[]{"己方", "敌方"})}));
-        map.put(GENERAL_HP_KEY, new PropertyInput("生命"));
-        map.put(GENERAL_DEFENSE_KEY, new PropertyInput("防御"));
-        map.put(GENERAL_CRIT_RATE_KEY, new PropertyInput("暴击率"));
-        map.put(GENERAL_CRIT_POWER_KEY, new PropertyInput("暴击伤害"));
-        map.put(GENERAL_EFFECT_HIT_RATE_KEY, new PropertyInput("效果命中"));
-        map.put(GENERAL_EFFECT_RESIST_RATE_KEY, new PropertyInput("效果抵抗"));
+        map.put(PropertyKey.GENERAL_SPEED_KEY, new PropertyInput());
+        map.put(PropertyKey.GENERAL_BASE_ATTACK_KEY, new PropertyInput());
+        map.put(PropertyKey.GENERAL_YU_HUN_ATTACK_KEY, new PropertyInput());
+        map.put(PropertyKey.GENERAL_TEAM_KEY, new PropertySelectSingle(new StringGroup[]{new StringGroup(null, new String[]{"己方", "敌方"})}));
+        map.put(PropertyKey.GENERAL_HP_KEY, new PropertyInput());
+        map.put(PropertyKey.GENERAL_DEFENSE_KEY, new PropertyInput());
+        map.put(PropertyKey.GENERAL_CRIT_RATE_KEY, new PropertyInput());
+        map.put(PropertyKey.GENERAL_CRIT_POWER_KEY, new PropertyInput());
+        map.put(PropertyKey.GENERAL_EFFECT_HIT_RATE_KEY, new PropertyInput());
+        map.put(PropertyKey.GENERAL_EFFECT_RESIST_RATE_KEY, new PropertyInput());
 
-        map.put(GENERAL_MOB_KEY, new PropertyCheck("是否为怪物"));
-        map.put(GENERAL_YYS_KEY, new PropertyCheck("是否为阴阳师"));
-        map.put(GENERAL_SUMMON_KEY, new PropertyCheck("是否为召唤物"));
+        map.put(PropertyKey.GENERAL_MOB_KEY, new PropertyCheck());
+        map.put(PropertyKey.GENERAL_YYS_KEY, new PropertyCheck());
+        map.put(PropertyKey.GENERAL_SUMMON_KEY, new PropertyCheck());
 
         return map;
     }
 
     public void init(PropertiesMap properties) {
-        this.speed = properties.get(GENERAL_SPEED_KEY).getDouble();
-        this.baseAttack = properties.get(GENERAL_BASE_ATTACK_KEY).getDouble();
-        this.yuHunAttack = properties.get(GENERAL_YU_HUN_ATTACK_KEY).getDouble();
-        this.team = properties.get(GENERAL_TEAM_KEY).getInt();
-        this.hp = properties.get(GENERAL_HP_KEY).getDouble();
+        this.speed = properties.get(PropertyKey.GENERAL_SPEED_KEY).getDouble();
+        this.baseAttack = properties.get(PropertyKey.GENERAL_BASE_ATTACK_KEY).getDouble();
+        this.yuHunAttack = properties.get(PropertyKey.GENERAL_YU_HUN_ATTACK_KEY).getDouble();
+        this.team = properties.get(PropertyKey.GENERAL_TEAM_KEY).getInt();
+        this.hp = properties.get(PropertyKey.GENERAL_HP_KEY).getDouble();
         this.maxHp = hp;
-        this.defense = properties.get(GENERAL_DEFENSE_KEY).getDouble();
-        this.critRate = properties.get(GENERAL_CRIT_RATE_KEY).getDouble();
-        this.critPower = properties.get(GENERAL_CRIT_POWER_KEY).getDouble();
-        this.effectHitRate = properties.get(GENERAL_EFFECT_HIT_RATE_KEY).getDouble();
-        this.effectResistRate = properties.get(GENERAL_EFFECT_RESIST_RATE_KEY).getDouble();
+        this.defense = properties.get(PropertyKey.GENERAL_DEFENSE_KEY).getDouble();
+        this.critRate = properties.get(PropertyKey.GENERAL_CRIT_RATE_KEY).getDouble();
+        this.critPower = properties.get(PropertyKey.GENERAL_CRIT_POWER_KEY).getDouble();
+        this.effectHitRate = properties.get(PropertyKey.GENERAL_EFFECT_HIT_RATE_KEY).getDouble();
+        this.effectResistRate = properties.get(PropertyKey.GENERAL_EFFECT_RESIST_RATE_KEY).getDouble();
 
-        if (properties.get(GENERAL_MOB_KEY).getBoolean()) {
+        if (properties.get(PropertyKey.GENERAL_MOB_KEY).getBoolean()) {
             this.isMob = true;
             addState(new MobGuiHuo(this));
         }
 
-        this.isYYS = properties.get(GENERAL_YYS_KEY).getBoolean();
-        this.isSummon = properties.get(GENERAL_SUMMON_KEY).getBoolean();
+        this.isYYS = properties.get(PropertyKey.GENERAL_YYS_KEY).getBoolean();
+        this.isSummon = properties.get(PropertyKey.GENERAL_SUMMON_KEY).getBoolean();
 
         addState(new AttackRecorder(this));
     }
@@ -238,10 +224,6 @@ public abstract class Character implements Serializable{
 
     public double getHp() {
         return hp;
-    }
-
-    public void setHp(double hp) {
-        this.hp = hp;
     }
 
     public double getMaxHp() {
