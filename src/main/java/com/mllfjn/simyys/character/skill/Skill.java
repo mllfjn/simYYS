@@ -22,6 +22,13 @@ public abstract class Skill implements Serializable {
     }
     public abstract int getSkillID();
     public abstract String getName();
+    public boolean tryUse(BattlePane bp) {
+        if (canUse(bp)) {
+            use(bp);
+            return true;
+        }
+        return false;
+    }
     public void use(BattlePane bp) {
         useBase(bp, true);
     }

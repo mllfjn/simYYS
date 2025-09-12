@@ -2,6 +2,8 @@ package com.mllfjn.simyys.character.ssr.qianji;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.skill.Skill;
+import javafx.collections.ObservableList;
 
 public class HaiYuanBeiJi extends Character {
     QianJi qianJi;
@@ -9,17 +11,12 @@ public class HaiYuanBeiJi extends Character {
         this.qianJi = qianJi;
     }
     @Override
-    public void initSelf(int[] skillLevels) {
+    public void addSkill(ObservableList<Skill> skills) {
 
-    }
-
-    @Override
-    public int[] getUseSkillOrder() {
-        return null;
     }
 
     public static void addStack(BattlePane bp, int count) {
-
+//TODO
     }
 
     @Override

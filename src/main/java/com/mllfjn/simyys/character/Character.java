@@ -1,13 +1,17 @@
 package com.mllfjn.simyys.character;
 
 import com.mllfjn.simyys.BattlePane;
+import com.mllfjn.simyys.customnode.StringGroup;
+import com.mllfjn.simyys.starter.propertygetter.PropertiesMap;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.skill.SkillAuto;
 import com.mllfjn.simyys.customnode.TextFlowLog;
 import com.mllfjn.simyys.determinant.ForbidDecrease;
 import com.mllfjn.simyys.determinant.ForbidIncrease;
 import com.mllfjn.simyys.interactive.Interactive;
-import com.mllfjn.simyys.starter.info.CharacterInfo;
+import com.mllfjn.simyys.starter.propertygetter.PropertyCheck;
+import com.mllfjn.simyys.starter.propertygetter.PropertyInput;
+import com.mllfjn.simyys.starter.propertygetter.PropertySelectSingle;
 import com.mllfjn.simyys.state.AttackRecorder;
 import com.mllfjn.simyys.guihuo.MobGuiHuo;
 import com.mllfjn.simyys.state.State;
@@ -38,41 +42,75 @@ public abstract class Character implements Serializable{
     private double effectHitRate;
     private double effectResistRate;
     private double speed;
-    private CharacterType type = CharacterType.SHI_SHEN;
+
+    private boolean isMob;
+    private boolean isYYS;
+    private boolean isSummon = false;
 
     private final List<State> states = new ArrayList<>();
     private final List<State> maintainedStates = new ArrayList<>();
     private transient ObservableList<Skill> skills;
-    private int[] skillLevels;
     private transient Interactive interactive;
 
-    public void init(CharacterInfo characterInfo, int[] skillLevels) {
-        this.name = characterInfo.name();
-        this.speed = Double.parseDouble(characterInfo.speed());
-        this.baseAttack = Double.parseDouble(characterInfo.baseAttack());
-        this.yuHunAttack = Double.parseDouble(characterInfo.yuHunAttack());
-        this.team = Integer.parseInt(characterInfo.team());
-        this.hp = Double.parseDouble(characterInfo.hp());
-        this.maxHp = Double.parseDouble(characterInfo.hp());
-        this.defense = Double.parseDouble(characterInfo.defense());
-        this.critRate = Double.parseDouble(characterInfo.critRate());
-        this.critPower = Double.parseDouble(characterInfo.critPower());
-        this.effectHitRate = Double.parseDouble(characterInfo.effectHitRate());
-        this.effectResistRate = Double.parseDouble(characterInfo.effectResistRate());
+    protected static final String GENERAL_SPEED_KEY = "general-speed";
+    protected static final String GENERAL_BASE_ATTACK_KEY = "general-baseAttack";
+    protected static final String GENERAL_YU_HUN_ATTACK_KEY = "general-yuHunAttack";
+    public static final String GENERAL_TEAM_KEY = "general-team";
+    protected static final String GENERAL_HP_KEY = "general-hp";
+    protected static final String GENERAL_DEFENSE_KEY = "general-defense";
+    protected static final String GENERAL_CRIT_RATE_KEY = "general-critRate";
+    protected static final String GENERAL_CRIT_POWER_KEY = "general-critPower";
+    protected static final String GENERAL_EFFECT_HIT_RATE_KEY = "general-effectHitRate";
+    protected static final String GENERAL_EFFECT_RESIST_RATE_KEY = "general-effectResistRate";
+    protected static final String GENERAL_MOB_KEY = "general-isMob";
+    protected static final String GENERAL_YYS_KEY = "general-isYYS";
+    protected static final String GENERAL_SUMMON_KEY = "general-isSummon";
 
-        this.skillLevels = skillLevels;
-        getSkills();
+    public PropertiesMap getProperties() {
+        PropertiesMap map = new PropertiesMap();
+        map.put(GENERAL_SPEED_KEY, new PropertyInput("速度"));
+        map.put(GENERAL_BASE_ATTACK_KEY, new PropertyInput("基础攻击"));
+        map.put(GENERAL_YU_HUN_ATTACK_KEY, new PropertyInput("御魂攻击"));
+        map.put(GENERAL_TEAM_KEY, new PropertySelectSingle("队伍", new StringGroup[]{new StringGroup(null, new String[]{"己方", "敌方"})}));
+        map.put(GENERAL_HP_KEY, new PropertyInput("生命"));
+        map.put(GENERAL_DEFENSE_KEY, new PropertyInput("防御"));
+        map.put(GENERAL_CRIT_RATE_KEY, new PropertyInput("暴击率"));
+        map.put(GENERAL_CRIT_POWER_KEY, new PropertyInput("暴击伤害"));
+        map.put(GENERAL_EFFECT_HIT_RATE_KEY, new PropertyInput("效果命中"));
+        map.put(GENERAL_EFFECT_RESIST_RATE_KEY, new PropertyInput("效果抵抗"));
 
-        addState(new AttackRecorder(this));
+        map.put(GENERAL_MOB_KEY, new PropertyCheck("是否为怪物"));
+        map.put(GENERAL_YYS_KEY, new PropertyCheck("是否为阴阳师"));
+        map.put(GENERAL_SUMMON_KEY, new PropertyCheck("是否为召唤物"));
 
-        if (team < 0) {
-            team = -team;
-            type = CharacterType.MOB;
-            addState(new MobGuiHuo(this));
-        }
+        return map;
     }
 
-    public abstract void initSelf(int[] skillLevels);
+    public void init(PropertiesMap properties) {
+        this.speed = properties.get(GENERAL_SPEED_KEY).getDouble();
+        this.baseAttack = properties.get(GENERAL_BASE_ATTACK_KEY).getDouble();
+        this.yuHunAttack = properties.get(GENERAL_YU_HUN_ATTACK_KEY).getDouble();
+        this.team = properties.get(GENERAL_TEAM_KEY).getInt();
+        this.hp = properties.get(GENERAL_HP_KEY).getDouble();
+        this.maxHp = hp;
+        this.defense = properties.get(GENERAL_DEFENSE_KEY).getDouble();
+        this.critRate = properties.get(GENERAL_CRIT_RATE_KEY).getDouble();
+        this.critPower = properties.get(GENERAL_CRIT_POWER_KEY).getDouble();
+        this.effectHitRate = properties.get(GENERAL_EFFECT_HIT_RATE_KEY).getDouble();
+        this.effectResistRate = properties.get(GENERAL_EFFECT_RESIST_RATE_KEY).getDouble();
+
+        if (properties.get(GENERAL_MOB_KEY).getBoolean()) {
+            this.isMob = true;
+            addState(new MobGuiHuo(this));
+        }
+
+        this.isYYS = properties.get(GENERAL_YYS_KEY).getBoolean();
+        this.isSummon = properties.get(GENERAL_SUMMON_KEY).getBoolean();
+
+        addState(new AttackRecorder(this));
+    }
+
+    public abstract void addSkill(ObservableList<Skill> skills);
 
     public static double getTTA(double distance, double speed) {
         return distance / speed;
@@ -164,40 +202,35 @@ public abstract class Character implements Serializable{
     }
 
     private void act(BattlePane bp) {
-        if (lockSkill != 0 ) {
-            // 锁定技能不为0时,检测是否可用
-            if (useSkill(bp, lockSkill)) {
+        if (lockSkill != 0) {
+            Skill skillLock = getSkill(lockSkill);
+            if (skillLock != null && skillLock.tryUse(bp)) {
                 return;
             }
-        } else {
-            // 锁定技能为0时,根据技能顺序使用技能
-            int[] order = getUseSkillOrder();
-            if (order != null) {
-                for (int i : order) {
-                    if (useSkill(bp, i)) {
-                        return;
+        }
+        if (!useSkillAuto(bp)) {
+            Skill skill1 = getSkill(1);
+            if (skill1 != null) {
+                skill1.use(bp);
+            }
+        }
+        /*if (lockSkill != 0) {
+            Skill skillLock = getSkill(lockSkill);
+            if (skillLock.canUse(bp)) {
+                skillLock.use(bp);
+            } else {
+                if (!useSkillAuto(bp)) {
+                    Skill skill1 = getSkill(1);
+                    if (skill1 != null) {
+                        getSkill(1).use(bp);
                     }
                 }
             }
-        }
-
-        // 无可用技能时普攻
-        useSkill(bp, 1);
+        }*/
     }
-
-    private boolean useSkill(BattlePane bp, int i) {
-        for (Skill skill : skills) {
-            if (skill.getSkillID() == i) {
-                if (skill.canUse(bp)) {
-                    skill.use(bp);
-                    return true;
-                }
-            }
-        }
+    protected boolean useSkillAuto(BattlePane bp) {
         return false;
     }
-
-    public abstract int[] getUseSkillOrder();
 
     public double getAttack() {
         return baseAttack + yuHunAttack;
@@ -235,14 +268,14 @@ public abstract class Character implements Serializable{
         return AttributeCounter.getGeneralAttribute(Attribute.EFFECT_RESIST_RATE, effectResistRate, states);
     }
     public boolean isMob() {
-        return type == CharacterType.MOB;
+        return isMob;
     }
     public boolean isYYS() {
-        return type == CharacterType.YYS;
+        return isYYS;
     }
 
     public boolean isSummon() {
-        return type == CharacterType.SUMMON;
+        return isSummon;
     }
 
     public void setLockSkill(int i) {
@@ -314,9 +347,18 @@ public abstract class Character implements Serializable{
     public ObservableList<Skill> getSkills() {
         if (skills == null) {
             skills = FXCollections.observableArrayList(SkillAuto.INSTANCE);
-            initSelf(skillLevels);
+            addSkill(skills);
         }
         return skills;
+    }
+
+    public Skill getSkill(int i) {
+        for (Skill skill : getSkills()) {
+            if (skill.getSkillID() == i) {
+                return skill;
+            }
+        }
+        return null;
     }
 
     public void deleteState(String privateName) {
@@ -329,10 +371,6 @@ public abstract class Character implements Serializable{
         if (characterIcon != null) {
             characterIcon.updateState();
         }
-    }
-
-    public void setType(CharacterType type) {
-        this.type = type;
     }
 
     public Interactive getHit(BattlePane bp) {

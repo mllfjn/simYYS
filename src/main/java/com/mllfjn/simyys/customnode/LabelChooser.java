@@ -6,6 +6,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -20,14 +21,13 @@ public abstract class LabelChooser extends Label {
         this.setOnMouseClicked(mouseEvent -> onMouseClicked());
     }
 
-    public void onMouseClicked() {
+    /*public void onMouseClicked() {
         Stage stage = new Stage();
         VBox root = new VBox(10);
-        String[] type = getTypeText();
-        String[][] list = getList();
+        StringGroup[] groups = getStringGroups();
 
-        for (int i = 0; i < type.length; i++) {
-            Label typeLabel = new Label(type[i]);
+        for (int i = 0; i < groups.length; i++) {
+            Label typeLabel = new Label(groups[i].label());
             typeLabel.setAlignment(Pos.CENTER);
             typeLabel.setPrefSize(100, 25);
             FlowPane flowPane = new FlowPane();
@@ -50,8 +50,33 @@ public abstract class LabelChooser extends Label {
         stage.setScene(scene);
         stage.setTitle(getChooseText());
         stage.show();
+    }*/
+
+    public void onMouseClicked() {
+        StringGroup[] groups = getStringGroups();
+
+        Stage stage = new Stage();
+        GridPane gp = new GridPane();
+
+        for (StringGroup group : groups) {
+            Label typeLabel = new Label(group.label());
+            typeLabel.setAlignment(Pos.CENTER);
+            typeLabel.setPrefSize(100, 25);
+            FlowPane flowPane = new FlowPane();
+            for (String s : group.values()) {
+                Button button = new Button(s);
+                button.setAlignment(Pos.CENTER);
+                button.setOnAction(event -> {
+                    this.setText(s);
+                    stage.close();
+                });
+                flowPane.getChildren().add(button);
+            }
+        }
+        stage.setScene(new Scene(gp));
+        stage.setTitle(getChooseText());
+        stage.showAndWait();
     }
-    public abstract String[] getTypeText();
-    public abstract String[][] getList();
-    public abstract String getChooseText();
+    protected abstract StringGroup[] getStringGroups();
+    protected abstract String getChooseText();
 }

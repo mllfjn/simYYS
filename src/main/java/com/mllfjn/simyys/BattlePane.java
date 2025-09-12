@@ -7,9 +7,7 @@ import com.mllfjn.simyys.customnode.TextFlowLog;
 import com.mllfjn.simyys.guihuo.GuiHuo;
 import com.mllfjn.simyys.ratecontroller.TotalRateCalc;
 import com.mllfjn.simyys.starter.Initializer;
-import com.mllfjn.simyys.starter.info.CharacterInfo;
-import com.mllfjn.simyys.starter.info.FlagChangeInfo;
-import com.mllfjn.simyys.starter.info.SkillChangeInfo;
+import com.mllfjn.simyys.starter.propertygetter.PropertiesHolder;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -27,9 +25,7 @@ import java.util.Stack;
 
 public class BattlePane {
     private final Initializer.Back back;
-    private final CharacterInfo[] characterInfo;
-    private final SkillChangeInfo[] skillChangeInfo;
-    private final FlagChangeInfo[] flagChangeInfo;
+    private final List<PropertiesHolder> list;
     public List<Character> characters;
     public Character[] autoTo = new Character[2];
     private ActionBarType actionBarType = ActionBarType.SHUNWEI;
@@ -42,11 +38,9 @@ public class BattlePane {
     private final Stack<byte[]> recorder = new Stack<>();
     public boolean isControlRate = false;
     private GuiHuo[] guiHuo = new GuiHuo[2];
-    public BattlePane(Stage stage, Initializer.Back back, CharacterInfo[] characterInfo, SkillChangeInfo[] skillChangeInfo, FlagChangeInfo[] flagChangeInfo) {
+    public BattlePane(Stage stage, Initializer.Back back, List<PropertiesHolder> list) {
         this.back = back;
-        this.characterInfo = characterInfo;
-        this.skillChangeInfo = skillChangeInfo;
-        this.flagChangeInfo = flagChangeInfo;
+        this.list = list;
         this.characters = new ArrayList<>();
         stage.setScene(new Scene(root));
 
@@ -79,24 +73,30 @@ public class BattlePane {
     private void configureTeamPane() {
         teamPane[0] = new HBox();
         teamPane[1] = new HBox();
+
         teamPane[0].setAlignment(Pos.CENTER);
         teamPane[1].setAlignment(Pos.CENTER);
+
+//        teamPane[0].setMaxWidth(Double.MAX_VALUE);
+//        teamPane[1].setMaxWidth(Double.MAX_VALUE);
 
         teamPane[0].setSpacing(5);
         teamPane[1].setSpacing(5);
         teamPane[0].setPadding(new Insets(5));
 
-        teamPane[0].setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, new BorderWidths(3))));
-        teamPane[1].setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, new BorderWidths(3))));
+//        teamPane[0].setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, new BorderWidths(3))));
+//        teamPane[1].setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, new BorderWidths(3))));
 
         VBox container = new VBox(teamPane[1], teamPane[0]);
         //container.setSpacing(5);
         container.setPadding(new Insets(3));
+        container.setPrefWidth(1000);
+//        container.setMaxWidth(Double.MAX_VALUE);
         teamPane[0].minHeightProperty().bind(root.heightProperty().divide(2).subtract(5));
         teamPane[1].minHeightProperty().bind(root.heightProperty().divide(2).subtract(5));
 
         ScrollPane scrollPane = new ScrollPane(container);
-        scrollPane.setPrefWidth(1100);
+        scrollPane.setMaxWidth(1100);
         root.setCenter(scrollPane);
 //        reloadCharacterIcon();
     }
@@ -201,9 +201,13 @@ public class BattlePane {
     }
 
     private void init() {
-        for (CharacterInfo info : characterInfo) {
-            if (Integer.parseInt(info.team()) == 0 || Integer.parseInt(info.team()) == 1 || Integer.parseInt(info.team()) == -1) {
-                addCharacter(CharacterFactory.createCharacter(info));
+        for (PropertiesHolder holder : list) {
+            int team = holder.map().get(Character.GENERAL_TEAM_KEY).getInt();
+            if (team == 0 || team == 1) {
+                Character character = CharacterFactory.getCharacter(holder);
+                if (character != null) {
+                    addCharacter(character);
+                }
             }
         }
 

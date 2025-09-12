@@ -7,4 +7,8 @@ public class Utils {
         e.printStackTrace(System.out);
         new Alert(Alert.AlertType.ERROR, text).show();
     }
+
+    public static void information(String text) {
+        new Alert(Alert.AlertType.INFORMATION, text);
+    }
 }
