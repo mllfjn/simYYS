@@ -1,6 +1,6 @@
 package com.mllfjn.simyys.character;
 
-import com.mllfjn.simyys.Utils;
+import com.mllfjn.simyys.utils.Utils;
 import com.mllfjn.simyys.character.mob.shenqilou.ShenQiLou;
 import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
 import com.mllfjn.simyys.character.propertygetter.PropertiesMap;
@@ -71,10 +71,11 @@ public class CharacterFactory {
     }
 
     public static Character getCharacter(PropertiesHolder ph) {
-        Character character = getCharacter(ph.name());
+        Character character = getCharacter(ph.name);
         if (character != null) {
-            character.init(ph.map());
-            character.name = ph.name();
+            character.init(ph.map);
+            character.name = ph.name;
+            character.addSkills();
             return character;
         }
         return null;

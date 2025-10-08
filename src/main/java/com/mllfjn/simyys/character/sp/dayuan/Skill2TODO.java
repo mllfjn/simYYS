@@ -23,7 +23,7 @@ class Skill2TODO extends Skill {
 
     @Override
     public void usePrivate(BattlePane bp) {
-        StateFlagCombined state = (StateFlagCombined) getBelongTo().getState(StateFlagCombined.privateName);
+        StateCombined state = (StateCombined) getBelongTo().getState(StateCombined.privateName);
         state.from.deleteState(StateSTChiTODO.privateName);
         state.from.deleteState(StateSTQingTODO.privateName);
         state.delete();
@@ -31,6 +31,6 @@ class Skill2TODO extends Skill {
 
     @Override
     public boolean canUse(BattlePane bp) {
-        return super.canUse(bp) && getBelongTo().getState(StateFlagCombined.privateName) == null;
+        return super.canUse(bp) && getBelongTo().getState(StateCombined.privateName) == null;
     }
 }

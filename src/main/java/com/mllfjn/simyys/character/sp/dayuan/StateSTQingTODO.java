@@ -10,8 +10,8 @@ import com.mllfjn.simyys.trigger.Trigger;
 class StateSTQingTODO extends StateShengTian implements Displayable {
     public static final String privateName = "胜天之缘·青";
 
-    public StateSTQingTODO(Character belongTo, Character from) {
-        super(belongTo, from);
+    public StateSTQingTODO(Character from, Character belongTo) {
+        super(from, belongTo);
     }
 
     @Override

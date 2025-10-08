@@ -8,20 +8,24 @@ class StateShenLi extends State implements AttributeModifier, Displayable {
     public static final String privateName = "神力";
     private int stack;
 
-    public StateShenLi(Character belongTo, Character from) {
-        super(from, belongTo, StateType.BUFF, StateForm.YIN_JI);
+    public StateShenLi(Character character) {
+        super(character, character, StateType.BUFF, StateForm.YIN_JI);
     }
 
     public static void addStack(Character character, int count) {
         StateShenLi shenLi = (StateShenLi) character.getState(privateName);
         if (shenLi == null) {
-            shenLi = new StateShenLi(character, character);
+            shenLi = new StateShenLi(character);
             character.addState(shenLi);
         }
         shenLi.stack += count;
         if (shenLi.stack > 5) {
             shenLi.stack = 5;
         }
+    }
+
+    public int getStack() {
+        return stack;
     }
 
     @Override

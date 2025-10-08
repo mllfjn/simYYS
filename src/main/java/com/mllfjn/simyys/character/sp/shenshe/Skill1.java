@@ -7,10 +7,10 @@ import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
 
-class SkillPuGong extends Skill {
+class Skill1 extends Skill {
     public static final String privateName = "灵魂惩戒";
     private static final int[] multiplier = new int[]{0, 100, 105, 110, 115, 125};
-    public SkillPuGong(Character belongTo, int level) {
+    public Skill1(Character belongTo, int level) {
         super(belongTo, level, 0, 0);
     }
 

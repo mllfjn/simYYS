@@ -1,7 +1,6 @@
 package com.mllfjn.simyys.character;
 
 import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.customnode.StringGroup;
 import com.mllfjn.simyys.character.propertygetter.PropertiesMap;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.skill.SkillAuto;
@@ -11,14 +10,13 @@ import com.mllfjn.simyys.determinant.ForbidIncrease;
 import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.character.propertygetter.PropertyCheck;
 import com.mllfjn.simyys.character.propertygetter.PropertyInput;
-import com.mllfjn.simyys.character.propertygetter.PropertySelectSingle;
 import com.mllfjn.simyys.state.AttackRecorder;
 import com.mllfjn.simyys.guihuo.MobGuiHuo;
 import com.mllfjn.simyys.state.State;
 import com.mllfjn.simyys.state.StateSettleType;
 import com.mllfjn.simyys.trigger.Trigger;
 import com.mllfjn.simyys.trigger.TriggerSession;
-import javafx.collections.FXCollections;
+import com.mllfjn.simyys.utils.SerializableObservableList;
 import javafx.collections.ObservableList;
 
 import java.io.Serializable;
@@ -35,7 +33,7 @@ public abstract class Character implements Serializable{
     private double maxHp;
     private double hp;
     private double baseAttack;
-    private double yuHunAttack;
+    private double additionAttack;
     private double defense;
     private double critRate;
     private double critPower;
@@ -45,11 +43,12 @@ public abstract class Character implements Serializable{
 
     private boolean isMob;
     private boolean isYYS;
-    private boolean isSummon = false;
+    private boolean isSummon;
+
+    protected final SerializableObservableList<Skill> skills = new SerializableObservableList<>();
 
     private final List<State> states = new ArrayList<>();
     private final List<State> maintainedStates = new ArrayList<>();
-    private transient ObservableList<Skill> skills;
     private transient Interactive interactive;
 
     public PropertiesMap getProperties() {
@@ -57,7 +56,6 @@ public abstract class Character implements Serializable{
         map.put(PropertyKey.GENERAL_SPEED_KEY, new PropertyInput());
         map.put(PropertyKey.GENERAL_BASE_ATTACK_KEY, new PropertyInput());
         map.put(PropertyKey.GENERAL_YU_HUN_ATTACK_KEY, new PropertyInput());
-        map.put(PropertyKey.GENERAL_TEAM_KEY, new PropertySelectSingle(new StringGroup[]{new StringGroup(null, new String[]{"己方", "敌方"})}));
         map.put(PropertyKey.GENERAL_HP_KEY, new PropertyInput());
         map.put(PropertyKey.GENERAL_DEFENSE_KEY, new PropertyInput());
         map.put(PropertyKey.GENERAL_CRIT_RATE_KEY, new PropertyInput());
@@ -65,6 +63,7 @@ public abstract class Character implements Serializable{
         map.put(PropertyKey.GENERAL_EFFECT_HIT_RATE_KEY, new PropertyInput());
         map.put(PropertyKey.GENERAL_EFFECT_RESIST_RATE_KEY, new PropertyInput());
 
+        map.put(PropertyKey.GENERAL_TEAM_KEY, new PropertyCheck());
         map.put(PropertyKey.GENERAL_MOB_KEY, new PropertyCheck());
         map.put(PropertyKey.GENERAL_YYS_KEY, new PropertyCheck());
         map.put(PropertyKey.GENERAL_SUMMON_KEY, new PropertyCheck());
@@ -75,8 +74,8 @@ public abstract class Character implements Serializable{
     public void init(PropertiesMap properties) {
         this.speed = properties.get(PropertyKey.GENERAL_SPEED_KEY).getDouble();
         this.baseAttack = properties.get(PropertyKey.GENERAL_BASE_ATTACK_KEY).getDouble();
-        this.yuHunAttack = properties.get(PropertyKey.GENERAL_YU_HUN_ATTACK_KEY).getDouble();
-        this.team = properties.get(PropertyKey.GENERAL_TEAM_KEY).getInt();
+        this.additionAttack = properties.get(PropertyKey.GENERAL_YU_HUN_ATTACK_KEY).getDouble();
+        this.team = properties.get(PropertyKey.GENERAL_TEAM_KEY).getBoolean() ? 1 : 0;
         this.hp = properties.get(PropertyKey.GENERAL_HP_KEY).getDouble();
         this.maxHp = hp;
         this.defense = properties.get(PropertyKey.GENERAL_DEFENSE_KEY).getDouble();
@@ -96,7 +95,9 @@ public abstract class Character implements Serializable{
         addState(new AttackRecorder(this));
     }
 
-    public abstract void addSkill(ObservableList<Skill> skills);
+    public void addSkills() {
+        skills.add(SkillAuto.INSTANCE);
+    }
 
     public static double getTTA(double distance, double speed) {
         return distance / speed;
@@ -165,8 +166,6 @@ public abstract class Character implements Serializable{
 
         TriggerSession.trigger(bp, Trigger.AFTER_ROUND, this.getStates());
 
-        // 危险：可能涉及状态删除
-
         states.removeIf(state -> {
             if (state.getSettleType() == StateSettleType.CHI_XU) {
                 state.setDuration(state.getDuration() - 1);
@@ -184,7 +183,7 @@ public abstract class Character implements Serializable{
             return false;
         });
 
-        getSkills().forEach(Skill::pastRound);
+        skills.getList().forEach(Skill::pastRound);
     }
 
     private void act(BattlePane bp) {
@@ -200,26 +199,27 @@ public abstract class Character implements Serializable{
                 skill1.use(bp);
             }
         }
-        /*if (lockSkill != 0) {
-            Skill skillLock = getSkill(lockSkill);
-            if (skillLock.canUse(bp)) {
-                skillLock.use(bp);
-            } else {
-                if (!useSkillAuto(bp)) {
-                    Skill skill1 = getSkill(1);
-                    if (skill1 != null) {
-                        getSkill(1).use(bp);
-                    }
-                }
-            }
-        }*/
     }
+
+    public Skill getSkill(int skillID) {
+        for (Skill skill : skills.getList()) {
+            if (skill.getSkillID() == skillID) {
+                return skill;
+            }
+        }
+        return null;
+    }
+
+    public ObservableList<Skill> getSkills() {
+        return skills.getObservableList();
+    }
+
     protected boolean useSkillAuto(BattlePane bp) {
         return false;
     }
 
     public double getAttack() {
-        return baseAttack + yuHunAttack;
+        return baseAttack + additionAttack;
     }
 
     public double getHp() {
@@ -239,7 +239,7 @@ public abstract class Character implements Serializable{
     }
 
     public double getCritPower() {
-        return critPower;
+        return AttributeCounter.getGeneralAttribute(Attribute.CRIT_POWER, critPower, states);
     }
 
     public double getEffectHitRate() {
@@ -326,22 +326,7 @@ public abstract class Character implements Serializable{
     public List<State> getStates() {
         return states;
     }
-    public ObservableList<Skill> getSkills() {
-        if (skills == null) {
-            skills = FXCollections.observableArrayList(SkillAuto.INSTANCE);
-            addSkill(skills);
-        }
-        return skills;
-    }
 
-    public Skill getSkill(int i) {
-        for (Skill skill : getSkills()) {
-            if (skill.getSkillID() == i) {
-                return skill;
-            }
-        }
-        return null;
-    }
 
     public void deleteState(String privateName) {
         for (State state : states) {

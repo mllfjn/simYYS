@@ -4,7 +4,10 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
-import com.mllfjn.simyys.state.State;
+import com.mllfjn.simyys.interactive.Info;
+import com.mllfjn.simyys.interactive.Interactive;
+
+import java.util.List;
 
 class Skill3TODO extends Skill {
     public static final String privateName = "与世结缘";
@@ -29,13 +32,32 @@ class Skill3TODO extends Skill {
         Character target;
         if (bp.autoTo[getBelongTo().team] != null) {
             target = bp.autoTo[getBelongTo().team];
-        } else if (getBelongTo().getState(StateFlagCombined.privateName) instanceof StateFlagCombined sfc){
+        } else if (getBelongTo().getState(StateCombined.privateName) instanceof StateCombined sfc){
             target = sfc.from;
         } else {
             target = CharacterFinder.find(bp.characters, getBelongTo().team, CharacterFinder.Property.ATTACK, CharacterFinder.Criteria.MAX);
         }
         lastUsedTarget = target;
+        Interactive interactive = getBelongTo().getHit(bp);
 
+        // 获得1层神力
         StateShenLi.addStack(getBelongTo(), 1);
+        // 并治疗友方目标生命上限8%的生命
+        Info heal = interactive.heal(privateName, target, 8);
+        // lv5 - 若治疗暴击,则额外提升该目标暴击伤害 **必须在治疗目标之后,治疗其他队友之前**
+        if (getLevel() == 5 && heal.getBaoJi()) {
+            target.addState(new StateCritPower(getBelongTo(), target));
+        }
+
+        int ShenLiStack = ((StateShenLi)getBelongTo().getState(StateShenLi.privateName)).getStack();
+
+        // 自身神力3层及以上时,额外治疗所选目标以外的友方生命上限8%的生命
+        if (ShenLiStack >= 3) {
+            List<Character> targets = CharacterFinder.findTeammate(getBelongTo(), bp.characters);
+            targets.remove(target);
+            interactive.heal(privateName, targets, 8);
+        }
+
+
     }
 }

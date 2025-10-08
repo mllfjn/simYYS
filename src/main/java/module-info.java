@@ -9,7 +9,6 @@ module com.mllfjn.simyys {
             org.testfx,
             org.testfx.junit5;
     opens com.mllfjn.simyys.starter to com.google.gson;
-    //opens com.mllfjn.simyys.character to com.google.gson;
     opens com.mllfjn.simyys.customnode to org.testfx.junit5;
 
 
@@ -26,9 +25,8 @@ module com.mllfjn.simyys {
     exports com.mllfjn.simyys.determinant;
     exports com.mllfjn.simyys.ratecontroller;
     exports com.mllfjn.simyys.character.propertygetter;
-    opens com.mllfjn.simyys.character.propertygetter to com.google.gson;
-    //opens com.mllfjn.simyys.character.skill to com.google.gson;
-    //opens com.mllfjn.simyys.trigger to com.google.gson, javafx.fxml, org.testfx, org.testfx.junit5;
-    //opens com.mllfjn.simyys.hit to com.google.gson, javafx.fxml, org.testfx, org.testfx.junit5;
+    opens com.mllfjn.simyys.character.propertygetter to com.google.gson, org.testfx.junit5;
+    exports com.mllfjn.simyys.utils;
+    opens com.mllfjn.simyys.utils to com.google.gson, javafx.fxml, org.testfx, org.testfx.junit5;
 
 }

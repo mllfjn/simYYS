@@ -1,5 +1,7 @@
 package com.mllfjn.simyys.character.propertygetter;
 
+import com.mllfjn.simyys.utils.Utils;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -9,6 +11,7 @@ import java.io.Serializable;
 
 public class PropertyInput extends PropertyRequire implements Serializable {
     private String value = "";
+    private transient SimpleStringProperty property;
     public PropertyInput setValue(String value) {
         this.value = value;
         return this;
@@ -16,10 +19,20 @@ public class PropertyInput extends PropertyRequire implements Serializable {
     public String getValue() {
         return value;
     }
+    public SimpleStringProperty getProperty() {
+        if (property == null) {
+            property = new SimpleStringProperty(value);
+            property.addListener((obs, old, val) -> value = val);
+        }
+        return property;
+    }
 
     @Override
     public boolean cover(PropertyRequire pr) {
         if (pr instanceof PropertyInput pi) {
+            if (property != null) {
+                property.set(pi.value);
+            }
             this.value = pi.value;
             return true;
         }
@@ -41,16 +54,12 @@ public class PropertyInput extends PropertyRequire implements Serializable {
 
     @Override
     public double getDouble() {
-        try {
-            return Double.parseDouble(value);
-        } catch (NumberFormatException e) {
-            return 0;
-        }
+        return Utils.parseDoubleOrDefault(value, 0.0);
     }
 
     @Override
     public int getInt() {
-        return Integer.parseInt(value);
+        return Utils.parseIntOrDefault(value, 0);
     }
 
     @Override

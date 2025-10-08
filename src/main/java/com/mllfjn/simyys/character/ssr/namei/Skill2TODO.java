@@ -4,12 +4,14 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
+import com.mllfjn.simyys.state.Flag;
 import com.mllfjn.simyys.state.State;
 
 import java.util.List;
 
 public class Skill2TODO extends Skill {
     public static final String privateName = "神赐之吻";
+    public static final String FLAG_HUI_MIE = "Flag-毁灭";
     private boolean useFront = false;
     public Skill2TODO(Character belongTo) {
         super(belongTo, 0, 2, 0);
@@ -25,16 +27,16 @@ public class Skill2TODO extends Skill {
         Character target = getTarget(bp);
         lastUsedTarget = target;
 
-        State state = getBelongTo().getState(StateFlagHuiMie.privateName);
+        State state = getBelongTo().getState(FLAG_HUI_MIE);
         if (state != null) {
             if (state.from != target) {
-                state.from.deleteState(StateHuiMieTODO.privateName);
+                state.delete();
             }
             state.delete();
         }
 
         target.addState(new StateHuiMieTODO(getBelongTo(), target, getLevel()));
-        getBelongTo().addState(new StateFlagHuiMie(target, getBelongTo()));
+        getBelongTo().addState(new Flag(target, getBelongTo(), FLAG_HUI_MIE));
     }
 
     private Character getTarget(BattlePane bp) {

@@ -8,13 +8,19 @@ import com.mllfjn.simyys.state.StateForm;
 import com.mllfjn.simyys.state.StateType;
 import com.mllfjn.simyys.trigger.Trigger;
 
-class StateFlagCombined extends State implements Runnable {
+class StateCombined extends State implements Runnable {
     public static final String privateName = "DaYuanCombined";
 
     public boolean increase = true;
+    private final StateShengTian shengTian;
 
-    public StateFlagCombined(Character from, Character belongTo) {
+    public StateCombined(Character from, Character belongTo, StateShengTian shengTian) {
         super(from, belongTo, StateType.SPECIAL, StateForm.SPECIAL);
+        this.shengTian = shengTian;
+    }
+
+    public void active() {
+        increase = true;
     }
 
     @Override
@@ -30,5 +36,7 @@ class StateFlagCombined extends State implements Runnable {
     @Override
     public void run(Trigger trigger, BattlePane bp) {
         from.increaseLocation(bp, belongTo, 30);
+        increase = false;
+        shengTian.active();
     }
 }

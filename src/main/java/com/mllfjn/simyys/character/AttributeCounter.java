@@ -18,9 +18,11 @@ public class AttributeCounter {
         double[] add = new double[zengShang.size()];
         for (State state : states) {
             if (state instanceof AttributeModifier a && a.isAffectAttribute(Attribute.ZENG_SHANG)) {
+
                 for (int i = 0; i < zengShang.size(); i++) {
                     if (zengShang.get(i).contains(state.name)) {
                         add[i] += a.getInfluence(Attribute.ZENG_SHANG);
+                        break;
                     }
                 }
             }

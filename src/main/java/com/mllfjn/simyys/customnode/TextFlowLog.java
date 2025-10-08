@@ -58,7 +58,6 @@ public class TextFlowLog extends ScrollPane {
 
     public void addText(String s, TextType type, TextColor textColor, FontSize fontSize) {
         CustomText text = new CustomText(s, type, textColor, fontSize);
-        text.setFill(textColor.color);
 
         addText(text);
     }

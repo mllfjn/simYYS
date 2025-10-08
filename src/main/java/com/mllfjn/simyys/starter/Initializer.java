@@ -1,12 +1,11 @@
 package com.mllfjn.simyys.starter;
 
 import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.Utils;
+import com.mllfjn.simyys.utils.Utils;
 import com.mllfjn.simyys.character.CharacterFactory;
 import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
 import com.mllfjn.simyys.character.propertygetter.PropertiesMap;
 import com.mllfjn.simyys.character.propertygetter.PropertyRequire;
-import com.mllfjn.simyys.character.propertygetter.SerializableHolder;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -31,8 +30,8 @@ public class Initializer {
 
         getController(stage, scene, borderPane);
 
-        ListView<PropertiesHolder> lvList = new ListView<>();
-        lvList.setItems(items);
+        CustomTableView customTableView = new CustomTableView();
+        customTableView.setItems(items);
 
         Button btnAdd = new Button("添加角色");
         Button btnDelete = new Button("删除角色");
@@ -45,35 +44,35 @@ public class Initializer {
         btnMoveUp.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         btnMoveDown.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
-        btnAdd.setOnAction(e -> addCharacter(stage, items));
+        btnAdd.setOnAction(e -> addCharacter(stage));
         btnDelete.setOnAction(e -> {
-            int index = lvList.getSelectionModel().getSelectedIndex();
+            int index = customTableView.getSelectionModel().getSelectedIndex();
             if (index >= 0 && index < items.size()) {
                 items.remove(index);
                 if (index < items.size()) {
-                    lvList.getSelectionModel().select(index);
+                    customTableView.getSelectionModel().select(index);
                 }
             }
         });
         btnModify.setOnAction(e -> {
-            PropertiesHolder item = lvList.getSelectionModel().getSelectedItem();
+            PropertiesHolder item = customTableView.getSelectionModel().getSelectedItem();
             if (item != null) {
                 item.show(stage);
-                lvList.refresh();
+                customTableView.refresh();
             }
         });
         btnMoveUp.setOnAction(e -> {
-            int index = lvList.getSelectionModel().getSelectedIndex();
+            int index = customTableView.getSelectionModel().getSelectedIndex();
             if (index > 0 && index < items.size()) {
                 items.add(index - 1, items.remove(index));
-                lvList.getSelectionModel().select(index - 1);
+                customTableView.getSelectionModel().select(index - 1);
             }
         });
         btnMoveDown.setOnAction(e -> {
-            int index = lvList.getSelectionModel().getSelectedIndex();
+            int index = customTableView.getSelectionModel().getSelectedIndex();
             if (index < items.size() - 1 && index >= 0) {
                 items.add(index + 1, items.remove(index));
-                lvList.getSelectionModel().select(index + 1);
+                customTableView.getSelectionModel().select(index + 1);
             }
         });
 
@@ -81,7 +80,7 @@ public class Initializer {
         tp.setVgap(20);
         tp.setPadding(new Insets(20, 10, 20, 10));
 
-        borderPane.setCenter(lvList);
+        borderPane.setCenter(customTableView);
         borderPane.setRight(tp);
 
         stage.setScene(scene);
@@ -91,7 +90,7 @@ public class Initializer {
         stage.show();
     }
 
-    private void addCharacter(Stage owner, ObservableList<PropertiesHolder> items) {
+    private void addCharacter(Stage owner) {
         Stage stageSelect = new Stage();
         GridPane gp = new GridPane();
         gp.setPadding(new Insets(20));
@@ -106,7 +105,7 @@ public class Initializer {
                 Button btn = new Button(name);
                 btn.setPrefWidth(100);
                 btn.setOnAction(event-> {
-                    PropertiesHolder propertiesHolder = new PropertiesHolder(name, CharacterFactory.getProperties(name));
+                    PropertiesHolder propertiesHolder = new PropertiesHolder(name, CharacterFactory.getProperties(name), new LinkedHashMap<>());
                     propertiesHolder.show(stageSelect);
                     items.add(propertiesHolder);
                 });
@@ -150,7 +149,6 @@ public class Initializer {
         }
         fileChooser.setInitialDirectory(directory);
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("队伍预设", "*.team"));
-//        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("队伍预设", "*.json"));
 
         File file = fileChooser.showOpenDialog(stage);
         if (file != null) {
@@ -169,35 +167,35 @@ public class Initializer {
 
             StringJoiner sj = new StringJoiner("\n");
             for (PropertiesHolder item : readItems) {
-                PropertiesMap currentProperties = CharacterFactory.getProperties(item.name());
+                PropertiesMap currentProperties = CharacterFactory.getProperties(item.name);
 
                 if (currentProperties == null) {
-                    sj.add(item.name() + "角色不存在");
+                    sj.add(item.name + "角色不存在");
                     continue;
                 }
 
                 for (Map.Entry<String, PropertyRequire> entry : currentProperties.entrySet()) {
                     String key = entry.getKey();
-                    PropertyRequire require = item.map().remove(key);
+                    PropertyRequire require = item.map.remove(key);
                     if (require == null) {
-                        sj.add(item.name() + "新增属性：" + entry.getKey());
+                        sj.add(item.name + "新增属性：" + entry.getKey());
                         continue;
                     }
 
                     if (!entry.getValue().cover(require)) {
-                        sj.add(item.name() + "属性：" + entry.getKey() + "发生变更");
+                        sj.add(item.name + "属性：" + entry.getKey() + "发生变更");
                     }
 
                 }
-                if (!item.map().isEmpty()) {
-                    sj.add(item.name() + "的预设中含有当前不存在的属性");
+                if (!item.map.isEmpty()) {
+                    sj.add(item.name + "的预设中含有当前不存在的属性");
                 }
-                items.add(new PropertiesHolder(item.name(), currentProperties));
+                items.add(new PropertiesHolder(item.name, currentProperties, item.lockSKill));
             }
 
             String message = sj.toString();
             if (!message.isEmpty()) {
-                Utils.information("部分式神或属性发生变更，请检查");
+                Utils.information("部分式神或属性发生变更，请检查：\n" + message);
             }
 
             /*try (
@@ -247,23 +245,16 @@ public class Initializer {
             }
 
         }
-
-        /*if (file != null) {
-            try (   // 使用 FileOutputStream 打开文件
-                    FileOutputStream fos = new FileOutputStream(file);
-                    // 创建 OutputStreamWriter，并指定 UTF-8 编码
-                    OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
-                    // 创建 BufferedWriter 来写入文本
-                    BufferedWriter writer = new BufferedWriter(osw)) {
-                writer.write(json);
-            } catch (IOException ignored) {
-
-            }
-        }*/
-
     }
 
     public interface Back {
         void back();
+    }
+
+    public static class SerializableHolder implements Serializable {
+        public final List<PropertiesHolder> list;
+        public SerializableHolder(ObservableList<PropertiesHolder> items) {
+            this.list = new ArrayList<>(items);
+        }
     }
 }

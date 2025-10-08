@@ -5,13 +5,15 @@ import com.mllfjn.simyys.character.propertygetter.PropertiesMap;
 import com.mllfjn.simyys.character.propertygetter.PropertyInput;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.yys.PropertyYYS;
-import javafx.collections.ObservableList;
+
+import java.util.List;
 
 public class ShenLe extends Character {
     public static final String privateName = "神乐";
     private static final String SKILL1_KEY = "普攻·伞击等级";
     private static final String SKILL_JF_KEY = "通灵·疾风等级";
     private int skill1Level;
+    private int skillJiFengLevel;
     public ShenLe() {
 
     }
@@ -21,7 +23,7 @@ public class ShenLe extends Character {
         PropertiesMap map = super.getProperties();
 
         map.put(SKILL1_KEY, new PropertyInput().setValue("5"));
-        map.put(SKILL_JF_KEY, new PropertyInput().setValue("5"));
+//        map.put(SKILL_JF_KEY, new PropertyInput().setValue("5"));
         PropertyYYS.changeDefaultProperty(map);
 
         return map;
@@ -31,11 +33,12 @@ public class ShenLe extends Character {
     public void init(PropertiesMap properties) {
         super.init(properties);
         skill1Level = properties.get(SKILL1_KEY).getInt();
-        properties.get(SKILL_JF_KEY).getInt();
+//        skillJiFengLevel = properties.get(SKILL_JF_KEY).getInt();
     }
 
     @Override
-    public void addSkill(ObservableList<Skill> skills) {
+    public void addSkills() {
+        super.addSkills();
         skills.add(new SkillPuGong(this, skill1Level));
     }
 }

@@ -5,8 +5,8 @@ import javafx.scene.control.Label;
 import java.text.DecimalFormat;
 
 public class TotalRateCalc extends Label{
-    private double currentRate = 1;
     private final DecimalFormat df = new DecimalFormat("0.00#%");
+    private double currentRate = 1;
     public TotalRateCalc() {
         super();
     }

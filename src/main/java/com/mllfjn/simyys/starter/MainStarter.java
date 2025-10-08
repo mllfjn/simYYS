@@ -8,7 +8,4 @@ public class MainStarter extends Application {
     public void start(Stage stage) {
         new Initializer(stage);
     }
-    public static void main(String[] args) {
-        launch();
-    }
 }

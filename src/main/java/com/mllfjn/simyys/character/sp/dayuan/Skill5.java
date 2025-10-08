@@ -22,6 +22,6 @@ class Skill5 extends SkillJieYuan {
 
     @Override
     void jieYuan(Character target) {
-        target.addState(new StateSTChiTODO(target, getBelongTo()));
+        target.addState(new StateSTChiTODO(getBelongTo(), target));
     }
 }

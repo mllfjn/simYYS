@@ -3,6 +3,7 @@ package com.mllfjn.simyys.character;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.state.Displayable;
 import com.mllfjn.simyys.state.State;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
@@ -33,15 +34,18 @@ public class CharacterIcon extends VBox {
         Pane image = CharacterFactory.getImageByName(character.name, CharacterFactory.ImageSize.LARGE, Color.ORANGE, 5);
         image.setOnMouseClicked(event -> onClickListener.onClick(this.character));
 
-        skillBox = new ComboBox<>(character.getSkills());
+        ObservableList<Skill> skills = character.getSkills();
+        skillBox = new ComboBox<>(skills);
+        skills.stream()
+                .filter(skill -> skill.getSkillID() == character.getLockSkill())
+                .findFirst()
+                .ifPresentOrElse(
+                        skill -> skillBox.getSelectionModel().select(skill),
+                        () -> skillBox.getSelectionModel().select(0)
+                );
+
         skillBox.valueProperty().addListener((obs, old, val) -> character.setLockSkill(val.getSkillID()));
-        for (Skill skill : skillBox.getItems()) {
-            if (skill.getSkillID() == character.getLockSkill()) {
-                skillBox.getSelectionModel().select(skill);
-            }
-            skillBox.getSelectionModel().select(character.getLockSkill());
-        }
-        
+
         healthBar.setMaxWidth(Double.MAX_VALUE);
         skillBox.setMaxWidth(Double.MAX_VALUE);
         stateLabel.setMaxWidth(Double.MAX_VALUE);
@@ -60,7 +64,7 @@ public class CharacterIcon extends VBox {
 
 
         this.getChildren().addAll(
-                this.stateLabel ,
+                this.stateLabel,
                 this.healthBar,
                 image,
                 this.skillBox
@@ -76,7 +80,7 @@ public class CharacterIcon extends VBox {
 
     public void update() {
         info[0].setText("攻击:" + String.format("%.2f", character.getAttack()));
-        info[1].setText("生命:" + String.format("%.2f(%.2f%%)", character.getHp(), character.getHp()/ character.getMaxHp() * 100));
+        info[1].setText("生命:" + String.format("%.2f(%.2f%%)", character.getHp(), character.getHp() / character.getMaxHp() * 100));
         info[2].setText("防御:" + String.format("%.2f", character.getDefense()));
         info[3].setText("速度:" + String.format("%.2f", character.getSpeed()));
         info[4].setText("暴击:" + String.format("%.2f", character.getCritRate()));
@@ -84,7 +88,7 @@ public class CharacterIcon extends VBox {
         info[6].setText("命中:" + String.format("%.2f", character.getEffectHitRate()));
         info[7].setText("抵抗:" + String.format("%.2f", character.getEffectResistRate()));
 
-        this.healthBar.setProgress(character.getHp() / character.getMaxHp() );
+        this.healthBar.setProgress(character.getHp() / character.getMaxHp());
 
         updateState();
     }
@@ -103,6 +107,7 @@ public class CharacterIcon extends VBox {
     public interface OnClickListener {
         void onClick(Character character);
     }
+
     public void setIsAuto(boolean visible) {
         autoTo.setVisible(visible);
     }

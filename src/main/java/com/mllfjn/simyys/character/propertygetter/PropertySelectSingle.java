@@ -1,6 +1,5 @@
 package com.mllfjn.simyys.character.propertygetter;
 
-import com.mllfjn.simyys.customnode.StringGroup;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -18,10 +17,6 @@ public class PropertySelectSingle  extends PropertyRequire implements Serializab
     private String value;
     public PropertySelectSingle(StringGroup[] options) {
         this.options = options;
-    }
-
-    public PropertySelectSingle(StringGroup options) {
-        this.options = new StringGroup[]{options};
     }
 
     @Override
@@ -47,6 +42,9 @@ public class PropertySelectSingle  extends PropertyRequire implements Serializab
     public boolean cover(PropertyRequire pr) {
         if (pr instanceof PropertySelectSingle ps) {
             String newValue = ps.value;
+            if (newValue == null) {
+                return true;
+            }
             for (StringGroup group : options) {
                 for (String s : group.values()) {
                     if (newValue.equals(s)) {

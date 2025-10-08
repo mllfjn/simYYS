@@ -26,7 +26,7 @@ tasks.withType(JavaCompile).configureEach {
 
 application {
     mainModule = 'com.mllfjn.simyys'
-    mainClass = 'com.mllfjn.simyys.MainStarter'
+    mainClass = 'com.mllfjn.simyys.starter.Launcher'
 }
 
 javafx {

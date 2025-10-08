@@ -1,6 +1,5 @@
 package com.mllfjn.simyys.character.propertygetter;
 
-import com.mllfjn.simyys.customnode.StringGroup;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -20,9 +19,6 @@ public class PropertySelectMulti  extends PropertyRequire implements Serializabl
     private final StringGroup[] options;
     public PropertySelectMulti(StringGroup[] options) {
         this.options = options;
-    }
-    public PropertySelectMulti(StringGroup options) {
-        this.options = new StringGroup[]{options};
     }
 
     @Override

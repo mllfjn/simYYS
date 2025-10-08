@@ -11,8 +11,15 @@ import com.mllfjn.simyys.trigger.Trigger;
 
 abstract class StateShengTian extends State implements ForbidDecrease, Runnable {
     public boolean increase = true;
+    private final StateCombined combined;
     public StateShengTian(Character from, Character belongTo) {
         super(from, belongTo, StateType.SPECIAL, StateForm.SPECIAL);
+        combined = new StateCombined(belongTo, from, this);
+        from.addState(combined);
+    }
+
+    public void active() {
+        increase = true;
     }
 
     @Override
@@ -24,5 +31,6 @@ abstract class StateShengTian extends State implements ForbidDecrease, Runnable 
     public void run(Trigger trigger, BattlePane bp) {
         from.increaseLocation(bp, belongTo, 30);
         increase = false;
+        combined.active();
     }
 }

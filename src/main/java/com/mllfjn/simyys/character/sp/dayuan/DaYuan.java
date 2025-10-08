@@ -6,7 +6,8 @@ import com.mllfjn.simyys.character.PropertyKey;
 import com.mllfjn.simyys.character.propertygetter.PropertiesMap;
 import com.mllfjn.simyys.character.propertygetter.PropertyInput;
 import com.mllfjn.simyys.character.skill.Skill;
-import javafx.collections.ObservableList;
+
+import java.util.List;
 
 public class DaYuan extends Character {
     public static final String privateName = "纺愿缘结神";
@@ -42,7 +43,8 @@ public class DaYuan extends Character {
     }
 
     @Override
-    public void addSkill(ObservableList<Skill> skills) {
+    public void addSkills() {
+        super.addSkills();
         skills.add(new Skill1(this, skill1Level));
         skills.add(new Skill2TODO(this));
         skills.add(new Skill3TODO(this, skill3Level));

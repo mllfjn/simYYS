@@ -4,7 +4,6 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
-import com.mllfjn.simyys.state.State;
 
 import java.util.List;
 
@@ -15,7 +14,7 @@ abstract class SkillJieYuan extends Skill {
 
     @Override
     public boolean canUse(BattlePane bp) {
-        return super.canUse(bp) && getBelongTo().getState(StateFlagCombined.privateName) == null && getTarget(bp) != null;
+        return super.canUse(bp) && getBelongTo().getState(StateCombined.privateName) == null && getTarget(bp) != null;
     }
 
     public Character getTarget(BattlePane bp) {
@@ -28,9 +27,10 @@ abstract class SkillJieYuan extends Skill {
     public void usePrivate(BattlePane bp) {
         Character target = getTarget(bp);
         lastUsedTarget = target;
-        jieYuan(target);
-        getBelongTo().addState(new StateFlagCombined(target, getBelongTo()));
+        // 2层神力
         StateShenLi.addStack(getBelongTo(), 2);
+        jieYuan(target);
+//        getBelongTo().addState(new StateCombined(target, getBelongTo()));
     }
 
     abstract void jieYuan(Character target);

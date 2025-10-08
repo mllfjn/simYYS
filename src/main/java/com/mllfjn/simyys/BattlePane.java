@@ -9,6 +9,7 @@ import com.mllfjn.simyys.guihuo.GuiHuo;
 import com.mllfjn.simyys.ratecontroller.TotalRateCalc;
 import com.mllfjn.simyys.starter.Initializer;
 import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
+import com.mllfjn.simyys.utils.Utils;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -168,7 +169,11 @@ public class BattlePane {
 
         CustomTextField round = new CustomTextField();
         Button skip = new Button("跳过回合");
-        skip.setOnAction(event -> skip(Integer.parseInt(round.getText())));
+        skip.setOnAction(event -> {
+            for (int i = 0; i < Utils.parseIntOrDefault(round.getText(), 0); i++) {
+                next();
+            }
+        });
 
         round.setPrefSize(100, 25);
         skip.setPrefSize(100, 25);
@@ -203,7 +208,7 @@ public class BattlePane {
 
     private void init() {
         for (PropertiesHolder holder : list) {
-            int team = holder.map().get(PropertyKey.GENERAL_TEAM_KEY).getInt();
+            int team = holder.map.get(PropertyKey.GENERAL_TEAM_KEY).getInt();
             if (team == 0 || team == 1) {
                 Character character = CharacterFactory.getCharacter(holder);
                 if (character != null) {
@@ -382,12 +387,6 @@ public class BattlePane {
         next.setLocation(0);
         next.timesToAct++;
         next.beforeRound(this);
-    }
-
-    private void skip(int round) {
-        for (int i = 0; i < round; i++) {
-            next();
-        }
     }
 
     public void removeCharacter(Character character) {
