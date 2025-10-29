@@ -3,6 +3,7 @@ package com.mllfjn.simyys.character.propertygetter;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
+import javafx.stage.Window;
 
 import java.io.Serializable;
 
@@ -36,23 +37,33 @@ public class PropertyCheck extends PropertyRequire implements Serializable {
     }
 
     @Override
-    public Node getNode(String desc) {
+    public boolean getBoolean() {
+        return value;
+    }
+
+    @Override
+    public Node getNode(String desc, Window owner) {
         CheckBox node = new CheckBox(desc);
         node.setMnemonicParsing(false);
         if (value) {
             node.setSelected(true);
         }
-        node.selectedProperty().addListener((obs, old, val) -> value = val);
+        node.selectedProperty().addListener((obs, old, val) -> {
+            value = val;
+            if (property != null) {
+                property.set(val);
+            }
+        });
 
         return node;
     }
 
-    @Override
+    /*@Override
     public void toString(StringBuilder sb) {
         if (value) {
             sb.append("是");
         } else {
             sb.append("否");
         }
-    }
+    }*/
 }

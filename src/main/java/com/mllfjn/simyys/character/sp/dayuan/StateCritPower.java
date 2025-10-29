@@ -4,7 +4,7 @@ import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.state.*;
 
-public class StateCritPower extends State implements AttributeModifier {
+class StateCritPower extends State implements AttributeModifier {
     public static final String privateName = "大缘加爆伤";
     // 防止爆伤来源为大缘自身时递归计算
     private boolean counting;

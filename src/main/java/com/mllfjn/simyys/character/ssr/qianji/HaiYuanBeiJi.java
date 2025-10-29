@@ -2,10 +2,6 @@ package com.mllfjn.simyys.character.ssr.qianji;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.character.skill.Skill;
-import javafx.collections.ObservableList;
-
-import java.util.List;
 
 public class HaiYuanBeiJi extends Character {
     QianJi qianJi;
@@ -18,8 +14,8 @@ public class HaiYuanBeiJi extends Character {
     }
 
     @Override
-    public void beForeDie(BattlePane bp) {
-        super.beForeDie(bp);
+    public void die(BattlePane bp) {
+        super.die(bp);
         qianJi.setHavePutDown(false);
     }
 }

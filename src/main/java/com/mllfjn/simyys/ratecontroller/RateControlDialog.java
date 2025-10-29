@@ -6,25 +6,23 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.text.DecimalFormat;
 import java.util.List;
-import java.util.Map;
 
 class RateControlDialog extends Stage {
     private final ReturnSelector[] selectors;
-    private final List<Character> list;
     private final Return[] result;
     private final boolean[] tbd;
     private final TotalRateCalc calc;
     private final Label rateLabel = new Label("当前概率：100.00%");
+    private static final DecimalFormat df = new DecimalFormat("0.00##%");
+
 
     RateControlDialog(String title, String event, List<Character> list, boolean[] tbd, double[] rates, Return[] result, int length, TotalRateCalc calc) {
         super();
-        this.list = list;
         this.result = result;
         this.tbd = tbd;
         this.calc = calc;
@@ -40,11 +38,6 @@ class RateControlDialog extends Stage {
                 selectors[i] = new ReturnSelector(root, i, list.get(i).name, rates[i], event, this::countCurrentRate);
             }
         }
-        /*int i = 0;
-        for (Character character : map.keySet()) {
-            selectors[i] = new ReturnSelector(root, i, character.name, rates[map.get(character)], event, this::countCurrentRate);
-            i++;
-        }*/
         Button button = new Button("确定");
         button.setOnAction( eventHandler -> {
             handlerReturn();
@@ -83,7 +76,6 @@ class RateControlDialog extends Stage {
             currentRate *= selector.getCurrentRate();
         }
 
-        DecimalFormat df = new DecimalFormat("0.00#%");
         rateLabel.setText("当前概率：" + df.format(currentRate));
 
         return currentRate;

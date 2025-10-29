@@ -8,7 +8,6 @@ import com.mllfjn.simyys.customnode.TextFlowLog;
 import com.mllfjn.simyys.ratecontroller.RateController;
 
 import java.util.*;
-import java.util.function.Function;
 
 public class Interactive {
     private final BattlePane bp;
@@ -30,10 +29,6 @@ public class Interactive {
         });
 
         currentNumberLog = new HashMap<>();
-    }
-
-    public void increase() {
-
     }
 
     private List<CustomText> createNumberRecord(String s) {
@@ -60,31 +55,20 @@ public class Interactive {
             return null;
         }
 
-        Info info = getDamage(target, multiplier, attackType, baoJi);
-        currentNumberLog.computeIfAbsent(target, k -> createNumberRecord(target.name))
-                .add(new CustomText(info.getTraceableNumber().getNumber() + " "
-                        , info.getTraceableNumber().getTrace()
-                        , type, baoJi ? TextFlowLog.TextColor.CRITICAL : TextFlowLog.TextColor.ATTACK, size));
-
-
-        return info;
-    }
-
-    private Info getDamage(Character target, int multiplier, AttackType attackType, boolean baoJi) {
-        TraceableNumber traceableNumber = new TraceableNumber();
-        Info info = new Info(traceableNumber);
+        Info info = new Info();
+        TraceableNumber traceableNumber = info.getTraceableNumber();
 
         // 基础伤害
         traceableNumber.add(owner.getAttack(), "攻击力");
+
+        // 技能系数
+        traceableNumber.mul(0.01 * multiplier, "技能系数");
 
         // 暴击
         if (baoJi) {
             traceableNumber.mul(owner.getCritPower() * 0.01, "爆伤");
             info.setBaoJi();
         }
-
-        // 技能系数
-        traceableNumber.mul(0.01 * multiplier, "技能系数");
 
         // 防御
         traceableNumber.mul(300.0 / (300 + target.getDefense()), "防御");
@@ -94,6 +78,14 @@ public class Interactive {
 
         // 盾
 //        traceableNumber.sub();
+
+        target.beHurt(bp, info);
+
+        currentNumberLog.computeIfAbsent(target, k -> createNumberRecord(target.name))
+                .add(new CustomText(traceableNumber.getNumberString() + " "
+                        , traceableNumber.getTrace()
+                        , type, baoJi ? TextFlowLog.TextColor.CRITICAL : TextFlowLog.TextColor.ATTACK, size));
+
 
         return info;
     }
@@ -114,11 +106,14 @@ public class Interactive {
             return null;
         }
 
-        TraceableNumber traceableNumber = new TraceableNumber();
-        Info info = new Info(traceableNumber);
+        Info info = new Info();
+        TraceableNumber traceableNumber = info.getTraceableNumber();
 
         // 基础数值
         traceableNumber.add(owner.getMaxHp(), "生命上限");
+
+        // 技能系数
+        traceableNumber.mul(0.01 * multiplier, "技能系数");
 
         // 暴击
         if (baoJi) {
@@ -126,15 +121,28 @@ public class Interactive {
             info.setBaoJi();
         }
 
-        // 技能系数
-        traceableNumber.mul(0.01 * multiplier, "技能系数");
+        target.beHeal(bp, info);
 
         currentNumberLog.computeIfAbsent(target, k -> createNumberRecord(target.name))
-                .add(new CustomText(info.getTraceableNumber().getNumber() + " "
-                        , info.getTraceableNumber().getTrace()
+                .add(new CustomText(traceableNumber.getNumberString() + " "
+                        , traceableNumber.getTrace()
                         , type, TextFlowLog.TextColor.HEAL, size));
 
         return info;
+    }
+
+    public void recovery(Character target, double num) {
+        Info info = new Info();
+        TraceableNumber traceableNumber = info.getTraceableNumber();
+
+        traceableNumber.add(num, "恢复数值");
+
+        target.recovery(num);
+
+        currentNumberLog.computeIfAbsent(target, k -> createNumberRecord(target.name))
+                .add(new CustomText(traceableNumber.getNumberString() + " "
+                , traceableNumber.getTrace()
+                , type, TextFlowLog.TextColor.HEAL, size));
     }
 
     public void effect(String stateName, List<Character> targets, int base, StateSupplier stateSupplier) {

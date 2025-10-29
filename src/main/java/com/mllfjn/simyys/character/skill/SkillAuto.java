@@ -6,12 +6,7 @@ import com.mllfjn.simyys.character.Character;
 public class SkillAuto extends Skill{
     public static final SkillAuto INSTANCE = new SkillAuto();
     private SkillAuto() {
-        super(null, 0, 0, 0);
-    }
-
-    @Override
-    public int getSkillID() {
-        return 0;
+        super(null, 0, 0, 0, 0);
     }
 
     @Override

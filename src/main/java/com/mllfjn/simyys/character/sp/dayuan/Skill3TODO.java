@@ -13,12 +13,7 @@ class Skill3TODO extends Skill {
     public static final String privateName = "与世结缘";
 
     public Skill3TODO(Character belongTo, int level) {
-        super(belongTo, level, 2, 0);
-    }
-
-    @Override
-    public int getSkillID() {
-        return 3;
+        super(belongTo, level, 2, 0, 3);
     }
 
     @Override
@@ -38,7 +33,7 @@ class Skill3TODO extends Skill {
             target = CharacterFinder.find(bp.characters, getBelongTo().team, CharacterFinder.Property.ATTACK, CharacterFinder.Criteria.MAX);
         }
         lastUsedTarget = target;
-        Interactive interactive = getBelongTo().getHit(bp);
+        Interactive interactive = getBelongTo().getInteractive(bp);
 
         // 获得1层神力
         StateShenLi.addStack(getBelongTo(), 1);

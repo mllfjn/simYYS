@@ -9,7 +9,7 @@ public class TraceableNumber {
     private final StringBuilder trace = new StringBuilder();
 
     public TraceableNumber() {
-        trace.append("数据来源：");
+        trace.append("计算过程：");
     }
 
     public void add(double num, String desc) {
@@ -27,17 +27,21 @@ public class TraceableNumber {
         append("*", num, desc);
     }
 
-//    public void div(double num, String desc) {
-//        number /= num;
-//        trace.append("/").append(num).append("(").append(desc).append(")");
-//    }
-
     private void append(String op, double num, String desc) {
+        // op .2f (desc)
         trace.append(op).append(df.format(num)).append("(").append(desc).append(")");
     }
 
-    public String getNumber() {
+    public void addTrace(String s) {
+        trace.append(s);
+    }
+
+    public String getNumberString() {
         return df.format(number);
+    }
+
+    public double getNumber() {
+        return number;
     }
 
     public String getTrace() {

@@ -1,8 +1,8 @@
-package com.mllfjn.simyys.determinant;
+package com.mllfjn.simyys.state.determinant;
 
 import com.mllfjn.simyys.character.Character;
 
-public interface ForbidIncrease {
+public interface IgnoreActionIncrease {
     default boolean effective(Character from) {
         return true;
     }

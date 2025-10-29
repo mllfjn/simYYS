@@ -1,13 +1,13 @@
 package com.mllfjn.simyys.starter;
 
 import com.mllfjn.simyys.BattlePane;
+import com.mllfjn.simyys.collections.SerializableObservableList;
 import com.mllfjn.simyys.utils.Utils;
 import com.mllfjn.simyys.character.CharacterFactory;
 import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
 import com.mllfjn.simyys.character.propertygetter.PropertiesMap;
 import com.mllfjn.simyys.character.propertygetter.PropertyRequire;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -20,18 +20,18 @@ import javafx.stage.Stage;
 import java.io.*;
 import java.util.*;
 
-public class Initializer {
-    private final ObservableList<PropertiesHolder> items = FXCollections.observableArrayList();
-    public Initializer(Stage stage) {
-        final int width = 1600;
-        final int height = 900;
+public class Initializer extends Application {
+    private final SerializableObservableList<PropertiesHolder> items = new SerializableObservableList<>();
+
+    @Override
+    public void start(Stage stage) throws Exception {
         BorderPane borderPane = new BorderPane();
         Scene scene = new Scene(borderPane);
 
         getController(stage, scene, borderPane);
 
         CustomTableView customTableView = new CustomTableView();
-        customTableView.setItems(items);
+        customTableView.setItems(items.getObservableList());
 
         Button btnAdd = new Button("添加角色");
         Button btnDelete = new Button("删除角色");
@@ -84,8 +84,8 @@ public class Initializer {
         borderPane.setRight(tp);
 
         stage.setScene(scene);
-        stage.setWidth(width);
-        stage.setHeight(height);
+        stage.setWidth(1600);
+        stage.setHeight(900);
         stage.setTitle("配置式神");
         stage.show();
     }
@@ -104,7 +104,7 @@ public class Initializer {
             for (String name : CharacterFactory.characterMap.get(label).keySet()) {
                 Button btn = new Button(name);
                 btn.setPrefWidth(100);
-                btn.setOnAction(event-> {
+                btn.setOnAction(event -> {
                     PropertiesHolder propertiesHolder = new PropertiesHolder(name, CharacterFactory.getProperties(name), new LinkedHashMap<>());
                     propertiesHolder.show(stageSelect);
                     items.add(propertiesHolder);
@@ -141,24 +141,25 @@ public class Initializer {
         borderPane.setTop(controlPane);
     }
 
+    @SuppressWarnings("unchecked")
     private void loadData(Stage stage) {
         FileChooser fileChooser = new FileChooser();
         File directory = new File("save");
-        if (!directory.exists()) {
-            directory.mkdir();
+        if (!directory.exists() && !directory.mkdir()) {
+            Utils.information("创建目录失败");
         }
         fileChooser.setInitialDirectory(directory);
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("队伍预设", "*.team"));
 
         File file = fileChooser.showOpenDialog(stage);
         if (file != null) {
-            List<PropertiesHolder> readItems = null;
+            SerializableObservableList<PropertiesHolder> readItems = null;
             try (FileInputStream fis = new FileInputStream(file);
                  ObjectInputStream ois = new ObjectInputStream(fis)
             ) {
-                readItems = ((SerializableHolder)ois.readObject()).list;
+                readItems = (SerializableObservableList<PropertiesHolder>) ois.readObject();
             } catch (Exception e) {
-                Utils.throwException("读取时出错", e);
+                Utils.throwException("读取文件时出错", e);
             }
 
             if (readItems == null) {
@@ -222,12 +223,13 @@ public class Initializer {
             }*/
         }
     }
+
     private void saveDate(Stage stage) {
 
         FileChooser fileChooser = new FileChooser();
         File directory = new File("save");
-        if (!directory.exists()) {
-            directory.mkdir();
+        if (!directory.exists() && !directory.mkdir()) {
+            Utils.information("创建目录失败");
         }
         fileChooser.setInitialDirectory(directory);
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("队伍预设", "*.team"));
@@ -239,7 +241,7 @@ public class Initializer {
                     FileOutputStream fos = new FileOutputStream(file);
                     ObjectOutputStream oos = new ObjectOutputStream(fos)
             ) {
-                oos.writeObject(new SerializableHolder(items));
+                oos.writeObject(items);
             } catch (Exception e) {
                 Utils.throwException("保存时出错", e);
             }
@@ -249,12 +251,5 @@ public class Initializer {
 
     public interface Back {
         void back();
-    }
-
-    public static class SerializableHolder implements Serializable {
-        public final List<PropertiesHolder> list;
-        public SerializableHolder(ObservableList<PropertiesHolder> items) {
-            this.list = new ArrayList<>(items);
-        }
     }
 }

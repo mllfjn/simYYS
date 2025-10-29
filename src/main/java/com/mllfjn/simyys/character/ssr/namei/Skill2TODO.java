@@ -9,12 +9,12 @@ import com.mllfjn.simyys.state.State;
 
 import java.util.List;
 
-public class Skill2TODO extends Skill {
+class Skill2TODO extends Skill {
     public static final String privateName = "神赐之吻";
     public static final String FLAG_HUI_MIE = "Flag-毁灭";
     private boolean useFront = false;
     public Skill2TODO(Character belongTo) {
-        super(belongTo, 0, 2, 0);
+        super(belongTo, 0, 2, 0, 2);
     }
 
     public void useFront(BattlePane bp) {
@@ -48,11 +48,6 @@ public class Skill2TODO extends Skill {
         } else {
             return CharacterFinder.findPriorAuto(teammates, bp, getBelongTo().team, CharacterFinder.Property.ATTACK, CharacterFinder.Criteria.MAX);
         }
-    }
-
-    @Override
-    public int getSkillID() {
-        return 2;
     }
 
     @Override

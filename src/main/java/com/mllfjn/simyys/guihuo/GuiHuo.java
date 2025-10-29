@@ -24,16 +24,15 @@ public class GuiHuo implements Serializable {
         progress++;
         if (progress == 5) {
             progress = 0;
-            addGuiHuo(increment);
+            gainGuiHuo(increment);
             if (increment < 5) {
                 increment++;
             }
         }
     }
 
-    public void addGuiHuo(int num) {
-        now += num;
-        now = Math.min(now, max);
+    public void gainGuiHuo(int num) {
+        now = Math.min(now + num, max);
     }
 
     public void setMax(int num) {

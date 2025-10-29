@@ -6,21 +6,23 @@ import com.mllfjn.simyys.character.Character;
 import java.io.Serializable;
 
 public abstract class Skill implements Serializable {
-    public final String[] SKILL_LABEL = new String[]{"普攻", "贰", "叁", "肆", "伍", "陆", "柒", "捌", "玖", "拾"};
+    public static final String[] SKILL_LABEL = new String[]{"普攻", "贰", "叁", "肆", "伍", "陆", "柒", "捌", "玖", "拾"};
     private final Character belongTo;
     private final int level;
-    public Character lastUsedTarget;
-    private final int cost;
     private final int coolDown;
+    private final int skillID;
+    private int cost;
     private int cooling;
+    public Character lastUsedTarget;
 
-    public Skill(Character belongTo, int level, int cost, int coolDown) {
+    public Skill(Character belongTo, int level, int cost, int coolDown, int skillID) {
         this.belongTo = belongTo;
         this.level = level;
         this.cost = cost;
         this.coolDown = coolDown;
+        this.skillID = skillID;
     }
-    public abstract int getSkillID();
+//    public abstract int getSkillID();
     public abstract String getName();
     public boolean tryUse(BattlePane bp) {
         if (canUse(bp)) {
@@ -31,6 +33,14 @@ public abstract class Skill implements Serializable {
     }
     public void use(BattlePane bp) {
         useBase(bp, true);
+    }
+
+    protected void setCost(int num) {
+        cost = num;
+    }
+
+    protected int getCost() {
+        return cost;
     }
 
     public void useWithoutCost(BattlePane bp) {
@@ -52,7 +62,7 @@ public abstract class Skill implements Serializable {
         sb.append("使用了").append(getName());
         bp.log.addSkill(sb.toString());
 
-        getBelongTo().getHit(bp).skillDone();
+        getBelongTo().getInteractive(bp).skillDone();
     }
     public abstract void usePrivate(BattlePane bp);
     public boolean canUse(BattlePane bp) {
@@ -76,5 +86,9 @@ public abstract class Skill implements Serializable {
         if (skillID == 0) return getName();
         if (skillID == 1) return SKILL_LABEL[0] + "·" + getName();
         return "妖术" + SKILL_LABEL[skillID - 1] + "·" + getName();
+    }
+
+    public int getSkillID() {
+        return skillID;
     }
 }

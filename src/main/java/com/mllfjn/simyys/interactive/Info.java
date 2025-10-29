@@ -1,11 +1,8 @@
 package com.mllfjn.simyys.interactive;
 
 public class Info {
-    private final TraceableNumber traceableNumber;
+    private final TraceableNumber traceableNumber = new TraceableNumber();
     private boolean baoJi;
-    public Info(TraceableNumber traceableNumber) {
-        this.traceableNumber = traceableNumber;
-    }
 
     public TraceableNumber getTraceableNumber() {
         return traceableNumber;

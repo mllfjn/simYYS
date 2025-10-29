@@ -45,10 +45,11 @@ public class StateHuiMieTODO extends State implements Displayable, Runnable, Att
     @Override
     public double getInfluence(Attribute attribute) {
         if (attribute == Attribute.DEFENCE) {
-            return (1 - stack) * 100;
+            return (1 - stack) * 100; // 降低防御(stack - 1) * 100，这里算的是+防御，所以负的
         } else if (attribute == Attribute.IGNORE_DEFENCE) {
             return 100 + level >= 4 ? (stack - 1) * 40 : 0;
         }
+
         return 0;
     }
 }

@@ -9,6 +9,8 @@ import com.mllfjn.simyys.guihuo.GuiHuo;
 import com.mllfjn.simyys.ratecontroller.TotalRateCalc;
 import com.mllfjn.simyys.starter.Initializer;
 import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
+import com.mllfjn.simyys.trigger.BattleActionTrigger;
+import com.mllfjn.simyys.collections.SerializableObservableList;
 import com.mllfjn.simyys.utils.Utils;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -21,26 +23,38 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 public class BattlePane {
+    // 返回初始化界面
     private final Initializer.Back back;
-    private final List<PropertiesHolder> list;
+    // 初始化属性列表
+    private final SerializableObservableList<PropertiesHolder> list;
+    // 角色列表
     public List<Character> characters;
-    public Character[] autoTo = new Character[2];
-    private ActionBarType actionBarType = ActionBarType.SHUN_WEI;
-    private final BorderPane root = new BorderPane();
-    private final AnchorPane actionBar = new AnchorPane();
-    public final TextFlowLog log = new TextFlowLog();
-    public final TotalRateCalc calc = new TotalRateCalc();
-    private final HBox[] teamPane = new HBox[2];
     private Character characterActing;
-    private final Stack<byte[]> recorder = new Stack<>();
+    // 红绿标 0-己方;1-敌方
+    public Character[] autoTo = new Character[2];
+    // 行动条显示模式,初始为顺位
+    private ActionBarType actionBarType = ActionBarType.SHUN_WEI;
+    private final AnchorPane actionBar = new AnchorPane();
+    // 日志
+    public final TextFlowLog log = new TextFlowLog();
+    // 概率计算器
     public boolean isControlRate = false;
+    public final TotalRateCalc calc = new TotalRateCalc();
+    // 鬼火条 0-己方;1-敌方
     private GuiHuo[] guiHuo = new GuiHuo[2];
-    public BattlePane(Stage stage, Initializer.Back back, List<PropertiesHolder> list) {
+    // 记录获得新回合的单位,这里的逻辑按照nga的帖子很乱,还要分是不是和怪物战斗,先简化随便取以后再改
+    private final Stack<Character> newRound = new Stack<>();
+    // 战斗记录,用于撤销
+    private final Stack<byte[]> recorder = new Stack<>();
+    // 全局触发器,用于幻境,结界
+    private final Map<Character, List<BattleActionTrigger>> triggerMap = new HashMap<>();
+
+    private final BorderPane root = new BorderPane();
+    private final HBox[] teamPane = new HBox[2];
+    public BattlePane(Stage stage, Initializer.Back back, SerializableObservableList<PropertiesHolder> list) {
         this.back = back;
         this.list = list;
         this.characters = new ArrayList<>();
@@ -71,7 +85,6 @@ public class BattlePane {
         log.setPrefWidth(400);
         root.setLeft(log);
     }
-
     private void configureTeamPane() {
         teamPane[0] = new HBox();
         teamPane[1] = new HBox();
@@ -102,7 +115,6 @@ public class BattlePane {
         root.setCenter(scrollPane);
 //        reloadCharacterIcon();
     }
-
     private void reloadCharacterIcon() {
         teamPane[0].getChildren().clear();
         teamPane[1].getChildren().clear();
@@ -110,6 +122,7 @@ public class BattlePane {
             teamPane[character.team].getChildren().add(character.getCharacterIcon(this::setAutoTo));
         }
     }
+
     public boolean canUseGuiHuo(Character character, int num) {
         if (character.isMob()) {
             return GuiHuo.mobCanUseGuiHuo(character, num);
@@ -117,7 +130,6 @@ public class BattlePane {
             return guiHuo[character.team].canUseGuiHuo(num);
         }
     }
-
     public void useGuiHuo(Character character, int num) {
         if (character.isMob()) {
             GuiHuo.mobUseGuiHuo(character, num);
@@ -125,6 +137,13 @@ public class BattlePane {
             guiHuo[character.team].useGuiHuo(num);
         }
     }
+    public void gainGuiHuo(Character character, int num) {
+        if (!character.isMob()) {
+            guiHuo[character.team].gainGuiHuo(num);
+        }
+        // 回忆了一下发现好像没有怪物获得鬼火的情况
+    }
+
 
     private void setAutoTo(Character characterSelected) {
         // 如果没标任何人，给选择目标设置标
@@ -145,7 +164,6 @@ public class BattlePane {
 
         }
     }
-
     private GridPane configureControlPane() {
         /*控制区
         控制区的内容
@@ -227,7 +245,7 @@ public class BattlePane {
         log.characterAct(characterActing);
     }
 
-    private void addCharacter(Character character) {
+    public void addCharacter(Character character) {
         characters.add(character);
         teamPane[character.team].getChildren().add(character.getCharacterIcon(this::setAutoTo));
     }
@@ -359,29 +377,40 @@ public class BattlePane {
             Utils.throwException("保存时出错", e);
         }
 
-        characterActing.round(this);
-        getNextActor();
-        log.characterAct(characterActing);
+        do {
+            characterActing.round(this);
+            getNextActor();
+            log.characterAct(characterActing);
+        } while (!characterActing.controllable());
+
         repaintActionBar();
 
+        // TODO 换成观察者模式
         for (Character character : characters) {
             character.characterIcon.update();
         }
     }
 
     private void getNextActor() {
+        Character next;
 
-        Character next = characters.get(0);
-        for (Character character : characters) {
-            if (character.before(next)) {
-                next = character;
+        if (!newRound.isEmpty()) {
+            next = newRound.pop();
+            // TODO 新回合不能推鬼火条
+        } else {
+            next = characters.get(0);
+            for (Character character : characters) {
+                if (character.before(next)) {
+                    next = character;
+                }
+            }
+            for (Character character : characters) {
+                if (character != next) {
+                    character.setLocation(character.getLocation() + character.getSpeed() * next.getTTA());
+                }
             }
         }
-        for (Character character : characters) {
-            if (character != next) {
-                character.setLocation(character.getLocation() + character.getSpeed() * next.getTTA());
-            }
-        }
+
         characterActing = next;
 
         next.setLocation(0);
@@ -389,9 +418,26 @@ public class BattlePane {
         next.beforeRound(this);
     }
 
+    public void getNewRound(Character character) {
+        newRound.push(character);
+    }
+
     public void removeCharacter(Character character) {
+        if (!characters.contains(character)) {
+            return;
+        }
         characters.remove(character);
         teamPane[character.team].getChildren().remove(character.characterIcon);
+
+        triggerMap.remove(character);
+    }
+
+    public void addActionTrigger(Character character, BattleActionTrigger trigger) {
+        triggerMap.computeIfAbsent(character, k -> new ArrayList<>());
+        triggerMap.get(character).add(trigger);
+    }
+    public void removeActionTrigger(Character character, BattleActionTrigger trigger) {
+        triggerMap.get(character).remove(trigger);
     }
 
     public boolean canSummon(int team) {
@@ -402,9 +448,8 @@ public class BattlePane {
         }
         return true;
     }
-
     public void addSummon(int team, Character character) {
-
+        // 要考虑清姬蛇顶掉其他召唤物
     }
 
     private enum ActionBarType {
@@ -412,4 +457,5 @@ public class BattlePane {
         SHUN_WEI
     }
 
+    private record CharacterStack(List<Character> characters, Character characterActing, Character[] autoTo, GuiHuo[] guiHuos, double totalRate) implements Serializable { }
 }

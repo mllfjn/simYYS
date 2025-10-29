@@ -6,6 +6,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.stage.Window;
 
 import java.io.Serializable;
 
@@ -40,13 +41,18 @@ public class PropertyInput extends PropertyRequire implements Serializable {
     }
 
     @Override
-    public Node getNode(String desc) {
+    public Node getNode(String desc, Window owner) {
         HBox node = new HBox();
         node.setSpacing(10);
         Label label = new Label(desc);
 
         TextField tf = new TextField(value);
-        tf.textProperty().addListener((obs, old, val) -> value = val);
+        tf.textProperty().addListener((obs, old, val) -> {
+            value = val;
+            if (property != null) {
+                property.set(val);
+            }
+        });
 
         node.getChildren().addAll(label, tf);
         return node;
@@ -62,8 +68,8 @@ public class PropertyInput extends PropertyRequire implements Serializable {
         return Utils.parseIntOrDefault(value, 0);
     }
 
-    @Override
+    /*@Override
     public void toString(StringBuilder sb) {
         sb.append(value == null || value.isEmpty() ? "无" : value);
-    }
+    }*/
 }

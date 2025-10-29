@@ -1,4 +1,4 @@
-package com.mllfjn.simyys.character.propertygetter;
+package com.mllfjn.simyys.collections;
 
 import java.io.Serializable;
 

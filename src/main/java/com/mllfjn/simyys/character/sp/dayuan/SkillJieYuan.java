@@ -8,13 +8,13 @@ import com.mllfjn.simyys.character.skill.Skill;
 import java.util.List;
 
 abstract class SkillJieYuan extends Skill {
-    public SkillJieYuan(Character belongTo) {
-        super(belongTo, 1, 1, 0);
+    public SkillJieYuan(Character belongTo, int skillID) {
+        super(belongTo, 1, 1, 0, skillID);
     }
 
     @Override
     public boolean canUse(BattlePane bp) {
-        return super.canUse(bp) && getBelongTo().getState(StateCombined.privateName) == null && getTarget(bp) != null;
+        return super.canUse(bp) && !getBelongTo().isHaveState(StateCombined.privateName) && getTarget(bp) != null;
     }
 
     public Character getTarget(BattlePane bp) {

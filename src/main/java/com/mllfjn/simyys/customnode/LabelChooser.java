@@ -1,6 +1,6 @@
 package com.mllfjn.simyys.customnode;
 
-import com.mllfjn.simyys.character.propertygetter.StringGroup;
+import com.mllfjn.simyys.collections.StringGroup;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;

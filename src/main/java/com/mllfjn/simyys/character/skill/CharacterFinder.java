@@ -29,6 +29,14 @@ public class CharacterFinder {
         return characters.stream().filter(character1 -> character1.team == character.team).collect(Collectors.toCollection(ArrayList::new));
     }
 
+    public static List<Character> findTeammateShiShen(Character character, List<Character> characters) {
+        return characters.stream().filter(character1 ->
+                        character1.team == character.team
+                                && !character1.isYYS()
+                                && !character1.isSummon())
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
     public static int getEnemyTeam(Character character) {
         return character.team == 0 ? 1 : 0;
     }
@@ -42,6 +50,7 @@ public class CharacterFinder {
         ATTACK(Character::getAttack);
 
         private final Function<Character, Double> getter;
+
         Property(Function<Character, Double> getter) {
             this.getter = getter;
         }

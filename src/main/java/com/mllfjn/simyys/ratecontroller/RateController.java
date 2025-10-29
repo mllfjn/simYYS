@@ -3,6 +3,7 @@ package com.mllfjn.simyys.ratecontroller;
 import com.mllfjn.simyys.character.Character;
 
 import java.util.*;
+import java.util.function.Function;
 
 public class RateController {
     public static boolean[] whetherOrNot(String title, String event, List<Character> targets, boolean rateControl, TotalRateCalc calc, RateGetter rateGetter) {
@@ -65,6 +66,17 @@ public class RateController {
         return whetherOrNot("命中控制：" + owner.name + "-" + stateName, "命中", targets, rateControl, calc, character ->
                 base * (100 + owner.getEffectHitRate()) / (100 + character.getEffectResistRate())
         );
+    }
+
+    public static <T> T choose(String title, List<T> list, Function<T, String> stringGetter, boolean rateControl) {
+        if (rateControl) {
+            ChooseDialog<T> dialog = new ChooseDialog<>(title + "目标选取", list, stringGetter);
+            Optional<T> result = dialog.showAndWait();
+            if (result.isPresent()) {
+                return result.get();
+            }
+        }
+        return list.get(new Random().nextInt(list.size()));
     }
 
 }

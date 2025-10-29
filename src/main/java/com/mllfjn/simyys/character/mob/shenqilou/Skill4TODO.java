@@ -11,12 +11,7 @@ class Skill4TODO extends Skill {
     public static final String privateName = "钳连击";
 
     public Skill4TODO(Character belongTo) {
-        super(belongTo, 0, 3, 4);
-    }
-
-    @Override
-    public int getSkillID() {
-        return 4;
+        super(belongTo, 0, 3, 4, 4);
     }
 
     @Override
@@ -26,7 +21,7 @@ class Skill4TODO extends Skill {
 
     @Override
     public void usePrivate(BattlePane bp) {
-        Interactive interactive = getBelongTo().getHit(bp);
+        Interactive interactive = getBelongTo().getInteractive(bp);
         for (int i = 0; i < 4; i++) {
             interactive.attack(privateName, CharacterFinder.findEnemy(getBelongTo(), bp.characters), 100, AttackType.QUN_TI);
         }

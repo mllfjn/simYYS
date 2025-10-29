@@ -1,5 +1,6 @@
 package com.mllfjn.simyys.character.propertygetter;
 
+import com.mllfjn.simyys.collections.StringGroup;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -8,7 +9,9 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 import java.io.Serializable;
 
@@ -58,11 +61,11 @@ public class PropertySelectSingle  extends PropertyRequire implements Serializab
     }
 
     @Override
-    public Node getNode(String desc) {
+    public Node getNode(String desc, Window owner) {
         if (options.length == 1 && options[0].values().length <= 5) {
             return getSimpleComboBox(desc);
         }
-        return getSelectWindow(desc);
+        return getSelectWindow(desc, owner);
     }
 
     private Node getSimpleComboBox(String desc) {
@@ -77,7 +80,7 @@ public class PropertySelectSingle  extends PropertyRequire implements Serializab
         return node;
     }
 
-    private Node getSelectWindow(String desc) {
+    private Node getSelectWindow(String desc, Window owner) {
         HBox node = new HBox();
         node.setSpacing(10);
         Label descLbl = new Label(desc);
@@ -103,6 +106,8 @@ public class PropertySelectSingle  extends PropertyRequire implements Serializab
                 gp.add(tp, 1, i);
             }
             stage.setScene(new Scene(gp));
+            stage.initOwner(owner);
+            stage.initModality(Modality.WINDOW_MODAL);
             stage.showAndWait();
         });
 
@@ -110,8 +115,8 @@ public class PropertySelectSingle  extends PropertyRequire implements Serializab
         return node;
     }
 
-    @Override
+    /*@Override
     public void toString(StringBuilder sb) {
         sb.append(value == null ? "无" : value);
-    }
+    }*/
 }

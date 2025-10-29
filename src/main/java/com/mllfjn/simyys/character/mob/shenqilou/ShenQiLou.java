@@ -4,10 +4,7 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.PropertyKey;
 import com.mllfjn.simyys.character.propertygetter.*;
-import com.mllfjn.simyys.character.skill.Skill;
-import com.mllfjn.simyys.character.propertygetter.StringGroup;
-
-import java.util.List;
+import com.mllfjn.simyys.collections.StringGroup;
 
 public class ShenQiLou extends Character {
     public static final String privateName = "蜃气楼";

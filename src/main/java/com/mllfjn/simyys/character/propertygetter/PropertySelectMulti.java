@@ -1,5 +1,6 @@
 package com.mllfjn.simyys.character.propertygetter;
 
+import com.mllfjn.simyys.collections.StringGroup;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -8,7 +9,9 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 import java.io.Serializable;
 import java.util.List;
@@ -52,20 +55,20 @@ public class PropertySelectMulti  extends PropertyRequire implements Serializabl
     }
 
     @Override
-    public Node getNode(String desc) {
+    public Node getNode(String desc, Window owner) {
         HBox node = new HBox();
         node.setSpacing(10);
 
         Label descLbl = new Label(desc);
         Label valueLbl = new Label();
         Button selectBtn = new Button("点击选择");
-        selectBtn.setOnAction(e -> openSelectDialog(valueLbl));
+        selectBtn.setOnAction(e -> openSelectDialog(valueLbl, owner));
 
         node.getChildren().addAll(descLbl, valueLbl, selectBtn);
         return node;
     }
 
-    private void openSelectDialog(Label valueLbl) {
+    private void openSelectDialog(Label valueLbl, Window owner) {
         Stage stage = new Stage();
         GridPane gp = new GridPane();
         gp.setHgap(10);
@@ -112,10 +115,13 @@ public class PropertySelectMulti  extends PropertyRequire implements Serializabl
         gp.add(confirmBtn, 1, options.length);
 
         stage.setScene(new Scene(gp));
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(owner);
         stage.showAndWait();
     }
-    @Override
+
+    /*@Override
     public void toString(StringBuilder sb) {
         sb.append(value);
-    }
+    }*/
 }

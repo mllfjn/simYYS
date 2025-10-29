@@ -7,12 +7,7 @@ class Skill5 extends SkillJieYuan {
     public static final String privateName = "胜天之缘·赤";
 
     public Skill5(Character belongTo) {
-        super(belongTo);
-    }
-
-    @Override
-    public int getSkillID() {
-        return 5;
+        super(belongTo, 5);
     }
 
     @Override

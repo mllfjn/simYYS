@@ -4,16 +4,11 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
 
-public class Skill3PutTODO extends Skill {
+class Skill3PutTODO extends Skill {
     public static final String privateName = "海潮入梦";
 
     public Skill3PutTODO(Character belongTo, int level) {
-        super(belongTo, level, 0, 0);
-    }
-
-    @Override
-    public int getSkillID() {
-        return 3;
+        super(belongTo, level, 0, 0, 3);
     }
 
     @Override

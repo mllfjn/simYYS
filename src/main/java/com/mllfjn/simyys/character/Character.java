@@ -5,8 +5,9 @@ import com.mllfjn.simyys.character.propertygetter.PropertiesMap;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.skill.SkillAuto;
 import com.mllfjn.simyys.customnode.TextFlowLog;
-import com.mllfjn.simyys.determinant.ForbidDecrease;
-import com.mllfjn.simyys.determinant.ForbidIncrease;
+import com.mllfjn.simyys.state.StateType;
+import com.mllfjn.simyys.state.determinant.*;
+import com.mllfjn.simyys.interactive.Info;
 import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.character.propertygetter.PropertyCheck;
 import com.mllfjn.simyys.character.propertygetter.PropertyInput;
@@ -16,7 +17,7 @@ import com.mllfjn.simyys.state.State;
 import com.mllfjn.simyys.state.StateSettleType;
 import com.mllfjn.simyys.trigger.Trigger;
 import com.mllfjn.simyys.trigger.TriggerSession;
-import com.mllfjn.simyys.utils.SerializableObservableList;
+import com.mllfjn.simyys.collections.SerializableObservableList;
 import javafx.collections.ObservableList;
 
 import java.io.Serializable;
@@ -30,6 +31,7 @@ public abstract class Character implements Serializable{
     private double location;
     private int lockSkill;
     public boolean alive = true;
+
     private double maxHp;
     private double hp;
     private double baseAttack;
@@ -50,7 +52,6 @@ public abstract class Character implements Serializable{
     private final List<State> states = new ArrayList<>();
     private final List<State> maintainedStates = new ArrayList<>();
     private transient Interactive interactive;
-
     public PropertiesMap getProperties() {
         PropertiesMap map = new PropertiesMap();
         map.put(PropertyKey.GENERAL_SPEED_KEY, new PropertyInput());
@@ -70,7 +71,6 @@ public abstract class Character implements Serializable{
 
         return map;
     }
-
     public void init(PropertiesMap properties) {
         this.speed = properties.get(PropertyKey.GENERAL_SPEED_KEY).getDouble();
         this.baseAttack = properties.get(PropertyKey.GENERAL_BASE_ATTACK_KEY).getDouble();
@@ -95,18 +95,125 @@ public abstract class Character implements Serializable{
         addState(new AttackRecorder(this));
     }
 
+
+    public double getAttack() {
+        return AttributeCounter.getGeneralAttribute(Attribute.ATTACK, baseAttack + additionAttack, getStates());
+    }
+    public double getHp() {
+        return hp;
+    }
+    public double getMaxHp() {
+        return maxHp;
+    }
+    public double getDefense() {
+        return AttributeCounter.getGeneralAttribute(Attribute.DEFENCE, defense, states);
+    }
+    public double getCritRate() {
+        return AttributeCounter.getGeneralAttribute(Attribute.CRIT_RATE, critRate, states);
+    }
+    public double getCritPower() {
+        return AttributeCounter.getGeneralAttribute(Attribute.CRIT_POWER, critPower, states);
+    }
+    public double getEffectHitRate() {
+        return AttributeCounter.getGeneralAttribute(Attribute.EFFECT_HIT_RATE, effectHitRate, states);
+    }
+    public double getEffectResistRate() {
+        return AttributeCounter.getGeneralAttribute(Attribute.EFFECT_RESIST_RATE, effectResistRate, states);
+    }
+
+    public boolean isMob() {
+        return isMob;
+    }
+    public boolean isYYS() {
+        return isYYS;
+    }
+    public boolean isSummon() {
+        return isSummon;
+    }
+
+    public double getInitAttack() {
+        return baseAttack + additionAttack;
+    }
+    public double getInitBaseAttack() {
+        return baseAttack;
+    }
+    public double getInitAdditionAttack() {
+        return additionAttack;
+    }
+    public double getInitDefense() {
+        return defense;
+    }
+    public double getInitSpeed() {
+        return speed;
+    }
+    public double getInitCritRate() {
+        return critRate;
+    }
+    public double getInitCritPower() {
+        return critPower;
+    }
+    public double getInitEffectHitRate() {
+        return effectHitRate;
+    }
+    public double getInitEffectResistRate() {
+        return effectResistRate;
+    }
+
+
+    protected void setInitBaseAttack(double baseAttack) {
+        this.baseAttack = baseAttack;
+    }
+    protected void setInitAdditionAttack(double additionAttack) {
+        this.additionAttack = additionAttack;
+    }
+    protected void setInitDefense(double defense) {
+        this.defense = defense;
+    }
+    protected void setInitCritRate(double critRate) {
+        this.critRate = critRate;
+    }
+    protected void setInitCritPower(double critPower) {
+        this.critPower = critPower;
+    }
+    protected void setInitSpeed(double speed) {
+        this.speed = speed;
+    }
+    protected void setInitEffectHitRate(double effectHitRate) {
+        this.effectHitRate = effectHitRate;
+    }
+    protected void setInitEffectResistRate(double effectResistRate) {
+        this.effectResistRate = effectResistRate;
+    }
+
+
+    public void setMaxHp(double num) {
+        if (isIgnoreChangeMaxHp()) {
+            return;
+        }
+
+        maxHp = num;
+    }
+    public void setHp(double num) {
+        this.hp = Math.min(maxHp, num);
+    }
+
+    public void setLockSkill(int i) {
+        this.lockSkill = i;
+    }
+    public int getLockSkill() {
+        return this.lockSkill;
+    }
+
+
     public void addSkills() {
         skills.add(SkillAuto.INSTANCE);
     }
-
     public static double getTTA(double distance, double speed) {
         return distance / speed;
     }
-
     public double getTTA() {
         return getTTA(100.0 - this.getLocation(), this.getSpeed());
     }
-
     public static boolean before(double distance1, double v1, double distance2, double v2) {
         double tta1 = getTTA(distance1, v1);
         double tta2 = getTTA(distance2, v2);
@@ -121,43 +228,49 @@ public abstract class Character implements Serializable{
 
         return v1 > v2;
     }
-
     public boolean before(Character character) {
         return before(100.0 - this.getLocation(), this.getSpeed(), 100 - character.getLocation(), character.getSpeed());
     }
-
     public double getSpeed() {
+        return AttributeCounter.getGeneralAttribute(Attribute.SPEED, getBasicSpeed(), getStates());
+    }
+    public double getBasicSpeed() {
         return speed;
     }
-
     public double getLocation() {
         return location;
     }
-
     public void setLocation(double newLocation) {
         this.location = newLocation;
     }
-
     public void increaseLocation(BattlePane bp, Character from, double increase) {
+        // 免疫行动条提升效果
         for (State state : states) {
-            if (state instanceof ForbidIncrease fi && fi.effective(from)) {
+            if (state instanceof IgnoreActionIncrease fi && fi.effective(from)) {
                 return;
             }
         }
-        this.location = Math.min(100, location + increase);
-        bp.log.addText("\t" + this.name + "行动提前" + increase + "%\n", TextFlowLog.TextType.INCREASE, TextFlowLog.TextColor.NORMAL, TextFlowLog.FontSize.NORMAL);
-    }
 
+        StringBuilder sb = new StringBuilder();
+        sb.append("\t").append(this.name).append("行动提前").append(increase);
+        if (location + increase > 100) {
+            double real = 100 - location;
+            sb.append("(实际提前").append((int)real).append("%,已到达行动条末端)");
+        }
+        sb.append("%\n");
+
+        this.location = Math.min(100, location + increase);
+        bp.log.addText(sb.toString(), TextFlowLog.TextType.INCREASE, TextFlowLog.TextColor.NORMAL, TextFlowLog.FontSize.NORMAL);
+    }
     public void decreaseLocation(BattlePane bp, Character from, double decrease) {
         for (State state : states) {
-            if (state instanceof ForbidDecrease) {
+            if (state instanceof IgnoreActionDecrease) {
                 return;
             }
         }
         this.location = Math.max(0, location - decrease);
         bp.log.addText("\t" + this.name + "行动推后" + decrease + "%\n", TextFlowLog.TextType.INCREASE, TextFlowLog.TextColor.NORMAL, TextFlowLog.FontSize.NORMAL);
     }
-
     public void beforeRound(BattlePane bp) {
         TriggerSession.trigger(bp, Trigger.BEFORE_ROUND, this.getStates());
     }
@@ -183,9 +296,8 @@ public abstract class Character implements Serializable{
             return false;
         });
 
-        skills.getList().forEach(Skill::pastRound);
+        skills.forEach(Skill::pastRound);
     }
-
     private void act(BattlePane bp) {
         if (lockSkill != 0) {
             Skill skillLock = getSkill(lockSkill);
@@ -200,98 +312,62 @@ public abstract class Character implements Serializable{
             }
         }
     }
-
     public Skill getSkill(int skillID) {
-        for (Skill skill : skills.getList()) {
+        for (Skill skill : skills) {
             if (skill.getSkillID() == skillID) {
                 return skill;
             }
         }
         return null;
     }
-
     public ObservableList<Skill> getSkills() {
         return skills.getObservableList();
     }
-
     protected boolean useSkillAuto(BattlePane bp) {
         return false;
     }
 
-    public double getAttack() {
-        return baseAttack + additionAttack;
-    }
-
-    public double getHp() {
-        return hp;
-    }
-
-    public double getMaxHp() {
-        return maxHp;
-    }
-
-    public double getDefense() {
-        return AttributeCounter.getGeneralAttribute(Attribute.DEFENCE, defense, states);
-    }
-
-    public double getCritRate() {
-        return critRate;
-    }
-
-    public double getCritPower() {
-        return AttributeCounter.getGeneralAttribute(Attribute.CRIT_POWER, critPower, states);
-    }
-
-    public double getEffectHitRate() {
-        return effectHitRate;
-    }
-
-    public double getEffectResistRate() {
-        return AttributeCounter.getGeneralAttribute(Attribute.EFFECT_RESIST_RATE, effectResistRate, states);
-    }
-    public boolean isMob() {
-        return isMob;
-    }
-    public boolean isYYS() {
-        return isYYS;
-    }
-
-    public boolean isSummon() {
-        return isSummon;
-    }
-
-    public void setLockSkill(int i) {
-        this.lockSkill = i;
-    }
-    public int getLockSkill() {
-        return this.lockSkill;
-    }
-    public Double beHurt(BattlePane bp, double damage) {
+    public void beHurt(BattlePane bp, Info info) {
+        double damage = info.getTraceableNumber().getNumber();
         if (getHp() <= damage) {
-            // 预留免死的位置 比如青女坊，金盾
-            /*if (TriggerSession.preventDie(this.getStates())) {
-                return null;
-            }*/
-            beForeDie(bp);
+            info.getTraceableNumber().addTrace("\t(击杀)");
+            beforeDie(bp);
         } else {
             this.hp -= damage;
         }
-        return damage;
     }
 
+    /**
+     * 失去:区别于受到伤害,失去生命不会暴击,无法被护盾吸收,不触发受到伤害相关效果
+     */
+    public void lostHP(BattlePane bp, double num) {
+        // 如果后来给失去生命默认解除睡眠状态,修改神蛇的堕化
+        hp -= num;
+        if (hp <= 0) {
+            die(bp);
+        }
+    }
+
+    public void beHeal(BattlePane bp, Info info) {
+        setHp(getHp() + info.getTraceableNumber().getNumber());
+    }
+
+    /** 恢复：区别于治疗，不受减疗效果影响，不触发治疗相关效果，不会暴击
+     *
+     */
+    public void recovery(double num) {
+        setHp(getHp() + num);
+    }
     public CharacterIcon getCharacterIcon(CharacterIcon.OnClickListener onClickListener) {
         if (characterIcon == null) {
             characterIcon = new CharacterIcon(this, onClickListener);
         }
         return characterIcon;
     }
-
     public void useFrontSkill(BattlePane bp) {}
-
     public AttackRecorder getAttackRecorder() {
         return (AttackRecorder) getState(AttackRecorder.privateName);
     }
-
     public State getState(String name) {
         for (State state : states) {
             if (state.name.equals(name)) {
@@ -300,8 +376,11 @@ public abstract class Character implements Serializable{
         }
         return null;
     }
-
     public void addState(State newState) {
+        if (newState.stateType == StateType.DEBUFF && isIgnoreDebuff()) {
+            return;
+        }
+
         for (State state : states) {
             if (state.name.equals(newState.name)) {
                 state.cover(newState);
@@ -314,21 +393,35 @@ public abstract class Character implements Serializable{
             characterIcon.updateState();
         }
     }
-
+    public boolean isHaveState(String name) {
+        return getState(name) != null;
+    }
+    public boolean isIgnoreDebuff() {
+        for (State state : getStates()) {
+            if (state instanceof IgnoreDebuff) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public boolean isIgnoreChangeMaxHp() {
+        for (State state : getStates()) {
+            if (state instanceof IgnoreChangeMaxHp) {
+                return true;
+            }
+        }
+        return false;
+    }
     public void addMaintainedState(State state) {
         maintainedStates.add(state);
     }
-
     public void removeMaintainedState(State state) {
         maintainedStates.remove(state);
     }
-
     public List<State> getStates() {
         return states;
     }
-
-
-    public void deleteState(String privateName) {
+    public void removeState(String privateName) {
         for (State state : states) {
             if (state.name.equals(privateName)) {
                 state.delete();
@@ -339,15 +432,27 @@ public abstract class Character implements Serializable{
             characterIcon.updateState();
         }
     }
-
-    public Interactive getHit(BattlePane bp) {
+    public Interactive getInteractive(BattlePane bp) {
         if (interactive == null) {
             interactive = new Interactive(bp, this);
         }
         return interactive;
     }
-    public void beForeDie(BattlePane bp) {
+    public void beforeDie(BattlePane bp) {
+        for (State state : getStates()) {
+            if (state instanceof PreventDie pd && pd.effective()) {
+                pd.action();
+                return;
+            }
+        }
+
+        die(bp);
+    }
+    public void die(BattlePane bp) {
         alive = false;
         bp.removeCharacter(this);
+    }
+    public boolean controllable() {
+        return true;
     }
 }

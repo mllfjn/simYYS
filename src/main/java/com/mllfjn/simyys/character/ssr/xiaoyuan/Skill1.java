@@ -11,12 +11,7 @@ class Skill1 extends Skill {
     public static final String privateName = "月下花";
     private static final int[] multiplier = new int[]{0, 100, 105, 110, 115, 115};
     public Skill1(Character belongTo, int level) {
-        super(belongTo, level, 0, 0);
-    }
-
-    @Override
-    public int getSkillID() {
-        return 1;
+        super(belongTo, level, 0, 0, 1);
     }
 
     @Override
@@ -29,7 +24,7 @@ class Skill1 extends Skill {
         Character target = CharacterFinder.findPriorAuto(bp, CharacterFinder.getEnemyTeam(getBelongTo()), CharacterFinder.Property.HP, CharacterFinder.Criteria.MIN);
         lastUsedTarget = target;
 
-        Interactive interactive = getBelongTo().getHit(bp);
+        Interactive interactive = getBelongTo().getInteractive(bp);
         interactive.attack(privateName, target, multiplier[getLevel()], AttackType.DAN_TI);
 
         if (getLevel() >= 5) {
