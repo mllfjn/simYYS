@@ -5,16 +5,13 @@ import com.mllfjn.simyys.character.propertygetter.PropertiesMap;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.skill.SkillAuto;
 import com.mllfjn.simyys.customnode.TextFlowLog;
-import com.mllfjn.simyys.state.StateType;
+import com.mllfjn.simyys.state.*;
 import com.mllfjn.simyys.state.determinant.*;
 import com.mllfjn.simyys.interactive.Info;
 import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.character.propertygetter.PropertyCheck;
 import com.mllfjn.simyys.character.propertygetter.PropertyInput;
-import com.mllfjn.simyys.state.AttackRecorder;
 import com.mllfjn.simyys.guihuo.MobGuiHuo;
-import com.mllfjn.simyys.state.State;
-import com.mllfjn.simyys.state.StateSettleType;
 import com.mllfjn.simyys.trigger.Trigger;
 import com.mllfjn.simyys.trigger.TriggerSession;
 import com.mllfjn.simyys.collections.SerializableObservableList;
@@ -71,7 +68,7 @@ public abstract class Character implements Serializable{
 
         return map;
     }
-    public void init(PropertiesMap properties) {
+    public void init(PropertiesMap properties, BattlePane bp) {
         this.speed = properties.get(PropertyKey.GENERAL_SPEED_KEY).getDouble();
         this.baseAttack = properties.get(PropertyKey.GENERAL_BASE_ATTACK_KEY).getDouble();
         this.additionAttack = properties.get(PropertyKey.GENERAL_YU_HUN_ATTACK_KEY).getDouble();
@@ -105,6 +102,9 @@ public abstract class Character implements Serializable{
     public double getMaxHp() {
         return maxHp;
     }
+    public double getSpeed() {
+        return AttributeCounter.getGeneralAttribute(Attribute.SPEED, speed, getStates());
+    }
     public double getDefense() {
         return AttributeCounter.getGeneralAttribute(Attribute.DEFENCE, defense, states);
     }
@@ -119,6 +119,12 @@ public abstract class Character implements Serializable{
     }
     public double getEffectResistRate() {
         return AttributeCounter.getGeneralAttribute(Attribute.EFFECT_RESIST_RATE, effectResistRate, states);
+    }
+    public double getJianShang() {
+        return AttributeCounter.getGeneralAttribute(Attribute.JIAN_SHANG, 0, getStates());
+    }
+    public double getIgnoreDefense() {
+        return AttributeCounter.getGeneralAttribute(Attribute.IGNORE_DEFENCE, 0, getStates());
     }
 
     public boolean isMob() {
@@ -230,12 +236,6 @@ public abstract class Character implements Serializable{
     }
     public boolean before(Character character) {
         return before(100.0 - this.getLocation(), this.getSpeed(), 100 - character.getLocation(), character.getSpeed());
-    }
-    public double getSpeed() {
-        return AttributeCounter.getGeneralAttribute(Attribute.SPEED, getBasicSpeed(), getStates());
-    }
-    public double getBasicSpeed() {
-        return speed;
     }
     public double getLocation() {
         return location;
@@ -358,6 +358,16 @@ public abstract class Character implements Serializable{
     public void recovery(double num) {
         setHp(getHp() + num);
     }
+    public void dispelAllBuff() {
+        getStates().removeIf(state -> state.stateType == StateType.BUFF && state.stateForm == StateForm.ZHUANG_TAI);
+    }
+    public void dispelAllDebuff() {
+        getStates().removeIf(state -> state.stateType == StateType.DEBUFF && state.stateForm == StateForm.ZHUANG_TAI);
+    }
+    public void dispelDeBuff(int count) {
+        // TODO 驱散指定数量的减益状态
+    }
+
     public CharacterIcon getCharacterIcon(CharacterIcon.OnClickListener onClickListener) {
         if (characterIcon == null) {
             characterIcon = new CharacterIcon(this, onClickListener);
@@ -453,6 +463,11 @@ public abstract class Character implements Serializable{
         bp.removeCharacter(this);
     }
     public boolean controllable() {
+        for (State state : getStates()) {
+            if (state instanceof CrowdControl) {
+                return false;
+            }
+        }
         return true;
     }
 }

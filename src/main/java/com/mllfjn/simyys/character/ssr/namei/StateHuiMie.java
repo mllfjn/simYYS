@@ -1,0 +1,125 @@
+package com.mllfjn.simyys.character.ssr.namei;
+
+import com.mllfjn.simyys.BattlePane;
+import com.mllfjn.simyys.character.Attribute;
+import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.state.*;
+import com.mllfjn.simyys.state.Runnable;
+import com.mllfjn.simyys.state.determinant.PreventDie;
+import com.mllfjn.simyys.trigger.Trigger;
+
+public class StateHuiMie extends State implements Displayable, Runnable, AttributeModifier, PreventDie {
+    public static final String privateName = "毁灭";
+    // 毁灭等级
+    private int stack = 1;
+    // 那美二技能等级
+    private final int level;
+    // 免死是否可以触发
+    private boolean canTrigger = true;
+    // 剩余可以触发免死的次数
+    private int times = 3;
+    // 那美攻击时无视护甲的状态,需要在毁灭移除时一起移除
+    private StateNaMeiIgnoreDefence NaMeiIgnoreDefence = null;
+
+    public StateHuiMie(NaMei from, Character belongTo, int level, boolean awakening) {
+        super(from, belongTo, StateType.BUFF, StateForm.YIN_JI);
+        this.level = level;
+
+        // 觉醒-伊邪那美攻击时,也可触发友方目标当前毁灭的防御无视效果
+        if (awakening) {
+            NaMeiIgnoreDefence = new StateNaMeiIgnoreDefence(from, (NaMei) belongTo, this);
+            from.addState(NaMeiIgnoreDefence);
+        }
+    }
+
+    @Override
+    public void setName() {
+        name = privateName;
+    }
+
+    @Override
+    public String getText() {
+        return "毁灭" + stack;
+    }
+
+    @Override
+    public boolean runnable(Trigger trigger) {
+        return stack < 6 && trigger == Trigger.BEFORE_ROUND // 毁灭等级可以在回合开始前上升5次
+                || trigger == Trigger.BEFORE_ROUND && !canTrigger && times > 0; // 毁灭免死还可以触发
+    }
+
+    @Override
+    public void run(Trigger trigger, BattlePane bp) {
+        if (stack < 6) {
+            stack++;
+        }
+
+        if (times > 0) {
+            canTrigger = true;
+        }
+    }
+
+    @Override
+    public boolean isAffectAttribute(Attribute attribute) {
+        return attribute == Attribute.DEFENCE || attribute == Attribute.IGNORE_DEFENCE;
+    }
+
+    @Override
+    public double getInfluence(Attribute attribute) {
+        if (attribute == Attribute.DEFENCE) {
+            return (1 - stack) * 100; // 降低防御(stack - 1) * 100，这里算的是+防御，所以负的
+        }
+
+        // 造成伤害时无视100点防御
+        // lv4-友方每因毁灭降低100点防御,额外无视40点防御,至多额外无视200点防御
+        if (attribute == Attribute.IGNORE_DEFENCE) {
+            return 100 + level >= 4 ? (stack - 1) * 40 : 0;
+        }
+
+        return 0;
+    }
+
+    @Override
+    public void delete() {
+        super.delete();
+        if (NaMeiIgnoreDefence != null) {
+            NaMeiIgnoreDefence.delete();
+        }
+    }
+
+    @Override
+    public boolean effective() {
+        // 只有那美自身在场时可以触发
+        return canTrigger && from.alive;
+    }
+
+    @Override
+    public void action() {
+        canTrigger = false;
+        times--;
+    }
+}
+
+class StateNaMeiIgnoreDefence extends State implements AttributeModifier {
+    private final StateHuiMie huiMie;
+
+    public StateNaMeiIgnoreDefence(Character from, NaMei belongTo, StateHuiMie huiMie) {
+        super(from, belongTo, StateType.SPECIAL, StateForm.SPECIAL);
+        this.huiMie = huiMie;
+    }
+
+    @Override
+    public boolean isAffectAttribute(Attribute attribute) {
+        return attribute == Attribute.IGNORE_DEFENCE;
+    }
+
+    @Override
+    public double getInfluence(Attribute attribute) {
+        return huiMie.getInfluence(Attribute.IGNORE_DEFENCE);
+    }
+
+    @Override
+    public void setName() {
+        name = "那美无视防御";
+    }
+}

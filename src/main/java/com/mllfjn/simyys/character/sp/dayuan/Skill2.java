@@ -4,10 +4,10 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
 
-class Skill2TODO extends Skill {
+class Skill2 extends Skill {
     public static final String privateName = "守缘刃";
 
-    public Skill2TODO(Character belongTo) {
+    public Skill2(Character belongTo) {
         super(belongTo, 1, 1, 0, 2);
     }
 
@@ -18,10 +18,13 @@ class Skill2TODO extends Skill {
 
     @Override
     public void usePrivate(BattlePane bp) {
+        // 再次释放时，解除目标【胜天之缘】
         StateCombined state = (StateCombined) getBelongTo().getState(StateCombined.privateName);
-        state.from.removeState(StateSTChiTODO.privateName);
-        state.from.removeState(StateSTQingTODO.privateName);
+        state.from.removeState(StateSTChi.privateName);
+        state.from.removeState(StateSTQing.privateName);
         state.delete();
+        // 并驱散其全部减益状态与 TODO 控制效果
+        state.from.dispelAllDebuff();
     }
 
     @Override

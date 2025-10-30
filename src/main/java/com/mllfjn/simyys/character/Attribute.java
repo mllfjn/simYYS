@@ -4,6 +4,7 @@ public enum Attribute {
     SPEED, // 速度
     ATTACK, // 攻击力
     ZENG_SHANG, // 增伤
+    JIAN_SHANG, // 减伤
     EFFECT_HIT_RATE, // 效果命中
     EFFECT_RESIST_RATE, // 效果抵抗
     DEFENCE, // 防御

@@ -46,7 +46,7 @@ public class StateShenSheJianShang extends State implements InfluenceDamage {
     }
 
     @Override
-    public boolean effective(AttackType attackType) {
+    public boolean effective(AttackType attackType, Character character) {
         return true;
     }
 

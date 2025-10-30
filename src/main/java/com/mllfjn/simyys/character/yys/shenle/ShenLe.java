@@ -1,12 +1,10 @@
 package com.mllfjn.simyys.character.yys.shenle;
 
+import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.propertygetter.PropertiesMap;
 import com.mllfjn.simyys.character.propertygetter.PropertyInput;
-import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.yys.PropertyYYS;
-
-import java.util.List;
 
 public class ShenLe extends Character {
     public static final String privateName = "神乐";
@@ -30,8 +28,8 @@ public class ShenLe extends Character {
     }
 
     @Override
-    public void init(PropertiesMap properties) {
-        super.init(properties);
+    public void init(PropertiesMap properties, BattlePane bp) {
+        super.init(properties, bp);
         skill1Level = properties.get(SKILL1_KEY).getInt();
 //        skillJiFengLevel = properties.get(SKILL_JF_KEY).getInt();
     }

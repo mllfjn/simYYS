@@ -9,6 +9,7 @@ import com.mllfjn.simyys.guihuo.GuiHuo;
 import com.mllfjn.simyys.ratecontroller.TotalRateCalc;
 import com.mllfjn.simyys.starter.Initializer;
 import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
+import com.mllfjn.simyys.trigger.BattleActionListener;
 import com.mllfjn.simyys.trigger.BattleActionTrigger;
 import com.mllfjn.simyys.collections.SerializableObservableList;
 import com.mllfjn.simyys.utils.Utils;
@@ -45,12 +46,13 @@ public class BattlePane {
     public final TotalRateCalc calc = new TotalRateCalc();
     // 鬼火条 0-己方;1-敌方
     private GuiHuo[] guiHuo = new GuiHuo[2];
-    // 记录获得新回合的单位,这里的逻辑按照nga的帖子很乱,还要分是不是和怪物战斗,先简化随便取以后再改
+    // 记录获得新回合的单位
+    // 这里的逻辑按照nga的帖子很乱,还要分是不是和怪物战斗,先简化随便取以后再改 https://bbs.nga.cn/read.php?tid=32486237
     private final Stack<Character> newRound = new Stack<>();
     // 战斗记录,用于撤销
     private final Stack<byte[]> recorder = new Stack<>();
     // 全局触发器,用于幻境,结界
-    private final Map<Character, List<BattleActionTrigger>> triggerMap = new HashMap<>();
+    private final Map<Character, List<BattleActionListener>> triggerMap = new HashMap<>();
 
     private final BorderPane root = new BorderPane();
     private final HBox[] teamPane = new HBox[2];
@@ -228,7 +230,7 @@ public class BattlePane {
         for (PropertiesHolder holder : list) {
             int team = holder.map.get(PropertyKey.GENERAL_TEAM_KEY).getInt();
             if (team == 0 || team == 1) {
-                Character character = CharacterFactory.getCharacter(holder);
+                Character character = CharacterFactory.getCharacter(holder, this);
                 if (character != null) {
                     addCharacter(character);
                 }
@@ -432,12 +434,12 @@ public class BattlePane {
         triggerMap.remove(character);
     }
 
-    public void addActionTrigger(Character character, BattleActionTrigger trigger) {
+    public void addActionTrigger(Character character, BattleActionListener listener) {
         triggerMap.computeIfAbsent(character, k -> new ArrayList<>());
-        triggerMap.get(character).add(trigger);
+        triggerMap.get(character).add(listener);
     }
-    public void removeActionTrigger(Character character, BattleActionTrigger trigger) {
-        triggerMap.get(character).remove(trigger);
+    public void removeActionTrigger(Character character, BattleActionListener listener) {
+        triggerMap.get(character).remove(listener);
     }
 
     public boolean canSummon(int team) {

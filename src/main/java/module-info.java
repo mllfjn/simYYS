@@ -4,6 +4,7 @@ module com.mllfjn.simyys {
     requires com.google.gson;
     requires org.jetbrains.annotations;
     requires javafx.graphics;
+    requires com.mllfjn.simyys;
 
     opens com.mllfjn.simyys to
             javafx.fxml,

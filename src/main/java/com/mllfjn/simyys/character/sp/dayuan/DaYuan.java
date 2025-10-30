@@ -5,9 +5,11 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.PropertyKey;
 import com.mllfjn.simyys.character.propertygetter.PropertiesMap;
 import com.mllfjn.simyys.character.propertygetter.PropertyInput;
-import com.mllfjn.simyys.character.skill.Skill;
-
-import java.util.List;
+import com.mllfjn.simyys.state.State;
+import com.mllfjn.simyys.state.StateForm;
+import com.mllfjn.simyys.state.StateType;
+import com.mllfjn.simyys.state.determinant.IgnoreActionDecrease;
+import com.mllfjn.simyys.state.determinant.IgnoreActionIncrease;
 
 public class DaYuan extends Character {
     public static final String privateName = "纺愿缘结神";
@@ -35,20 +37,38 @@ public class DaYuan extends Character {
     }
 
     @Override
-    public void init(PropertiesMap properties) {
-        super.init(properties);
+    public void init(PropertiesMap properties, BattlePane bp) {
+        super.init(properties, bp);
         int skillLevel = properties.get(PropertyKey.SKILL_KEY).getInt();
         skill1Level = PropertyKey.getSkillLevel(skillLevel, 1);
         skill3Level = PropertyKey.getSkillLevel(skillLevel, 3);
+
+        // 免疫来源于其他目标的行动条改变效果
+        addState(new StateIgnoreOtherActionChange(this));
     }
 
     @Override
     public void addSkills() {
         super.addSkills();
         skills.add(new Skill1(this, skill1Level));
-        skills.add(new Skill2TODO(this));
         skills.add(new Skill3TODO(this, skill3Level));
         skills.add(new Skill5(this));
         skills.add(new Skill6(this));
+    }
+}
+
+class StateIgnoreOtherActionChange extends State implements IgnoreActionIncrease, IgnoreActionDecrease {
+    public StateIgnoreOtherActionChange(Character character) {
+        super(character, character, StateType.SPECIAL, StateForm.SPECIAL);
+    }
+
+    @Override
+    public boolean effective(Character from) {
+        return from != belongTo;
+    }
+
+    @Override
+    public void setName() {
+        name = "大缘免疫推拉条";
     }
 }

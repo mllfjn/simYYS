@@ -71,10 +71,15 @@ public class Interactive {
         }
 
         // 防御
-        traceableNumber.mul(300.0 / (300 + target.getDefense()), "防御");
+        double realDefense = target.getDefense() - owner.getIgnoreDefense();
+        traceableNumber.mul(300.0 / (300 + realDefense), "防御");
 
         // 一般增伤乘区
         traceableNumber.mul(AttributeCounter.getZengShang(owner), "增伤");
+
+        // 减伤 实际 = 基础 / (1+减伤) = 基础 * (1.0 / (1+减伤))
+        // https://bbs.nga.cn/read.php?tid=35530141 关于减伤的分类
+        traceableNumber.mul( 1.0 / ( 1 + target.getJianShang() / 100 ), "减伤");
 
         // 盾
 //        traceableNumber.sub();
@@ -145,13 +150,14 @@ public class Interactive {
                 , type, TextFlowLog.TextColor.HEAL, size));
     }
 
-    public void effect(String stateName, List<Character> targets, int base, StateSupplier stateSupplier) {
+    public boolean[] effect(String stateName, List<Character> targets, int base, StateSupplier stateSupplier) {
         boolean[] mingZhong = RateController.mingZhong(stateName, owner, targets, base, bp.isControlRate, bp.calc);
         for (int i = 0; i < targets.size(); i++) {
             if (mingZhong[i]) {
                 effect(targets.get(i), stateSupplier);
             }
         }
+        return mingZhong;
     }
 
     public void effect(String stateName, Character target, int base, StateSupplier stateSupplier) {
@@ -161,7 +167,7 @@ public class Interactive {
     }
 
     private void effect(Character target, StateSupplier stateSupplier) {
-        target.addState(stateSupplier.get(target, owner));
+        target.addState(stateSupplier.get(owner, target));
     }
 
 }

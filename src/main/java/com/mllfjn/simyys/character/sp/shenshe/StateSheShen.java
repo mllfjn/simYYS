@@ -1,6 +1,5 @@
 package com.mllfjn.simyys.character.sp.shenshe;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.interactive.AttackType;
@@ -63,7 +62,7 @@ public class StateSheShen extends State implements IgnoreChangeMaxHp, IgnoreDebu
 
 
     @Override
-    public boolean effective(AttackType attackType) {
+    public boolean effective(AttackType attackType, Character character) {
         // lv3-蛇神受到的群体伤害下降30%
         return level >=3 && attackType == AttackType.QUN_TI;
     }

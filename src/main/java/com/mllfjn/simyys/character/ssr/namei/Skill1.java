@@ -23,9 +23,16 @@ class Skill1 extends Skill {
     public void usePrivate(BattlePane bp) {
         Character target = CharacterFinder.findPriorAuto(bp, CharacterFinder.getEnemyTeam(getBelongTo()), CharacterFinder.Property.HP, CharacterFinder.Criteria.MIN);
         lastUsedTarget = target;
-
         Interactive interactive = getBelongTo().getInteractive(bp);
+
+        // lv5-并有25%基础概率附加凋零,持续1回合
+        // 没有测试是先上凋零还是先造成伤害,这里猜测是先凋零
+        if (getLevel() == 5) {
+            interactive.effect(StateDiaoLing.privateName, target, 25, StateDiaoLing::new);
+        }
+
+        // 造成攻击(系数)伤害
         interactive.attack(privateName, target, multiplier[getLevel()], AttackType.DAN_TI);
-        interactive.effect(DiaoLing.privateName, target, 25, DiaoLing::new);
+
     }
 }

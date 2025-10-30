@@ -4,5 +4,5 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.state.State;
 
 public interface StateSupplier {
-    State get(Character to, Character from);
+    State get(Character from, Character to);
 }

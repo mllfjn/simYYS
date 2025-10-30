@@ -1,6 +1,5 @@
 package com.mllfjn.simyys.character.sp.dayuan;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 
 class Skill5 extends SkillJieYuan {
@@ -17,6 +16,6 @@ class Skill5 extends SkillJieYuan {
 
     @Override
     void jieYuan(Character target) {
-        target.addState(new StateSTChiTODO(getBelongTo(), target));
+        target.addState(new StateSTChi((DaYuan) getBelongTo(), target));
     }
 }

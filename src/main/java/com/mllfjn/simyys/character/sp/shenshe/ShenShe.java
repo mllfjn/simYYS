@@ -59,8 +59,8 @@ public class ShenShe extends Character {
     }
 
     @Override
-    public void init(PropertiesMap properties) {
-        super.init(properties);
+    public void init(PropertiesMap properties, BattlePane bp) {
+        super.init(properties, bp);
 
         int skillLevel = properties.get(PropertyKey.SKILL_KEY).getInt();
         skill1Level = PropertyKey.getSkillLevel(skillLevel, 1);

@@ -4,17 +4,16 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
-import com.mllfjn.simyys.state.Flag;
-import com.mllfjn.simyys.state.State;
 
 import java.util.List;
 
-class Skill2TODO extends Skill {
+class Skill2 extends Skill {
     public static final String privateName = "神赐之吻";
-    public static final String FLAG_HUI_MIE = "Flag-毁灭";
     private boolean useFront = false;
-    public Skill2TODO(Character belongTo) {
+    private final boolean awakening;
+    public Skill2(Character belongTo, boolean awakening) {
         super(belongTo, 0, 2, 0, 2);
+        this.awakening = awakening;
     }
 
     public void useFront(BattlePane bp) {
@@ -27,21 +26,20 @@ class Skill2TODO extends Skill {
         Character target = getTarget(bp);
         lastUsedTarget = target;
 
-        State state = getBelongTo().getState(FLAG_HUI_MIE);
-        if (state != null) {
-            if (state.from != target) {
-                state.delete();
-            }
-            state.delete();
+        // 指定友方目标施加毁灭
+        if (!target.isHaveState(StateHuiMie.privateName)) {
+            target.addState(new StateHuiMie((NaMei) getBelongTo(), target, getLevel(), awakening));
+        } else { // 若该目标已处于毁灭,则使其额外失去最大生命50%的生命(该效果不致命)
+            target.setHp(Math.max(0, target.getHp() - target.getMaxHp() * 0.5));
         }
 
-        target.addState(new StateHuiMieTODO(getBelongTo(), target, getLevel()));
-        getBelongTo().addState(new Flag(target, getBelongTo(), FLAG_HUI_MIE));
     }
 
     private Character getTarget(BattlePane bp) {
         List<Character> teammates = CharacterFinder.findTeammate(getBelongTo(), bp.characters);
+        // 为自身以外的
         teammates.remove(getBelongTo());
+        // 先机时只能给攻击最高的友方式神,其他时候可以给除自身以外的任意友方包括阴阳师
         if (useFront) {
             teammates.removeIf(Character::isYYS);
             return CharacterFinder.find(teammates, getBelongTo().team, CharacterFinder.Property.ATTACK, CharacterFinder.Criteria.MAX);

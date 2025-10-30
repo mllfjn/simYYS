@@ -20,8 +20,9 @@ public class PropertyCheck extends PropertyRequire implements Serializable {
         return false;
     }
 
-    public void setValue(boolean value) {
+    public PropertyCheck setValue(boolean value) {
         this.value = value;
+        return this;
     }
 
     public boolean getValue() {

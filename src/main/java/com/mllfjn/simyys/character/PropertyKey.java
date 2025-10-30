@@ -34,6 +34,7 @@ public class PropertyKey {
     };
     public static final String SKILL_KEY = "技能等级";
     public static final String JI_FENG_MO_CI_TIAO_KEY = "极逢魔增益词条";
+    public static final String JUE_XING_KEY = "是否觉醒";
 
     public static int getSkillLevel(int skill, int i) {
         return switch (i) {

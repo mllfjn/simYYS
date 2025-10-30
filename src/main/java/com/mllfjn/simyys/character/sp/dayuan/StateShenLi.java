@@ -6,6 +6,7 @@ import com.mllfjn.simyys.state.*;
 
 class StateShenLi extends State implements AttributeModifier, Displayable {
     public static final String privateName = "神力";
+    // 上限5层,每层提升自身20%效果抵抗,并根据已有层数强化与世结缘(3)效果
     private int stack;
 
     public StateShenLi(Character character) {
@@ -40,7 +41,7 @@ class StateShenLi extends State implements AttributeModifier, Displayable {
 
     @Override
     public double getInfluence(Attribute attribute) {
-        return attribute == Attribute.EFFECT_RESIST_RATE ? stack * 20 : 0;
+        return stack * 20;
     }
 
     @Override

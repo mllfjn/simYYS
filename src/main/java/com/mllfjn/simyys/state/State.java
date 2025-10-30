@@ -57,5 +57,8 @@ public abstract class State implements Serializable {
 
     public void delete() {
         belongTo.getStates().remove(this);
+        if (settleType == StateSettleType.WEI_CHI) {
+            from.removeMaintainedState(this);
+        }
     }
 }

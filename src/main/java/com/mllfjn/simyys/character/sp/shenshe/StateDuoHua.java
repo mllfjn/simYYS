@@ -27,7 +27,7 @@ public class StateDuoHua extends State implements Displayable, Runnable, Attribu
 
     @Override
     public double getInfluence(Attribute attribute) {
-        return belongTo.getBasicSpeed() * 0.4;
+        return belongTo.getInitSpeed() * 0.4;
     }
 
     @Override
