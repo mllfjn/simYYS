@@ -6,6 +6,8 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.customnode.CustomText;
 import com.mllfjn.simyys.customnode.TextFlowLog;
 import com.mllfjn.simyys.ratecontroller.RateController;
+import com.mllfjn.simyys.state.State;
+import com.mllfjn.simyys.state.determinant.InfluenceDamage;
 
 import java.util.*;
 
@@ -15,7 +17,7 @@ public class Interactive {
     private Map<Character, List<CustomText>> currentNumberLog = new LinkedHashMap<>();
     private Map<Character, List<CustomText>> increaseLog = new LinkedHashMap<>();
     private static final TextFlowLog.TextType type = TextFlowLog.TextType.NUMBER;
-    private static final TextFlowLog.FontSize size = TextFlowLog.FontSize.NORMAL;
+    private static final TextFlowLog.FontSize size = TextFlowLog.FontSize.SMALL;
 
     public Interactive(BattlePane bp, Character owner) {
         this.bp = bp;
@@ -28,7 +30,7 @@ public class Interactive {
             bp.log.addText("\n", type, TextFlowLog.TextColor.NORMAL, size);
         });
 
-        currentNumberLog = new HashMap<>();
+        currentNumberLog = new LinkedHashMap<>();
     }
 
     private List<CustomText> createNumberRecord(String s) {
@@ -75,7 +77,7 @@ public class Interactive {
         traceableNumber.mul(300.0 / (300 + realDefense), "防御");
 
         // 一般增伤乘区
-        traceableNumber.mul(AttributeCounter.getZengShang(owner), "增伤");
+        traceableNumber.mul(1 + owner.getZengShang() / 100, "增伤");
 
         // 减伤 实际 = 基础 / (1+减伤) = 基础 * (1.0 / (1+减伤))
         // https://bbs.nga.cn/read.php?tid=35530141 关于减伤的分类
@@ -84,7 +86,13 @@ public class Interactive {
         // 盾
 //        traceableNumber.sub();
 
-        target.beHurt(bp, info);
+        for (State state : target.getStates()) {
+            if (state instanceof InfluenceDamage sid && sid.effective(attackType, owner)) {
+                sid.doInfluence(attackType, info);
+            }
+        }
+
+        target.beHurt(info);
 
         currentNumberLog.computeIfAbsent(target, k -> createNumberRecord(target.name))
                 .add(new CustomText(traceableNumber.getNumberString() + " "
@@ -126,7 +134,7 @@ public class Interactive {
             info.setBaoJi();
         }
 
-        target.beHeal(bp, info);
+        target.beHeal(info);
 
         currentNumberLog.computeIfAbsent(target, k -> createNumberRecord(target.name))
                 .add(new CustomText(traceableNumber.getNumberString() + " "

@@ -1,6 +1,8 @@
 package com.mllfjn.simyys.character;
 
 import com.mllfjn.simyys.BattlePane;
+import com.mllfjn.simyys.character.sp.laotou.LaoTou;
+import com.mllfjn.simyys.utils.PicUtil;
 import com.mllfjn.simyys.utils.Utils;
 import com.mllfjn.simyys.character.mob.shenqilou.ShenQiLou;
 import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
@@ -9,109 +11,88 @@ import com.mllfjn.simyys.character.sp.dayuan.DaYuan;
 import com.mllfjn.simyys.character.sp.shenshe.ShenShe;
 import com.mllfjn.simyys.character.ssr.namei.NaMei;
 import com.mllfjn.simyys.character.ssr.qianji.QianJi;
-import com.mllfjn.simyys.character.ssr.xiaoyuan.XiaoYuan;
 import com.mllfjn.simyys.character.yys.shenle.ShenLe;
-import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import javafx.scene.shape.Circle;
 
-import java.net.URL;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class CharacterFactory {
-    /*public static final String[] characterListYYS = {"晴明", "神乐", "八百比丘尼", "源博雅"};
-    public static final String[] characterListSP = {"纺愿缘结神", "神堕八岐大蛇", "因幡辉夜姬", "浮世青行灯"};
-    public static final String[] characterListSSR = {"伊邪那美", "天照", "千姬", "缘结神"};
-    public static final String[] characterListSR = {"蝎女"};
-    public static final String[] characterListR = {"丑时之女"};
-    public static final String[] characterListN = {};
-    public static final String[] characterListMob = {"鬼灵歌姬", "蜃气楼", "土蜘蛛", "荒骷髅", "地震鲶", "胧车", "达摩"};
-    public static final String[][] characterList = new String[][]{characterListYYS, characterListSP, characterListSSR, characterListSR, characterListR, characterListN, characterListMob};
-    public static final String[] characterType = new String[]{"阴阳师", "SP", "SSR", "SR", "R", "N", "怪物"};*/
-
     public static final Map<String, Map<String, Class<? extends Character>>> characterMap = new LinkedHashMap<>();
+    private static final Map<String, Image> iconMap = new HashMap<>();
     static {
         Map<String, Class<? extends Character>> mapYYS = new LinkedHashMap<>();
         characterMap.put("阴阳师", mapYYS);
-        mapYYS.put(ShenLe.privateName, ShenLe.class);
+        mapYYS.put(ShenLe.CharacterName, ShenLe.class);
 
         Map<String, Class<? extends Character>> mapSP = new LinkedHashMap<>();
         characterMap.put("SP", mapSP);
-        mapSP.put(DaYuan.privateName, DaYuan.class);
-        mapSP.put(ShenShe.privateName, ShenShe.class);
+        mapSP.put(DaYuan.CharacterName, DaYuan.class);
+        mapSP.put(ShenShe.CharacterName, ShenShe.class);
+        mapSP.put(LaoTou.CharacterName, LaoTou.class);
 
         Map<String, Class<? extends Character>> mapSSR = new LinkedHashMap<>();
         characterMap.put("SSR", mapSSR);
-        mapSSR.put(NaMei.privateName, NaMei.class);
-        mapSSR.put(QianJi.privateName, QianJi.class);
-        mapSSR.put(XiaoYuan.privateName, XiaoYuan.class);
+        mapSSR.put(NaMei.CharacterName, NaMei.class);
+        mapSSR.put(QianJi.CharacterName, QianJi.class);
 
         Map<String, Class<? extends Character>> mapMob = new LinkedHashMap<>();
         characterMap.put("怪物", mapMob);
-        mapMob.put(ShenQiLou.privateName, ShenQiLou.class);
+        mapMob.put(ShenQiLou.CharacterName, ShenQiLou.class);
     }
 
-    public static Character getCharacter(String name) {
+    public static Optional<Character> getCharacter(String name) {
         for (Map<String, Class<? extends Character>> map : characterMap.values()) {
             if (map.containsKey(name)) {
                 try {
-                    return map.get(name).getDeclaredConstructor().newInstance();
+                    return Optional.of(map.get(name).getDeclaredConstructor().newInstance());
                 } catch (Exception e) {
                     Utils.throwException("获取角色信息失败", e);
                 }
 
             }
         }
-        return null;
+        return Optional.empty();
     }
 
-    public static Character getCharacter(PropertiesHolder ph, BattlePane bp) {
-        Character character = getCharacter(ph.name);
-        if (character != null) {
-            character.init(ph.map, bp);
-            character.name = ph.name;
+    public static Optional<Character> getCharacter(PropertiesHolder ph, BattlePane bp) {
+        Optional<Character> oc = getCharacter(ph.name);
+        oc.ifPresent(character -> {
+            character.init(ph, bp);
             character.addSkills();
-            return character;
-        }
-        return null;
+        });
+        return oc;
     }
 
-    public static PropertiesMap getProperties(String name) {
-        Character character = getCharacter(name);
-        if (character != null) {
-            return character.getProperties();
-        }
-        return null;
+    public static Optional<PropertiesMap> getProperties(String name) {
+        return getCharacter(name).map(Character::getProperties);
     }
 
-    public static Pane getImageByName(String name, ImageSize size, Paint color, double strokeWidth) {
-        URL url = CharacterFactory.class.getResource("images/" + name + ".png");
-        ImageView imageView = new ImageView(new Image(String.valueOf(url)));
-        imageView.setFitWidth(size.size);
-        imageView.setFitHeight(size.size);
+    public static Node getImage(String name, ImageSize size) {
+        Image image;
+        if (iconMap.containsKey(name)) {
+            image = iconMap.get(name);
+        } else {
+            image = PicUtil.loadImage(CharacterFactory.class, "shishen/", name, ".png", size.size);
+            iconMap.put(name, image);
+        }
+        return new ImageView(image);
+    }
 
-        double radius = size.size / 2;
-        Circle border = new Circle(radius, radius, radius);
-        border.setFill(Color.TRANSPARENT);
-        border.setStroke(color);
-        border.setStrokeWidth(strokeWidth);
-
-        StackPane container = new StackPane(border, imageView);
-        container.setPadding(new Insets(strokeWidth));
-
-        return container;
+    public static Node getImageWithStroke(String name, ImageSize size, Paint color, double strokeWidth) {
+        return PicUtil.clipAndStroke((ImageView) getImage(name, size), size.size, color, strokeWidth);
     }
 
     public enum ImageSize {
-        LARGE(140),
-        BIG(120),
-        SMALL(75);
+        LARGE(130),
+        BIG(110),
+        SMALL(70),
+        LABEL(35);
 
         public final double size;
         ImageSize(double size) {

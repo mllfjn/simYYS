@@ -4,14 +4,10 @@ import com.mllfjn.simyys.character.PropertyKey;
 import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
 import com.mllfjn.simyys.character.propertygetter.PropertyCheck;
 import com.mllfjn.simyys.character.propertygetter.PropertyInput;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.TextFieldTableCell;
-
-import java.util.Map;
 
 public class CustomTableView extends TableView<PropertiesHolder> {
     public CustomTableView() {
@@ -46,7 +42,7 @@ public class CustomTableView extends TableView<PropertiesHolder> {
             this.getColumns().add(column);
         }
 
-        TableColumn<PropertiesHolder, Number> columnTotalAttack = new TableColumn<>("总攻击");
+        TableColumn<PropertiesHolder, String> columnTotalAttack = new TableColumn<>("总攻击");
         columnTotalAttack.setCellValueFactory(param -> param.getValue().getTotalAttack());
         this.getColumns().add(2, columnTotalAttack);
     }

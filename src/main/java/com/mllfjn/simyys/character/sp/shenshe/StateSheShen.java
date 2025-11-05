@@ -9,16 +9,19 @@ import com.mllfjn.simyys.state.determinant.IgnoreChangeMaxHp;
 import com.mllfjn.simyys.state.determinant.IgnoreDebuff;
 import com.mllfjn.simyys.state.determinant.InfluenceDamage;
 import com.mllfjn.simyys.state.determinant.PreventDie;
+import com.mllfjn.simyys.trigger.EventActionDone;
 
 // 无法改变生命上限,免疫减益和 TODO 放逐
-public class StateSheShen extends State implements IgnoreChangeMaxHp, IgnoreDebuff, PreventDie, InfluenceDamage {
-    public static final String privateName = "蛇神";
+public class StateSheShen extends State implements IgnoreChangeMaxHp, IgnoreDebuff, PreventDie, InfluenceDamage, Displayable {
+    // 变身前的血量和上限
     private final double originalMaxHp;
     private final double originalHp;
-
+    // 吸取的攻击力
     private final double attack;
-
+    // 技能等级
     private final int level;
+    // 受到致命伤害时不会立即返回蛇神,而是在下一次行动结束时
+    private boolean die = false;
 
     public StateSheShen(Character character, int skillLevel, double attack) {
         super(character, character, StateType.SPECIAL, StateForm.SPECIAL);
@@ -30,8 +33,7 @@ public class StateSheShen extends State implements IgnoreChangeMaxHp, IgnoreDebu
         this.level = skillLevel;
 
         // 生命为神堕八岐大蛇攻击200%
-        character.setMaxHp(character.getAttack() * skillLevel == 1 ? 2 : 3.8);
-        character.setHp(character.getMaxHp());
+        character.setMaxHp(character.getAttack() * (skillLevel == 1 ? 2 : 3.8), true);
     }
 
     public double getAttack() {
@@ -39,24 +41,26 @@ public class StateSheShen extends State implements IgnoreChangeMaxHp, IgnoreDebu
     }
 
     @Override
-    public void setName() {
-        name = privateName;
-    }
-
-    @Override
-    public void action() {
-        backToNormal();
-
-        // lv4-蛇神被击败时,自身提升100点速度,持续1个回合
-        if (level >= 4) {
-            belongTo.addState(new StateSheShenSpeed(belongTo));
+    public void preventDie() {
+        if (!die) {
+            belongTo.bp.addActionTrigger(belongTo, event -> {
+                if (event instanceof EventActionDone ea) {
+                    backToNormal();
+                    // lv4-蛇神被击败时,自身提升100点速度,持续1个回合
+                    if (level >= 4) {
+                        belongTo.addState(new StateSheShenSpeed(belongTo));
+                    }
+                    return true;
+                }
+                return false;
+            });
         }
     }
 
     public void backToNormal() {
         // 当蛇神通过审判仪式破除天羽羽斩镇压或受到致命伤害时,本体重新回到场上
         delete();
-        belongTo.setMaxHp(originalMaxHp);
+        belongTo.setMaxHp(originalMaxHp, false);
         belongTo.setHp(originalHp);
     }
 
@@ -71,26 +75,28 @@ public class StateSheShen extends State implements IgnoreChangeMaxHp, IgnoreDebu
     public void doInfluence(AttackType attackType, Info info) {
         info.getTraceableNumber().mul(0.7, "蛇神");
     }
+
+    @Override
+    public String getText() {
+        return "蛇神";
+    }
+
+    static class StateSheShenSpeed extends State implements AttributeModifier {
+        public StateSheShenSpeed(Character character) {
+            super(character, character, StateType.SPECIAL, StateForm.SPECIAL);
+            this.setSettleType(StateSettleType.CHI_XU, 1);
+        }
+
+        @Override
+        public boolean isAffectAttribute(Attribute attribute) {
+            return attribute == Attribute.SPEED;
+        }
+
+        @Override
+        public double getInfluence(Attribute attribute) {
+            return 100;
+        }
+    }
 }
 
-class StateSheShenSpeed extends State implements AttributeModifier {
-    public StateSheShenSpeed(Character character) {
-        super(character, character, StateType.SPECIAL, StateForm.SPECIAL);
-        this.setSettleType(StateSettleType.CHI_XU, 1);
-    }
 
-    @Override
-    public void setName() {
-        name = "蛇神加速100";
-    }
-
-    @Override
-    public boolean isAffectAttribute(Attribute attribute) {
-        return attribute == Attribute.SPEED;
-    }
-
-    @Override
-    public double getInfluence(Attribute attribute) {
-        return 100;
-    }
-}

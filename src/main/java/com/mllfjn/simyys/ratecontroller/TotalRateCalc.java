@@ -1,35 +1,41 @@
 package com.mllfjn.simyys.ratecontroller;
 
+import com.mllfjn.simyys.utils.DecimalFormatUtil;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 
+import java.io.Serializable;
 import java.text.DecimalFormat;
 
-public class TotalRateCalc extends Label{
-    private final DecimalFormat df = new DecimalFormat("0.00#%");
+public class TotalRateCalc {
     private double currentRate = 1;
-    public TotalRateCalc() {
-        super();
-    }
-
+    private transient Label label;
     public void add(double rate) {
         currentRate *= rate;
-        display();
+        refresh();
     }
 
-    public void setRate(double rate) {
-        currentRate = rate;
-        display();
+    public Node getNode() {
+        if (label == null) {
+            label = new Label();
+        }
+        return label;
     }
 
-    public double getRate() {
+    public double getCurrentRate() {
         return currentRate;
     }
 
-    private void display() {
+    public void setCurrentRate(double currentRate) {
+        this.currentRate = currentRate;
+        refresh();
+    }
+
+    private void refresh() {
         if (currentRate == 1) {
-            this.setText("");
+            label.setText("");
         } else {
-            this.setText("当前概率：" + df.format(currentRate));
+            label.setText("当前概率：" + DecimalFormatUtil.df_2_1.format(currentRate));
         }
     }
 }

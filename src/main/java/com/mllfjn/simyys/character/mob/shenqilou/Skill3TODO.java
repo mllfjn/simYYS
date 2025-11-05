@@ -5,7 +5,7 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
 
 class Skill3TODO extends Skill {
-    public static final String privateName = "蜃气爆弹";
+    public static final String SkillName = "蜃气爆弹";
 
     public Skill3TODO(Character belongTo) {
         super(belongTo, 0, 3, 0, 3);
@@ -13,7 +13,7 @@ class Skill3TODO extends Skill {
 
     @Override
     public String getName() {
-        return privateName;
+        return SkillName;
     }
 
     @Override

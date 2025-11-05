@@ -18,15 +18,17 @@ public class CharacterFinder {
     }
 
     public static Character findPriorAuto(BattlePane bp, int team, Property property, Criteria criteria) {
-        return bp.autoTo[team] == null ? find(bp.characters, team, property, criteria) : bp.autoTo[team];
+        return bp.situation.getAutoTo(team).orElseGet(() -> find(bp.situation.characters, team, property, criteria));
     }
 
     public static Character findPriorAuto(List<Character> list, BattlePane bp, int team, Property property, Criteria criteria) {
-        return list.contains(bp.autoTo[team]) ? bp.autoTo[team] : find(list, team, property, criteria);
+        return bp.situation.getAutoTo(team).filter(list::contains).orElseGet(() -> find(list, team, property, criteria));
     }
 
     public static List<Character> findTeammate(Character character, List<Character> characters) {
-        return characters.stream().filter(character1 -> character1.team == character.team).collect(Collectors.toCollection(ArrayList::new));
+        return characters.stream()
+                .filter(character1 -> character1.team == character.team)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     public static List<Character> findTeammateShiShen(Character character, List<Character> characters) {

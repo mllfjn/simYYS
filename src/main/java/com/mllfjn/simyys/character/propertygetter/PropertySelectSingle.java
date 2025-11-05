@@ -13,11 +13,13 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 public class PropertySelectSingle  extends PropertyRequire implements Serializable {
-    private final StringGroup[] options;
     private String value;
+    private final StringGroup[] options;
+
     public PropertySelectSingle(StringGroup[] options) {
         this.options = options;
     }
@@ -31,7 +33,12 @@ public class PropertySelectSingle  extends PropertyRequire implements Serializab
                 }
             }
         }
-        return 0;
+        return super.getInt();
+    }
+
+    @Override
+    public String getString() {
+        return value;
     }
 
     public void setValue(int i) {
@@ -114,9 +121,4 @@ public class PropertySelectSingle  extends PropertyRequire implements Serializab
         node.getChildren().addAll(descLbl, valueLbl, confirmBtn);
         return node;
     }
-
-    /*@Override
-    public void toString(StringBuilder sb) {
-        sb.append(value == null ? "无" : value);
-    }*/
 }

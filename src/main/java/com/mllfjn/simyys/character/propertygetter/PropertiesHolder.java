@@ -1,9 +1,11 @@
 package com.mllfjn.simyys.character.propertygetter;
 
+import com.mllfjn.simyys.utils.DecimalFormatUtil;
 import com.mllfjn.simyys.utils.Utils;
 import com.mllfjn.simyys.character.PropertyKey;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
+import javafx.beans.binding.StringBinding;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -21,6 +23,7 @@ import javafx.stage.Window;
 import java.io.Serializable;
 import java.util.AbstractMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 public class PropertiesHolder implements Serializable {
     public final String name;
@@ -28,7 +31,7 @@ public class PropertiesHolder implements Serializable {
     public final Map<Integer, Integer> lockSKill;
 
     private transient SimpleStringProperty nameProperty;
-    private transient DoubleBinding totalAttackProperty;
+    private transient StringBinding totalAttackProperty;
 
     public PropertiesHolder(String name, PropertiesMap map, Map<Integer, Integer> lockSKill) {
         this.name = name;
@@ -66,13 +69,14 @@ public class PropertiesHolder implements Serializable {
         return nameProperty;
     }
 
-    public DoubleBinding getTotalAttack() {
+    public StringBinding getTotalAttack() {
         if (totalAttackProperty == null) {
             SimpleStringProperty baseAttack = ((PropertyInput) map.get(PropertyKey.GENERAL_BASE_ATTACK_KEY)).getProperty();
             SimpleStringProperty addAttack = ((PropertyInput) map.get(PropertyKey.GENERAL_YU_HUN_ATTACK_KEY)).getProperty();
 
-            totalAttackProperty = Bindings.createDoubleBinding(() -> Utils.parseDoubleOrDefault(
-                            baseAttack.getValue(), 0.0) + Utils.parseDoubleOrDefault(addAttack.getValue(), 0.0)
+            totalAttackProperty = Bindings.createStringBinding(() -> DecimalFormatUtil.df_0_2.format(
+                            Utils.parseDoubleOrDefault(baseAttack.getValue(), 0)
+                                    + Utils.parseDoubleOrDefault(addAttack.getValue(), 0))
                     , baseAttack, addAttack);
         }
         return totalAttackProperty;

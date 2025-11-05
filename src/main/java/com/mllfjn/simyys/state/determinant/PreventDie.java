@@ -5,5 +5,5 @@ public interface PreventDie {
         return true;
     }
 
-    void action();
+    void preventDie();
 }

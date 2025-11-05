@@ -4,21 +4,19 @@ import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.state.*;
 
+import java.util.Optional;
+
 class StateShenLi extends State implements AttributeModifier, Displayable {
-    public static final String privateName = "神力";
     // 上限5层,每层提升自身20%效果抵抗,并根据已有层数强化与世结缘(3)效果
     private int stack;
 
-    public StateShenLi(Character character) {
+    private StateShenLi(Character character) {
         super(character, character, StateType.BUFF, StateForm.YIN_JI);
+        character.addState(this);
     }
 
     public static void addStack(Character character, int count) {
-        StateShenLi shenLi = (StateShenLi) character.getState(privateName);
-        if (shenLi == null) {
-            shenLi = new StateShenLi(character);
-            character.addState(shenLi);
-        }
+        StateShenLi shenLi = character.getState(StateShenLi.class).orElseGet(() -> new StateShenLi(character));
         shenLi.stack += count;
         if (shenLi.stack > 5) {
             shenLi.stack = 5;
@@ -27,11 +25,6 @@ class StateShenLi extends State implements AttributeModifier, Displayable {
 
     public int getStack() {
         return stack;
-    }
-
-    @Override
-    public void setName() {
-        this.name = privateName;
     }
 
     @Override

@@ -7,11 +7,14 @@ import java.io.Serializable;
 
 public abstract class Skill implements Serializable {
     public static final String[] SKILL_LABEL = new String[]{"普攻", "贰", "叁", "肆", "伍", "陆", "柒", "捌", "玖", "拾"};
+
     private final Character belongTo;
     private final int level;
     private final int coolDown;
     private final int skillID;
+    // 技能本身的消耗
     private int cost;
+
     private int cooling;
     public Character lastUsedTarget;
 
@@ -22,8 +25,9 @@ public abstract class Skill implements Serializable {
         this.coolDown = coolDown;
         this.skillID = skillID;
     }
-//    public abstract int getSkillID();
+
     public abstract String getName();
+
     public boolean tryUse(BattlePane bp) {
         if (canUse(bp)) {
             use(bp);
@@ -31,10 +35,12 @@ public abstract class Skill implements Serializable {
         }
         return false;
     }
+
     public void use(BattlePane bp) {
         useBase(bp, true);
     }
 
+    // 技能本身的消耗，妒火之类的状态不要改这个
     protected void setCost(int num) {
         cost = num;
     }
@@ -52,9 +58,12 @@ public abstract class Skill implements Serializable {
             bp.useGuiHuo(getBelongTo(), cost);
         }
 
+        lastUsedTarget = null;
         usePrivate(bp);
 
-        cooling = coolDown + 1;
+        if (coolDown != 0) {
+            cooling = coolDown + 1;
+        }
         StringBuilder sb = new StringBuilder(belongTo.name);
         if (lastUsedTarget != null) {
             sb.append("对").append(lastUsedTarget.name);
@@ -62,9 +71,11 @@ public abstract class Skill implements Serializable {
         sb.append("使用了").append(getName());
         bp.log.addSkill(sb.toString());
 
-        getBelongTo().getInteractive(bp).skillDone();
+        getBelongTo().getInteractive().skillDone();
     }
+
     public abstract void usePrivate(BattlePane bp);
+
     public boolean canUse(BattlePane bp) {
         return cooling == 0 && bp.canUseGuiHuo(belongTo, cost);
     }
@@ -76,6 +87,7 @@ public abstract class Skill implements Serializable {
     public int getLevel() {
         return this.level;
     }
+
     public void pastRound() {
         if (cooling > 0) cooling--;
     }

@@ -9,7 +9,7 @@ import com.mllfjn.simyys.state.determinant.PreventDie;
 import com.mllfjn.simyys.trigger.Trigger;
 
 public class StateHuiMie extends State implements Displayable, Runnable, AttributeModifier, PreventDie {
-    public static final String privateName = "毁灭";
+    private static final String text = "毁灭";
     // 毁灭等级
     private int stack = 1;
     // 那美二技能等级
@@ -19,27 +19,19 @@ public class StateHuiMie extends State implements Displayable, Runnable, Attribu
     // 剩余可以触发免死的次数
     private int times = 3;
     // 那美攻击时无视护甲的状态,需要在毁灭移除时一起移除
-    private StateNaMeiIgnoreDefence NaMeiIgnoreDefence = null;
+    private final StateNaMeiFlag NaMeiFlag;
 
     public StateHuiMie(NaMei from, Character belongTo, int level, boolean awakening) {
         super(from, belongTo, StateType.BUFF, StateForm.YIN_JI);
         this.level = level;
 
-        // 觉醒-伊邪那美攻击时,也可触发友方目标当前毁灭的防御无视效果
-        if (awakening) {
-            NaMeiIgnoreDefence = new StateNaMeiIgnoreDefence(from, (NaMei) belongTo, this);
-            from.addState(NaMeiIgnoreDefence);
-        }
-    }
-
-    @Override
-    public void setName() {
-        name = privateName;
+        NaMeiFlag = new StateNaMeiFlag(from, this, awakening);
+        from.addState(NaMeiFlag);
     }
 
     @Override
     public String getText() {
-        return "毁灭" + stack;
+        return text + stack;
     }
 
     @Override
@@ -49,7 +41,7 @@ public class StateHuiMie extends State implements Displayable, Runnable, Attribu
     }
 
     @Override
-    public void run(Trigger trigger, BattlePane bp) {
+    public boolean run(Trigger trigger, BattlePane bp) {
         if (stack < 6) {
             stack++;
         }
@@ -57,6 +49,8 @@ public class StateHuiMie extends State implements Displayable, Runnable, Attribu
         if (times > 0) {
             canTrigger = true;
         }
+
+        return false;
     }
 
     @Override
@@ -82,8 +76,8 @@ public class StateHuiMie extends State implements Displayable, Runnable, Attribu
     @Override
     public void delete() {
         super.delete();
-        if (NaMeiIgnoreDefence != null) {
-            NaMeiIgnoreDefence.delete();
+        if (NaMeiFlag != null) {
+            NaMeiFlag.delete();
         }
     }
 
@@ -94,32 +88,30 @@ public class StateHuiMie extends State implements Displayable, Runnable, Attribu
     }
 
     @Override
-    public void action() {
+    public void preventDie() {
         canTrigger = false;
         times--;
     }
 }
 
-class StateNaMeiIgnoreDefence extends State implements AttributeModifier {
+class StateNaMeiFlag extends State implements AttributeModifier {
     private final StateHuiMie huiMie;
+    private final boolean awakening;
 
-    public StateNaMeiIgnoreDefence(Character from, NaMei belongTo, StateHuiMie huiMie) {
-        super(from, belongTo, StateType.SPECIAL, StateForm.SPECIAL);
+    public StateNaMeiFlag(NaMei naMei, StateHuiMie huiMie, boolean awakening) {
+        super(naMei, naMei, StateType.SPECIAL, StateForm.SPECIAL);
         this.huiMie = huiMie;
+        this.awakening = awakening;
     }
 
     @Override
     public boolean isAffectAttribute(Attribute attribute) {
-        return attribute == Attribute.IGNORE_DEFENCE;
+        // 觉醒-伊邪那美攻击时,也可触发友方目标当前毁灭的防御无视效果
+        return awakening && attribute == Attribute.IGNORE_DEFENCE;
     }
 
     @Override
     public double getInfluence(Attribute attribute) {
         return huiMie.getInfluence(Attribute.IGNORE_DEFENCE);
-    }
-
-    @Override
-    public void setName() {
-        name = "那美无视防御";
     }
 }

@@ -9,15 +9,8 @@ import com.mllfjn.simyys.state.instance.StateSleep;
 import com.mllfjn.simyys.trigger.Trigger;
 
 public class StateDuoHua extends State implements Displayable, Runnable, AttributeModifier, ActionWhenDie {
-    public static final String privateName = "堕化";
-
     public StateDuoHua(Character from, Character belongTo) {
         super(from, belongTo, StateType.GENERAL, StateForm.YIN_JI);
-    }
-
-    @Override
-    public void setName() {
-        name = privateName;
     }
 
     @Override
@@ -32,7 +25,7 @@ public class StateDuoHua extends State implements Displayable, Runnable, Attribu
 
     @Override
     public String getText() {
-        return privateName;
+        return "堕化";
     }
 
     @Override
@@ -41,16 +34,18 @@ public class StateDuoHua extends State implements Displayable, Runnable, Attribu
     }
 
     @Override
-    public void run(Trigger trigger, BattlePane bp) {
+    public boolean run(Trigger trigger, BattlePane bp) {
         // 回合开始时腐蚀自身当前24%生命,视为失去生命,且可解除睡眠状态
-        belongTo.lostHP(bp, belongTo.getHp()*0.24);
+        belongTo.lostHP(belongTo.getHp()*0.24);
         StateSleep.removeSleep(belongTo);
+
+        return false;
     }
 
     @Override
     public void action(BattlePane bp) {
         // 携带者阵亡时,神堕八岐大蛇提升40%行动条
-        from.increaseLocation(bp, belongTo, 40);
+        from.increaseLocation(belongTo, 40);
         // 并将携带者献祭成1把堕落之剑
         new DuoLuoZhiJian((ShenShe) from, belongTo, bp, true);
         // 立即破除1把天羽羽斩封印

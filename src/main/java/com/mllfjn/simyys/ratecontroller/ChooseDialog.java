@@ -23,32 +23,14 @@ public class ChooseDialog<T> extends Dialog<T> {
             Button button = new Button(stringGetter.apply(t));
             button.setOnAction(event -> {
                 result = t;
+                close();
             });
+            tp.getChildren().add(button);
         }
 
         getDialogPane().setContent(tp);
-        getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL);
 
-        setResultConverter(buttonType -> {
-            if (buttonType == ButtonType.OK) {
-                return result;
-            }
-            return null;
-        });
+        setResultConverter(buttonType -> result);
     }
-
-    /*public <T> T choose(List<T> list, Function<T, String> stringGetter) {
-        TilePane tp = new TilePane();
-        tp.setPadding(new Insets(100));
-        tp.setHgap(20);
-
-        for (T t : list) {
-            Button button = new Button(stringGetter.apply(t));
-            button.setOnAction(event -> {
-                close();
-            });
-        }
-        this.showAndWait();
-        return null;
-    }*/
 }

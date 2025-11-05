@@ -1,73 +1,106 @@
 package com.mllfjn.simyys.character;
 
 import com.mllfjn.simyys.character.skill.Skill;
+import com.mllfjn.simyys.character.yuhun.YuHun;
+import com.mllfjn.simyys.character.yuhun.YuHunFactory;
 import com.mllfjn.simyys.state.Displayable;
 import com.mllfjn.simyys.state.State;
+import com.mllfjn.simyys.state.StateShield;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 
-import java.net.URL;
+import java.util.Iterator;
+import java.util.Optional;
+import java.util.StringJoiner;
 
 public class CharacterIcon extends VBox {
-    public final Character character;
-    private final Label stateLabel = new Label();
-    private final ProgressBar healthBar = new ProgressBar();
-    private final ComboBox<Skill> skillBox;
-    private final Label[] info = new Label[8];
-    private final ImageView autoTo;
+    protected final Character character;
 
-    public CharacterIcon(Character character, OnClickListener onClickListener) {
+    // 状态栏
+    private final Label stateLabel = new Label();
+    // 生命条
+    private final ProgressBar healthBar = new ProgressBar();
+    // 护盾条
+    private final ProgressBar shieldBar = new ProgressBar();
+    // 技能选择栏
+    private final ComboBox<Skill> skillBox;
+    // 状态显示 TODO UI决定是否显示
+    private final Label[] info = new Label[8];
+    // 红绿标的那个标
+    private final Node autoTo;
+    // 图片区域,包括头像和御魂
+    private final AnchorPane imagePane = new AnchorPane();
+    // 御魂显示
+    private final ImageView[] yuHunIcon = new ImageView[4];
+    // 修改技能时comboBox切换不生效
+    private boolean isModifyingItems = false;
+    // 头像鼠标左键事件
+    private final onClickHandler onClickHandler;
+    // 可选,右键时触发其他事件,比如极逢魔的转阶段,须佐的天威
+    private EventHandler<MouseEvent> eventHandler;
+
+    public CharacterIcon(Character character, onClickHandler onClickHandler) {
         super();
         this.character = character;
-        this.setPadding(new Insets(0, 0, 40, 0));
+        this.onClickHandler = onClickHandler;
+        this.setPadding(new Insets(0, 0, 10, 0));
         this.setAlignment(Pos.BOTTOM_CENTER);
 
-        // 从下到上，分别是信息，技能选择，头像，生命，（盾），状态栏
-        Pane image = CharacterFactory.getImageByName(character.name, CharacterFactory.ImageSize.LARGE, Color.ORANGE, 5);
-        image.setOnMouseClicked(event -> onClickListener.onClick(this.character));
-
-        ObservableList<Skill> skills = character.getSkills();
+        // 头像
+        Node image = CharacterFactory.getImageWithStroke(character.name, CharacterFactory.ImageSize.LARGE, Color.ORANGE, 5);
+        image.setOnMouseClicked(this::onMouseClicked);
+        StackPane icon = new StackPane(image);
+        icon.setAlignment(Pos.CENTER);
+        imagePane.getChildren().add(icon);
+        // 技能选择
+        ObservableList<Skill> skills = character.getReadOnlySkillList();
         skillBox = new ComboBox<>(skills);
-        skills.stream()
-                .filter(skill -> skill.getSkillID() == character.getLockSkill())
-                .findFirst()
-                .ifPresentOrElse(
-                        skill -> skillBox.getSelectionModel().select(skill),
-                        () -> skillBox.getSelectionModel().select(0)
-                );
-
-        skillBox.valueProperty().addListener((obs, old, val) -> character.setLockSkill(val.getSkillID()));
-
-        healthBar.setMaxWidth(Double.MAX_VALUE);
+        selectLockSkill();
+        skillBox.valueProperty().addListener((obs, old, val) -> {
+            if (!isModifyingItems) {
+                character.setLockSkill(val.getSkillID());
+            }
+        });
         skillBox.setMaxWidth(Double.MAX_VALUE);
+        // 生命
+        healthBar.setMaxWidth(Double.MAX_VALUE);
+        // TODO盾
+        shieldBar.setStyle("-fx-accent: lightblue");
+        shieldBar.setMaxWidth(Double.MAX_VALUE);
+        // 状态栏
         stateLabel.setMaxWidth(Double.MAX_VALUE);
 
-        if (character.team % 2 == 0) {
+        // 设置队伍相关
+        if (character.team == 0) {
             healthBar.setStyle("-fx-accent: orange");
-            URL url = CharacterFactory.class.getResource("images/绿标.png");
-            this.autoTo = new ImageView(String.valueOf(url));
+            this.autoTo = CharacterFactory.getImage("绿标", CharacterFactory.ImageSize.LABEL);
         } else {
             healthBar.setStyle("-fx-accent: red");
-            URL url = CharacterFactory.class.getResource("images/红标.png");
-            this.autoTo = new ImageView(String.valueOf(url));
+            this.autoTo = CharacterFactory.getImage("红标", CharacterFactory.ImageSize.LABEL);
         }
-        setIsAuto(false);
-        this.getChildren().add(0, autoTo);
 
+        setIsAuto(false);
 
         this.getChildren().addAll(
-                this.stateLabel,
-                this.healthBar,
-                image,
-                this.skillBox
+                autoTo,
+                stateLabel,
+                healthBar,
+                shieldBar,
+                imagePane,
+                skillBox
         );
         for (int i = 0; i < info.length; i++) {
             info[i] = new Label();
@@ -77,38 +110,157 @@ public class CharacterIcon extends VBox {
 
         update();
     }
+    public CharacterIcon(Character character, onClickHandler onClickHandler, EventHandler<MouseEvent> eventHandler) {
+        this(character, onClickHandler);
+        this.eventHandler = eventHandler;
+    }
+
+    protected void onMouseClicked(MouseEvent event) {
+        if (eventHandler == null || event.getButton() == MouseButton.PRIMARY) {
+            onClickHandler.onLeftClick(character);
+        } else {
+            eventHandler.handle(event);
+        }
+    }
+
+    public void selectLockSkill() {
+        // 如果当前选中的技能存在，并且SkillID等于lockSkill，返回
+        if (skillBox.getValue() != null && skillBox.getValue().getSkillID() == character.getLockSkill()) {
+            return;
+        }
+
+        isModifyingItems = true;
+        Optional<Skill> os = character.getSkill(character.getLockSkill());
+        os.ifPresentOrElse(
+                s -> skillBox.getSelectionModel().select(s)
+                , () -> skillBox.getSelectionModel().select(0)
+        );
+        isModifyingItems = false;
+    }
+
+    public void startChangeSkill() {
+        isModifyingItems = true;
+    }
+
+    public void endChangeSkill() {
+        selectLockSkill();
+    }
 
     public void update() {
+        refreshProperties();
+        refreshStateLabel();
+        refreshHealthBar();
+        updateYuHunIcon();
+        refreshShieldBar();
+    }
+
+    public void refreshStateLabel() {
+        StringJoiner sj = new StringJoiner(" ");
+        // 这里海原贝戟和堕落之剑会显示没必要的无法动作,所以移除了   而且该方法需要遍历states,和下面应该可以合在一起
+        /*if (!character.controllable()) {
+            sj.add("无法动作");
+        }*/
+        for (State state : character.getStates()) {
+            if (state instanceof Displayable d) {
+                String text = d.getText();
+                if (text != null) {
+                    sj.add(text);
+                }
+            }
+        }
+        this.stateLabel.setText(sj.toString());
+    }
+
+    public void refreshProperties() {
         info[0].setText("攻击:" + String.format("%.2f", character.getAttack()));
-        info[1].setText("生命:" + String.format("%.2f(%.2f%%)", character.getHp(), character.getHp() / character.getMaxHp() * 100));
         info[2].setText("防御:" + String.format("%.2f", character.getDefense()));
         info[3].setText("速度:" + String.format("%.2f", character.getSpeed()));
         info[4].setText("暴击:" + String.format("%.2f", character.getCritRate()));
         info[5].setText("爆伤:" + String.format("%.2f", character.getCritPower()));
         info[6].setText("命中:" + String.format("%.2f", character.getEffectHitRate()));
         info[7].setText("抵抗:" + String.format("%.2f", character.getEffectResistRate()));
-
-        this.healthBar.setProgress(character.getHp() / character.getMaxHp());
-
-        updateState();
     }
 
-    public void updateState() {
-        StringBuilder sb = new StringBuilder();
-        for (State state : character.getStates()) {
-            if (state instanceof Displayable d) {
-                sb.append(d.getText()).append(" ");
+    public void refreshHealthBar() {
+        info[1].setText("生命:" + String.format("%.2f(%.2f%%)", character.getHp(), character.getHp() / character.getMaxHp() * 100));
+        this.healthBar.setProgress(character.getHp() / character.getMaxHp());
+    }
+
+    public void refreshShieldBar() {
+        double shield = 0;
+        double maxHp = character.getMaxHp();
+        Iterator<State> iterator = character.getStates().iterator();
+        while (shield < maxHp && iterator.hasNext()) {
+            if (iterator.next() instanceof StateShield ss) {
+                shield += ss.getShield();
             }
         }
-        this.stateLabel.setText(sb.toString());
-    }
-
-
-    public interface OnClickListener {
-        void onClick(Character character);
+        if (shield > 0) {
+            shieldBar.setProgress(shield / maxHp);
+            shieldBar.setVisible(true);
+        } else {
+            shieldBar.setVisible(false);
+        }
     }
 
     public void setIsAuto(boolean visible) {
         autoTo.setVisible(visible);
+    }
+
+    public void updateYuHunIcon() {
+//        LinkedHashSet<String> yuHunList = character.getYuHunList();
+        Iterator<YuHun> iterator = character.getYuHunSet().iterator();
+        for (int i = 0; i < 4; i++) {
+            if (iterator.hasNext()) {
+                YuHun yuHun = iterator.next();
+                ImageView imageView = getImagePosition(i);
+                double radius = YuHunFactory.ICON_SIZE / 2;
+                imageView.setClip(new Circle(radius, radius, radius));
+                imageView.setImage(YuHunFactory.getImage(yuHun.getName()));
+                imageView.setFitHeight(YuHunFactory.ICON_SIZE);
+                imageView.setFitWidth(YuHunFactory.ICON_SIZE);
+            } else {
+                if (yuHunIcon[i] != null) {
+                    yuHunIcon[i].setImage(null);
+                }
+            }
+        }
+    }
+
+    private ImageView getImagePosition(int index) {
+        if (index >= yuHunIcon.length) {
+            throw new IndexOutOfBoundsException();
+        }
+
+        if (yuHunIcon[index] == null) {
+            ImageView imageView = new ImageView();
+            // 按顺序在imagePane的 左下 右下 左上 右上
+            switch (index) {
+                case 0 -> {
+                    AnchorPane.setLeftAnchor(imageView, 0.0);
+                    AnchorPane.setBottomAnchor(imageView, 0.0);
+                }
+                case 1 -> {
+                    AnchorPane.setRightAnchor(imageView, 0.0);
+                    AnchorPane.setBottomAnchor(imageView, 0.0);
+                }
+                case 2 -> {
+                    AnchorPane.setLeftAnchor(imageView, 0.0);
+                    AnchorPane.setTopAnchor(imageView, 0.0);
+                }
+                case 3 -> {
+                    AnchorPane.setRightAnchor(imageView, 0.0);
+                    AnchorPane.setTopAnchor(imageView, 0.0);
+                }
+            }
+            yuHunIcon[index] = imageView;
+            imagePane.getChildren().add(imageView);
+        }
+
+        return yuHunIcon[index];
+    }
+
+    public interface onClickHandler {
+        void onLeftClick(Character character);
     }
 }

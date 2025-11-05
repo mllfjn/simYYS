@@ -7,8 +7,9 @@ import com.mllfjn.simyys.state.State;
 import com.mllfjn.simyys.state.StateForm;
 import com.mllfjn.simyys.state.StateType;
 
+import java.util.Optional;
+
 public class StateAddAttack extends State implements AttributeModifier {
-    public static final String privateName = "天羽羽斩增加攻击";
     private double attack;
 
     public StateAddAttack(Character character) {
@@ -16,22 +17,13 @@ public class StateAddAttack extends State implements AttributeModifier {
     }
 
     public static void addAttack(ShenShe shenShe, double attack) {
-        StateAddAttack state = (StateAddAttack) shenShe.getState(privateName);
-        if (state == null) {
-            state = new StateAddAttack(shenShe);
-            shenShe.addState(state);
-        }
-
-        state.addAttack(attack);
+        shenShe.getState(StateAddAttack.class)
+                .or(() -> shenShe.addState(new StateAddAttack(shenShe)))
+                .ifPresent(state -> state.addAttack(attack));
     }
 
     private void addAttack(double attack) {
         this.attack += attack;
-    }
-
-    @Override
-    public void setName() {
-        name = privateName;
     }
 
     @Override

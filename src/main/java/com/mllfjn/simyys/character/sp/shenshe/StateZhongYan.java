@@ -10,9 +10,4 @@ public class StateZhongYan extends State implements IgnoreDebuff {
     public StateZhongYan(Character character) {
         super(character, character, StateType.SPECIAL, StateForm.SPECIAL);
     }
-
-    @Override
-    public void setName() {
-        name = "终焉审判幻境";
-    }
 }

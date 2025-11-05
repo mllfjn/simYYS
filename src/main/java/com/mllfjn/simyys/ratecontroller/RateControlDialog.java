@@ -1,6 +1,7 @@
 package com.mllfjn.simyys.ratecontroller;
 
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.utils.DecimalFormatUtil;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -11,6 +12,7 @@ import javafx.stage.Stage;
 
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.function.Function;
 
 class RateControlDialog extends Stage {
     private final ReturnSelector[] selectors;
@@ -18,10 +20,8 @@ class RateControlDialog extends Stage {
     private final boolean[] tbd;
     private final TotalRateCalc calc;
     private final Label rateLabel = new Label("当前概率：100.00%");
-    private static final DecimalFormat df = new DecimalFormat("0.00##%");
 
-
-    RateControlDialog(String title, String event, List<Character> list, boolean[] tbd, double[] rates, Return[] result, int length, TotalRateCalc calc) {
+    <T> RateControlDialog(String title, String event, List<T> list, Function<T, String> stringGetter, boolean[] tbd, double[] rates, Return[] result, int length, TotalRateCalc calc) {
         super();
         this.result = result;
         this.tbd = tbd;
@@ -35,7 +35,7 @@ class RateControlDialog extends Stage {
 
         for (int i = 0; i < length; i++) {
             if (tbd[i]) {
-                selectors[i] = new ReturnSelector(root, i, list.get(i).name, rates[i], event, this::countCurrentRate);
+                selectors[i] = new ReturnSelector(root, i, stringGetter.apply(list.get(i)), rates[i], event, this::countCurrentRate);
             }
         }
         Button button = new Button("确定");
@@ -76,7 +76,7 @@ class RateControlDialog extends Stage {
             currentRate *= selector.getCurrentRate();
         }
 
-        rateLabel.setText("当前概率：" + df.format(currentRate));
+        rateLabel.setText("当前概率：" + DecimalFormatUtil.df_2_2.format(currentRate));
 
         return currentRate;
     }

@@ -1,18 +1,11 @@
 package com.mllfjn.simyys.customnode;
 
 import com.mllfjn.simyys.character.Character;
-import javafx.geometry.Insets;
-import javafx.scene.Scene;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.input.MouseButton;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.scene.text.TextFlow;
-import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,6 +62,10 @@ public class TextFlowLog extends ScrollPane {
         }
     }
 
+    public void addLocationChange(String text) {
+        addText("\t" + text + "\n", TextType.INCREASE, TextFlowLog.TextColor.NORMAL, TextFlowLog.FontSize.NORMAL);
+    }
+
     private void reFresh() {
         textFlow.getChildren().clear();
         for (List<CustomText> list : totalList) {
@@ -83,10 +80,11 @@ public class TextFlowLog extends ScrollPane {
     public void characterAct(Character characterActing) {
         this.addText(DIVIDER, TextType.ROUND, TextColor.NORMAL, FontSize.NORMAL);
         this.addText(characterActing.name + "行动" + characterActing.timesToAct + "\n", TextType.ROUND, TextColor.NORMAL, FontSize.BIG);
+    }
 
+    public void next() {
         currentList = new ArrayList<>();
         totalList.add(currentList);
-
     }
 
     public void prev() {
@@ -98,7 +96,7 @@ public class TextFlowLog extends ScrollPane {
     public enum TextType {
         ROUND("回合"),
         SKILL("技能"),
-        INCREASE("拉条"),
+        INCREASE("行动条"),
         NUMBER("伤害数字"),
         YU_HUN("御魂触发");
         final String description;

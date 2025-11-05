@@ -3,18 +3,22 @@ package com.mllfjn.simyys;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.CharacterFactory;
 import com.mllfjn.simyys.character.PropertyKey;
+import com.mllfjn.simyys.character.yuhun.HuoLing;
+import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.customnode.CustomTextField;
 import com.mllfjn.simyys.customnode.TextFlowLog;
 import com.mllfjn.simyys.guihuo.GuiHuo;
+import com.mllfjn.simyys.guihuo.MobGuiHuo;
 import com.mllfjn.simyys.ratecontroller.TotalRateCalc;
 import com.mllfjn.simyys.starter.Initializer;
 import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
-import com.mllfjn.simyys.trigger.BattleActionListener;
-import com.mllfjn.simyys.trigger.BattleActionTrigger;
+import com.mllfjn.simyys.trigger.*;
 import com.mllfjn.simyys.collections.SerializableObservableList;
 import com.mllfjn.simyys.utils.Utils;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -27,145 +31,104 @@ import java.io.*;
 import java.util.*;
 
 public class BattlePane {
+    // 所有需要在返回上一步时恢复的内容封装在这里
+    public SerializableItems situation = new SerializableItems();
     // 返回初始化界面
     private final Initializer.Back back;
     // 初始化属性列表
     private final SerializableObservableList<PropertiesHolder> list;
-    // 角色列表
-    public List<Character> characters;
-    private Character characterActing;
-    // 红绿标 0-己方;1-敌方
-    public Character[] autoTo = new Character[2];
+    // 概率控制模式
+    public boolean isControlRate = false;
+    public final TotalRateCalc calc = new TotalRateCalc();
+    // 日志
+    public final TextFlowLog log = new TextFlowLog();
+    // 战斗记录,用于撤销
+    private final Stack<byte[]> recorder = new Stack<>();
+    // 主界面
+    private final BorderPane root = new BorderPane();
     // 行动条显示模式,初始为顺位
     private ActionBarType actionBarType = ActionBarType.SHUN_WEI;
     private final AnchorPane actionBar = new AnchorPane();
-    // 日志
-    public final TextFlowLog log = new TextFlowLog();
-    // 概率计算器
-    public boolean isControlRate = false;
-    public final TotalRateCalc calc = new TotalRateCalc();
-    // 鬼火条 0-己方;1-敌方
-    private GuiHuo[] guiHuo = new GuiHuo[2];
-    // 记录获得新回合的单位
-    // 这里的逻辑按照nga的帖子很乱,还要分是不是和怪物战斗,先简化随便取以后再改 https://bbs.nga.cn/read.php?tid=32486237
-    private final Stack<Character> newRound = new Stack<>();
-    // 战斗记录,用于撤销
-    private final Stack<byte[]> recorder = new Stack<>();
-    // 全局触发器,用于幻境,结界
-    private final Map<Character, List<BattleActionListener>> triggerMap = new HashMap<>();
+    // teamPane容器
+    private final VBox container = new VBox();
 
-    private final BorderPane root = new BorderPane();
-    private final HBox[] teamPane = new HBox[2];
+
     public BattlePane(Stage stage, Initializer.Back back, SerializableObservableList<PropertiesHolder> list) {
         this.back = back;
         this.list = list;
-        this.characters = new ArrayList<>();
         stage.setScene(new Scene(root));
 
         setupUI();
         init();
         repaintActionBar();
-
-        guiHuo[0] = new GuiHuo(4);
-        guiHuo[1] = new GuiHuo(4);
     }
 
     private void setupUI() {
-/*
+        /*
           右边是主操作区
           主体偏上是行动条，点击切换模式
           右下角是控制区
          */
 
+        // 队伍区
+        container.setPadding(new Insets(3));
+        ScrollPane scrollPane = new ScrollPane(container);
+        scrollPane.setFitToHeight(true);
+        scrollPane.setFitToWidth(true);
+        root.setCenter(scrollPane);
+        // 控制区
         BorderPane right = new BorderPane();
         right.setTop(actionBar);
         right.setBottom(configureControlPane());
         root.setRight(right);
         configureActionBar();
-        configureTeamPane();
+        reloadTeamPane();
 
+        // 日志区
         log.setPrefWidth(400);
         root.setLeft(log);
+
     }
-    private void configureTeamPane() {
-        teamPane[0] = new HBox();
-        teamPane[1] = new HBox();
 
-        teamPane[0].setAlignment(Pos.CENTER);
-        teamPane[1].setAlignment(Pos.CENTER);
-
-//        teamPane[0].setMaxWidth(Double.MAX_VALUE);
-//        teamPane[1].setMaxWidth(Double.MAX_VALUE);
-
-        teamPane[0].setSpacing(5);
-        teamPane[1].setSpacing(5);
-        teamPane[0].setPadding(new Insets(5));
-
-//        teamPane[0].setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, new BorderWidths(3))));
-//        teamPane[1].setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, new BorderWidths(3))));
-
-        VBox container = new VBox(teamPane[1], teamPane[0]);
-        //container.setSpacing(5);
-        container.setPadding(new Insets(3));
-        container.setPrefWidth(1000);
-//        container.setMaxWidth(Double.MAX_VALUE);
-        teamPane[0].minHeightProperty().bind(root.heightProperty().divide(2).subtract(5));
-        teamPane[1].minHeightProperty().bind(root.heightProperty().divide(2).subtract(5));
-
-        ScrollPane scrollPane = new ScrollPane(container);
-        scrollPane.setMaxWidth(1100);
-        root.setCenter(scrollPane);
-//        reloadCharacterIcon();
-    }
-    private void reloadCharacterIcon() {
-        teamPane[0].getChildren().clear();
-        teamPane[1].getChildren().clear();
-        for (Character character : characters) {
-            teamPane[character.team].getChildren().add(character.getCharacterIcon(this::setAutoTo));
-        }
+    private void reloadTeamPane() {
+        ObservableList<Node> children = container.getChildren();
+        children.clear();
+        children.addAll(situation.teamPane[1].getPane(), situation.teamPane[0].getPane());
     }
 
     public boolean canUseGuiHuo(Character character, int num) {
         if (character.isMob()) {
-            return GuiHuo.mobCanUseGuiHuo(character, num);
+            return MobGuiHuo.mobCanUseGuiHuo(character, num);
         } else {
-            return guiHuo[character.team].canUseGuiHuo(num);
+            return situation.teamPane[character.team].canUseGuiHuo(num);
         }
     }
+
     public void useGuiHuo(Character character, int num) {
         if (character.isMob()) {
-            GuiHuo.mobUseGuiHuo(character, num);
+            MobGuiHuo.mobUseGuiHuo(character, num);
         } else {
-            guiHuo[character.team].useGuiHuo(num);
+            int team = character.team;
+            situation.teamPane[team].useGuiHuo(num);
+            onTrigger(new EventUseGuiHuo(team, num));
         }
     }
+
     public void gainGuiHuo(Character character, int num) {
-        if (!character.isMob()) {
-            guiHuo[character.team].gainGuiHuo(num);
-        }
-        // 回忆了一下发现好像没有怪物获得鬼火的情况
-    }
-
-
-    private void setAutoTo(Character characterSelected) {
-        // 如果没标任何人，给选择目标设置标
-        // 如果已有标，且和选择的目标不是一个，换到新目标
-        // 如果已有标，且和选择的目标是一个，取消标
-
-        if (autoTo[characterSelected.team] == null) {
-            autoTo[characterSelected.team] = characterSelected;
-            characterSelected.characterIcon.setIsAuto(true);
+        if (character.isMob()) {
+            MobGuiHuo.mobGainGuiHuo(character, num);
         } else {
-            autoTo[characterSelected.team].characterIcon.setIsAuto(false);
-            if (autoTo[characterSelected.team] != characterSelected) {
-                characterSelected.characterIcon.setIsAuto(true);
-                autoTo[characterSelected.team] = characterSelected;
-            } else {
-                autoTo[characterSelected.team] = null;
-            }
-
+            situation.teamPane[character.team].gainGuiHuo(num);
         }
     }
+
+    public void addProgress(Character character) {
+        // 怪物不跑鬼火条
+        if (!character.isMob()) {
+            situation.teamPane[character.team].addProgress();
+        }
+    }
+
     private GridPane configureControlPane() {
         /*控制区
         控制区的内容
@@ -175,13 +138,13 @@ public class BattlePane {
         跳过指定回合数*/
 
         CheckBox rateControl = new CheckBox("概率控制模式");
-        rateControl.selectedProperty().addListener((obs, old, val) -> this.isControlRate = val);
+        rateControl.selectedProperty().addListener((obs, old, val) -> isControlRate = val);
 
         Button prevBtn = new Button("上一个");
         Button nextBtn = new Button("下一个");
         Button backBtn = new Button("返回");
         prevBtn.setOnAction(event -> prev());
-        nextBtn.setOnAction(event -> next());
+        nextBtn.setOnAction(event -> next(false));
         backBtn.setOnAction(event -> back.back());
         prevBtn.setPrefSize(100, 25);
         nextBtn.setPrefSize(100, 25);
@@ -191,7 +154,7 @@ public class BattlePane {
         Button skip = new Button("跳过回合");
         skip.setOnAction(event -> {
             for (int i = 0; i < Utils.parseIntOrDefault(round.getText(), 0); i++) {
-                next();
+                next(false);
             }
         });
 
@@ -203,7 +166,7 @@ public class BattlePane {
         controller.setPadding(new Insets(0, 0, 50, 0)); // 底部留空
 
         controller.add(rateControl, 0, 0);
-        controller.add(calc, 1, 0);
+        controller.add(calc.getNode(), 1, 0);
         controller.add(prevBtn, 0, 1);
         controller.add(nextBtn, 1, 1);
         controller.add(round, 0, 2);
@@ -230,29 +193,28 @@ public class BattlePane {
         for (PropertiesHolder holder : list) {
             int team = holder.map.get(PropertyKey.GENERAL_TEAM_KEY).getInt();
             if (team == 0 || team == 1) {
-                Character character = CharacterFactory.getCharacter(holder, this);
-                if (character != null) {
-                    addCharacter(character);
-                }
+                CharacterFactory.getCharacter(holder, this).ifPresent(this::addCharacter);
             }
         }
 
         getNextActor();
 
-        // 先机
-        for (Character character : characters) {
-            character.useFrontSkill(this);
-        }
+        // 战斗开始
+        onTrigger(new EventBattleStart());
+        // 火灵
+        situation.teamPane[0].init();
+        situation.teamPane[1].init();
 
-        log.characterAct(characterActing);
+        log.characterAct(situation.characterActing);
+        log.next();
     }
 
     public void addCharacter(Character character) {
-        characters.add(character);
-        teamPane[character.team].getChildren().add(character.getCharacterIcon(this::setAutoTo));
+        situation.addCharacter(character);
     }
+
     private List<Character> getCharactersByLocation() {
-        return getCharactersAlive().stream().sorted((o1, o2) -> {
+        return situation.characters.stream().sorted((o1, o2) -> {
             if (o1.getLocation() > o2.getLocation()) {
                 return -1;
             } else if (o1.getLocation() < o2.getLocation()) {
@@ -263,7 +225,7 @@ public class BattlePane {
 
     private List<Character> getCharactersByActionSort() {
         List<Character> rt = new ArrayList<>();
-        List<Character> list = getCharactersAlive();
+        List<Character> list = situation.characters;
         int size = list.size();
         double[] distance = new double[size];
         double[] speed = new double[size];
@@ -272,7 +234,7 @@ public class BattlePane {
             speed[i] = list.get(i).getSpeed();
         }
 
-        rt.add(characterActing);
+        rt.add(situation.characterActing);
         for (int i = 1; i < 9; i++) {
             int min = 0;
             for (int j = 1; j < size; j++) {
@@ -287,10 +249,6 @@ public class BattlePane {
         return rt;
     }
 
-    private List<Character> getCharactersAlive() {
-        return characters.stream().filter(character -> character.alive).toList();
-    }
-
     private void repaintActionBar() {
         double yOffset = 20;
         double layoutXBig = 40;
@@ -303,30 +261,30 @@ public class BattlePane {
         if (actionBarType == ActionBarType.SHUN_WEI) {
 
             List<Character> list = getCharactersByActionSort();
-            Pane imageBig = CharacterFactory.getImageByName(list.get(0).name, CharacterFactory.ImageSize.BIG, color, strokeWidth);
-            imageBig.setLayoutY( yOffset + 8 * CharacterFactory.ImageSize.SMALL.size );
+            Node imageBig = CharacterFactory.getImageWithStroke(list.get(0).name, CharacterFactory.ImageSize.BIG, color, strokeWidth);
+            imageBig.setLayoutY(yOffset + 8 * CharacterFactory.ImageSize.SMALL.size);
             imageBig.setLayoutX(layoutXBig);
             actionBar.getChildren().add(imageBig);
-            for (int i = 1 ; i < 9; i++) {
-                Pane imageSmall = CharacterFactory.getImageByName(list.get(i).name, CharacterFactory.ImageSize.SMALL, color, strokeWidth);
-                imageSmall.setLayoutX( layoutXSmall );
-                imageSmall.setLayoutY( yOffset + (8 - i) * CharacterFactory.ImageSize.SMALL.size);
+            for (int i = 1; i < 9; i++) {
+                Node imageSmall = CharacterFactory.getImageWithStroke(list.get(i).name, CharacterFactory.ImageSize.SMALL, color, strokeWidth);
+                imageSmall.setLayoutX(layoutXSmall);
+                imageSmall.setLayoutY(yOffset + (8 - i) * CharacterFactory.ImageSize.SMALL.size);
                 actionBar.getChildren().add(imageSmall);
             }
 
         } else if (actionBarType == ActionBarType.JIN_DU) {
             List<Character> list = getCharactersByLocation();
             for (int i = list.size() - 2; i >= 0; i--) {
-                Pane imageSmall = CharacterFactory.getImageByName(list.get(i).name, CharacterFactory.ImageSize.SMALL, color, strokeWidth);
+                Node imageSmall = CharacterFactory.getImageWithStroke(list.get(i).name, CharacterFactory.ImageSize.SMALL, color, strokeWidth);
                 // location在0的时候，y在0
                 // location在100的时候，y在small.size * 7.5
                 // y = location * small.size * 7.5 / 100
-                imageSmall.setLayoutY( yOffset + list.get(i).getLocation() * CharacterFactory.ImageSize.SMALL.size * 7.5 / 100);
+                imageSmall.setLayoutY(yOffset + list.get(i).getLocation() * CharacterFactory.ImageSize.SMALL.size * 7.5 / 100);
                 imageSmall.setLayoutX(layoutXSmall);
                 actionBar.getChildren().add(imageSmall);
             }
-            Pane imageBig = CharacterFactory.getImageByName(list.get(list.size() - 1).name, CharacterFactory.ImageSize.BIG, color, strokeWidth);
-            imageBig.setLayoutY( yOffset + 8 * CharacterFactory.ImageSize.SMALL.size );
+            Node imageBig = CharacterFactory.getImageWithStroke(list.get(list.size() - 1).name, CharacterFactory.ImageSize.BIG, color, strokeWidth);
+            imageBig.setLayoutY(yOffset + 8 * CharacterFactory.ImageSize.SMALL.size);
             imageBig.setLayoutX(layoutXBig);
             actionBar.getChildren().add(imageBig);
         }
@@ -334,61 +292,74 @@ public class BattlePane {
 
     private void prev() {
         if (!recorder.isEmpty()) {
-
-            CharacterStack prev = null;
             try (ByteArrayInputStream bis = new ByteArrayInputStream(recorder.pop());
                  ObjectInputStream ois = new ObjectInputStream(bis)
-            ){
-                prev = (CharacterStack) ois.readObject();
-            } catch (IOException | ClassNotFoundException e) {
+            ) {
+                situation = (SerializableItems) ois.readObject();
+            } catch (Exception e) {
                 Utils.throwException("恢复时出错", e);
-            }
-            
-            if (prev == null) {
                 return;
             }
-
-            characters = prev.characters();
-            characterActing = prev.characterActing();
+            
+            /*if (prev == null) {
+                return;
+            }*/
+            calc.setCurrentRate(situation.getCurrentRate());
+            situation.reset(this);
+            /*characterActing = prev.characterActing();
             this.autoTo = prev.autoTo();
-            this.guiHuo = prev.guiHuos();
-            this.calc.setRate(prev.totalRate());
+            listenerMap = prev.listenerMap();
+            teamPane[0].setGuiHuo(prev.team0GuiHuo);
+            teamPane[1].setGuiHuo(prev.team1GuiHuo);
+            this.calc.setRate(prev.totalRate());*/
 
             repaintActionBar();
-            reloadCharacterIcon();
+            reloadTeamPane();
+//            reloadCharacterIcon();
 
-            if (autoTo[0] != null) {
+            /*if (autoTo[0] != null) {
                 autoTo[0].characterIcon.setIsAuto(true);
             }
 
             if (autoTo[1] != null) {
                 autoTo[1].characterIcon.setIsAuto(true);
-            }
+            }*/
 
             log.prev();
         }
 
     }
-    private void next() {
+
+    public void next(boolean skip) {
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
              ObjectOutputStream oos = new ObjectOutputStream(bos)
-        ){
-            oos.writeObject(new CharacterStack(characters, characterActing, autoTo, guiHuo, calc.getRate()));
+        ) {
+            situation.setCurrentRate(calc.getCurrentRate());
+            oos.writeObject(situation);
             recorder.push(bos.toByteArray());
         } catch (IOException e) {
             Utils.throwException("保存时出错", e);
         }
 
+
         do {
-            characterActing.round(this);
+            // 如果skip为真,当前行动角色跳过
+            // 但是后续的其他角色不跳过
+            situation.characterActing.round(skip);
+            skip = false;
+            // 回合结束,触发回合结束事件
+            onTrigger(new EventRoundDone(situation.characterActing));
             getNextActor();
-            log.characterAct(characterActing);
-        } while (!characterActing.controllable());
+            log.characterAct(situation.characterActing);
+        } while (!situation.characterActing.controllable());
+        log.next();
 
         repaintActionBar();
 
         // TODO 换成观察者模式
-        for (Character character : characters) {
+        // 顺便要缓存数据,不要每次要属性都遍历属性重新算,修改所有会改变增益数值的状态,改变时重新加载
+        // 大缘(当前爆伤) 目标(当前爆伤*0.4) 但是怎么在大缘爆伤改变时通知目标呢?
+        for (Character character : situation.characters) {
             character.characterIcon.update();
         }
     }
@@ -396,10 +367,11 @@ public class BattlePane {
     private void getNextActor() {
         Character next;
 
-        if (!newRound.isEmpty()) {
-            next = newRound.pop();
+        if (!situation.newRound.isEmpty()) {
+            next = situation.newRound.pop();
             // TODO 新回合不能推鬼火条
         } else {
+            List<Character> characters = situation.characters;
             next = characters.get(0);
             for (Character character : characters) {
                 if (character.before(next)) {
@@ -413,45 +385,39 @@ public class BattlePane {
             }
         }
 
-        characterActing = next;
+        situation.characterActing = next;
 
         next.setLocation(0);
         next.timesToAct++;
-        next.beforeRound(this);
+        next.beforeRound();
     }
 
     public void getNewRound(Character character) {
-        newRound.push(character);
-    }
-
-    public void removeCharacter(Character character) {
-        if (!characters.contains(character)) {
-            return;
-        }
-        characters.remove(character);
-        teamPane[character.team].getChildren().remove(character.characterIcon);
-
-        triggerMap.remove(character);
-    }
-
-    public void addActionTrigger(Character character, BattleActionListener listener) {
-        triggerMap.computeIfAbsent(character, k -> new ArrayList<>());
-        triggerMap.get(character).add(listener);
-    }
-    public void removeActionTrigger(Character character, BattleActionListener listener) {
-        triggerMap.get(character).remove(listener);
+        situation.newRound.push(character);
+        log.addLocationChange(character.getName() + "获得新回合");
     }
 
     public boolean canSummon(int team) {
-        for (Character character : characters) {
-            if (character.team == team && character.isSummon()) {
-                return false;
-            }
-        }
-        return true;
+        return situation.teamPane[team].canSummon();
     }
-    public void addSummon(int team, Character character) {
-        // 要考虑清姬蛇顶掉其他召唤物
+
+    public void removeCharacter(Character character) {
+        situation.removeCharacter(character);
+        onTrigger(new EventCharacterDie(character));
+    }
+
+    public void addActionTrigger(Character character, BattleActionListener listener) {
+        situation.listenerMap.computeIfAbsent(character, k -> new ArrayList<>()).add(listener);
+    }
+
+    public void removeActionTrigger(Character character, BattleActionListener listener) {
+        situation.listenerMap.get(character).remove(listener);
+    }
+
+    public void onTrigger(TriggerEvent event) {
+        for (List<BattleActionListener> list : situation.listenerMap.values()) {
+            list.removeIf(listener -> listener.onBattleAction(event));
+        }
     }
 
     private enum ActionBarType {
@@ -459,5 +425,9 @@ public class BattlePane {
         SHUN_WEI
     }
 
-    private record CharacterStack(List<Character> characters, Character characterActing, Character[] autoTo, GuiHuo[] guiHuos, double totalRate) implements Serializable { }
+
+    private record CharacterStack(List<Character> characters, Character characterActing, Character[] autoTo,
+                                  Map<Character, List<BattleActionListener>> listenerMap, GuiHuo team0GuiHuo,
+                                  GuiHuo team1GuiHuo, double totalRate) implements Serializable {
+    }
 }

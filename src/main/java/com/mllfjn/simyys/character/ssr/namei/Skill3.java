@@ -6,14 +6,12 @@ import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
-import com.mllfjn.simyys.interactive.StateSupplier;
-import com.mllfjn.simyys.state.State;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Skill3 extends Skill {
-    public static final String privateName = "灭世之舞";
+class Skill3 extends Skill {
+    public static final String SkillName = "灭世之舞";
 
     public Skill3(Character belongTo, int level) {
         super(belongTo, level, 3, 0, 3);
@@ -21,14 +19,14 @@ public class Skill3 extends Skill {
 
     @Override
     public String getName() {
-        return privateName;
+        return SkillName;
     }
 
     @Override
     public void usePrivate(BattlePane bp) {
-        Interactive interactive = getBelongTo().getInteractive(bp);
+        Interactive interactive = getBelongTo().getInteractive();
         // 目标首先为红标,其次是生命最高单位
-        List<Character> enemy = CharacterFinder.findEnemy(getBelongTo(), bp.characters);
+        List<Character> enemy = CharacterFinder.findEnemy(getBelongTo(), bp.situation.characters);
         Character target = CharacterFinder.findPriorAuto(bp, CharacterFinder.getEnemyTeam(getBelongTo()), CharacterFinder.Property.HP, CharacterFinder.Criteria.MAX);
         lastUsedTarget = target;
         // 没有测试是先上凋零还是先造成伤害,这里猜测是先凋零
@@ -55,15 +53,16 @@ public class Skill3 extends Skill {
         }
 
         // 攻击敌方全体造成攻击120%伤害
-        interactive.attack(privateName, enemy, 120, AttackType.QUN_TI);
+        interactive.attack(SkillName, enemy, 120, AttackType.QUN_TI);
         // 攻击指定敌方目标造成攻击120%伤害
-        interactive.attack(privateName, target, 120, AttackType.DAN_TI);
+        interactive.attack(SkillName, target, 120, AttackType.DAN_TI);
         // 并额外使其获得恍惚
+
     }
 
     private void addDiaoLing(NaMei naMei, Interactive interactive, List<Character> list, boolean isMob) {
         StringBuilder sb = new StringBuilder();
-        sb.append(StateDiaoLing.privateName);
+        sb.append(StateDiaoLing.text);
         if (isMob) {
             sb.append("-对怪物释放");
         }

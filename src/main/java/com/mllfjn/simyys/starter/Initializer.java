@@ -84,7 +84,7 @@ public class Initializer extends Application {
         borderPane.setRight(tp);
 
         stage.setScene(scene);
-        stage.setWidth(1600);
+        stage.setWidth(1800);
         stage.setHeight(900);
         stage.setTitle("配置式神");
         stage.show();
@@ -105,7 +105,7 @@ public class Initializer extends Application {
                 Button btn = new Button(name);
                 btn.setPrefWidth(100);
                 btn.setOnAction(event -> {
-                    PropertiesHolder propertiesHolder = new PropertiesHolder(name, CharacterFactory.getProperties(name), new LinkedHashMap<>());
+                    PropertiesHolder propertiesHolder = new PropertiesHolder(name, CharacterFactory.getProperties(name).orElseThrow(), new LinkedHashMap<>());
                     propertiesHolder.show(stageSelect);
                     items.add(propertiesHolder);
                 });
@@ -168,12 +168,12 @@ public class Initializer extends Application {
 
             StringJoiner sj = new StringJoiner("\n");
             for (PropertiesHolder item : readItems) {
-                PropertiesMap currentProperties = CharacterFactory.getProperties(item.name);
-
-                if (currentProperties == null) {
+                Optional<PropertiesMap> op = CharacterFactory.getProperties(item.name);
+                if (op.isEmpty()) {
                     sj.add(item.name + "角色不存在");
                     continue;
                 }
+                PropertiesMap currentProperties = op.get();
 
                 for (Map.Entry<String, PropertyRequire> entry : currentProperties.entrySet()) {
                     String key = entry.getKey();

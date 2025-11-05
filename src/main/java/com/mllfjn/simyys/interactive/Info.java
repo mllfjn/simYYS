@@ -12,7 +12,7 @@ public class Info {
         baoJi = true;
     }
 
-    public boolean getBaoJi() {
+    public boolean isBaoJi() {
         return baoJi;
     }
 }

@@ -5,7 +5,7 @@ import com.mllfjn.simyys.character.Character;
 import java.io.Serializable;
 
 public abstract class State implements Serializable {
-    public String name;
+//    public String name;
     public final Character from;
     public final Character belongTo;
     public final StateType stateType;
@@ -18,9 +18,6 @@ public abstract class State implements Serializable {
         this.belongTo = belongTo;
         this.stateType = stateType;
         this.stateForm = stateForm;
-
-
-        setName();
     }
 
     public void setSettleType(StateSettleType settleType, int duration) {
@@ -44,21 +41,12 @@ public abstract class State implements Serializable {
         duration = num;
     }
 
-    public abstract void setName();
-
-    /**
-     * 用于覆盖状态
-     *
-     * @param state 新的状态
-     */
-    public void cover(State state) {
-        duration = Math.max(duration, state.duration);
-    }
-
     public void delete() {
         belongTo.getStates().remove(this);
-        if (settleType == StateSettleType.WEI_CHI) {
+
+        // 这里不能直接在维持列表中删除,因为可能会从维持列表中遍历并调用delete方法,如果后续有需要维持状态主动删除,需要修改
+        /*if (settleType == StateSettleType.WEI_CHI) {
             from.removeMaintainedState(this);
-        }
+        }*/
     }
 }

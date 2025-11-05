@@ -2,17 +2,16 @@ package com.mllfjn.simyys.character.sp.dayuan;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.character.PropertyKey;
-import com.mllfjn.simyys.character.propertygetter.PropertiesMap;
-import com.mllfjn.simyys.character.propertygetter.PropertyInput;
+import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
+import com.mllfjn.simyys.character.CharacterShiShenBase;
 import com.mllfjn.simyys.state.State;
 import com.mllfjn.simyys.state.StateForm;
 import com.mllfjn.simyys.state.StateType;
 import com.mllfjn.simyys.state.determinant.IgnoreActionDecrease;
 import com.mllfjn.simyys.state.determinant.IgnoreActionIncrease;
 
-public class DaYuan extends Character {
-    public static final String privateName = "纺愿缘结神";
+public class DaYuan extends CharacterShiShenBase {
+    public static final String CharacterName = "纺愿缘结神";
     private int skill1Level;
     private int skill3Level;
     public DaYuan() {
@@ -20,55 +19,50 @@ public class DaYuan extends Character {
     }
 
     @Override
-    protected boolean useSkillAuto(BattlePane bp) {
-        return getSkill(5).tryUse(bp) ||
-                getSkill(3).tryUse(bp);
+    protected boolean useSkillAuto() {
+        return isHaveState(StateCombined.class) ? tryUseSkill(3) : tryUseSkill(5);
     }
 
     @Override
-    public PropertiesMap getProperties() {
-        PropertiesMap map = super.getProperties();
-
-        ((PropertyInput) map.get(PropertyKey.GENERAL_BASE_ATTACK_KEY)).setValue("2224");
-
-        map.put(PropertyKey.SKILL_KEY, new PropertyInput().setValue("515"));
-
-        return map;
+    protected String getDefaultBaseAttack() {
+        return "2224";
     }
 
     @Override
-    public void init(PropertiesMap properties, BattlePane bp) {
-        super.init(properties, bp);
-        int skillLevel = properties.get(PropertyKey.SKILL_KEY).getInt();
-        skill1Level = PropertyKey.getSkillLevel(skillLevel, 1);
-        skill3Level = PropertyKey.getSkillLevel(skillLevel, 3);
+    public void init(PropertiesHolder propertiesHolder, BattlePane bp) {
+        super.init(propertiesHolder, bp);
 
         // 免疫来源于其他目标的行动条改变效果
         addState(new StateIgnoreOtherActionChange(this));
     }
 
     @Override
-    public void addSkills() {
-        super.addSkills();
+    protected String getDefaultSkillLevel() {
+        return "515";
+    }
+
+    @Override
+    protected boolean canAwakening() {
+        return false;
+    }
+
+    @Override
+    public void addOwnSkills() {
         skills.add(new Skill1(this, skill1Level));
-        skills.add(new Skill3TODO(this, skill3Level));
+        skills.add(new Skill3(this, skill3Level));
         skills.add(new Skill5(this));
         skills.add(new Skill6(this));
     }
-}
 
-class StateIgnoreOtherActionChange extends State implements IgnoreActionIncrease, IgnoreActionDecrease {
-    public StateIgnoreOtherActionChange(Character character) {
-        super(character, character, StateType.SPECIAL, StateForm.SPECIAL);
-    }
+    static class StateIgnoreOtherActionChange extends State implements IgnoreActionIncrease, IgnoreActionDecrease {
+        public StateIgnoreOtherActionChange(Character character) {
+            super(character, character, StateType.SPECIAL, StateForm.SPECIAL);
+        }
 
-    @Override
-    public boolean effective(Character from) {
-        return from != belongTo;
-    }
-
-    @Override
-    public void setName() {
-        name = "大缘免疫推拉条";
+        @Override
+        public boolean effective(Character from) {
+            return from != belongTo;
+        }
     }
 }
+

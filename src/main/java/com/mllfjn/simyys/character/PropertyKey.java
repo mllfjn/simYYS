@@ -1,5 +1,8 @@
 package com.mllfjn.simyys.character;
 
+import com.mllfjn.simyys.character.propertygetter.*;
+import com.mllfjn.simyys.collections.StringGroup;
+
 public class PropertyKey {
     public static final String GENERAL_SPEED_KEY = "速度";
     public static final String GENERAL_BASE_ATTACK_KEY = "基础攻击";
@@ -34,7 +37,9 @@ public class PropertyKey {
     };
     public static final String SKILL_KEY = "技能等级";
     public static final String JI_FENG_MO_CI_TIAO_KEY = "极逢魔增益词条";
+    public static final String YU_HUN_KEY = "御魂";
     public static final String JUE_XING_KEY = "是否觉醒";
+    public static final String QI_LING_KEY = "契灵";
 
     public static int getSkillLevel(int skill, int i) {
         return switch (i) {

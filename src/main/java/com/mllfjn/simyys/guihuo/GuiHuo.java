@@ -1,5 +1,10 @@
 package com.mllfjn.simyys.guihuo;
-import com.mllfjn.simyys.character.Character;
+
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.control.Label;
+import javafx.scene.layout.StackPane;
+import javafx.scene.text.Font;
 
 import java.io.Serializable;
 
@@ -8,8 +13,19 @@ public class GuiHuo implements Serializable {
     private int now;
     private int increment = 3;
     private int progress;
+    private transient Label guiHuoDisplay;
+
     public GuiHuo(int startWith) {
         now = startWith;
+    }
+
+    public Node getGuiHuoDisplay() {
+        guiHuoDisplay = new Label();
+        guiHuoDisplay.setFont(new Font(30));
+        repaint();
+        StackPane stackPane = new StackPane(guiHuoDisplay);
+        stackPane.setAlignment(Pos.BOTTOM_CENTER);
+        return stackPane;
     }
 
     public boolean canUseGuiHuo(int num) {
@@ -18,6 +34,7 @@ public class GuiHuo implements Serializable {
 
     public void useGuiHuo(int num) {
         now -= num;
+        repaint();
     }
 
     public void addProgress() {
@@ -29,24 +46,22 @@ public class GuiHuo implements Serializable {
                 increment++;
             }
         }
+        repaint();
     }
 
     public void gainGuiHuo(int num) {
         now = Math.min(now + num, max);
+        repaint();
     }
 
     public void setMax(int num) {
         max = num;
         now = Math.min(now, max);
+        repaint();
     }
 
-    public static boolean mobCanUseGuiHuo(Character character, int num) {
-        MobGuiHuo guiHuo = (MobGuiHuo) character.getState(MobGuiHuo.privateName);
-        return guiHuo.canUse(num);
-    }
-
-    public static void mobUseGuiHuo(Character character, int num) {
-        MobGuiHuo guiHuo = (MobGuiHuo) character.getState(MobGuiHuo.privateName);
-        guiHuo.useGuiHuo(num);
+    private void repaint() {
+        // 当前鬼火：4/8  进度：2/5(+4)
+        guiHuoDisplay.setText("当前鬼火:" + now + "/" + max + "-进度:" + progress + "/5(+" + increment + ")");
     }
 }

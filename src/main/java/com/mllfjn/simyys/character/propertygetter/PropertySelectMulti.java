@@ -20,6 +20,7 @@ import java.util.StringJoiner;
 public class PropertySelectMulti  extends PropertyRequire implements Serializable {
     private String value;
     private final StringGroup[] options;
+
     public PropertySelectMulti(StringGroup[] options) {
         this.options = options;
     }
@@ -43,6 +44,11 @@ public class PropertySelectMulti  extends PropertyRequire implements Serializabl
         return false;
     }
 
+    @Override
+    public String getString() {
+        return value;
+    }
+
     private boolean contains(String newValue) {
         for (StringGroup option : options) {
             for (String s : option.values()) {
@@ -60,7 +66,7 @@ public class PropertySelectMulti  extends PropertyRequire implements Serializabl
         node.setSpacing(10);
 
         Label descLbl = new Label(desc);
-        Label valueLbl = new Label();
+        Label valueLbl = new Label(value);
         Button selectBtn = new Button("点击选择");
         selectBtn.setOnAction(e -> openSelectDialog(valueLbl, owner));
 
@@ -119,9 +125,4 @@ public class PropertySelectMulti  extends PropertyRequire implements Serializabl
         stage.initOwner(owner);
         stage.showAndWait();
     }
-
-    /*@Override
-    public void toString(StringBuilder sb) {
-        sb.append(value);
-    }*/
 }

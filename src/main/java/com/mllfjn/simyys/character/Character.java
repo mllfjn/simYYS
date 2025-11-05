@@ -1,19 +1,24 @@
 package com.mllfjn.simyys.character;
 
 import com.mllfjn.simyys.BattlePane;
+import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
 import com.mllfjn.simyys.character.propertygetter.PropertiesMap;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.skill.SkillAuto;
-import com.mllfjn.simyys.customnode.TextFlowLog;
+import com.mllfjn.simyys.character.yuhun.YuHun;
+import com.mllfjn.simyys.character.yuhun.YuHunFactory;
+import com.mllfjn.simyys.character.yuhun.YuHunSealResponse;
+import com.mllfjn.simyys.character.yys.QiLingFactory;
+import com.mllfjn.simyys.interactive.TraceableNumber;
 import com.mllfjn.simyys.state.*;
+import com.mllfjn.simyys.state.Runnable;
 import com.mllfjn.simyys.state.determinant.*;
 import com.mllfjn.simyys.interactive.Info;
 import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.character.propertygetter.PropertyCheck;
 import com.mllfjn.simyys.character.propertygetter.PropertyInput;
 import com.mllfjn.simyys.guihuo.MobGuiHuo;
-import com.mllfjn.simyys.trigger.Trigger;
-import com.mllfjn.simyys.trigger.TriggerSession;
+import com.mllfjn.simyys.trigger.*;
 import com.mllfjn.simyys.collections.SerializableObservableList;
 import javafx.collections.ObservableList;
 
@@ -22,7 +27,6 @@ import java.util.*;
 
 public abstract class Character implements Serializable{
     public String name;
-    public transient CharacterIcon characterIcon;
     public int team;
     public int timesToAct;
     private double location;
@@ -42,17 +46,25 @@ public abstract class Character implements Serializable{
 
     private boolean isMob;
     private boolean isYYS;
-    private boolean isSummon;
+    protected boolean isSummon;
 
     protected final SerializableObservableList<Skill> skills = new SerializableObservableList<>();
+    private Map<Integer, Integer> lockSKillMap;
 
+    // 自身状态
     private final List<State> states = new ArrayList<>();
+    // 维持的状态
     private final List<State> maintainedStates = new ArrayList<>();
+    // 御魂列表
+    private final LinkedHashSet<YuHun> yuHunList = new LinkedHashSet<>();
+
+    public transient CharacterIcon characterIcon;
     private transient Interactive interactive;
+    public transient BattlePane bp;
     public PropertiesMap getProperties() {
         PropertiesMap map = new PropertiesMap();
         map.put(PropertyKey.GENERAL_SPEED_KEY, new PropertyInput());
-        map.put(PropertyKey.GENERAL_BASE_ATTACK_KEY, new PropertyInput());
+        map.put(PropertyKey.GENERAL_BASE_ATTACK_KEY, new PropertyInput().setValue(getDefaultBaseAttack()));
         map.put(PropertyKey.GENERAL_YU_HUN_ATTACK_KEY, new PropertyInput());
         map.put(PropertyKey.GENERAL_HP_KEY, new PropertyInput());
         map.put(PropertyKey.GENERAL_DEFENSE_KEY, new PropertyInput());
@@ -68,7 +80,16 @@ public abstract class Character implements Serializable{
 
         return map;
     }
-    public void init(PropertiesMap properties, BattlePane bp) {
+    protected abstract String getDefaultBaseAttack();
+
+    public String getName() {
+        return name;
+    }
+    public void init(PropertiesHolder propertiesHolder, BattlePane bp) {
+        setBattlePane(bp);
+        this.lockSKillMap = propertiesHolder.lockSKill;
+        PropertiesMap properties = propertiesHolder.map;
+        this.name = propertiesHolder.name;
         this.speed = properties.get(PropertyKey.GENERAL_SPEED_KEY).getDouble();
         this.baseAttack = properties.get(PropertyKey.GENERAL_BASE_ATTACK_KEY).getDouble();
         this.additionAttack = properties.get(PropertyKey.GENERAL_YU_HUN_ATTACK_KEY).getDouble();
@@ -87,11 +108,22 @@ public abstract class Character implements Serializable{
         }
 
         this.isYYS = properties.get(PropertyKey.GENERAL_YYS_KEY).getBoolean();
+        if (isYYS) {
+            QiLingFactory.addQiLing(properties, this);
+        }
         this.isSummon = properties.get(PropertyKey.GENERAL_SUMMON_KEY).getBoolean();
 
-        addState(new AttackRecorder(this));
+        // 如果有御魂,读取御魂
+        if (properties.containsKey(PropertyKey.YU_HUN_KEY)) {
+            String yuHun = properties.get(PropertyKey.YU_HUN_KEY).getString();
+            if (yuHun != null) {
+                addAllYuHun(yuHun.split(","));
+            }
+        }
     }
-
+    public void setBattlePane(BattlePane bp) {
+        this.bp = bp;
+    }
 
     public double getAttack() {
         return AttributeCounter.getGeneralAttribute(Attribute.ATTACK, baseAttack + additionAttack, getStates());
@@ -119,6 +151,9 @@ public abstract class Character implements Serializable{
     }
     public double getEffectResistRate() {
         return AttributeCounter.getGeneralAttribute(Attribute.EFFECT_RESIST_RATE, effectResistRate, states);
+    }
+    public double getZengShang() {
+        return AttributeCounter.getGeneralAttribute(Attribute.ZENG_SHANG, 0, getStates());
     }
     public double getJianShang() {
         return AttributeCounter.getGeneralAttribute(Attribute.JIAN_SHANG, 0, getStates());
@@ -192,28 +227,42 @@ public abstract class Character implements Serializable{
     }
 
 
-    public void setMaxHp(double num) {
+    public void setMaxHp(double num, boolean replenish) {
         if (isIgnoreChangeMaxHp()) {
             return;
         }
 
         maxHp = num;
+        if (replenish) {
+            setHp(maxHp);
+        }
+
+        if (characterIcon != null) {
+            characterIcon.refreshHealthBar();
+        }
     }
     public void setHp(double num) {
         this.hp = Math.min(maxHp, num);
+        bp.onTrigger(new EventHpChange(this));
+        if (characterIcon != null) {
+            characterIcon.refreshHealthBar();
+        }
     }
 
     public void setLockSkill(int i) {
-        this.lockSkill = i;
+        getSkill(i).ifPresent(skill -> lockSkill = i);
+        if (characterIcon != null) {
+            characterIcon.selectLockSkill();
+        }
     }
     public int getLockSkill() {
         return this.lockSkill;
     }
-
-
     public void addSkills() {
         skills.add(SkillAuto.INSTANCE);
+        addOwnSkills();
     }
+    protected abstract void addOwnSkills();
     public static double getTTA(double distance, double speed) {
         return distance / speed;
     }
@@ -243,7 +292,7 @@ public abstract class Character implements Serializable{
     public void setLocation(double newLocation) {
         this.location = newLocation;
     }
-    public void increaseLocation(BattlePane bp, Character from, double increase) {
+    public void increaseLocation(Character from, double increase) {
         // 免疫行动条提升效果
         for (State state : states) {
             if (state instanceof IgnoreActionIncrease fi && fi.effective(from)) {
@@ -252,33 +301,47 @@ public abstract class Character implements Serializable{
         }
 
         StringBuilder sb = new StringBuilder();
-        sb.append("\t").append(this.name).append("行动提前").append(increase);
+        sb.append(this.name).append("行动提前").append((int)increase).append("%");
         if (location + increase > 100) {
             double real = 100 - location;
-            sb.append("(实际提前").append((int)real).append("%,已到达行动条末端)");
+            sb.append("(实际提前").append((int)real).append("%)");
         }
-        sb.append("%\n");
 
         this.location = Math.min(100, location + increase);
-        bp.log.addText(sb.toString(), TextFlowLog.TextType.INCREASE, TextFlowLog.TextColor.NORMAL, TextFlowLog.FontSize.NORMAL);
+        bp.log.addLocationChange(sb.toString());
     }
-    public void decreaseLocation(BattlePane bp, Character from, double decrease) {
+    public void decreaseLocation(Character from, double decrease) {
         for (State state : states) {
             if (state instanceof IgnoreActionDecrease) {
                 return;
             }
         }
         this.location = Math.max(0, location - decrease);
-        bp.log.addText("\t" + this.name + "行动推后" + decrease + "%\n", TextFlowLog.TextType.INCREASE, TextFlowLog.TextColor.NORMAL, TextFlowLog.FontSize.NORMAL);
+        bp.log.addLocationChange(this.name + "行动推后" + (int)decrease);
     }
-    public void beforeRound(BattlePane bp) {
-        TriggerSession.trigger(bp, Trigger.BEFORE_ROUND, this.getStates());
+    public void beforeRound() {
+        stateRun(Trigger.BEFORE_ROUND);
+//        trigger(bp, Trigger.BEFORE_ROUND, this.getStates());
+        if (lockSKillMap != null && lockSKillMap.containsKey(timesToAct)) {
+            setLockSkill(lockSKillMap.get(timesToAct));
+        }
     }
-    public void round(BattlePane bp) {
-        act(bp);
+    public void round(boolean skip) {
+        if (!skip) {
+            act();
+        }
+        // 以下是回合后事件
 
-        TriggerSession.trigger(bp, Trigger.AFTER_ROUND, this.getStates());
+        // 非怪物推进鬼火条
+        if (!isMob()) {
+            bp.addProgress(this);
+        }
+        // 行动后触发状态
+//        TriggerSession.trigger(bp, Trigger.AFTER_ROUND, this.getStates());
+        stateRun(Trigger.AFTER_ROUND_FIRST);
+        stateRun(Trigger.AFTER_ROUND);
 
+        // 持续类状态过回合
         states.removeIf(state -> {
             if (state.getSettleType() == StateSettleType.CHI_XU) {
                 state.setDuration(state.getDuration() - 1);
@@ -286,7 +349,7 @@ public abstract class Character implements Serializable{
             }
             return false;
         });
-
+        // 维持类状态过回合
         maintainedStates.removeIf(state -> {
             state.setDuration(state.getDuration() - 1);
             if (state.getDuration() == 0) {
@@ -295,60 +358,117 @@ public abstract class Character implements Serializable{
             }
             return false;
         });
-
+        // 技能冷却
         skills.forEach(Skill::pastRound);
     }
-    private void act(BattlePane bp) {
+    private void act() {
         if (lockSkill != 0) {
-            Skill skillLock = getSkill(lockSkill);
-            if (skillLock != null && skillLock.tryUse(bp)) {
+            Optional<Skill> os = getSkill(lockSkill);
+            if (os.isPresent() && os.get().tryUse(bp)) {
                 return;
             }
         }
-        if (!useSkillAuto(bp)) {
-            Skill skill1 = getSkill(1);
-            if (skill1 != null) {
-                skill1.use(bp);
-            }
+        if (!useSkillAuto()) {
+            getSkill(1).ifPresent(skill -> skill.use(bp));
         }
     }
-    public Skill getSkill(int skillID) {
+    public Optional<Skill> getSkill(int skillID) {
         for (Skill skill : skills) {
             if (skill.getSkillID() == skillID) {
-                return skill;
+                return Optional.of(skill);
             }
         }
-        return null;
+        return Optional.empty();
     }
-    public ObservableList<Skill> getSkills() {
+    public void removeSkill(int skillID) {
+        Optional<Skill> os = getSkill(skillID);
+        os.ifPresent(skill -> {
+            if (characterIcon != null) {
+                characterIcon.startChangeSkill();
+            }
+            skills.remove(skill);
+            if (skillID == lockSkill) {
+                lockSkill = 0;
+            }
+            if (characterIcon != null) {
+                characterIcon.endChangeSkill();
+            }
+        });
+    }
+    public boolean tryUseSkill(int skillID) {
+        return getSkill(skillID)
+                .map(skill -> skill.tryUse(bp))
+                .orElse(false);
+    }
+    public ObservableList<Skill> getReadOnlySkillList() {
         return skills.getObservableList();
     }
-    protected boolean useSkillAuto(BattlePane bp) {
+    public void addSkill(Skill skill) {
+        int i = 0;
+        Iterator<Skill> iterator = skills.iterator();
+        while (iterator.hasNext() && iterator.next().getSkillID() < skill.getSkillID()) {
+            i++;
+        }
+
+        if (characterIcon != null) {
+            characterIcon.startChangeSkill();
+        }
+
+        skills.add(i, skill);
+
+        if (characterIcon != null) {
+            characterIcon.endChangeSkill();
+        }
+    }
+    protected boolean useSkillAuto() {
         return false;
     }
 
-    public void beHurt(BattlePane bp, Info info) {
-        double damage = info.getTraceableNumber().getNumber();
-        if (getHp() <= damage) {
-            info.getTraceableNumber().addTrace("\t(击杀)");
-            beforeDie(bp);
-        } else {
-            this.hp -= damage;
+    public void beHurt(Info info) {
+        TraceableNumber traceableNumber = info.getTraceableNumber();
+        // 遍历状态找护盾
+        boolean operated = false;
+        Iterator<State> iterator = getStates().iterator();
+        while (traceableNumber.getNumber() > 0 && iterator.hasNext()) {
+            if (iterator.next() instanceof StateShield ss) {
+                operated = true;
+                if (ss.handle(info)) {
+                    iterator.remove();
+                } else {
+                    break;
+                }
+            }
+        }
+        // 如果有护盾生效了,刷新护盾条
+        if (operated) {
+            if (characterIcon != null) {
+                characterIcon.refreshShieldBar();
+            }
+        }
+        // 如果护盾没能抵消完伤害
+        double damage = traceableNumber.getNumber();
+        if (damage > 0) {
+            if (getHp() <= damage) {
+                info.getTraceableNumber().addTrace("\t(击杀)");
+                beforeDie();
+            } else {
+                this.hp -= damage;
+            }
         }
     }
 
     /**
      * 失去:区别于受到伤害,失去生命不会暴击,无法被护盾吸收,不触发受到伤害相关效果
      */
-    public void lostHP(BattlePane bp, double num) {
+    public void lostHP(double num) {
         // 如果后来给失去生命默认解除睡眠状态,修改神蛇的堕化
         hp -= num;
         if (hp <= 0) {
-            die(bp);
+            die();
         }
     }
 
-    public void beHeal(BattlePane bp, Info info) {
+    public void beHeal(Info info) {
         setHp(getHp() + info.getTraceableNumber().getNumber());
     }
 
@@ -367,44 +487,60 @@ public abstract class Character implements Serializable{
     public void dispelDeBuff(int count) {
         // TODO 驱散指定数量的减益状态
     }
+    public void removeAllCrowControl() {
+        getStates().removeIf(state -> state instanceof CrowdControl);
+    }
 
-    public CharacterIcon getCharacterIcon(CharacterIcon.OnClickListener onClickListener) {
+    public CharacterIcon getCharacterIcon(CharacterIcon.onClickHandler onClickHandler) {
         if (characterIcon == null) {
-            characterIcon = new CharacterIcon(this, onClickListener);
+            characterIcon = createCharacterIcon(onClickHandler);
         }
         return characterIcon;
     }
-    public void useFrontSkill(BattlePane bp) {}
-    public AttackRecorder getAttackRecorder() {
-        return (AttackRecorder) getState(AttackRecorder.privateName);
+    protected CharacterIcon createCharacterIcon(CharacterIcon.onClickHandler onClickHandler) {
+        return new CharacterIcon(this, onClickHandler);
     }
-    public State getState(String name) {
+    public <T extends State> Optional<T> getState(Class<T> clazz) {
         for (State state : states) {
-            if (state.name.equals(name)) {
-                return state;
+            if (clazz.isInstance(state)) {
+                return Optional.of(clazz.cast(state));
             }
         }
-        return null;
+        return Optional.empty();
     }
-    public void addState(State newState) {
+    public boolean isHaveState(Class<? extends State> clazz) {
+        return getState(clazz).isPresent();
+    }
+    public <T extends State> Optional<T> addState(T newState) {
         if (newState.stateType == StateType.DEBUFF && isIgnoreDebuff()) {
-            return;
+            return Optional.empty();
         }
 
-        for (State state : states) {
-            if (state.name.equals(newState.name)) {
-                state.cover(newState);
-                return;
+        /*for (State state : states) {
+            if (newState.getClass().isInstance(state)) {
+                @SuppressWarnings("unchecked")
+                T result = (T) state;
+                result.cover(newState);
+                return Optional.of(result);
             }
-        }
+        }*/
 
         states.add(newState);
+
         if (characterIcon != null) {
-            characterIcon.updateState();
+            if (newState instanceof Displayable) {
+                characterIcon.refreshStateLabel();
+            }
+
+            if (newState instanceof AttributeModifier) {
+                characterIcon.refreshProperties();
+            }
+
+            if (newState instanceof StateShield) {
+                characterIcon.refreshShieldBar();
+            }
         }
-    }
-    public boolean isHaveState(String name) {
-        return getState(name) != null;
+        return Optional.of(newState);
     }
     public boolean isIgnoreDebuff() {
         for (State state : getStates()) {
@@ -425,49 +561,110 @@ public abstract class Character implements Serializable{
     public void addMaintainedState(State state) {
         maintainedStates.add(state);
     }
-    public void removeMaintainedState(State state) {
-        maintainedStates.remove(state);
-    }
     public List<State> getStates() {
         return states;
     }
-    public void removeState(String privateName) {
+    public <T extends State> void removeState(Class<T> clazz) {
         for (State state : states) {
-            if (state.name.equals(privateName)) {
-                state.delete();
+            if (clazz.isInstance(state)) {
+                states.remove(state);
+                if (characterIcon != null) {
+                    characterIcon.refreshStateLabel();
+                }
                 return;
             }
         }
-        if (characterIcon != null) {
-            characterIcon.updateState();
-        }
+
     }
-    public Interactive getInteractive(BattlePane bp) {
+    public Interactive getInteractive() {
         if (interactive == null) {
             interactive = new Interactive(bp, this);
         }
         return interactive;
     }
-    public void beforeDie(BattlePane bp) {
+    public void addYuHun(YuHun yuHun, boolean isAdding) {
+        yuHunList.add(yuHun);
+
+        if (yuHun instanceof YuHunSealResponse sr) {
+            sr.enable();
+        }
+
+        if (!isAdding) {
+            refreshYuHunIcon();
+        }
+    }
+    public void addAllYuHun(String[] names) {
+        for (String s : names) {
+            YuHunFactory.getYuHun(s, this).ifPresent(yuHun -> {
+                addYuHun(yuHun, true);
+            });
+        }
+
+        refreshYuHunIcon();
+    }
+    public <T extends YuHun> void removeYuHun(Class<T> tClass) {
+        Set<YuHun> yuHunSet = getYuHunSet();
+        for (YuHun yuHun : yuHunSet) {
+            if (tClass.isInstance(yuHun)) {
+                yuHunSet.remove(yuHun);
+                if (yuHun instanceof YuHunSealResponse sr) {
+                    sr.disable();
+                }
+                refreshYuHunIcon();
+                break;
+            }
+        }
+    }
+    private void refreshYuHunIcon() {
+        if (characterIcon != null) {
+            characterIcon.updateYuHunIcon();
+        }
+    }
+    public LinkedHashSet<YuHun> getYuHunSet() {
+        return yuHunList;
+    }
+    public void beforeDie() {
         for (State state : getStates()) {
             if (state instanceof PreventDie pd && pd.effective()) {
-                pd.action();
+                pd.preventDie();
                 return;
             }
         }
 
-        die(bp);
+        die();
     }
-    public void die(BattlePane bp) {
+    public void die() {
         alive = false;
         bp.removeCharacter(this);
     }
     public boolean controllable() {
+        // 如果被控了,无法行动
         for (State state : getStates()) {
             if (state instanceof CrowdControl) {
                 return false;
             }
         }
-        return true;
+        // 如果技能全都用不了,无法行动
+        boolean canUse = false;
+        for (Skill skill : skills) {
+            if (skill instanceof SkillAuto) {
+                continue;
+            }
+            if (skill.canUse(bp)) {
+                canUse = true;
+                break;
+            }
+        }
+        return canUse;
+    }
+    private void stateRun(Trigger trigger) {
+        List<State> copy = new ArrayList<>(states);
+        for (State state : copy) {
+            if (state instanceof Runnable r && r.runnable(trigger)) {
+                if (r.run(trigger, bp)) {
+                    states.remove(state);
+                }
+            }
+        }
     }
 }

@@ -8,7 +8,7 @@ import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
 
 class Skill4TODO extends Skill {
-    public static final String privateName = "钳连击";
+    public static final String SkillName = "钳连击";
 
     public Skill4TODO(Character belongTo) {
         super(belongTo, 0, 3, 4, 4);
@@ -16,14 +16,14 @@ class Skill4TODO extends Skill {
 
     @Override
     public String getName() {
-        return privateName;
+        return SkillName;
     }
 
     @Override
     public void usePrivate(BattlePane bp) {
-        Interactive interactive = getBelongTo().getInteractive(bp);
+        Interactive interactive = getBelongTo().getInteractive();
         for (int i = 0; i < 4; i++) {
-            interactive.attack(privateName, CharacterFinder.findEnemy(getBelongTo(), bp.characters), 100, AttackType.QUN_TI);
+            interactive.attack(SkillName, CharacterFinder.findEnemy(getBelongTo(), bp.situation.characters), 100, AttackType.QUN_TI);
         }
     }
 }

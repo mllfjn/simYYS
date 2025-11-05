@@ -6,7 +6,7 @@ import java.util.*;
 import java.util.function.Function;
 
 public class RateController {
-    public static boolean[] whetherOrNot(String title, String event, List<Character> targets, boolean rateControl, TotalRateCalc calc, RateGetter rateGetter) {
+    public static <T> boolean[] whetherOrNot(String title, String event, List<T> targets, Function<T, String> stringGetter, boolean rateControl, TotalRateCalc calc, Function<T, Double> rateGetter) {
         // 首先根据传入的getter算法计算出每个的概率
         // 其中<=0的,直接算NO, >=100的直接算YES
         // 剩下概率性的, 如果rateControl为true,调用RateControlDialog得出结果
@@ -19,27 +19,23 @@ public class RateController {
 
         int count = 0;
         for (int i = 0; i < size; i++) {
-            if (!targets.get(i).alive) {
-                returns[i] = Return.DEFAULT;
+            rates[i] = rateGetter.apply(targets.get(i));
+            if (rates[i] <= 0) {
+                returns[i] = Return.NO;
+            } else if (rates[i] >= 100) {
+                returns[i] = Return.YES;
             } else {
-                rates[i] = rateGetter.get(targets.get(i));
-                if (rates[i] <= 0) {
-                    returns[i] = Return.NO;
-                } else if (rates[i] >= 100) {
-                    returns[i] = Return.YES;
+                if (rateControl) {
+                    tbd[i] = true;
+                    count++;
                 } else {
-                    if (rateControl) {
-                        tbd[i] = true;
-                        count++;
-                    } else {
-                        returns[i] = Return.DEFAULT;
-                    }
+                    returns[i] = Return.DEFAULT;
                 }
             }
         }
 
         if (count > 0) {
-            new RateControlDialog(title, event, targets, tbd, rates, returns, count, calc);
+            new RateControlDialog(title, event, targets, stringGetter, tbd, rates, returns, count, calc);
         }
 
         boolean[] result = new boolean[size];
@@ -57,22 +53,27 @@ public class RateController {
     }
 
     public static boolean[] baoJi(String skillName, Character owner, List<Character> targets, boolean rateControl, TotalRateCalc calc) {
-        return whetherOrNot("暴击控制：" + owner.name + "-" + skillName, "暴击", targets, rateControl, calc, (character) ->
+        return whetherOrNot("暴击控制：" + owner.name + "-" + skillName, "暴击", targets, Character::getName, rateControl, calc, (character) ->
                 owner.getCritRate()
         );
     }
 
     public static boolean[] mingZhong(String stateName, Character owner, List<Character> targets, int base, boolean rateControl, TotalRateCalc calc) {
-        return whetherOrNot("命中控制：" + owner.name + "-" + stateName, "命中", targets, rateControl, calc, character ->
+        return whetherOrNot("命中控制：" + owner.name + "-" + stateName, "命中", targets, Character::getName, rateControl, calc, character ->
                 base * (100 + owner.getEffectHitRate()) / (100 + character.getEffectResistRate())
         );
     }
 
-    public static <T> T choose(String title, List<T> list, Function<T, String> stringGetter, boolean rateControl) {
+    public static <T> T choose(String title, List<T> list, Function<T, String> stringGetter, boolean rateControl, TotalRateCalc calc) {
+        if (list.size() == 1) {
+            return list.get(0);
+        }
+
         if (rateControl) {
-            ChooseDialog<T> dialog = new ChooseDialog<>(title + "目标选取", list, stringGetter);
+            ChooseDialog<T> dialog = new ChooseDialog<>(title + "选取", list, stringGetter);
             Optional<T> result = dialog.showAndWait();
             if (result.isPresent()) {
+                calc.add( 1.0 / list.size());
                 return result.get();
             }
         }

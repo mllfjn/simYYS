@@ -3,7 +3,7 @@ package com.mllfjn.simyys.character.sp.dayuan;
 import com.mllfjn.simyys.character.Character;
 
 class Skill5 extends SkillJieYuan {
-    public static final String privateName = "胜天之缘·赤";
+    public static final String SkillName = "胜天之缘·赤";
 
     public Skill5(Character belongTo) {
         super(belongTo, 5);
@@ -11,7 +11,7 @@ class Skill5 extends SkillJieYuan {
 
     @Override
     public String getName() {
-        return privateName;
+        return SkillName;
     }
 
     @Override

@@ -5,10 +5,7 @@ import javafx.collections.ObservableList;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class SerializableObservableList<E extends Serializable> implements Serializable, Iterable<E>{
     private final List<E> list = new ArrayList<>();
@@ -18,7 +15,7 @@ public class SerializableObservableList<E extends Serializable> implements Seria
         if (observableList == null) {
             observableList = FXCollections.observableList(list);
         }
-        return observableList;
+        return FXCollections.unmodifiableObservableList(observableList);
     }
 
     public boolean add(E e) {
@@ -39,6 +36,10 @@ public class SerializableObservableList<E extends Serializable> implements Seria
 
     public int size() {
         return list.size();
+    }
+
+    public E get(int index) {
+        return list.get(index);
     }
 
     @Override

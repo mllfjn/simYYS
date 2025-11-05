@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AttributeCounter {
-    private static final List<List<String>> zengShang = new ArrayList<>();
+    /*private static final List<List<String>> zengShang = new ArrayList<>();
     static {
         // 一般增伤
         zengShang.add(List.of());
@@ -33,7 +33,7 @@ public class AttributeCounter {
             rt *= (1 + a);
         }
         return rt;
-    }
+    }*/
 
     public static double getGeneralAttribute(Attribute attribute, double base, List<State> states) {
         for (State state : states) {

@@ -5,25 +5,16 @@ import com.mllfjn.simyys.state.Runnable;
 import com.mllfjn.simyys.state.State;
 
 import java.util.*;
+/*
 
 public class TriggerSession {
-    private static final Map<String, Integer> orderBeforeRound = new HashMap<>();
-    private static final Map<String, Integer> orderAfterRound = new HashMap<>();
-    static {
-        // 回合前状态执行顺序
-        List<String> beforeRound = List.of();
+    // 如果以后状态列表很大，改用map
+    private static final List<Class<? extends State>> orderBeforeRound = List.of(
 
-        // 回合后状态执行顺序
-        List<String> afterRound = List.of();
+    );
+    private static final List<Class<? extends State>> orderAfterRound = List.of(
 
-        for (int i = 0; i < beforeRound.size(); i++) {
-            orderBeforeRound.put(beforeRound.get(i), i);
-        }
-
-        for (int i = 0; i < afterRound.size(); i++) {
-            orderAfterRound.put(afterRound.get(i), i);
-        }
-    }
+    );
 
     public static void trigger(BattlePane bp, Trigger trigger, List<State> states) {
         switch (trigger) {
@@ -33,36 +24,35 @@ public class TriggerSession {
         }
     }
 
-    private static void runByOrder(BattlePane bp, List<State> states, Trigger trigger, Map<String, Integer> order) {
-        List<Runnable> runByOrder = new ArrayList<>();
-        List<Runnable> runLater = new ArrayList<>();
-        for (State state : states) {
-            if (state instanceof Runnable r && r.runnable(trigger)) {
-                if (order.containsKey(state.name)) {
-                    runByOrder.add(r);
-                } else {
-                    runLater.add(r);
-                }
-            }
-        }
-
-        runByOrder.sort(Comparator.comparingInt(o -> order.get(((State)o).name)));
-
-        for (Runnable state : runByOrder) {
-            state.run(trigger, bp);
-        }
-
-        for (Runnable state : runLater) {
-            state.run(trigger, bp);
-        }
+    private static void runByOrder(BattlePane bp, List<State> states, Trigger trigger, List<Class<? extends State>> order) {
+        // 按照order中顺序排列，其他的状态排在后面
+        states.sort(Comparator.comparingInt(o -> {
+            int index = order.indexOf(o.getClass());
+            return index == -1 ? Integer.MAX_VALUE : index;
+        }));
+        runByDefault(bp, states, trigger);
     }
 
     private static void runByDefault(BattlePane bp, List<State> states, Trigger trigger) {
-        // 危险 可能涉及状态删除
-        for (State state : states) {
+        */
+/*//*
+/ removeIf中如果添加元素会抛异常
+        states.removeIf(state -> {
             if (state instanceof Runnable r && r.runnable(trigger)) {
-                r.run(trigger, bp);
+                return r.run(trigger, bp);
+            }
+            return false;
+        });*//*
+
+
+        List<State> copy = new ArrayList<>(states);
+        for (State state : copy) {
+            if (state instanceof Runnable r && r.runnable(trigger)) {
+                if (r.run(trigger, bp)) {
+                    states.remove(state);
+                }
             }
         }
     }
 }
+*/

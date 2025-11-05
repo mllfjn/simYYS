@@ -1,13 +1,11 @@
 package com.mllfjn.simyys.trigger;
 
-import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.character.Character;
+import java.io.Serializable;
 
-public interface BattleActionListener {
-    void onBattleAction(BattleActionTrigger trigger, Character character, BattlePane bp);
-
+public interface BattleActionListener extends Serializable {
     /**
-     * 生效时可以调用该方法通知添加者
+     *
+     * @return return true if this event should be removed after use
      */
-    default void response(BattlePane bp) {}
+    boolean onBattleAction(TriggerEvent event);
 }

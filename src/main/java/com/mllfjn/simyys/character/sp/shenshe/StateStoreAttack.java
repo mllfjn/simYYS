@@ -9,7 +9,6 @@ import com.mllfjn.simyys.state.StateType;
 
 // 这是神蛇被吸攻击的队友身上的状态
 public class StateStoreAttack extends State implements AttributeModifier {
-    public static final String privateName = "神蛇队友被封存攻击";
     private int stack = 1;
 
     public StateStoreAttack(Character from, Character belongTo) {
@@ -18,21 +17,13 @@ public class StateStoreAttack extends State implements AttributeModifier {
     }
 
     public static void addStack(Character from, Character character) {
-        StateStoreAttack state = (StateStoreAttack) character.getState(privateName);
-        if (state == null) {
-            state = new StateStoreAttack(from, character);
-            character.addState(state);
-        }
-        state.addStack();
+        character.getState(StateStoreAttack.class)
+                .or(() -> character.addState(new StateStoreAttack(from, character)))
+                .ifPresent(StateStoreAttack::addStack);
     }
 
     public void addStack() {
         stack++;
-    }
-
-    @Override
-    public void setName() {
-        name = privateName;
     }
 
     @Override

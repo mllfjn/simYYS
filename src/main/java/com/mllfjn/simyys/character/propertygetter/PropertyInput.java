@@ -67,9 +67,4 @@ public class PropertyInput extends PropertyRequire implements Serializable {
     public int getInt() {
         return Utils.parseIntOrDefault(value, 0);
     }
-
-    /*@Override
-    public void toString(StringBuilder sb) {
-        sb.append(value == null || value.isEmpty() ? "无" : value);
-    }*/
 }

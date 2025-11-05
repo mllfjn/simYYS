@@ -4,8 +4,10 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
 
+import java.util.Optional;
+
 class Skill2 extends Skill {
-    public static final String privateName = "守缘刃";
+    public static final String SKillName = "守缘刃";
 
     public Skill2(Character belongTo) {
         super(belongTo, 1, 1, 0, 2);
@@ -13,22 +15,24 @@ class Skill2 extends Skill {
 
     @Override
     public String getName() {
-        return privateName;
+        return SKillName;
     }
 
     @Override
     public void usePrivate(BattlePane bp) {
-        // 再次释放时，解除目标【胜天之缘】
-        StateCombined state = (StateCombined) getBelongTo().getState(StateCombined.privateName);
-        state.from.removeState(StateSTChi.privateName);
-        state.from.removeState(StateSTQing.privateName);
-        state.delete();
-        // 并驱散其全部减益状态与 TODO 控制效果
-        state.from.dispelAllDebuff();
+        Optional<StateCombined> os = getBelongTo().getState(StateCombined.class);
+        os.ifPresent(state -> {
+            // 再次释放时，解除目标 胜天之缘
+            state.from.removeState(StateSTChi.class);
+            state.from.removeState(StateSTQing.class);
+            // 并驱散其全部减益状态与 TODO 控制效果
+            state.from.dispelAllDebuff();
+            state.delete();
+        });
     }
 
     @Override
     public boolean canUse(BattlePane bp) {
-        return super.canUse(bp) && !getBelongTo().isHaveState(StateCombined.privateName);
+        return super.canUse(bp) && !getBelongTo().isHaveState(StateCombined.class);
     }
 }

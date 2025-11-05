@@ -1,10 +1,11 @@
 package com.mllfjn.simyys.interactive;
 
 
+import com.mllfjn.simyys.utils.DecimalFormatUtil;
+
 import java.text.DecimalFormat;
 
 public class TraceableNumber {
-    private static final DecimalFormat df = new DecimalFormat("0.##");
     private double number;
     private final StringBuilder trace = new StringBuilder();
 
@@ -29,7 +30,7 @@ public class TraceableNumber {
 
     private void append(String op, double num, String desc) {
         // op .2f (desc)
-        trace.append(op).append(df.format(num)).append("(").append(desc).append(")");
+        trace.append(op).append(DecimalFormatUtil.df_0_2.format(num)).append("(").append(desc).append(")");
     }
 
     public void addTrace(String s) {
@@ -37,7 +38,7 @@ public class TraceableNumber {
     }
 
     public String getNumberString() {
-        return df.format(number);
+        return DecimalFormatUtil.df_0_2.format(number);
     }
 
     public double getNumber() {

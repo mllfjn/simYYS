@@ -2,8 +2,12 @@ package com.mllfjn.simyys.utils;
 
 import javafx.scene.control.Alert;
 
+import java.io.Serializable;
+import java.lang.reflect.Array;
+
 public class Utils {
-    public static void throwException(String text, Exception e) {
+    public static void throwException(String text, Throwable e) {
+        System.out.println(e.getMessage());
         e.printStackTrace(System.out);
         new Alert(Alert.AlertType.ERROR, text).show();
     }
@@ -23,6 +27,23 @@ public class Utils {
             return Integer.parseInt(text);
         } catch (NumberFormatException e) {
             return defaultValue;
+        }
+    }
+
+    public static boolean isHaveNonSerializable(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (obj instanceof Object[]) {
+            for (Object o : (Object[]) obj) {
+                if (isHaveNonSerializable(o)) {
+                    return true;
+                }
+            }
+            return false;
+        } else {
+            return !(obj instanceof Serializable);
         }
     }
 }

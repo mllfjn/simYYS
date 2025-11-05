@@ -19,6 +19,7 @@ public abstract class PropertyRequire implements Serializable {
     public int getInt() {
         return 0;
     }
+    public String getString() {return null;}
 
 //    public abstract void toString(StringBuilder sb);
 }

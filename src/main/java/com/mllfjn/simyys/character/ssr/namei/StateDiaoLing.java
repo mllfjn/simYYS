@@ -10,7 +10,7 @@ import com.mllfjn.simyys.state.Runnable;
 import com.mllfjn.simyys.trigger.Trigger;
 
 public class StateDiaoLing extends State implements Displayable, AttributeModifier, Runnable {
-    public static final String privateName = "凋零";
+    public static final String text = "凋零";
 
     public StateDiaoLing(Character from, Character belongTo, int duration) {
         super(from, belongTo, StateType.GENERAL, StateForm.YIN_JI);
@@ -18,13 +18,8 @@ public class StateDiaoLing extends State implements Displayable, AttributeModifi
     }
 
     @Override
-    public void setName() {
-        name = privateName;
-    }
-
-    @Override
     public String getText() {
-        return privateName;
+        return text + getDuration();
     }
 
     @Override
@@ -39,13 +34,15 @@ public class StateDiaoLing extends State implements Displayable, AttributeModifi
 
     @Override
     public boolean runnable(Trigger trigger) {
-        return trigger == Trigger.AFTER_ROUND;
+        return trigger == Trigger.AFTER_ROUND_FIRST;
     }
 
     @Override
-    public void run(Trigger trigger, BattlePane bp) {
-        Interactive interactive = from.getInteractive(bp);
+    public boolean run(Trigger trigger, BattlePane bp) {
+        Interactive interactive = from.getInteractive();
         // 回合结束时受到施加者攻击120%间接伤害
-        interactive.attack(privateName, belongTo, 120, AttackType.JIAN_JIE);
+        interactive.attack(text, belongTo, 120, AttackType.JIAN_JIE);
+
+        return false;
     }
 }

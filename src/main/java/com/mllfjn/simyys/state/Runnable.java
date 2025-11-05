@@ -5,5 +5,10 @@ import com.mllfjn.simyys.trigger.Trigger;
 
 public interface Runnable {
     boolean runnable(Trigger trigger);
-    void run(Trigger trigger, BattlePane bp);
+
+    /**
+     *
+     * @return return true if state should remove after run
+     */
+    boolean run(Trigger trigger, BattlePane bp);
 }
