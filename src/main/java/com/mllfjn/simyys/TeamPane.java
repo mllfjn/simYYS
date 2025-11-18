@@ -1,7 +1,6 @@
 package com.mllfjn.simyys;
 
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.character.CharacterIcon;
 import com.mllfjn.simyys.character.yuhun.HuoLing;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.guihuo.GuiHuo;
@@ -13,7 +12,6 @@ import javafx.scene.layout.Pane;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 

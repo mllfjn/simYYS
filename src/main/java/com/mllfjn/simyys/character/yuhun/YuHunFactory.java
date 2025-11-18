@@ -3,10 +3,7 @@ package com.mllfjn.simyys.character.yuhun;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.utils.PicUtil;
 import com.mllfjn.simyys.utils.Utils;
-import javafx.scene.Node;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
 
 import java.util.HashMap;
 import java.util.Map;

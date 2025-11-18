@@ -11,8 +11,6 @@ public class SerializableItems implements Serializable {
     public List<Character> characters = new ArrayList<>();
     // 当前行动角色
     public Character characterActing;
-    // 红绿标 0-己方;1-敌方
-    private final Character[] autoTo = new Character[2];
     // 记录获得新回合的单位
     // 这里的逻辑按照nga的帖子很乱,还要分是不是和怪物战斗,先简化随便取以后再改 https://bbs.nga.cn/read.php?tid=32486237
     private final Stack<Character> newRound = new Stack<>();

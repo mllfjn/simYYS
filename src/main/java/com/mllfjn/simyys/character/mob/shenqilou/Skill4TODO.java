@@ -2,10 +2,7 @@ package com.mllfjn.simyys.character.mob.shenqilou;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
-import com.mllfjn.simyys.interactive.AttackType;
-import com.mllfjn.simyys.interactive.Interactive;
 
 class Skill4TODO extends Skill {
     public static final String SkillName = "强力——钳鳌重击";

@@ -7,7 +7,6 @@ import com.mllfjn.simyys.state.Displayable;
 import com.mllfjn.simyys.state.State;
 import com.mllfjn.simyys.state.StateShield;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
