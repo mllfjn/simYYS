@@ -89,6 +89,8 @@ public class ShenQiLou extends Character {
     @Override
     public void addOwnSkills() {
         skills.add(new Skill1(this));
+        skills.add(new Skill2(this));
+        skills.add(new Skill3(this));
         skills.add(new Skill4TODO(this));
     }
 

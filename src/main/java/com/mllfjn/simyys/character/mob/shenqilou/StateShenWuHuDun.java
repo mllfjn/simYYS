@@ -18,7 +18,7 @@ public class StateShenWuHuDun extends StateShield {
     public boolean handle(Info info) {
         super.handle(info);
         // 使用暴击伤害攻击蜃气楼可击破护盾,抵挡3次暴击伤害后，护盾消失。
-        if (info.isBaoJi()) {
+        if (info.isCrit()) {
             count--;
         }
         return count == 0;
