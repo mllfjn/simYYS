@@ -154,7 +154,7 @@ public class CharacterIcon extends VBox {
         refreshShieldBar();
     }
 
-    public void refreshStateLabel() {
+    private void refreshStateLabel() {
         StringJoiner sj = new StringJoiner(" ");
         // 这里海原贝戟和堕落之剑会显示没必要的无法动作,所以移除了   而且该方法需要遍历states,和下面应该可以合在一起
         /*if (!character.controllable()) {
@@ -171,7 +171,7 @@ public class CharacterIcon extends VBox {
         this.stateLabel.setText(sj.toString());
     }
 
-    public void refreshProperties() {
+    private void refreshProperties() {
         info[0].setText("攻击:" + String.format("%.2f", character.getAttack()));
         info[2].setText("防御:" + String.format("%.2f", character.getDefense()));
         info[3].setText("速度:" + String.format("%.2f", character.getSpeed()));
@@ -181,12 +181,12 @@ public class CharacterIcon extends VBox {
         info[7].setText("抵抗:" + String.format("%.2f", character.getEffectResistRate()));
     }
 
-    public void refreshHealthBar() {
+    private void refreshHealthBar() {
         info[1].setText("生命:" + String.format("%.2f(%.2f%%)", character.getHp(), character.getHp() / character.getMaxHp() * 100));
         this.healthBar.setProgress(character.getHp() / character.getMaxHp());
     }
 
-    public void refreshShieldBar() {
+    private void refreshShieldBar() {
         double shield = 0;
         double maxHp = character.getMaxHp();
         Iterator<State> iterator = character.getStates().iterator();
@@ -203,28 +203,23 @@ public class CharacterIcon extends VBox {
         }
     }
 
-    public void setIsAuto(boolean visible) {
-        autoTo.setVisible(visible);
-    }
-
-    public void updateYuHunIcon() {
-//        LinkedHashSet<String> yuHunList = character.getYuHunList();
+    private void updateYuHunIcon() {
         Iterator<YuHun> iterator = character.getYuHunSet().iterator();
         for (int i = 0; i < 4; i++) {
             if (iterator.hasNext()) {
                 YuHun yuHun = iterator.next();
                 ImageView imageView = getImagePosition(i);
-                double radius = YuHunFactory.ICON_SIZE / 2;
-                imageView.setClip(new Circle(radius, radius, radius));
                 imageView.setImage(YuHunFactory.getImage(yuHun.getName()));
-                imageView.setFitHeight(YuHunFactory.ICON_SIZE);
-                imageView.setFitWidth(YuHunFactory.ICON_SIZE);
             } else {
                 if (yuHunIcon[i] != null) {
                     yuHunIcon[i].setImage(null);
                 }
             }
         }
+    }
+
+    public void setIsAuto(boolean visible) {
+        autoTo.setVisible(visible);
     }
 
     private ImageView getImagePosition(int index) {
@@ -253,6 +248,9 @@ public class CharacterIcon extends VBox {
                     AnchorPane.setTopAnchor(imageView, 0.0);
                 }
             }
+            imageView.setClip(new Circle(YuHunFactory.ICON_RADIUS, YuHunFactory.ICON_RADIUS, YuHunFactory.ICON_RADIUS));
+            imageView.setFitHeight(YuHunFactory.ICON_SIZE);
+            imageView.setFitWidth(YuHunFactory.ICON_SIZE);
             yuHunIcon[index] = imageView;
             imagePane.getChildren().add(imageView);
         }

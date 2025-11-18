@@ -6,7 +6,9 @@ import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunUnfullMark;
+import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.ratecontroller.RateController;
+import com.mllfjn.simyys.state.StateSettleType;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +28,7 @@ public class Skill3 extends Skill {
     @Override
     public void usePrivate(BattlePane bp) {
         Character belongTo = getBelongTo();
+        Interactive interactive = belongTo.getInteractive();
         int level = getLevel();
         // 恢复非召唤物友方目标生命上限(系数)的生命
         List<Character> teammate = CharacterFinder.findTeammate(belongTo, bp.situation.characters);
@@ -34,24 +37,32 @@ public class Skill3 extends Skill {
         Character target = CharacterFinder.findPriorAuto(teammate, bp
                 , belongTo.team, CharacterFinder.Property.ATTACK, CharacterFinder.Criteria.MAX);
         lastUsedTarget = target;
-        belongTo.getInteractive().recovery(target, belongTo.getMaxHp() * multiplier[level] / 100);
+        interactive.recovery(target, belongTo.getMaxHp() * multiplier[level] / 100);
 
-        // 有50%概率将自身的御魂4件套效果转移给目标,维持一回合(至多转移1种效果,TODO且总御魂造成伤害提升至多为140%)
-        // lv5-概率提升至100
-        getFirstFullYuHun().ifPresent(yuHun -> {
-            boolean trans;
-            if (level == 5) {
-                trans = true;
-            } else {
-                trans = RateController.whetherOrNot(SkillName, "向" + target + "转移御魂", List.of("转移"), item -> item, bp.isControlRate, bp.calc, item -> 50.0)[0];
-            }
-            if (trans) {
-                target.addState(new StateYuHunTrans(belongTo, target, yuHun));
-            }
+        target.getState(StateYuHunTrans.class).ifPresentOrElse(stateYuHunTrans -> {
+            // 若目标未处于控制效果,则使其获得新的回合并在该回合结束后移除御魂转移效果
+                if (target.controllable()) {
+                    interactive.getNewRound(target);
+                    stateYuHunTrans.setSettleType(StateSettleType.CHI_XU, 1);
+                } else {
+                    // 对处于御魂转移效果的目标再次释放时,驱散或解除其所有控制效果
+                    target.removeAllCrowControl();
+                }
+        }, () -> {
+            // 有50%概率将自身的御魂4件套效果转移给目标,维持一回合(至多转移1种效果,TODO且总御魂造成伤害提升至多为140%)
+            getFirstFullYuHun().ifPresent(yuHun -> {
+                boolean trans;
+                // lv5-概率提升至100
+                if (level == 5) {
+                    trans = true;
+                } else {
+                    trans = RateController.whetherOrNot(SkillName, "向" + target + "转移御魂", List.of("转移"), item -> item, bp.isControlRate, bp.calc, item -> 50.0)[0];
+                }
+                if (trans) {
+                    target.addState(new StateYuHunTrans(belongTo, target, yuHun));
+                }
+            });
         });
-        // 对处于御魂转移效果的目标再次释放时,驱散或解除其所有控制效果
-        target.getState(StateYuHunTrans.class).ifPresent(state -> target.removeAllCrowControl());
-        // 若目标未处于控制效果,则使其获得新的回合并在该回合结束后移除御魂转移效果
     }
 
     private Optional<Class<? extends YuHun>> getFirstFullYuHun() {

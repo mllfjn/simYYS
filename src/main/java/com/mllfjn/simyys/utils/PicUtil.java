@@ -1,6 +1,5 @@
 package com.mllfjn.simyys.utils;
 
-import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
@@ -49,30 +48,6 @@ public class PicUtil{
         gc.setFill(Color.BLACK);
         gc.fillText(text, (size - width * scale) / 2, size * 0.6);
         return canvas.snapshot(null, null);
-        /*double fontSize = size / 6;
-
-
-        Canvas canvas = new Canvas(size, size);
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-
-        gc.setFill(Color.LIGHTBLUE);
-        gc.fillOval(0, 0, size, size);
-
-
-        Text tt = new Text(text);
-        Text tg = new Text("404");
-        tt.setFont(new Font(fontSize));
-        tg.setFont(new Font(fontSize));
-        Bounds boundsText = tt.getLayoutBounds();
-        Bounds boundsGeneral = tg.getLayoutBounds();
-
-        gc.setFill(Color.BLACK);
-        gc.setFont(new Font(fontSize));
-        gc.fillText(text, (size - boundsText.getWidth()) / 2, size / 2);
-        gc.setFont(new Font(fontSize));
-        gc.fillText("404", (size - boundsGeneral.getWidth()) / 2, (size / 2 + boundsText.getHeight() + boundsGeneral.getHeight() / 2));
-
-        return canvas.snapshot(null, null);*/
     }
 
     public static <T> Image loadImage(Class<T> clazz, String path, String name, String extension, double size) {

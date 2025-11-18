@@ -31,7 +31,7 @@ abstract class StateShengTian extends State implements IgnoreActionDecrease, Run
     public boolean run(Trigger trigger, BattlePane bp) {
         // (自身与)处于胜天之缘的目标回合结束后,均会提升对方30%行动条
         // 这里拉条来源必须要是from-大缘自己,因为大缘免疫其他目标拉条
-        from.increaseLocation(from, 30);
+        from.doInteractive(interactive -> interactive.increaseLocation(from, 30));
         increase = false;
         combined.active();
 
@@ -86,7 +86,8 @@ class StateCombined extends State implements Runnable {
     @Override
     public boolean run(Trigger trigger, BattlePane bp) {
         // 自身(与处于)胜天之缘的目标回合结束后,均会提升对方30%行动条
-        from.increaseLocation(belongTo, 30);
+
+        belongTo.doInteractive(interactive -> interactive.increaseLocation(from, 30));
         increase = false;
         shengTian.active();
 

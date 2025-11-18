@@ -38,7 +38,7 @@ class Skill2Special extends Skill {
             }
         }
         // 获得新回合
-        bp.getNewRound(shenShe);
+        shenShe.doInteractive(interactive -> interactive.getNewRound(shenShe));
         // 将审判仪式(3)替换位终焉裁决
         getBelongTo().removeSkill(3);
         getBelongTo().addSkill(new Skill3Special(shenShe));

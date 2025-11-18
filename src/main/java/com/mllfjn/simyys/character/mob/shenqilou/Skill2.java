@@ -5,10 +5,10 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
 
 class Skill2 extends Skill {
-    private static final String SkillName = "钳鳌重击";
+    private static final String SkillName = "蜃气爆弹";
 
     public Skill2(Character belongTo) {
-        super(belongTo, 0, 0, 0, 2);
+        super(belongTo, 0, 3, 0, 2);
     }
 
     @Override

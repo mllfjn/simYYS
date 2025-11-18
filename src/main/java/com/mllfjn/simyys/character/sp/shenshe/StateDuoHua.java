@@ -45,7 +45,7 @@ public class StateDuoHua extends State implements Displayable, Runnable, Attribu
     @Override
     public void action(BattlePane bp) {
         // 携带者阵亡时,神堕八岐大蛇提升40%行动条
-        from.increaseLocation(belongTo, 40);
+        belongTo.doInteractive(interactive -> interactive.increaseLocation(from, 40));
         // 并将携带者献祭成1把堕落之剑
         new DuoLuoZhiJian((ShenShe) from, belongTo, bp, true);
         // 立即破除1把天羽羽斩封印

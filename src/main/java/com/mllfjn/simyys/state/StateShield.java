@@ -20,7 +20,7 @@ public class StateShield extends State implements Displayable {
 
     /**
      *
-     * @param info 伤害
+     * @param info 伤害信息
      * @return return true if shield run out
      */
     public boolean handle(Info info) {

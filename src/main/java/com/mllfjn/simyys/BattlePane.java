@@ -9,6 +9,7 @@ import com.mllfjn.simyys.customnode.CustomTextField;
 import com.mllfjn.simyys.customnode.TextFlowLog;
 import com.mllfjn.simyys.guihuo.GuiHuo;
 import com.mllfjn.simyys.guihuo.MobGuiHuo;
+import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.ratecontroller.TotalRateCalc;
 import com.mllfjn.simyys.starter.Initializer;
 import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
@@ -29,6 +30,7 @@ import javafx.stage.Stage;
 
 import java.io.*;
 import java.util.*;
+import java.util.function.Consumer;
 
 public class BattlePane {
     // 所有需要在返回上一步时恢复的内容封装在这里
@@ -40,6 +42,8 @@ public class BattlePane {
     // 概率控制模式
     public boolean isControlRate = false;
     public final TotalRateCalc calc = new TotalRateCalc();
+    // 交互
+    private final Interactive interactive = new Interactive(this);
     // 日志
     public final TextFlowLog log = new TextFlowLog();
     // 战斗记录,用于撤销
@@ -96,6 +100,14 @@ public class BattlePane {
         children.addAll(situation.teamPane[1].getPane(), situation.teamPane[0].getPane());
     }
 
+    public void repaint() {
+        repaintActionBar();
+
+        for (Character character : situation.characters) {
+            character.characterIcon.update();
+        }
+    }
+
     public boolean canUseGuiHuo(Character character, int num) {
         if (character.isMob()) {
             return MobGuiHuo.mobCanUseGuiHuo(character, num);
@@ -122,11 +134,8 @@ public class BattlePane {
         }
     }
 
-    public void addProgress(Character character) {
-        // 怪物不跑鬼火条
-        if (!character.isMob()) {
-            situation.teamPane[character.team].addProgress();
-        }
+    public void addProgress(int team) {
+        situation.addProgress(team);
     }
 
     private GridPane configureControlPane() {
@@ -144,7 +153,10 @@ public class BattlePane {
         Button nextBtn = new Button("下一个");
         Button backBtn = new Button("返回");
         prevBtn.setOnAction(event -> prev());
-        nextBtn.setOnAction(event -> next(false));
+        nextBtn.setOnAction(event -> {
+            next(false);
+            repaint();
+        });
         backBtn.setOnAction(event -> back.back());
         prevBtn.setPrefSize(100, 25);
         nextBtn.setPrefSize(100, 25);
@@ -156,6 +168,7 @@ public class BattlePane {
             for (int i = 0; i < Utils.parseIntOrDefault(round.getText(), 0); i++) {
                 next(false);
             }
+            repaint();
         });
 
         round.setPrefSize(100, 25);
@@ -300,31 +313,12 @@ public class BattlePane {
                 Utils.throwException("恢复时出错", e);
                 return;
             }
-            
-            /*if (prev == null) {
-                return;
-            }*/
+
             calc.setCurrentRate(situation.getCurrentRate());
             situation.reset(this);
-            /*characterActing = prev.characterActing();
-            this.autoTo = prev.autoTo();
-            listenerMap = prev.listenerMap();
-            teamPane[0].setGuiHuo(prev.team0GuiHuo);
-            teamPane[1].setGuiHuo(prev.team1GuiHuo);
-            this.calc.setRate(prev.totalRate());*/
 
             repaintActionBar();
             reloadTeamPane();
-//            reloadCharacterIcon();
-
-            /*if (autoTo[0] != null) {
-                autoTo[0].characterIcon.setIsAuto(true);
-            }
-
-            if (autoTo[1] != null) {
-                autoTo[1].characterIcon.setIsAuto(true);
-            }*/
-
             log.prev();
         }
 
@@ -350,40 +344,29 @@ public class BattlePane {
             // 回合结束,触发回合结束事件
             onTrigger(new EventRoundDone(situation.characterActing));
             getNextActor();
+            interactive.display();
             log.characterAct(situation.characterActing);
         } while (!situation.characterActing.controllable());
+
         log.next();
-
-        repaintActionBar();
-
-        // TODO 换成观察者模式
-        // 顺便要缓存数据,不要每次要属性都遍历属性重新算,修改所有会改变增益数值的状态,改变时重新加载
-        // 大缘(当前爆伤) 目标(当前爆伤*0.4) 但是怎么在大缘爆伤改变时通知目标呢?
-        for (Character character : situation.characters) {
-            character.characterIcon.update();
-        }
     }
 
     private void getNextActor() {
-        Character next;
-
-        if (!situation.newRound.isEmpty()) {
-            next = situation.newRound.pop();
-            // TODO 新回合不能推鬼火条
-        } else {
+        Character next = situation.newRoundCharacter().orElseGet(() -> {
             List<Character> characters = situation.characters;
-            next = characters.get(0);
+            Character c = characters.get(0);
             for (Character character : characters) {
-                if (character.before(next)) {
-                    next = character;
+                if (character.before(c)) {
+                    c = character;
                 }
             }
             for (Character character : characters) {
-                if (character != next) {
-                    character.setLocation(character.getLocation() + character.getSpeed() * next.getTTA());
+                if (character != c) {
+                    character.setLocation(character.getLocation() + character.getSpeed() * c.getTTA());
                 }
             }
-        }
+            return c;
+        });
 
         situation.characterActing = next;
 
@@ -392,9 +375,13 @@ public class BattlePane {
         next.beforeRound();
     }
 
-    public void getNewRound(Character character) {
-        situation.newRound.push(character);
-        log.addLocationChange(character.getName() + "获得新回合");
+    public Interactive getInteractive(Character character) {
+        interactive.setOwner(character);
+        return interactive;
+    }
+
+    public void doInteractive(Character character, Consumer<Interactive> action) {
+        interactive.doInterActive(character, action);
     }
 
     public boolean canSummon(int team) {
@@ -425,9 +412,9 @@ public class BattlePane {
         SHUN_WEI
     }
 
-
+/*
     private record CharacterStack(List<Character> characters, Character characterActing, Character[] autoTo,
                                   Map<Character, List<BattleActionListener>> listenerMap, GuiHuo team0GuiHuo,
                                   GuiHuo team1GuiHuo, double totalRate) implements Serializable {
-    }
+    }*/
 }

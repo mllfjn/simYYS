@@ -74,8 +74,7 @@ public class StateHuiMie extends State implements Displayable, Runnable, Attribu
     }
 
     @Override
-    public void delete() {
-        super.delete();
+    public void beforeDelete() {
         if (NaMeiFlag != null) {
             NaMeiFlag.delete();
         }

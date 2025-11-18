@@ -7,11 +7,11 @@ import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
 
-class Skill4TODO extends Skill {
-    public static final String SkillName = "强力——钳鳌重击";
+class Skill3 extends Skill {
+    public static final String SkillName = "绀连击";
 
-    public Skill4TODO(Character belongTo) {
-        super(belongTo, 0, 3, 0, 4);
+    public Skill3(Character belongTo) {
+        super(belongTo, 0, 3, 0, 3);
     }
 
     @Override
@@ -21,6 +21,9 @@ class Skill4TODO extends Skill {
 
     @Override
     public void usePrivate(BattlePane bp) {
-
+        Interactive interactive = getBelongTo().getInteractive();
+        for (int i = 0; i < 4; i++) {
+            interactive.attack(SkillName, CharacterFinder.findEnemy(getBelongTo(), bp.situation.characters), 100, AttackType.QUN_TI);
+        }
     }
 }

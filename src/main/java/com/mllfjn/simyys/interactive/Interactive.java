@@ -1,42 +1,62 @@
 package com.mllfjn.simyys.interactive;
 
 import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.character.AttributeCounter;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.customnode.CustomText;
 import com.mllfjn.simyys.customnode.TextFlowLog;
 import com.mllfjn.simyys.ratecontroller.RateController;
 import com.mllfjn.simyys.state.State;
+import com.mllfjn.simyys.state.determinant.IgnoreActionIncrease;
 import com.mllfjn.simyys.state.determinant.InfluenceDamage;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 public class Interactive {
     private final BattlePane bp;
-    private final Character owner;
+    private Character owner;
     private Map<Character, List<CustomText>> currentNumberLog = new LinkedHashMap<>();
-    private Map<Character, List<CustomText>> increaseLog = new LinkedHashMap<>();
+    private Set<String> increaseLog = new LinkedHashSet<>();
     private static final TextFlowLog.TextType type = TextFlowLog.TextType.NUMBER;
     private static final TextFlowLog.FontSize size = TextFlowLog.FontSize.SMALL;
 
-    public Interactive(BattlePane bp, Character owner) {
+    public Interactive(BattlePane bp) {
         this.bp = bp;
+    }
+
+    public void setOwner(Character owner) {
         this.owner = owner;
     }
 
-    public void skillDone() {
+    public void doInterActive(Character character, Consumer<Interactive> action) {
+        Character temp = owner;
+        owner = character;
+
+        action.accept(this);
+
+        owner = temp;
+    }
+
+    public void display() {
         currentNumberLog.values().forEach(list -> {
             list.forEach(bp.log::addText);
             bp.log.addText("\n", type, TextFlowLog.TextColor.NORMAL, size);
         });
 
+        increaseLog.forEach(bp.log::addLocationChange);
+
         currentNumberLog = new LinkedHashMap<>();
+        increaseLog = new LinkedHashSet<>();
     }
 
-    private List<CustomText> createNumberRecord(String s) {
-        List<CustomText> list = new ArrayList<>();
-        list.add(new CustomText("\t" + s + "：", type, TextFlowLog.TextColor.NORMAL, size));
-        return list;
+    private void addNumberRecord(Character character, CustomText text) {
+        currentNumberLog.computeIfAbsent(character, k -> {
+            List<CustomText> list = new ArrayList<>();
+            list.add(new CustomText("\t" + character.name + "：", type, TextFlowLog.TextColor.NORMAL, size));
+            return list;
+        });
+
+        currentNumberLog.get(character).add(text);
     }
 
     public Info[] attack(String skillName, List<Character> targets, int multiplier, AttackType attackType) {
@@ -81,7 +101,7 @@ public class Interactive {
 
         // 减伤 实际 = 基础 / (1+减伤) = 基础 * (1.0 / (1+减伤))
         // https://bbs.nga.cn/read.php?tid=35530141 关于减伤的分类
-        traceableNumber.mul( 1.0 / ( 1 + target.getJianShang() / 100 ), "减伤");
+        traceableNumber.mul(1.0 / (1 + target.getJianShang() / 100), "减伤");
 
         // 盾
 //        traceableNumber.sub();
@@ -94,10 +114,9 @@ public class Interactive {
 
         target.beHurt(info);
 
-        currentNumberLog.computeIfAbsent(target, k -> createNumberRecord(target.name))
-                .add(new CustomText(traceableNumber.getNumberString() + " "
-                        , traceableNumber.getTrace()
-                        , type, baoJi ? TextFlowLog.TextColor.CRITICAL : TextFlowLog.TextColor.ATTACK, size));
+        addNumberRecord(target, new CustomText(traceableNumber.getNumberString() + " "
+                , traceableNumber.getTrace()
+                , type, baoJi ? TextFlowLog.TextColor.CRITICAL : TextFlowLog.TextColor.ATTACK, size));
 
 
         return info;
@@ -136,10 +155,9 @@ public class Interactive {
 
         target.beHeal(info);
 
-        currentNumberLog.computeIfAbsent(target, k -> createNumberRecord(target.name))
-                .add(new CustomText(traceableNumber.getNumberString() + " "
-                        , traceableNumber.getTrace()
-                        , type, TextFlowLog.TextColor.HEAL, size));
+        addNumberRecord(target, new CustomText(traceableNumber.getNumberString() + " "
+                , traceableNumber.getTrace()
+                , type, TextFlowLog.TextColor.HEAL, size));
 
         return info;
     }
@@ -152,8 +170,7 @@ public class Interactive {
 
         target.recovery(num);
 
-        currentNumberLog.computeIfAbsent(target, k -> createNumberRecord(target.name))
-                .add(new CustomText(traceableNumber.getNumberString() + " "
+        addNumberRecord(target, new CustomText(traceableNumber.getNumberString() + " "
                 , traceableNumber.getTrace()
                 , type, TextFlowLog.TextColor.HEAL, size));
     }
@@ -178,4 +195,37 @@ public class Interactive {
         target.addState(stateSupplier.get(owner, target));
     }
 
+    public void getNewRound(Character target) {
+        bp.situation.getNewRound(target);
+        increaseLog.add(target.name + "获得新回合");
+    }
+
+    public void increaseLocation(Character target, double increase) {
+        // 免疫行动条提升效果
+        for (State state : target.getStates()) {
+            if (state instanceof IgnoreActionIncrease fi && fi.effective(owner)) {
+                return;
+            }
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(target.name).append("行动提前").append((int) increase).append("%");
+        double location = target.getLocation();
+        if (location + increase > 100) {
+            sb.append("(实际提前").append(100 - location).append("%)");
+        }
+
+        target.setLocation(location + increase);
+        increaseLog.add(sb.toString());
+    }
+
+    /*public void decreaseLocation(Character from, double decrease) {
+        for (State state : states) {
+            if (state instanceof IgnoreActionDecrease) {
+                return;
+            }
+        }
+        this.location = Math.max(0, location - decrease);
+        bp.log.addLocationChange(this.name + "行动推后" + (int)decrease);
+    }*/
 }

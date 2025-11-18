@@ -70,8 +70,6 @@ public abstract class Skill implements Serializable {
         }
         sb.append("使用了").append(getName());
         bp.log.addSkill(sb.toString());
-
-        getBelongTo().getInteractive().skillDone();
     }
 
     public abstract void usePrivate(BattlePane bp);

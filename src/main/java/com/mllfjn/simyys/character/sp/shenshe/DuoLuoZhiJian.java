@@ -59,7 +59,7 @@ public class DuoLuoZhiJian extends Character {
         // 获得1点鬼火
         bp.gainGuiHuo(this, 1);
         // 并为神堕八岐大蛇提升15%行动条
-        shenShe.increaseLocation(this, 15);
+        interactive.increaseLocation(shenShe, 15);
     }
 
     @Override

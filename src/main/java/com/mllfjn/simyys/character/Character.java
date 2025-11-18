@@ -24,6 +24,7 @@ import javafx.collections.ObservableList;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.function.Consumer;
 
 public abstract class Character implements Serializable{
     public String name;
@@ -59,7 +60,6 @@ public abstract class Character implements Serializable{
     private final LinkedHashSet<YuHun> yuHunList = new LinkedHashSet<>();
 
     public transient CharacterIcon characterIcon;
-    private transient Interactive interactive;
     public transient BattlePane bp;
     public PropertiesMap getProperties() {
         PropertiesMap map = new PropertiesMap();
@@ -236,17 +236,10 @@ public abstract class Character implements Serializable{
         if (replenish) {
             setHp(maxHp);
         }
-
-        if (characterIcon != null) {
-            characterIcon.refreshHealthBar();
-        }
     }
     public void setHp(double num) {
         this.hp = Math.min(maxHp, num);
         bp.onTrigger(new EventHpChange(this));
-        if (characterIcon != null) {
-            characterIcon.refreshHealthBar();
-        }
     }
 
     public void setLockSkill(int i) {
@@ -290,38 +283,21 @@ public abstract class Character implements Serializable{
         return location;
     }
     public void setLocation(double newLocation) {
-        this.location = newLocation;
-    }
-    public void increaseLocation(Character from, double increase) {
-        // 免疫行动条提升效果
-        for (State state : states) {
-            if (state instanceof IgnoreActionIncrease fi && fi.effective(from)) {
-                return;
-            }
-        }
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(this.name).append("行动提前").append((int)increase).append("%");
-        if (location + increase > 100) {
-            double real = 100 - location;
-            sb.append("(实际提前").append((int)real).append("%)");
-        }
-
-        this.location = Math.min(100, location + increase);
-        bp.log.addLocationChange(sb.toString());
-    }
-    public void decreaseLocation(Character from, double decrease) {
-        for (State state : states) {
-            if (state instanceof IgnoreActionDecrease) {
-                return;
-            }
-        }
-        this.location = Math.max(0, location - decrease);
-        bp.log.addLocationChange(this.name + "行动推后" + (int)decrease);
+        this.location = Math.min(100, newLocation);
     }
     public void beforeRound() {
         stateRun(Trigger.BEFORE_ROUND);
-//        trigger(bp, Trigger.BEFORE_ROUND, this.getStates());
+
+        // 维持类状态过回合
+        maintainedStates.removeIf(state -> {
+            state.setDuration(state.getDuration() - 1);
+            if (state.getDuration() == 0) {
+                state.delete();
+                return true;
+            }
+            return false;
+        });
+
         if (lockSKillMap != null && lockSKillMap.containsKey(timesToAct)) {
             setLockSkill(lockSKillMap.get(timesToAct));
         }
@@ -334,10 +310,9 @@ public abstract class Character implements Serializable{
 
         // 非怪物推进鬼火条
         if (!isMob()) {
-            bp.addProgress(this);
+            bp.addProgress(this.team);
         }
         // 行动后触发状态
-//        TriggerSession.trigger(bp, Trigger.AFTER_ROUND, this.getStates());
         stateRun(Trigger.AFTER_ROUND_FIRST);
         stateRun(Trigger.AFTER_ROUND);
 
@@ -345,16 +320,10 @@ public abstract class Character implements Serializable{
         states.removeIf(state -> {
             if (state.getSettleType() == StateSettleType.CHI_XU) {
                 state.setDuration(state.getDuration() - 1);
-                return state.getDuration() == 0;
-            }
-            return false;
-        });
-        // 维持类状态过回合
-        maintainedStates.removeIf(state -> {
-            state.setDuration(state.getDuration() - 1);
-            if (state.getDuration() == 0) {
-                state.delete();
-                return true;
+                if (state.getDuration() == 0) {
+                    state.beforeDelete();
+                    return true;
+                }
             }
             return false;
         });
@@ -427,22 +396,14 @@ public abstract class Character implements Serializable{
     public void beHurt(Info info) {
         TraceableNumber traceableNumber = info.getTraceableNumber();
         // 遍历状态找护盾
-        boolean operated = false;
         Iterator<State> iterator = getStates().iterator();
         while (traceableNumber.getNumber() > 0 && iterator.hasNext()) {
             if (iterator.next() instanceof StateShield ss) {
-                operated = true;
                 if (ss.handle(info)) {
                     iterator.remove();
                 } else {
                     break;
                 }
-            }
-        }
-        // 如果有护盾生效了,刷新护盾条
-        if (operated) {
-            if (characterIcon != null) {
-                characterIcon.refreshShieldBar();
             }
         }
         // 如果护盾没能抵消完伤害
@@ -472,8 +433,8 @@ public abstract class Character implements Serializable{
         setHp(getHp() + info.getTraceableNumber().getNumber());
     }
 
-    /** 恢复：区别于治疗，不受减疗效果影响，不触发治疗相关效果，不会暴击
-     *
+    /**
+     *  恢复：区别于治疗，不受减疗效果影响，不触发治疗相关效果，不会暴击
      */
     public void recovery(double num) {
         setHp(getHp() + num);
@@ -516,30 +477,7 @@ public abstract class Character implements Serializable{
             return Optional.empty();
         }
 
-        /*for (State state : states) {
-            if (newState.getClass().isInstance(state)) {
-                @SuppressWarnings("unchecked")
-                T result = (T) state;
-                result.cover(newState);
-                return Optional.of(result);
-            }
-        }*/
-
         states.add(newState);
-
-        if (characterIcon != null) {
-            if (newState instanceof Displayable) {
-                characterIcon.refreshStateLabel();
-            }
-
-            if (newState instanceof AttributeModifier) {
-                characterIcon.refreshProperties();
-            }
-
-            if (newState instanceof StateShield) {
-                characterIcon.refreshShieldBar();
-            }
-        }
         return Optional.of(newState);
     }
     public boolean isIgnoreDebuff() {
@@ -561,6 +499,12 @@ public abstract class Character implements Serializable{
     public void addMaintainedState(State state) {
         maintainedStates.add(state);
     }
+
+    public void removeMaintainedState(State state) {
+        maintainedStates.remove(state);
+    }
+
+
     public List<State> getStates() {
         return states;
     }
@@ -568,39 +512,30 @@ public abstract class Character implements Serializable{
         for (State state : states) {
             if (clazz.isInstance(state)) {
                 states.remove(state);
-                if (characterIcon != null) {
-                    characterIcon.refreshStateLabel();
-                }
                 return;
             }
         }
 
     }
-    public Interactive getInteractive() {
-        if (interactive == null) {
-            interactive = new Interactive(bp, this);
-        }
-        return interactive;
-    }
-    public void addYuHun(YuHun yuHun, boolean isAdding) {
-        yuHunList.add(yuHun);
 
+    public Interactive getInteractive() {
+        return bp.getInteractive(this);
+    }
+
+    public void doInteractive(Consumer<Interactive> action) {
+        bp.doInteractive(this, action);
+    }
+
+    public void addYuHun(YuHun yuHun) {
+        yuHunList.add(yuHun);
         if (yuHun instanceof YuHunSealResponse sr) {
             sr.enable();
-        }
-
-        if (!isAdding) {
-            refreshYuHunIcon();
         }
     }
     public void addAllYuHun(String[] names) {
         for (String s : names) {
-            YuHunFactory.getYuHun(s, this).ifPresent(yuHun -> {
-                addYuHun(yuHun, true);
-            });
+            YuHunFactory.getYuHun(s, this).ifPresent(this::addYuHun);
         }
-
-        refreshYuHunIcon();
     }
     public <T extends YuHun> void removeYuHun(Class<T> tClass) {
         Set<YuHun> yuHunSet = getYuHunSet();
@@ -610,16 +545,11 @@ public abstract class Character implements Serializable{
                 if (yuHun instanceof YuHunSealResponse sr) {
                     sr.disable();
                 }
-                refreshYuHunIcon();
-                break;
+                return;
             }
         }
     }
-    private void refreshYuHunIcon() {
-        if (characterIcon != null) {
-            characterIcon.updateYuHunIcon();
-        }
-    }
+
     public LinkedHashSet<YuHun> getYuHunSet() {
         return yuHunList;
     }

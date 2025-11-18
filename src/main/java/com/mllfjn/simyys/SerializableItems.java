@@ -15,7 +15,8 @@ public class SerializableItems implements Serializable {
     private final Character[] autoTo = new Character[2];
     // 记录获得新回合的单位
     // 这里的逻辑按照nga的帖子很乱,还要分是不是和怪物战斗,先简化随便取以后再改 https://bbs.nga.cn/read.php?tid=32486237
-    public final Stack<Character> newRound = new Stack<>();
+    private final Stack<Character> newRound = new Stack<>();
+    public boolean disablePush = false;
     // 队伍面板，负责显示头像和管理鬼火条
     public final TeamPane[] teamPane = new TeamPane[2];
     // 全局监听器,用于幻境,结界
@@ -38,6 +39,26 @@ public class SerializableItems implements Serializable {
 
     public void setCurrentRate(double currentRate) {
         this.currentRate = currentRate;
+    }
+
+    public Optional<Character> newRoundCharacter() {
+        if (newRound.isEmpty()) {
+            return Optional.empty();
+        }
+
+        disablePush = true;
+        return Optional.of(newRound.pop());
+    }
+
+    public void getNewRound(Character character) {
+        newRound.push(character);
+    }
+
+    public void addProgress(int team) {
+        if (!disablePush) {
+            teamPane[team].addProgress();
+        }
+        disablePush = false;
     }
 
     public void reset(BattlePane bp) {

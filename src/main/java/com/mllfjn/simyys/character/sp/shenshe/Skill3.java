@@ -67,7 +67,7 @@ class Skill3 extends Skill {
 
         // lv3-释放时蛇神每剩余20%生命,为自身提升8%行动条
         if (getLevel() >= 3) {
-            shenShe.increaseLocation(shenShe, 8 * times);
+            interactive.increaseLocation(shenShe, 8 * times);
         }
         // lv5-释放时抽取封存的友方式神攻击，总值不超过自身初始攻击100%
         if (getLevel() == 5) {

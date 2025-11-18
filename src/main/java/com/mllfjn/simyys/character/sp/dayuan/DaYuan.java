@@ -12,8 +12,6 @@ import com.mllfjn.simyys.state.determinant.IgnoreActionIncrease;
 
 public class DaYuan extends CharacterShiShenBase {
     public static final String CharacterName = "纺愿缘结神";
-    private int skill1Level;
-    private int skill3Level;
     public DaYuan() {
 
     }

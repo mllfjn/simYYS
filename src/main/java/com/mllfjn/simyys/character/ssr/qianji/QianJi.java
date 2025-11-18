@@ -33,7 +33,7 @@ public class QianJi extends CharacterShiShenBase {
                     && !erd.getCharacter().isSummon() // 非召唤物
                     && erd.getCharacter().team != team // 敌方
             ) {
-                increaseLocation(QianJi.this, 10);
+                QianJi.this.doInteractive(interactive -> interactive.increaseLocation(QianJi.this, 10));
             }
             return false;
         });

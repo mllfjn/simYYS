@@ -25,12 +25,6 @@ public class TeamPane implements Serializable {
     private Character auto;
     private GuiHuo guiHuo;
 
-//    public TeamPane() {
-//        setupUI();
-//            this.minHeightProperty().bind(heightProperty.divide(2).subtract(5));
-//            setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, new BorderWidths(3))));
-//    }
-
     public Pane getPane() {
         if (root == null) {
             center = new HBox();

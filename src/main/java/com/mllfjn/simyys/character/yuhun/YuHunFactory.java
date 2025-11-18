@@ -14,6 +14,7 @@ import java.util.Optional;
 
 public class YuHunFactory {
     public static final double ICON_SIZE = 30;
+    public static final double ICON_RADIUS = ICON_SIZE / 2;
     private static final Map<String, Image> iconMap = new HashMap<>();
     private static final Map<String, Class<? extends YuHun>> yuHunMap = new HashMap<>();
 

@@ -21,6 +21,10 @@ public abstract class State implements Serializable {
     }
 
     public void setSettleType(StateSettleType settleType, int duration) {
+        if (settleType == StateSettleType.WEI_CHI) {
+            from.removeMaintainedState(this);
+        }
+
         this.settleType = settleType;
         this.duration = duration;
 
@@ -42,6 +46,7 @@ public abstract class State implements Serializable {
     }
 
     public void delete() {
+        beforeDelete();
         belongTo.getStates().remove(this);
 
         // 这里不能直接在维持列表中删除,因为可能会从维持列表中遍历并调用delete方法,如果后续有需要维持状态主动删除,需要修改
@@ -49,4 +54,6 @@ public abstract class State implements Serializable {
             from.removeMaintainedState(this);
         }*/
     }
+
+    public void beforeDelete() {}
 }

@@ -32,7 +32,7 @@ class StateChi extends State implements Runnable, Displayable {
             // 无法连续触发此效果
             if (!belongTo.isHaveState(StateChiNewRound.class)) {
                 // 回合结束后立即获得1个回合,且新回合释放妖术技能消耗的鬼火减少2点(已包含在StateChiNewRound中)
-                bp.getNewRound(belongTo);
+                belongTo.doInteractive(interactive -> interactive.getNewRound(belongTo));
                 belongTo.addState(new StateChiNewRound((DaYuan) from, belongTo));
             }
         } else {
