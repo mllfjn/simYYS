@@ -36,8 +36,7 @@ public class DuoLuoZhiJian extends Character {
     }
 
     @Override
-    public void die() {
-        super.die();
+    public void dieHandle() {
         StateShenSheJianShang.reduce(shenShe);
     }
 

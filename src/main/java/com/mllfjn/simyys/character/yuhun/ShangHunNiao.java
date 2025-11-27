@@ -4,7 +4,7 @@ import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.state.*;
 import com.mllfjn.simyys.trigger.BattleActionListener;
-import com.mllfjn.simyys.trigger.EventCharacterDie;
+import com.mllfjn.simyys.trigger.battleevent.EventCharacterDie;
 
 public class ShangHunNiao extends YuHun implements YuHunSealResponse {
     public static final String YuHunName = "伤魂鸟";

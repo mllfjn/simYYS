@@ -27,9 +27,7 @@ public class ShenShe extends CharacterShiShenBase {
     }
 
     @Override
-    public void die() {
-        super.die();
-
+    public void dieHandle() {
         // 阵亡时将封存的攻击全部归还
         for (Character teammate : CharacterFinder.findTeammateShiShen(this, bp.situation.characters)) {
             teammate.removeState(StateStoreAttack.class);

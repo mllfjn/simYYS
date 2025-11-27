@@ -6,9 +6,7 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.state.*;
 import com.mllfjn.simyys.state.determinant.IgnoreDebuff;
-import com.mllfjn.simyys.trigger.BattleActionListener;
-import com.mllfjn.simyys.trigger.EventUseGuiHuo;
-import com.mllfjn.simyys.trigger.TriggerEvent;
+import com.mllfjn.simyys.trigger.battleevent.EventUseGuiHuo;
 
 import java.util.List;
 
@@ -58,8 +56,7 @@ public class HaiYuanBeiJi extends Character {
     }
 
     @Override
-    public void die() {
-        super.die();
+    public void dieHandle() {
         qianJi.setHaiYuanBeiJi(null);
         qianJi.addState(new QianJi.StateQianJiIgnoreDebuff(qianJi));
         Skill3_2.removeBeiGeAndChangeSkill(qianJi);

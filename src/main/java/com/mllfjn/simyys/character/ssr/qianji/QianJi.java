@@ -8,7 +8,7 @@ import com.mllfjn.simyys.state.State;
 import com.mllfjn.simyys.state.StateForm;
 import com.mllfjn.simyys.state.StateType;
 import com.mllfjn.simyys.state.determinant.IgnoreDebuff;
-import com.mllfjn.simyys.trigger.EventRoundDone;
+import com.mllfjn.simyys.trigger.battleevent.EventRoundDone;
 
 public class QianJi extends CharacterShiShenBase {
     public static final String CharacterName = "千姬";

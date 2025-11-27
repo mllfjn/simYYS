@@ -45,7 +45,7 @@ public abstract class State implements Serializable {
         duration = num;
     }
 
-    public void delete() {
+    public final void delete() {
         beforeDelete();
         belongTo.getStates().remove(this);
 

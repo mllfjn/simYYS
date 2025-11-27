@@ -9,10 +9,11 @@ import com.mllfjn.simyys.state.determinant.IgnoreChangeMaxHp;
 import com.mllfjn.simyys.state.determinant.IgnoreDebuff;
 import com.mllfjn.simyys.state.determinant.InfluenceDamage;
 import com.mllfjn.simyys.state.determinant.PreventDie;
-import com.mllfjn.simyys.trigger.EventActionDone;
+import com.mllfjn.simyys.trigger.battleevent.EventActionDone;
 
 // 无法改变生命上限,免疫减益和 TODO 放逐
 public class StateSheShen extends State implements IgnoreChangeMaxHp, IgnoreDebuff, PreventDie, InfluenceDamage, Displayable {
+    public static final String text = "蛇神";
     // 变身前的血量和上限
     private final double originalMaxHp;
     private final double originalHp;
@@ -44,7 +45,7 @@ public class StateSheShen extends State implements IgnoreChangeMaxHp, IgnoreDebu
     public void preventDie() {
         if (!die) {
             belongTo.bp.addActionTrigger(belongTo, event -> {
-                if (event instanceof EventActionDone ea) {
+                if (event instanceof EventActionDone) {
                     backToNormal();
                     // lv4-蛇神被击败时,自身提升100点速度,持续1个回合
                     if (level >= 4) {
@@ -54,7 +55,13 @@ public class StateSheShen extends State implements IgnoreChangeMaxHp, IgnoreDebu
                 }
                 return false;
             });
+            die = true;
         }
+    }
+
+    @Override
+    public String getName() {
+        return text;
     }
 
     public void backToNormal() {
@@ -73,12 +80,12 @@ public class StateSheShen extends State implements IgnoreChangeMaxHp, IgnoreDebu
 
     @Override
     public void doInfluence(AttackType attackType, Info info) {
-        info.getTraceableNumber().mul(0.7, "蛇神");
+        info.getTraceableNumber().mul(0.7, text);
     }
 
     @Override
     public String getText() {
-        return "蛇神";
+        return text;
     }
 
     static class StateSheShenSpeed extends State implements AttributeModifier {

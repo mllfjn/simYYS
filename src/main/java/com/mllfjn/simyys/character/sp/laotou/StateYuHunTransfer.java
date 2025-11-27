@@ -5,31 +5,36 @@ import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunFactory;
 import com.mllfjn.simyys.state.*;
 
-public class StateYuHunTrans extends State implements Displayable {
+public class StateYuHunTransfer extends State implements Displayable {
     private final Class<? extends YuHun> yClass;
-    private boolean willTrans = true;
+    private boolean transfer = true;
 
-    public StateYuHunTrans(Character from, Character belongTo, Class<? extends YuHun> yClass) {
+    private StateYuHunBeingTransfer beingTransfer;
+
+    public StateYuHunTransfer(Character from, Character belongTo, Class<? extends YuHun> yClass) {
         super(from, belongTo, StateType.SPECIAL, StateForm.SPECIAL);
         this.yClass = yClass;
         setSettleType(StateSettleType.WEI_CHI, 1);
 
         for (YuHun yuHun : belongTo.getYuHunSet()) {
             if (yuHun.getClass() == yClass) {
-                willTrans = false;
+                transfer = false;
                 break;
             }
         }
 
-        if (willTrans) {
-            belongTo.addYuHun(YuHunFactory.getYuHun(yClass, belongTo));
+        if (transfer) {
+            belongTo.addYuHun(YuHunFactory.getYuHun(yClass, belongTo).orElseThrow());
+            beingTransfer = new StateYuHunBeingTransfer(belongTo, ((LaoTou) from), yClass, this);
+            from.addState(beingTransfer);
         }
     }
 
     @Override
     public void beforeDelete() {
-        if (willTrans) {
+        if (transfer) {
             belongTo.removeYuHun(yClass);
+            beingTransfer.delete();
         }
     }
 

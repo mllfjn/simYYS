@@ -12,6 +12,7 @@ import com.mllfjn.simyys.starter.Initializer;
 import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
 import com.mllfjn.simyys.trigger.*;
 import com.mllfjn.simyys.collections.SerializableObservableList;
+import com.mllfjn.simyys.trigger.battleevent.*;
 import com.mllfjn.simyys.utils.Utils;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -60,15 +61,13 @@ public class BattlePane {
 
         setupUI();
         init();
-        repaintActionBar();
+        repaint();
     }
 
     private void setupUI() {
-        /*
-          右边是主操作区
-          主体偏上是行动条，点击切换模式
-          右下角是控制区
-         */
+        // 右边是主操作区
+        // 主体偏上是行动条，点击切换模式
+        // 右下角是控制区
 
         // 队伍区
         container.setPadding(new Insets(3));
@@ -100,7 +99,7 @@ public class BattlePane {
         repaintActionBar();
 
         for (Character character : situation.characters) {
-            character.characterIcon.update();
+            character.getCharacterIcon().update();
         }
     }
 
@@ -313,14 +312,14 @@ public class BattlePane {
             calc.setCurrentRate(situation.getCurrentRate());
             situation.reset(this);
 
-            repaintActionBar();
             reloadTeamPane();
+            repaint();
             log.prev();
         }
 
     }
 
-    public void next(boolean skip) {
+    private void next(boolean skip) {
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
              ObjectOutputStream oos = new ObjectOutputStream(bos)
         ) {
@@ -337,6 +336,8 @@ public class BattlePane {
             // 但是后续的其他角色不跳过
             situation.characterActing.round(skip);
             skip = false;
+            // 行动结束
+            onTrigger(new EventActionDone(situation.characterActing));
             // 回合结束,触发回合结束事件
             onTrigger(new EventRoundDone(situation.characterActing));
             getNextActor();
@@ -345,6 +346,11 @@ public class BattlePane {
         } while (!situation.characterActing.controllable());
 
         log.next();
+    }
+
+    public void skipCharacterAct() {
+        next(true);
+        repaint();
     }
 
     private void getNextActor() {
@@ -407,10 +413,4 @@ public class BattlePane {
         JIN_DU,
         SHUN_WEI
     }
-
-/*
-    private record CharacterStack(List<Character> characters, Character characterActing, Character[] autoTo,
-                                  Map<Character, List<BattleActionListener>> listenerMap, GuiHuo team0GuiHuo,
-                                  GuiHuo team1GuiHuo, double totalRate) implements Serializable {
-    }*/
 }

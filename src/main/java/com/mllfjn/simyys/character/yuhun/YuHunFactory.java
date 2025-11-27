@@ -38,22 +38,22 @@ public class YuHunFactory {
 
     public static <T extends YuHun> Optional<T> getYuHun(String name, Character character) {
         if (yuHunMap.containsKey(name)) {
-            return Optional.ofNullable(getYuHun(yuHunMap.get(name), character));
+            return getYuHun(yuHunMap.get(name), character);
         }
 
         return Optional.empty();
     }
 
-    public static <T extends YuHun> T getYuHun(Class<? extends YuHun> yClass, Character character) {
+    public static <T extends YuHun> Optional<T> getYuHun(Class<? extends YuHun> yClass, Character character) {
         try {
             @SuppressWarnings("unchecked")
             T yuHun = (T) yClass.getDeclaredConstructor().newInstance();
             yuHun.init(character);
             yClass.cast(yuHun);
-            return yuHun;
+            return Optional.of(yuHun);
         } catch (Exception e) {
             Utils.throwException("加载御魂失败", e);
         }
-        return null;
+        return Optional.empty();
     }
 }

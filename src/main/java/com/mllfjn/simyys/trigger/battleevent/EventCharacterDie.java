@@ -1,10 +1,11 @@
-package com.mllfjn.simyys.trigger;
+package com.mllfjn.simyys.trigger.battleevent;
 
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.trigger.TriggerEvent;
 
-public class EventHpChange extends TriggerEvent{
+public class EventCharacterDie extends TriggerEvent {
     private final Character character;
-    public EventHpChange(Character character) {
+    public EventCharacterDie(Character character) {
         this.character = character;
     }
 

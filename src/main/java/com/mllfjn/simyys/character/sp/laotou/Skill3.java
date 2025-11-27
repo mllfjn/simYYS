@@ -13,7 +13,7 @@ import com.mllfjn.simyys.state.StateSettleType;
 import java.util.List;
 import java.util.Optional;
 
-public class Skill3 extends Skill {
+class Skill3 extends Skill {
     public static final String SkillName = "委以重任";
     private final int[] multiplier = new int[]{0, 14, 16, 18, 20, 20};
     public Skill3(Character belongTo, int level) {
@@ -27,23 +27,25 @@ public class Skill3 extends Skill {
 
     @Override
     public void usePrivate(BattlePane bp) {
-        Character belongTo = getBelongTo();
+        LaoTou belongTo = (LaoTou) getBelongTo();
         Interactive interactive = belongTo.getInteractive();
         int level = getLevel();
+
+        // 二技能需要确认是否释放过三
+        belongTo.addState(new StateUse3Flag(belongTo));
         // 恢复非召唤物友方目标生命上限(系数)的生命
-        List<Character> teammate = CharacterFinder.findTeammate(belongTo, bp.situation.characters);
+        List<Character> teammate = CharacterFinder.findTeammateExceptSummon(belongTo, bp.situation.characters);
         teammate.remove(belongTo);
-        teammate.removeIf(Character::isSummon);
         Character target = CharacterFinder.findPriorAuto(teammate, bp
                 , belongTo.team, CharacterFinder.Property.ATTACK, CharacterFinder.Criteria.MAX);
         lastUsedTarget = target;
         interactive.recovery(target, belongTo.getMaxHp() * multiplier[level] / 100);
 
-        target.getState(StateYuHunTrans.class).ifPresentOrElse(stateYuHunTrans -> {
+        target.getState(StateYuHunTransfer.class).ifPresentOrElse(stateYuHunTransfer -> {
             // 若目标未处于控制效果,则使其获得新的回合并在该回合结束后移除御魂转移效果
                 if (target.controllable()) {
                     interactive.getNewRound(target);
-                    stateYuHunTrans.setSettleType(StateSettleType.CHI_XU, 1);
+                    stateYuHunTransfer.setSettleType(StateSettleType.CHI_XU, 1);
                 } else {
                     // 对处于御魂转移效果的目标再次释放时,驱散或解除其所有控制效果
                     target.removeAllCrowControl();
@@ -56,10 +58,11 @@ public class Skill3 extends Skill {
                 if (level == 5) {
                     trans = true;
                 } else {
-                    trans = RateController.whetherOrNot(SkillName, "向" + target + "转移御魂", List.of("转移"), item -> item, bp.isControlRate, bp.calc, item -> 50.0)[0];
+                    trans = RateController.whetherOrNot(SkillName, "向" + target + "转移御魂", List.of("转移")
+                            , item -> item, bp.isControlRate, bp.calc, item -> 50.0)[0];
                 }
                 if (trans) {
-                    target.addState(new StateYuHunTrans(belongTo, target, yuHun));
+                    target.addState(new StateYuHunTransfer(belongTo, target, yuHun));
                 }
             });
         });

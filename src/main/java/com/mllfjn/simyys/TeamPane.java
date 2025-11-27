@@ -30,7 +30,7 @@ public class TeamPane implements Serializable {
             center.setPadding(new Insets(5));
             center.setAlignment(Pos.CENTER);
             for (Character character : characters) {
-                center.getChildren().add(character.getCharacterIcon(this::setAuto));
+                center.getChildren().add(character.getCharacterIcon());
             }
 
             root = new BorderPane();
@@ -46,17 +46,17 @@ public class TeamPane implements Serializable {
         // 如果没标任何人，给选择目标设置标
         if (auto == null) {
             auto = characterSelected;
-            auto.characterIcon.setIsAuto(true);
+            auto.getCharacterIcon().setIsAuto(true);
         } else {
             // 如果已有标，先取消标
-            auto.characterIcon.setIsAuto(false);
+            auto.getCharacterIcon().setIsAuto(false);
             // 如果已有标，且和选择的目标是一个，置null
             if (auto == characterSelected) {
                 auto = null;
             } else {
                 // 如果已有标，且和选择的目标不是一个，换到新目标
                 auto = characterSelected;
-                characterSelected.characterIcon.setIsAuto(true);
+                characterSelected.getCharacterIcon().setIsAuto(true);
             }
         }
     }
@@ -68,7 +68,7 @@ public class TeamPane implements Serializable {
     public void addCharacter(Character character) {
         characters.add(character);
         if (center != null) {
-            center.getChildren().add(character.getCharacterIcon(this::setAuto));
+            center.getChildren().add(character.getCharacterIcon());
         }
         if (guiHuo == null && !character.isMob()) {
             guiHuo = new GuiHuo(4);
@@ -78,7 +78,7 @@ public class TeamPane implements Serializable {
 
     public void removeCharacter(Character character) {
         characters.remove(character);
-        center.getChildren().remove(character.characterIcon);
+        center.getChildren().remove(character.getCharacterIcon());
         if (auto == character) {
             auto = null;
         }

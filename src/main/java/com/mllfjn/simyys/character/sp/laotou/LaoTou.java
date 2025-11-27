@@ -23,7 +23,14 @@ public class LaoTou extends CharacterShiShenBase {
     @Override
     public void addOwnSkills() {
         skills.add(new Skill1(this, skill1Level));
-        new Skill2(this);
+        new Skill2(this, skill2Level);
         skills.add(new Skill3(this, skill3Level));
+    }
+
+    @Override
+    protected void dieHandle() {
+        getState(StateYuHunBeingTransfer.class).ifPresent(stateYuHunBeingTransfer -> {
+            stateYuHunBeingTransfer.stateYuHunTransfer.delete();
+        });
     }
 }

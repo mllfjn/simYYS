@@ -10,8 +10,8 @@ import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.state.*;
 import com.mllfjn.simyys.state.Runnable;
-import com.mllfjn.simyys.trigger.EventBattleStart;
-import com.mllfjn.simyys.trigger.EventHpChange;
+import com.mllfjn.simyys.trigger.battleevent.EventBattleStart;
+import com.mllfjn.simyys.trigger.battleevent.EventHpChange;
 import com.mllfjn.simyys.trigger.Trigger;
 
 public class QiLingFactory {

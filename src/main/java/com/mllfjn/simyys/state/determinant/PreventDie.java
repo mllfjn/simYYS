@@ -6,4 +6,6 @@ public interface PreventDie {
     }
 
     void preventDie();
+
+    String getName();
 }

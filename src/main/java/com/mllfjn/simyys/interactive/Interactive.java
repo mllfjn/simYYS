@@ -6,6 +6,7 @@ import com.mllfjn.simyys.customnode.CustomText;
 import com.mllfjn.simyys.customnode.TextFlowLog;
 import com.mllfjn.simyys.ratecontroller.RateController;
 import com.mllfjn.simyys.state.State;
+import com.mllfjn.simyys.state.determinant.IgnoreActionDecrease;
 import com.mllfjn.simyys.state.determinant.IgnoreActionIncrease;
 import com.mllfjn.simyys.state.determinant.InfluenceDamage;
 
@@ -217,20 +218,28 @@ public class Interactive {
         sb.append(target.name).append("行动提前").append((int) increase).append("%");
         double location = target.getLocation();
         if (location + increase > 100) {
-            sb.append("(实际提前").append(100 - location).append("%)");
+            sb.append("(实际提前").append((int) (100 - location)).append("%)");
         }
 
-        target.setLocation(location + increase);
+        target.setLocation(Math.min(100, location + increase));
         increaseLog.add(sb.toString());
     }
 
-    /*public void decreaseLocation(Character from, double decrease) {
-        for (State state : states) {
+    public void decreaseLocation(Character target, double decrease) {
+        // 免疫行动条提升效果
+        for (State state : target.getStates()) {
             if (state instanceof IgnoreActionDecrease) {
                 return;
             }
         }
-        this.location = Math.max(0, location - decrease);
-        bp.log.addLocationChange(this.name + "行动推后" + (int)decrease);
-    }*/
+        StringBuilder sb = new StringBuilder();
+        sb.append(target.name).append("行动推后").append((int) decrease).append("%");
+        double location = target.getLocation();
+        if (location - decrease < 0) {
+            sb.append("(实际推后").append((int) location).append("%)");
+        }
+
+        target.setLocation(Math.max(0, location - decrease));
+        increaseLog.add(sb.toString());
+    }
 }

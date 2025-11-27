@@ -31,6 +31,12 @@ public class CharacterFinder {
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
+    public static List<Character> findTeammateExceptSummon(Character character, List<Character> characters) {
+        return characters.stream()
+                .filter(character1 -> character1.team == character.team && !character1.isSummon())
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
     public static List<Character> findTeammateShiShen(Character character, List<Character> characters) {
         return characters.stream().filter(character1 ->
                         character1.team == character.team

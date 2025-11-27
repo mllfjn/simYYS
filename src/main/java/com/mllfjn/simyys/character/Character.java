@@ -20,7 +20,10 @@ import com.mllfjn.simyys.character.propertygetter.PropertyInput;
 import com.mllfjn.simyys.guihuo.MobGuiHuo;
 import com.mllfjn.simyys.trigger.*;
 import com.mllfjn.simyys.collections.SerializableObservableList;
+import com.mllfjn.simyys.trigger.battleevent.EventHpChange;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
+import javafx.scene.input.MouseEvent;
 
 import java.io.Serializable;
 import java.util.*;
@@ -59,7 +62,7 @@ public abstract class Character implements Serializable{
     // 御魂列表
     private final LinkedHashSet<YuHun> yuHunList = new LinkedHashSet<>();
 
-    public transient CharacterIcon characterIcon;
+    private transient CharacterIcon characterIcon;
     public transient BattlePane bp;
     public PropertiesMap getProperties() {
         PropertiesMap map = new PropertiesMap();
@@ -283,7 +286,7 @@ public abstract class Character implements Serializable{
         return location;
     }
     public void setLocation(double newLocation) {
-        this.location = Math.min(100, newLocation);
+        this.location = newLocation;
     }
     public void beforeRound() {
         stateRun(Trigger.BEFORE_ROUND);
@@ -406,14 +409,15 @@ public abstract class Character implements Serializable{
                 }
             }
         }
-        // 如果护盾没能抵消完伤害
         double damage = traceableNumber.getNumber();
+        // 如果护盾没能抵消完伤害
         if (damage > 0) {
+            // 如果剩余血量比伤害小,进入死亡判定
             if (getHp() <= damage) {
                 info.getTraceableNumber().addTrace("\t(击杀)");
-                beforeDie();
+                beforeDie(info);
             } else {
-                this.hp -= damage;
+                setHp(getHp() - damage);
             }
         }
     }
@@ -452,14 +456,15 @@ public abstract class Character implements Serializable{
         getStates().removeIf(state -> state instanceof CrowdControl);
     }
 
-    public CharacterIcon getCharacterIcon(CharacterIcon.onClickHandler onClickHandler) {
+    public CharacterIcon getCharacterIcon() {
         if (characterIcon == null) {
-            characterIcon = createCharacterIcon(onClickHandler);
+            characterIcon = new CharacterIcon(this);
+            characterIcon.setEventHandler(getEventHandler());
         }
         return characterIcon;
     }
-    protected CharacterIcon createCharacterIcon(CharacterIcon.onClickHandler onClickHandler) {
-        return new CharacterIcon(this, onClickHandler);
+    protected EventHandler<MouseEvent> getEventHandler() {
+        return null;
     }
     public <T extends State> Optional<T> getState(Class<T> clazz) {
         for (State state : states) {
@@ -511,6 +516,7 @@ public abstract class Character implements Serializable{
     public <T extends State> void removeState(Class<T> clazz) {
         for (State state : states) {
             if (clazz.isInstance(state)) {
+                state.beforeDelete();
                 states.remove(state);
                 return;
             }
@@ -553,10 +559,11 @@ public abstract class Character implements Serializable{
     public LinkedHashSet<YuHun> getYuHunSet() {
         return yuHunList;
     }
-    public void beforeDie() {
+    public void beforeDie(Info info) {
         for (State state : getStates()) {
             if (state instanceof PreventDie pd && pd.effective()) {
                 pd.preventDie();
+                info.getTraceableNumber().addTrace("(" + pd.getName() + "免死生效)");
                 return;
             }
         }
@@ -566,7 +573,12 @@ public abstract class Character implements Serializable{
     public void die() {
         alive = false;
         bp.removeCharacter(this);
+
+        // 通过老头死亡时可以叠一层伤魂鸟判断，应该先触发死亡，再执行
+        dieHandle();
     }
+
+    protected void dieHandle() {}
     public boolean controllable() {
         // 如果被控了,无法行动
         for (State state : getStates()) {

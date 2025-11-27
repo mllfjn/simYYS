@@ -26,8 +26,10 @@ import java.util.Optional;
 import java.util.StringJoiner;
 
 public class CharacterIcon extends VBox {
-    protected final Character character;
+    public static final double MAX_WIDTH = CharacterFactory.ImageSize.LARGE.size * 1.1;
 
+
+    protected final Character character;
     // 状态栏
     private final Label stateLabel = new Label();
     // 生命条
@@ -46,15 +48,12 @@ public class CharacterIcon extends VBox {
     private final ImageView[] yuHunIcon = new ImageView[4];
     // 修改技能时comboBox切换不生效
     private boolean isModifyingItems = false;
-    // 头像鼠标左键事件
-    private final onClickHandler onClickHandler;
     // 可选,右键时触发其他事件,比如极逢魔的转阶段,须佐的天威
     private EventHandler<MouseEvent> eventHandler;
 
-    public CharacterIcon(Character character, onClickHandler onClickHandler) {
+    public CharacterIcon(Character character) {
         super();
         this.character = character;
-        this.onClickHandler = onClickHandler;
         this.setPadding(new Insets(0, 0, 10, 0));
         this.setAlignment(Pos.BOTTOM_CENTER);
 
@@ -73,14 +72,15 @@ public class CharacterIcon extends VBox {
                 character.setLockSkill(val.getSkillID());
             }
         });
-        skillBox.setMaxWidth(Double.MAX_VALUE);
+        skillBox.setMaxWidth(MAX_WIDTH);
         // 生命
-        healthBar.setMaxWidth(Double.MAX_VALUE);
-        // TODO盾
+        healthBar.setMaxWidth(MAX_WIDTH);
+        // 盾
         shieldBar.setStyle("-fx-accent: lightblue");
-        shieldBar.setMaxWidth(Double.MAX_VALUE);
+        shieldBar.setMaxWidth(MAX_WIDTH);
         // 状态栏
-        stateLabel.setMaxWidth(Double.MAX_VALUE);
+        stateLabel.setMaxWidth(MAX_WIDTH);
+        stateLabel.setWrapText(true);
 
         // 设置队伍相关
         if (character.team == 0) {
@@ -103,20 +103,18 @@ public class CharacterIcon extends VBox {
         );
         for (int i = 0; i < info.length; i++) {
             info[i] = new Label();
-            info[i].setMaxWidth(Double.MAX_VALUE);
+            info[i].setMaxWidth(MAX_WIDTH);
             this.getChildren().add(info[i]);
         }
-
-        update();
     }
-    public CharacterIcon(Character character, onClickHandler onClickHandler, EventHandler<MouseEvent> eventHandler) {
-        this(character, onClickHandler);
+
+    public void setEventHandler(EventHandler<MouseEvent> eventHandler) {
         this.eventHandler = eventHandler;
     }
 
     protected void onMouseClicked(MouseEvent event) {
         if (eventHandler == null || event.getButton() == MouseButton.PRIMARY) {
-            onClickHandler.onLeftClick(character);
+            character.bp.situation.teamPane[character.team].setAuto(character);
         } else {
             eventHandler.handle(event);
         }
@@ -154,7 +152,7 @@ public class CharacterIcon extends VBox {
     }
 
     private void refreshStateLabel() {
-        StringJoiner sj = new StringJoiner(" ");
+        StringJoiner sj = new StringJoiner(Displayable.DELIMITER);
         // 这里海原贝戟和堕落之剑会显示没必要的无法动作,所以移除了   而且该方法需要遍历states,和下面应该可以合在一起
         /*if (!character.controllable()) {
             sj.add("无法动作");
@@ -255,9 +253,5 @@ public class CharacterIcon extends VBox {
         }
 
         return yuHunIcon[index];
-    }
-
-    public interface onClickHandler {
-        void onLeftClick(Character character);
     }
 }

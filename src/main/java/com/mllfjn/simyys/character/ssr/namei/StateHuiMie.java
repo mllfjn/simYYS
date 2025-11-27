@@ -31,13 +31,21 @@ public class StateHuiMie extends State implements Displayable, Runnable, Attribu
 
     @Override
     public String getText() {
-        return text + stack;
+        StringBuilder sb = new StringBuilder();
+        // 毁灭6
+        sb.append(text).append(stack);
+        // 免死生效
+        if (effective()) {
+            sb.append(Displayable.DELIMITER).append("金盾");
+        }
+
+        return sb.toString();
     }
 
     @Override
     public boolean runnable(Trigger trigger) {
-        return stack < 6 && trigger == Trigger.BEFORE_ROUND // 毁灭等级可以在回合开始前上升5次
-                || trigger == Trigger.BEFORE_ROUND && !canTrigger && times > 0; // 毁灭免死还可以触发
+        return trigger == Trigger.BEFORE_ROUND && stack < 6// 毁灭等级可以在回合开始前上升5次
+                || trigger == Trigger.BEFORE_ROUND && !canTrigger && times > 0;// 毁灭免死还可以触发
     }
 
     @Override
@@ -90,6 +98,11 @@ public class StateHuiMie extends State implements Displayable, Runnable, Attribu
     public void preventDie() {
         canTrigger = false;
         times--;
+    }
+
+    @Override
+    public String getName() {
+        return text;
     }
 }
 

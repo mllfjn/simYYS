@@ -6,17 +6,25 @@ import com.mllfjn.simyys.character.CharacterIcon;
 import com.mllfjn.simyys.character.PropertyKey;
 import com.mllfjn.simyys.character.propertygetter.*;
 import com.mllfjn.simyys.collections.StringGroup;
-import com.mllfjn.simyys.trigger.EventRoundDone;
+import com.mllfjn.simyys.trigger.battleevent.EventActionDone;
+import com.mllfjn.simyys.trigger.battleevent.EventRoundDone;
+import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.input.MouseEvent;
 
 public class ShenQiLou extends Character {
     public static final String CharacterName = "蜃气楼";
     private int stage = 1;
+    private boolean prepareChangeStage = false;
+
+    private transient ContextMenu contextMenu;
+
     public ShenQiLou() {}
 
     public void changeStage() {
         stage++;
+        prepareChangeStage = false;
         switch (stage) {
             case 2 -> stage2();
             case 3 -> stage3();
@@ -61,29 +69,40 @@ public class ShenQiLou extends Character {
     }
 
     @Override
-    protected CharacterIcon createCharacterIcon(CharacterIcon.onClickHandler onClickHandler) {
-        return new CharacterIcon(this, onClickHandler, event -> {
-            ContextMenu menu = new ContextMenu();
+    protected EventHandler<MouseEvent> getEventHandler() {
+        return event -> {
+            if (!prepareChangeStage) {
+                getContextMenu().show(getCharacterIcon(), event.getScreenX(), event.getScreenY());
+            }
+        };
+    }
+
+    private ContextMenu getContextMenu() {
+        if (contextMenu == null) {
+            contextMenu = new ContextMenu();
             MenuItem item1 = new MenuItem("跳过当前回合切换阶段");
             MenuItem item2 = new MenuItem("该回合行动后切换阶段");
             item1.setOnAction(e -> {
-                this.bp.next(true);
+                this.bp.skipCharacterAct();
                 this.changeStage();
             });
 
             item2.setOnAction(e -> {
-                this.bp.addActionTrigger(this, te -> {
-                    if (te instanceof EventRoundDone rd) {
-                        this.changeStage();
-                        return true;
-                    }
-                    return false;
-                });
+                if (!prepareChangeStage) {
+                    this.bp.addActionTrigger(this, te -> {
+                        if (te instanceof EventActionDone) {
+                            this.changeStage();
+                            return true;
+                        }
+                        return false;
+                    });
+                    prepareChangeStage = true;
+                }
             });
 
-            menu.getItems().addAll(item1, item2);
-            menu.show(characterIcon, event.getScreenX(), event.getScreenY());
-        });
+            contextMenu.getItems().addAll(item1, item2);
+        }
+        return contextMenu;
     }
 
     @Override
