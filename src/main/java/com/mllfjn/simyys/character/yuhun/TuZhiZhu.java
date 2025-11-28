@@ -11,8 +11,9 @@ import com.mllfjn.simyys.trigger.Trigger;
 
 import java.util.*;
 
-public class TuZhiZhu extends YuHun implements YuHunUnfullMark{
+public class TuZhiZhu extends YuHun implements YuHunUnfullMark {
     public static final String YuHunName = "土蜘蛛";
+
     @Override
     public String getName() {
         return YuHunName;
@@ -30,7 +31,7 @@ public class TuZhiZhu extends YuHun implements YuHunUnfullMark{
             Optional<StateTuZhiZhu> OptionalTu = target.getState(StateTuZhiZhu.class);
             // 如果目标已经有三层土了，直接返回
             if (OptionalTu.isPresent() && OptionalTu.get().getCount() == 3) {
-               return;
+                return;
             }
             // 如果目标身上没有土蜘蛛状态,new一个
             StateTuZhiZhu stateTu = OptionalTu.orElseGet(() -> {
@@ -66,7 +67,10 @@ public class TuZhiZhu extends YuHun implements YuHunUnfullMark{
             // TODO
             for (TuZhiZhuRecord record : records) {
                 record.from.doInteractive(interactive ->
-                        interactive.attack(belongTo, AttackType.JIAN_JIE, Info.createJianJieAttack()));
+                        interactive.attack(belongTo, AttackType.JIAN_JIE, Info.createJianJieAttack(
+                                (owner, target) -> record.num
+                                , record.from, belongTo
+                        )));
             }
             return true;
         }
@@ -81,6 +85,7 @@ public class TuZhiZhu extends YuHun implements YuHunUnfullMark{
             return -belongTo.getInitSpeed() * 0.1 * count;
         }
 
-        record TuZhiZhuRecord(Character from, double num) {}
+        record TuZhiZhuRecord(Character from, double num) {
+        }
     }
 }

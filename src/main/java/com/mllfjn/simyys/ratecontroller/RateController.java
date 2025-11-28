@@ -1,6 +1,7 @@
 package com.mllfjn.simyys.ratecontroller;
 
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.interactive.Info;
 
 import java.util.*;
 import java.util.function.Function;
@@ -52,12 +53,18 @@ public class RateController {
         return result;
     }
 
-    public static boolean[] baoJi(String skillName, Character owner, List<Character> targets, boolean rateControl, TotalRateCalc calc) {
-        return whetherOrNot("暴击控制：" + owner.name + "-" + skillName, "暴击", targets, Character::getName, rateControl, calc
+    public static void baoJi(String skillName, Character owner, boolean rateControl, TotalRateCalc calc, List<Character> targets, Info... infos) {
+        List<Character> list = new ArrayList<>();
+        for (Info info : infos) {
+            if (info.canCrit() && info.getCrit() != null) {
+
+            }
+        }
+        /*return whetherOrNot("暴击控制：" + owner.name + "-" + skillName, "暴击", targets, Character::getName, rateControl, calc
                 , (character) -> {
                     return owner.getCritRate();
                 }
-        );
+        );*/
     }
 
     public static boolean[] mingZhong(String stateName, Character owner, List<Character> targets, int base, boolean rateControl, TotalRateCalc calc) {

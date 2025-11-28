@@ -110,4 +110,8 @@ public class Info {
     public boolean isCalJianShang() {
         return calJianShang;
     }
+
+    public boolean canCrit() {
+        return canCrit;
+    }
 }
