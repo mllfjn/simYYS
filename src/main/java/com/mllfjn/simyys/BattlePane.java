@@ -334,11 +334,15 @@ public class BattlePane {
         do {
             // 如果skip为真,当前行动角色跳过
             // 但是后续的其他角色不跳过
-            situation.characterActing.round(skip);
+            if (!skip) {
+                situation.characterActing.round();
+            }
             skip = false;
-            // 行动结束
+
+            situation.characterActing.afterRound();
+            // 行动结束事件
             onTrigger(new EventActionDone(situation.characterActing));
-            // 回合结束,触发回合结束事件
+            // 回合结束事件
             onTrigger(new EventRoundDone(situation.characterActing));
             getNextActor();
             interactive.display();

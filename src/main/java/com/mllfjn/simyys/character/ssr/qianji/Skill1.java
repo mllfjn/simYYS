@@ -32,7 +32,7 @@ class Skill1 extends Skill {
         if (getLevel() == 5) {
             HaiYuanBeiJi haiYuanBeiJi = ((QianJi) getBelongTo()).getHaiYuanBeiJi();
             if (haiYuanBeiJi != null) {
-                haiYuanBeiJi.getChaoSheng().addStack(1, bp);
+                haiYuanBeiJi.addChaoSheng(1);
             }
         }
     }

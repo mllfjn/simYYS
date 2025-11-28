@@ -17,7 +17,7 @@ class Skill2 {
 
     public Skill2(LaoTou laoTou, int level) {
         laoTou.addState(new StateAfterRound(laoTou, level));
-        // lv5-战斗开始后,自身首次受到伤害时开始打盹
+        // lv5-战斗开始后,自身首次受到伤害时开始打盹 TODO
         if (level >= 5) {
 
         }

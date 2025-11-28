@@ -305,14 +305,20 @@ public abstract class Character implements Serializable{
             setLockSkill(lockSKillMap.get(timesToAct));
         }
     }
-    public void round(boolean skip) {
-        if (!skip) {
-            act();
+    public void round() {
+        if (lockSkill != 0) {
+            Optional<Skill> os = getSkill(lockSkill);
+            if (os.isPresent() && os.get().tryUse(bp)) {
+                return;
+            }
         }
-        // 以下是回合后事件
-
-        // 非怪物推进鬼火条
-        if (!isMob()) {
+        if (!useSkillAuto()) {
+            getSkill(1).ifPresent(skill -> skill.use(bp));
+        }
+    }
+    public void afterRound() {
+        // 非怪物或者召唤物推进鬼火条
+        if (!isMob() && !isSummon) {
             bp.addProgress(this.team);
         }
         // 行动后触发状态
@@ -332,17 +338,6 @@ public abstract class Character implements Serializable{
         });
         // 技能冷却
         skills.forEach(Skill::pastRound);
-    }
-    private void act() {
-        if (lockSkill != 0) {
-            Optional<Skill> os = getSkill(lockSkill);
-            if (os.isPresent() && os.get().tryUse(bp)) {
-                return;
-            }
-        }
-        if (!useSkillAuto()) {
-            getSkill(1).ifPresent(skill -> skill.use(bp));
-        }
     }
     public Optional<Skill> getSkill(int skillID) {
         for (Skill skill : skills) {

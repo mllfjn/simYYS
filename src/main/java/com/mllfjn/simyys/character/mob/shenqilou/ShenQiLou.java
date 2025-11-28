@@ -2,12 +2,10 @@ package com.mllfjn.simyys.character.mob.shenqilou;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.character.CharacterIcon;
 import com.mllfjn.simyys.character.PropertyKey;
 import com.mllfjn.simyys.character.propertygetter.*;
 import com.mllfjn.simyys.collections.StringGroup;
 import com.mllfjn.simyys.trigger.battleevent.EventActionDone;
-import com.mllfjn.simyys.trigger.battleevent.EventRoundDone;
 import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -110,7 +108,7 @@ public class ShenQiLou extends Character {
         skills.add(new Skill1(this));
         skills.add(new Skill2(this));
         skills.add(new Skill3(this));
-        skills.add(new Skill4TODO(this));
+        skills.add(new Skill4(this));
     }
 
     @Override

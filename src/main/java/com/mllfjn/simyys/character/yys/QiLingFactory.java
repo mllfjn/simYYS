@@ -69,7 +69,6 @@ class StateQiCritPower extends State implements AttributeModifier, Displayable {
 }
 
 class StateQiHuoLing extends State implements Runnable {
-
     public StateQiHuoLing(Character character) {
         super(character, character, StateType.SPECIAL, StateForm.SPECIAL);
     }

@@ -121,9 +121,10 @@ public class Interactive {
 
         target.beHurt(info);
 
-        addNumberRecord(target, new CustomText(traceableNumber.getNumberString() + " "
-                , traceableNumber.getTrace()
-                , type, info.isCrit() ? TextFlowLog.TextColor.CRITICAL : TextFlowLog.TextColor.ATTACK, size));
+        addNumberRecord(target
+                , new CustomText(traceableNumber.getNumberString() + " "
+                        , traceableNumber.getTrace()
+                        , type, info.isCrit() ? TextFlowLog.TextColor.CRITICAL : TextFlowLog.TextColor.ATTACK, size));
     }
 
     public Info heal(String skillName, Character target, int multiplier) {

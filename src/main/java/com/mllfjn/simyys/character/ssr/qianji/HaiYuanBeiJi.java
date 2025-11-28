@@ -62,8 +62,8 @@ public class HaiYuanBeiJi extends Character {
         Skill3_2.removeBeiGeAndChangeSkill(qianJi);
     }
 
-    public StateChaoSheng getChaoSheng() {
-        return chaoSheng;
+    public void addChaoSheng(int count) {
+        chaoSheng.addStack(count, bp);
     }
 
     @Override
@@ -72,7 +72,7 @@ public class HaiYuanBeiJi extends Character {
     }
 }
 
-class StateChaoSheng extends com.mllfjn.simyys.state.State implements Displayable, IgnoreDebuff {
+class StateChaoSheng extends State implements Displayable, IgnoreDebuff {
     private final static String StateName = "潮声";
     private int stack;
 

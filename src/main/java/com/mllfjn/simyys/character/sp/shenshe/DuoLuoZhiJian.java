@@ -2,6 +2,7 @@ package com.mllfjn.simyys.character.sp.shenshe;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.interactive.Interactive;
 
 public class DuoLuoZhiJian extends Character {
@@ -33,6 +34,8 @@ public class DuoLuoZhiJian extends Character {
 
         bp.addCharacter(this);
         StateShenSheJianShang.add(shenShe);
+
+        addOwnSkills();
     }
 
     @Override
@@ -47,22 +50,38 @@ public class DuoLuoZhiJian extends Character {
 
     @Override
     public void addOwnSkills() {
-
-    }
-
-    @Override
-    public void round(boolean skip) {
-        Interactive interactive = getInteractive();
-        // 行动时恢复20%生命
-        interactive.recovery(this, getMaxHp() * 0.2);
-        // 获得1点鬼火
-        bp.gainGuiHuo(this, 1);
-        // 并为神堕八岐大蛇提升15%行动条
-        interactive.increaseLocation(shenShe, 15);
+        addSkill(new DLZJSkill1(this));
     }
 
     @Override
     public boolean controllable() {
         return false;
     }
+
+
+
+    static class DLZJSkill1 extends Skill {
+
+        public DLZJSkill1(Character belongTo) {
+            super(belongTo, 0, 0, 0, 1);
+        }
+
+        @Override
+        public String getName() {
+            return DuoLuoZhiJian.CharacterName;
+        }
+
+        @Override
+        public void usePrivate(BattlePane bp) {
+            DuoLuoZhiJian belongTo = ((DuoLuoZhiJian) getBelongTo());
+            Interactive interactive = belongTo.getInteractive();
+            // 行动时恢复20%生命
+            interactive.recovery(belongTo, belongTo.getMaxHp() * 0.2);
+            // 获得1点鬼火
+            bp.gainGuiHuo(belongTo, 1);
+            // 并为神堕八岐大蛇提升15%行动条
+            interactive.increaseLocation(belongTo.shenShe, 15);
+        }
+    }
 }
+

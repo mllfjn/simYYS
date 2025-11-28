@@ -16,7 +16,7 @@ public class Info {
     // 可否暴击
     private boolean canCrit = true;
     // 是否暴击
-    private boolean crit;
+    private Boolean crit;
     // 计算防御
     private boolean calDefense = true;
     // 计算增伤
@@ -40,6 +40,17 @@ public class Info {
         info.canCrit = false;
         info.calZengShang = false;
         info.calJianShang = false;
+
+        return info;
+    }
+    // 间接伤害:TODO 不会触发御魂效果
+    // 无法被分担,对防御为0的敌人必定暴击
+    public static Info createJianJieAttack(BiFunction<Character, Character, Double> basicNumber, Character owner, Character target) {
+        Info info = new Info(basicNumber);
+
+        if (target.getDefense() - owner.getIgnoreDefense() == 0) {
+            info.setCrit(true);
+        }
 
         return info;
     }
@@ -73,6 +84,10 @@ public class Info {
     }
 
     public boolean isCrit() {
+        return crit != null && crit;
+    }
+
+    public Boolean getCrit() {
         return crit;
     }
 

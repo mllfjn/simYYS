@@ -53,8 +53,10 @@ public class RateController {
     }
 
     public static boolean[] baoJi(String skillName, Character owner, List<Character> targets, boolean rateControl, TotalRateCalc calc) {
-        return whetherOrNot("暴击控制：" + owner.name + "-" + skillName, "暴击", targets, Character::getName, rateControl, calc, (character) ->
-                owner.getCritRate()
+        return whetherOrNot("暴击控制：" + owner.name + "-" + skillName, "暴击", targets, Character::getName, rateControl, calc
+                , (character) -> {
+                    return owner.getCritRate();
+                }
         );
     }
 
@@ -73,7 +75,7 @@ public class RateController {
             ChooseDialog<T> dialog = new ChooseDialog<>(title + "选取", list, stringGetter);
             Optional<T> result = dialog.showAndWait();
             if (result.isPresent()) {
-                calc.add( 1.0 / list.size());
+                calc.add(1.0 / list.size());
                 return result.get();
             }
         }

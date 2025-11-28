@@ -23,7 +23,9 @@ class Skill3 extends Skill {
     public void usePrivate(BattlePane bp) {
         Interactive interactive = getBelongTo().getInteractive();
         for (int i = 0; i < 4; i++) {
-            interactive.attack(SkillName, CharacterFinder.findEnemy(getBelongTo(), bp.situation.characters), 100, AttackType.QUN_TI);
+            interactive.attack(SkillName
+                    , CharacterFinder.findEnemy(getBelongTo(), bp.situation.characters)
+                    , 100, AttackType.QUN_TI);
         }
     }
 }

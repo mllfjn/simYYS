@@ -39,4 +39,8 @@ public class StateShield extends State implements Displayable {
     public double getShield() {
         return shield;
     }
+
+    protected void setShield(double shield) {
+        this.shield = shield;
+    }
 }
