@@ -39,11 +39,11 @@ public class ReturnSelector {
         root.addRow(index, yesBtn, defaultBtn, noBtn);
     }
 
-    public Return getReturn() {
+    public Boolean getReturn() {
         return switch (group.getToggles().indexOf(group.getSelectedToggle())) {
-            case 0 -> Return.YES;
-            case 2 -> Return.NO;
-            default -> Return.DEFAULT;
+            case 0 -> true;
+            case 2 -> false;
+            default -> null;
         };
     }
 

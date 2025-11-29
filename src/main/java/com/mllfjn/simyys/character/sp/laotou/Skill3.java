@@ -16,6 +16,7 @@ import java.util.Optional;
 class Skill3 extends Skill {
     public static final String SkillName = "委以重任";
     private final int[] multiplier = new int[]{0, 14, 16, 18, 20, 20};
+
     public Skill3(Character belongTo, int level) {
         super(belongTo, level, 2, 0, 3);
     }
@@ -43,29 +44,31 @@ class Skill3 extends Skill {
 
         target.getState(StateYuHunTransfer.class).ifPresentOrElse(stateYuHunTransfer -> {
             // 若目标未处于控制效果,则使其获得新的回合并在该回合结束后移除御魂转移效果
-                if (target.controllable()) {
-                    interactive.getNewRound(target);
-                    stateYuHunTransfer.setSettleType(StateSettleType.CHI_XU, 1);
-                } else {
-                    // 对处于御魂转移效果的目标再次释放时,驱散或解除其所有控制效果
-                    target.removeAllCrowControl();
-                }
+            if (target.controllable()) {
+                interactive.getNewRound(target);
+                stateYuHunTransfer.setSettleType(StateSettleType.CHI_XU, 1);
+            } else {
+                // 对处于御魂转移效果的目标再次释放时,驱散或解除其所有控制效果
+                target.removeAllCrowControl();
+            }
         }, () -> {
             // 有50%概率将自身的御魂4件套效果转移给目标,维持一回合(至多转移1种效果,TODO且总御魂造成伤害提升至多为140%)
             getFirstFullYuHun().ifPresent(yuHun -> {
-                boolean trans;
-                // lv5-概率提升至100
                 if (level == 5) {
-                    trans = true;
+                    doTransfer(target, yuHun);
                 } else {
-                    trans = RateController.whetherOrNot(SkillName, "向" + target + "转移御魂", List.of("转移")
-                            , item -> item, bp.isControlRate, bp.calc, item -> 50.0)[0];
-                }
-                if (trans) {
-                    target.addState(new StateYuHunTransfer(belongTo, target, yuHun));
+                    RateController.whetherOrNot(SkillName, "向" + target + "转移御魂", List.of("转移")
+                            , item -> item, bp.isControlRate, bp.calc, item -> 50.0
+                            , (s, aBoolean) -> {
+                                if (aBoolean) doTransfer(target, yuHun);
+                            });
                 }
             });
         });
+    }
+
+    private void doTransfer(Character target, Class<? extends YuHun> yuHun) {
+        target.addState(new StateYuHunTransfer(getBelongTo(), target, yuHun));
     }
 
     private Optional<Class<? extends YuHun>> getFirstFullYuHun() {

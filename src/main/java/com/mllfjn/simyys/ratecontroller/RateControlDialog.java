@@ -1,6 +1,5 @@
 package com.mllfjn.simyys.ratecontroller;
 
-import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.utils.DecimalFormatUtil;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -10,41 +9,41 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import java.text.DecimalFormat;
 import java.util.List;
 import java.util.function.Function;
 
 class RateControlDialog extends Stage {
     private final ReturnSelector[] selectors;
-    private final Return[] result;
-    private final boolean[] tbd;
+    private final Boolean[] result;
     private final TotalRateCalc calc;
     private final Label rateLabel = new Label("当前概率：100.00%");
 
-    <T> RateControlDialog(String title, String event, List<T> list, Function<T, String> stringGetter, boolean[] tbd, double[] rates, Return[] result, int length, TotalRateCalc calc) {
+    public <T> RateControlDialog(String title, String event, List<T> list, Function<T, String> stringGetter, double[] rates, Boolean[] result, int count, TotalRateCalc calc) {
         super();
         this.result = result;
-        this.tbd = tbd;
         this.calc = calc;
-        selectors = new ReturnSelector[length];
+        selectors = new ReturnSelector[count];
 
         GridPane root = new GridPane();
         root.setPadding(new Insets(20));
         root.setHgap(10);
         root.setVgap(10);
 
-        for (int i = 0; i < length; i++) {
-            if (tbd[i]) {
-                selectors[i] = new ReturnSelector(root, i, stringGetter.apply(list.get(i)), rates[i], event, this::countCurrentRate);
+        int j = 0;
+        for (int i = 0; i < result.length; i++) {
+            if (result[i] == null) {
+                selectors[j] = new ReturnSelector(root, j, stringGetter.apply(list.get(i)), rates[i], event, this::countCurrentRate);
+                j++;
             }
         }
+
         Button button = new Button("确定");
         button.setOnAction( eventHandler -> {
             handlerReturn();
             close();
         });
-        root.add(rateLabel, 0, length);
-        root.add(button, 0, length + 1);
+        root.add(rateLabel, 0, count);
+        root.add(button, 0, count + 1);
 
         setScene(new Scene(root));
 
@@ -62,7 +61,7 @@ class RateControlDialog extends Stage {
     private void handlerReturn() {
         int j = 0;
         for (int i = 0; i < selectors.length; i++) {
-            if (tbd[i]) {
+            if (result[i] == null) {
                 result[i] = selectors[j++].getReturn();
             }
         }

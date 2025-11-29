@@ -61,20 +61,24 @@ public class Interactive {
     }
 
     public Info[] attack(String skillName, List<Character> targets, int multiplier, AttackType attackType) {
-        boolean[] crit = RateController.baoJi(skillName, owner, targets, bp.isControlRate, bp.calc);
         Info[] infos = new Info[targets.size()];
         for (int i = 0; i < targets.size(); i++) {
             Info info = Info.createTypicalAttack(multiplier);
             infos[i] = info;
-            info.setCrit(crit[i]);
-            attack(targets.get(i), attackType, info);
         }
+
+        RateController.baoJi(skillName, owner, bp.isControlRate, bp.calc, targets, infos);
+
+        for (int i = 0; i < targets.size(); i++) {
+            attack(targets.get(i), attackType, infos[i]);
+        }
+
         return infos;
     }
 
     public Info attack(String skillName, Character target, int multiplier, AttackType attackType) {
         Info info = Info.createTypicalAttack(multiplier);
-        info.setCrit(RateController.baoJi(skillName, owner, List.of(target), bp.isControlRate, bp.calc)[0]);
+        RateController.baoJi(skillName, owner, bp.isControlRate, bp.calc, List.of(target), info);
         attack(target, attackType, info);
         return info;
     }
@@ -129,17 +133,23 @@ public class Interactive {
 
     public Info heal(String skillName, Character target, int multiplier) {
         Info info = Info.createTypicalHeal(multiplier);
-        info.setCrit(RateController.baoJi(skillName, owner, List.of(target), bp.isControlRate, bp.calc)[0]);
+        RateController.baoJi(skillName, owner, bp.isControlRate, bp.calc, List.of(target), info);
+
         return heal(target, info);
     }
 
     public void heal(String skillName, List<Character> targets, int multiplier) {
-        boolean[] crit = RateController.baoJi(skillName, owner, targets, bp.isControlRate, bp.calc);
+        Info[] infos = new Info[targets.size()];
         for (int i = 0; i < targets.size(); i++) {
-            Info info = Info.createTypicalHeal(multiplier);
-            info.setCrit(crit[i]);
-            heal(targets.get(i), info);
+            infos[i] = Info.createTypicalHeal(multiplier);
         }
+
+        RateController.baoJi(skillName, owner, bp.isControlRate, bp.calc, targets, infos);
+
+        for (int i = 0; i < targets.size(); i++) {
+            heal(targets.get(i), infos[i]);
+        }
+
     }
 
     private Info heal(Character target, Info info) {
@@ -182,18 +192,18 @@ public class Interactive {
                 , type, TextFlowLog.TextColor.HEAL, size));
     }
 
-    public boolean[] effect(String stateName, List<Character> targets, int base, StateSupplier stateSupplier) {
-        boolean[] mingZhong = RateController.mingZhong(stateName, owner, targets, base, bp.isControlRate, bp.calc);
+    public EffectInfo[] effect(String stateName, List<Character> targets, int base, StateSupplier stateSupplier) {
+        EffectInfo[] infos = RateController.mingZhong(stateName, owner, targets, base, bp.isControlRate, bp.calc);
         for (int i = 0; i < targets.size(); i++) {
-            if (mingZhong[i]) {
+            if (infos[i].isHit()) {
                 effect(targets.get(i), stateSupplier);
             }
         }
-        return mingZhong;
+        return infos;
     }
 
     public void effect(String stateName, Character target, int base, StateSupplier stateSupplier) {
-        if (RateController.mingZhong(stateName, owner, List.of(target), base, bp.isControlRate, bp.calc)[0]) {
+        if (RateController.mingZhong(stateName, owner, List.of(target), base, bp.isControlRate, bp.calc)[0].isHit()) {
             effect(target, stateSupplier);
         }
     }
