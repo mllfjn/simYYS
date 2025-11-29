@@ -21,14 +21,14 @@ class Skill2Special extends Skill {
 
     @Override
     public boolean canUse(BattlePane bp) {
-        return super.canUse(bp) && !getBelongTo().isHaveState(StateZhongYan.class);
+        return super.canUse(bp) && !getBelongTo().isHaveStatus(StatusZhongYan.class);
     }
 
     @Override
     public void usePrivate(BattlePane bp) {
         ShenShe shenShe = (ShenShe) getBelongTo();
         // 展开终焉审判幻境,幻境中,神堕八岐大蛇免疫减益和 TODO 放逐
-        shenShe.addState(new StateZhongYan(shenShe));
+        shenShe.addStatus(new StatusZhongYan(shenShe));
         // 夺取阴阳师位进行接下来的战斗
         List<Character> teammate = CharacterFinder.findTeammate(shenShe, bp.situation.characters);
         for (Character character : teammate) {
@@ -50,7 +50,7 @@ class Skill2Special extends Skill {
         teammateShiShen.remove(shenShe);
         for (Character character : teammateShiShen) {
             new DuoLuoZhiJian(shenShe, character, bp, true);
-            StateAddAttack.addAttack((ShenShe) getBelongTo(), character.getInitAttack() * 0.06);
+            StatusAddAttack.addAttack((ShenShe) getBelongTo(), character.getInitAttack() * 0.06);
         }
     }
 }

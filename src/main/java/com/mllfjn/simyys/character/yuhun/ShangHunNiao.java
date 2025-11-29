@@ -2,8 +2,8 @@ package com.mllfjn.simyys.character.yuhun;
 
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.state.*;
-import com.mllfjn.simyys.trigger.BattleActionListener;
+import com.mllfjn.simyys.status.*;
+import com.mllfjn.simyys.trigger.battleevent.BattleActionListener;
 import com.mllfjn.simyys.trigger.battleevent.EventCharacterDie;
 
 public class ShangHunNiao extends YuHun implements YuHunSealResponse {
@@ -17,7 +17,7 @@ public class ShangHunNiao extends YuHun implements YuHunSealResponse {
                 Character belongTo = getBelongTo();
                 belongTo.getInteractive().heal(YuHunName, belongTo, 20);
                 // 并提升20%伤害
-                StateShangHunNiao.addStack(belongTo);
+                StatusShangHunNiao.addStack(belongTo);
             }
             return false;
         };
@@ -30,7 +30,7 @@ public class ShangHunNiao extends YuHun implements YuHunSealResponse {
 
     @Override
     public void enable() {
-        getBelongTo().bp.addActionTrigger(getBelongTo(), listener);
+        getBelongTo().bp.addActionListener(getBelongTo(), listener);
     }
 
     @Override
@@ -39,19 +39,19 @@ public class ShangHunNiao extends YuHun implements YuHunSealResponse {
     }
 
 
-    static class StateShangHunNiao extends State implements AttributeModifier, Displayable {
+    static class StatusShangHunNiao extends Status implements AttributeModifier, Displayable {
         private int stack;
 
-        public StateShangHunNiao(Character character) {
-            super(character, character, StateType.BUFF, StateForm.YIN_JI);
+        public StatusShangHunNiao(Character character) {
+            super(character, character, StatusType.BUFF, StatusForm.YIN_JI);
         }
 
         public static void addStack(Character character) {
-            character.getState(StateShangHunNiao.class)
-                    .or(() -> character.addState(new StateShangHunNiao(character)))
-                    .ifPresent(state -> {
-                        if (state.stack < 6) {
-                            state.stack++;
+            character.getStatus(StatusShangHunNiao.class)
+                    .or(() -> character.addStatus(new StatusShangHunNiao(character)))
+                    .ifPresent(status -> {
+                        if (status.stack < 6) {
+                            status.stack++;
                         }
                     });
         }

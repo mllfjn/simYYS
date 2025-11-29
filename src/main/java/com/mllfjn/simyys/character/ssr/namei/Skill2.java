@@ -5,7 +5,7 @@ import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
-import com.mllfjn.simyys.state.*;
+import com.mllfjn.simyys.status.*;
 import com.mllfjn.simyys.trigger.battleevent.EventBattleStart;
 import com.mllfjn.simyys.trigger.battleevent.EventHpChange;
 
@@ -29,7 +29,7 @@ class Skill2 extends Skill {
 
         // lv5-先机:对攻击攻击最高的友方式神无消耗释放神赐之吻(2)
         if (level == 5) {
-            naMei.bp.addActionTrigger(naMei, event -> {
+            naMei.bp.addActionListener(naMei, event -> {
                 if (event instanceof EventBattleStart) {
                     useFront(naMei.bp);
                     return true;
@@ -40,14 +40,14 @@ class Skill2 extends Skill {
 
         // lv2-当场上非召唤物友方目标首次剩余1点生命时，速度提升50%，持续2回合(每个目标至多生效1次,单次战斗累计至多生效3次)
         if (level >= 2) {
-            naMei.bp.addActionTrigger(naMei, event -> {
+            naMei.bp.addActionListener(naMei, event -> {
                 if (event instanceof EventHpChange ec) {
                     if (!effectedCharacters.contains(ec.getCharacter()) && ec.getCharacter().getHp() == 1) {
                         effectedCharacters.add(ec.getCharacter());
-                        ec.getCharacter().addState(new StateNaMeiSpeed(naMei, ec.getCharacter()));
+                        ec.getCharacter().addStatus(new StatusNaMeiSpeed(naMei, ec.getCharacter()));
                         // lv3-当场上非召唤物友方目标首次剩余1点生命时,暴击伤害提升50% 限制与lv2相同
                         if (level >= 3) {
-                            ec.getCharacter().addState(new StateNaMeiCritPower(naMei, ec.getCharacter()));
+                            ec.getCharacter().addStatus(new StatusNaMeiCritPower(naMei, ec.getCharacter()));
                         }
                         // 如果3次结束return true删除监听器
                         return times-- == 0;
@@ -69,8 +69,8 @@ class Skill2 extends Skill {
         lastUsedTarget = target;
 
         // 指定友方目标施加毁灭
-        if (!target.isHaveState(StateHuiMie.class)) {
-            target.addState(new StateHuiMie((NaMei) getBelongTo(), target, getLevel(), awakening));
+        if (!target.isHaveStatus(StatusHuiMie.class)) {
+            target.addStatus(new StatusHuiMie((NaMei) getBelongTo(), target, getLevel(), awakening));
         } else { // 若该目标已处于毁灭,则使其额外失去最大生命50%的生命(该效果不致命)
             target.setHp(Math.max(1, target.getHp() - target.getMaxHp() * 0.5));
         }
@@ -97,10 +97,10 @@ class Skill2 extends Skill {
 }
 
 
-class StateNaMeiSpeed extends State implements AttributeModifier {
-    public StateNaMeiSpeed(NaMei from, Character belongTo) {
-        super(from, belongTo, StateType.SPECIAL, StateForm.SPECIAL);
-        setSettleType(StateSettleType.CHI_XU, 2);
+class StatusNaMeiSpeed extends Status implements AttributeModifier {
+    public StatusNaMeiSpeed(NaMei from, Character belongTo) {
+        super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
+        setSettleType(StatusDurationType.CHI_XU, 2);
     }
 
     @Override
@@ -114,10 +114,10 @@ class StateNaMeiSpeed extends State implements AttributeModifier {
     }
 }
 
-class StateNaMeiCritPower extends State implements AttributeModifier {
-    public StateNaMeiCritPower(NaMei from, Character belongTo) {
-        super(from, belongTo, StateType.SPECIAL, StateForm.SPECIAL);
-        setSettleType(StateSettleType.CHI_XU, 2);
+class StatusNaMeiCritPower extends Status implements AttributeModifier {
+    public StatusNaMeiCritPower(NaMei from, Character belongTo) {
+        super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
+        setSettleType(StatusDurationType.CHI_XU, 2);
     }
 
     @Override

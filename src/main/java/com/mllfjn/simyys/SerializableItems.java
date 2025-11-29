@@ -1,6 +1,6 @@
 package com.mllfjn.simyys;
 
-import com.mllfjn.simyys.trigger.BattleActionListener;
+import com.mllfjn.simyys.trigger.battleevent.BattleActionListener;
 import com.mllfjn.simyys.character.Character;
 
 import java.io.Serializable;

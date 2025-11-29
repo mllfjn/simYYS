@@ -64,7 +64,7 @@ class Skill3 extends Skill {
 
     private void addDiaoLing(NaMei naMei, Interactive interactive, List<Character> list, boolean isMob) {
         StringBuilder sb = new StringBuilder();
-        sb.append(StateDiaoLing.text);
+        sb.append(StatusDiaoLing.text);
         if (isMob) {
             sb.append("-对怪物释放");
         }
@@ -73,13 +73,13 @@ class Skill3 extends Skill {
         // lv4-对怪物释放时,施加凋零的基础概率提升至80%
         // lv3-释放时,施加的凋零持续事件增至2回合
         EffectInfo[] infos = interactive.effect(sb.toString(), list, isMob ? 80 : 25
-                , (from, to) -> new StateDiaoLing(from, to, getLevel() >= 3 ? 2 : 1));
+                , (from, to) -> new StatusDiaoLing(from, to, getLevel() >= 3 ? 2 : 1));
 
         // lv2-凋零命中时施加沉沦,持续1回合
         if (getLevel() >= 2) {
             for (int i = 0; i < infos.length; i++) {
                 if (infos[i].isHit()) {
-                    list.get(i).addState(new StateChenLun(naMei, list.get(i), getLevel()));
+                    list.get(i).addStatus(new StatusChenLun(naMei, list.get(i), getLevel()));
                 }
             }
         }

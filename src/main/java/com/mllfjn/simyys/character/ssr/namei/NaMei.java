@@ -34,6 +34,6 @@ public class NaMei extends CharacterShiShenBase {
     @Override
     protected boolean useSkillAuto() {
         // 如果毁灭已经给出去了,放三,否则二
-        return isHaveState(StateNaMeiFlag.class) ? tryUseSkill(3) : tryUseSkill(2);
+        return isHaveStatus(StatusNaMeiFlag.class) ? tryUseSkill(3) : tryUseSkill(2);
     }
 }

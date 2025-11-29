@@ -2,7 +2,7 @@ package com.mllfjn.simyys.interactive;
 
 public class EffectInfo {
     private boolean isHit;
-    private boolean isResist;
+//    private boolean isResist;
 
     public boolean isHit() {
         return isHit;

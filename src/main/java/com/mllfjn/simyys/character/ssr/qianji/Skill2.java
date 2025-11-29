@@ -30,7 +30,7 @@ class Skill2 extends Skill {
         interactive.attack(SkillName, target, multiplier[getLevel()], AttackType.DAN_TI);
         // 若海原贝戟在场,额外附加汐梦
         if (((QianJi) getBelongTo()).getHaiYuanBeiJi() != null) {
-            target.addState(new StateXiMeng(getBelongTo(), target));
+            target.addStatus(new StatusXiMeng(getBelongTo(), target));
         }
     }
 }

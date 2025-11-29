@@ -1,7 +1,5 @@
 package com.mllfjn.simyys.trigger.battleevent;
 
-import com.mllfjn.simyys.trigger.TriggerEvent;
-
 public class EventUseGuiHuo extends TriggerEvent {
     private final int team;
     private final int num;

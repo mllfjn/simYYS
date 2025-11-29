@@ -6,8 +6,8 @@ import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
-import com.mllfjn.simyys.state.*;
-import com.mllfjn.simyys.state.Runnable;
+import com.mllfjn.simyys.status.*;
+import com.mllfjn.simyys.status.Runnable;
 import com.mllfjn.simyys.trigger.Trigger;
 
 class Skill3_2 extends Skill {
@@ -27,7 +27,7 @@ class Skill3_2 extends Skill {
         Interactive interactive = getBelongTo().getInteractive();
         // 对敌方全体造成攻击(120 + 悲歌层数*100)%的伤害
         interactive.attack(SkillName, CharacterFinder.findEnemy(getBelongTo(), bp.situation.characters)
-                , 120 + getBelongTo().getState(StateBeiGe.class).orElseThrow().getStack() * 100
+                , 120 + getBelongTo().getStatus(StatusBeiGe.class).orElseThrow().getStack() * 100
                 , AttackType.QUN_TI);
         // 释放后移除悲歌,并将技能替换为海潮入梦(3-1)
         QianJi qianJi = (QianJi) getBelongTo();
@@ -36,17 +36,17 @@ class Skill3_2 extends Skill {
     }
 
     public static void removeBeiGeAndChangeSkill(QianJi qianJi) {
-        qianJi.removeState(StateBeiGe.class);
+        qianJi.removeStatus(StatusBeiGe.class);
         qianJi.getSkill3_1();
     }
 }
 
-class StateBeiGe extends State implements Runnable, Displayable {
-    private static final String StateName = "悲歌";
+class StatusBeiGe extends Status implements Runnable, Displayable {
+    private static final String StatusName = "悲歌";
     private int stack;
 
-    public StateBeiGe(Character character) {
-        super(character, character, StateType.SPECIAL, StateForm.SPECIAL);
+    public StatusBeiGe(Character character) {
+        super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
     }
 
     @Override
@@ -68,7 +68,7 @@ class StateBeiGe extends State implements Runnable, Displayable {
         if (stack == 0) {
             return null;
         } else {
-            return StateName + stack;
+            return StatusName + stack;
         }
     }
 

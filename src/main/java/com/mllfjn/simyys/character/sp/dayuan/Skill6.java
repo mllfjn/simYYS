@@ -16,6 +16,6 @@ class Skill6 extends SkillJieYuan {
 
     @Override
     void jieYuan(Character target) {
-        target.addState(new StateSTQing((DaYuan) getBelongTo(), target));
+        target.addStatus(new StatusSTQing((DaYuan) getBelongTo(), target));
     }
 }

@@ -8,7 +8,7 @@ import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.interactive.Info;
 import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.ratecontroller.RateController;
-import com.mllfjn.simyys.state.*;
+import com.mllfjn.simyys.status.*;
 
 import java.util.List;
 
@@ -33,7 +33,7 @@ class Skill3 extends Skill {
                 // 目标首先是绿标
                 .getAutoTo(daYuan.team)
                 // 然后是结缘的式神
-                .or(() -> daYuan.getState(StateCombined.class).map(state -> state.from))
+                .or(() -> daYuan.getStatus(StatusCombined.class).map(status -> status.from))
                 // 最后是攻击最高的
                 .orElseGet(() -> CharacterFinder.find(bp.situation.characters, daYuan.team, CharacterFinder.Property.ATTACK, CharacterFinder.Criteria.MAX));
 
@@ -41,9 +41,9 @@ class Skill3 extends Skill {
         Interactive interactive = daYuan.getInteractive();
 
         // 获得1层神力
-        StateShenLi.addStack(daYuan, 1);
+        StatusShenLi.addStack(daYuan, 1);
         // 获取神力层数
-        int shenLiStack = daYuan.getState(StateShenLi.class).map(StateShenLi::getStack).orElse(0);
+        int shenLiStack = daYuan.getStatus(StatusShenLi.class).map(StatusShenLi::getStack).orElse(0);
         // 并治疗友方目标生命上限8%的生命
         Info healInfo = heal(interactive, target);
         // 使其有50%概率获得尘缘·赤，有50%概率获得尘缘·青
@@ -54,15 +54,15 @@ class Skill3 extends Skill {
         if (shenLiStack == 5) {
             // 自身神力5层时，同时获得两个效果
             chi = qing = true;
-        } else if (target.isHaveState(StateSTChi.class)) {
+        } else if (target.isHaveStatus(StatusSTChi.class)) {
             // 有胜天之缘赤的单位被施加与世结缘时，必定出现尘缘·赤
             chi = true;
-        } else if (target.isHaveState(StateSTQing.class)) {
+        } else if (target.isHaveStatus(StatusSTQing.class)) {
             // 有胜天之缘青的单位被施加与世结缘时，必定出现尘缘·青
             qing = true;
         } else {
             // 既没有5层神力,也没胜天之缘
-            List<String> list = List.of(StateChi.StateName, StateQing.StateName);
+            List<String> list = List.of(StatusChi.StatusName, StatusQing.StatusName);
             int i = list.indexOf(RateController.choose(SkillName, list, item -> item, bp.isControlRate, bp.calc));
             if (i == 0) {
                 chi = true;
@@ -71,15 +71,15 @@ class Skill3 extends Skill {
             }
         }
         if (chi) {
-            target.addState(new StateChi(daYuan, target, level));
+            target.addStatus(new StatusChi(daYuan, target, level));
         }
         if (qing) {
-            target.addState(new StateQing(daYuan, target, level));
+            target.addStatus(new StatusQing(daYuan, target, level));
         }
 
         // lv5 - 若治疗暴击,则额外提升该目标暴击伤害 **必须在治疗目标之后,治疗其他队友之前**
         if (level == 5 && healInfo.isCrit()) {
-            target.addState(new StateCritPower(daYuan, target));
+            target.addStatus(new StatusCritPower(daYuan, target));
         }
 
         // 自身神力3层及以上时,额外治疗所选目标以外的友方生命上限8%的生命
@@ -94,7 +94,7 @@ class Skill3 extends Skill {
     private Info heal(Interactive interactive, Character target) {
         // lv4-若治疗时目标生命为100%，则治疗时额外施加生命上限8%的护盾，判断是否满血的逻辑在install方法内部
         if (getLevel() >= 4) {
-            StateDaYuanShield.install(getBelongTo(), target);
+            StatusDaYuanShield.install(getBelongTo(), target);
         }
         return interactive.heal(SkillName, target, 8);
     }
@@ -102,19 +102,19 @@ class Skill3 extends Skill {
     private void heal(Interactive interactive, List<Character> targets) {
         if (getLevel() >= 4) {
             for (Character target : targets) {
-                StateDaYuanShield.install(getBelongTo(), target);
+                StatusDaYuanShield.install(getBelongTo(), target);
             }
         }
         interactive.heal(SkillName, targets, 8);
     }
 
-    static class StateCritPower extends State implements AttributeModifier {
+    static class StatusCritPower extends Status implements AttributeModifier {
         // 防止from为大缘自身时递归计算
         private boolean counting;
 
-        public StateCritPower(Character from, Character belongTo) {
-            super(from, belongTo, StateType.SPECIAL, StateForm.SPECIAL);
-            setSettleType(StateSettleType.WEI_CHI, 1);
+        public StatusCritPower(Character from, Character belongTo) {
+            super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
+            setSettleType(StatusDurationType.WEI_CHI, 1);
         }
 
         @Override

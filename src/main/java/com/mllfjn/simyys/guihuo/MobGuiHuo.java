@@ -2,26 +2,26 @@ package com.mllfjn.simyys.guihuo;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.state.*;
-import com.mllfjn.simyys.state.Runnable;
+import com.mllfjn.simyys.status.*;
+import com.mllfjn.simyys.status.Runnable;
 import com.mllfjn.simyys.trigger.Trigger;
 
-public class MobGuiHuo extends State implements Runnable, Displayable {
+public class MobGuiHuo extends Status implements Runnable, Displayable {
     private static final int max = 3;
     private int now;
 
     public MobGuiHuo(Character belongTo) {
-        super(belongTo, belongTo, StateType.SPECIAL, StateForm.SPECIAL);
+        super(belongTo, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
     }
 
     public static boolean mobCanUseGuiHuo(Character character, int num) {
-        return character.getState(MobGuiHuo.class).orElseThrow().canUse(num);
+        return character.getStatus(MobGuiHuo.class).orElseThrow().canUse(num);
     }
     public static void mobUseGuiHuo(Character character, int num) {
-        character.getState(MobGuiHuo.class).orElseThrow().useGuiHuo(num);
+        character.getStatus(MobGuiHuo.class).orElseThrow().useGuiHuo(num);
     }
     public static void mobGainGuiHuo(Character character, int num) {
-        character.getState(MobGuiHuo.class).orElseThrow().gainGuiHuo(num);
+        character.getStatus(MobGuiHuo.class).orElseThrow().gainGuiHuo(num);
     }
 
     private boolean canUse(int num) {

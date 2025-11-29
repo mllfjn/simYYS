@@ -8,7 +8,7 @@ import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunUnfullMark;
 import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.ratecontroller.RateController;
-import com.mllfjn.simyys.state.StateSettleType;
+import com.mllfjn.simyys.status.StatusDurationType;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,7 +33,7 @@ class Skill3 extends Skill {
         int level = getLevel();
 
         // 二技能需要确认是否释放过三
-        belongTo.addState(new StateUse3Flag(belongTo));
+        belongTo.addStatus(new StatusUse3Flag(belongTo));
         // 恢复非召唤物友方目标生命上限(系数)的生命
         List<Character> teammate = CharacterFinder.findTeammateExceptSummon(belongTo, bp.situation.characters);
         teammate.remove(belongTo);
@@ -42,11 +42,11 @@ class Skill3 extends Skill {
         lastUsedTarget = target;
         interactive.recovery(target, belongTo.getMaxHp() * multiplier[level] / 100);
 
-        target.getState(StateYuHunTransfer.class).ifPresentOrElse(stateYuHunTransfer -> {
+        target.getStatus(StatusYuHunTransfer.class).ifPresentOrElse(statusYHT -> {
             // 若目标未处于控制效果,则使其获得新的回合并在该回合结束后移除御魂转移效果
             if (target.controllable()) {
                 interactive.getNewRound(target);
-                stateYuHunTransfer.setSettleType(StateSettleType.CHI_XU, 1);
+                statusYHT.setSettleType(StatusDurationType.CHI_XU, 1);
             } else {
                 // 对处于御魂转移效果的目标再次释放时,驱散或解除其所有控制效果
                 target.removeAllCrowControl();
@@ -68,7 +68,7 @@ class Skill3 extends Skill {
     }
 
     private void doTransfer(Character target, Class<? extends YuHun> yuHun) {
-        target.addState(new StateYuHunTransfer(getBelongTo(), target, yuHun));
+        target.addStatus(new StatusYuHunTransfer(getBelongTo(), target, yuHun));
     }
 
     private Optional<Class<? extends YuHun>> getFirstFullYuHun() {

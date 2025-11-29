@@ -20,7 +20,7 @@ class Skill3 extends Skill {
     @Override
     public boolean canUse(BattlePane bp) {
         // 蛇神姿态下可释放
-        return super.canUse(bp) && getBelongTo().isHaveState(StateSheShen.class);
+        return super.canUse(bp) && getBelongTo().isHaveStatus(StatusSheShen.class);
     }
 
     @Override
@@ -32,7 +32,7 @@ class Skill3 extends Skill {
     public void usePrivate(BattlePane bp) {
         ShenShe shenShe = (ShenShe) getBelongTo();
         Interactive interactive = shenShe.getInteractive();
-        StateSheShen sheShen= shenShe.getState(StateSheShen.class).orElseThrow();
+        StatusSheShen sheShen= shenShe.getStatus(StatusSheShen.class).orElseThrow();
 
         // 破除一把天羽羽斩的镇压
         shenShe.poChuZhenYa();
@@ -40,7 +40,7 @@ class Skill3 extends Skill {
         // 指定1位除自身外友方式神附加堕化
         List<Character> teammateShiShen = CharacterFinder.findTeammateShiShen(shenShe, bp.situation.characters);
         // 去除已经有堕化的和自己
-        teammateShiShen.removeIf(teammate -> teammate.isHaveState(StateDuoHua.class) || teammate == shenShe);
+        teammateShiShen.removeIf(teammate -> teammate.isHaveStatus(StatusDuoHua.class) || teammate == shenShe);
         if (!teammateShiShen.isEmpty()) {
             Character target;
             if (teammateShiShen.size() == 1) {
@@ -53,7 +53,7 @@ class Skill3 extends Skill {
                         .orElseGet(() -> RateController.choose(SkillName, teammateShiShen, teammate -> teammate.name, bp.isControlRate, bp.calc));
             }
             lastUsedTarget = target;
-            target.addState(new StateDuoHua(shenShe, target));
+            target.addStatus(new StatusDuoHua(shenShe, target));
         }
 
         // 若累计破除5把天羽羽斩,解放强大的邪力,将神堕之力(2)替换位蛇神之噬
@@ -71,7 +71,7 @@ class Skill3 extends Skill {
         }
         // lv5-释放时抽取封存的友方式神攻击，总值不超过自身初始攻击100%
         if (getLevel() == 5) {
-            StateAddAttack.addAttack(shenShe, sheShen.getAttack());
+            StatusAddAttack.addAttack(shenShe, sheShen.getAttack());
         }
 
         int multiplier = 188;

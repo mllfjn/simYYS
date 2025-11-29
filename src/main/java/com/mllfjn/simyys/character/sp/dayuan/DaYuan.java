@@ -4,11 +4,11 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
 import com.mllfjn.simyys.character.CharacterShiShenBase;
-import com.mllfjn.simyys.state.State;
-import com.mllfjn.simyys.state.StateForm;
-import com.mllfjn.simyys.state.StateType;
-import com.mllfjn.simyys.state.determinant.IgnoreActionDecrease;
-import com.mllfjn.simyys.state.determinant.IgnoreActionIncrease;
+import com.mllfjn.simyys.status.Status;
+import com.mllfjn.simyys.status.StatusForm;
+import com.mllfjn.simyys.status.StatusType;
+import com.mllfjn.simyys.status.determinant.IgnoreActionDecrease;
+import com.mllfjn.simyys.status.determinant.IgnoreActionIncrease;
 
 public class DaYuan extends CharacterShiShenBase {
     public static final String CharacterName = "纺愿缘结神";
@@ -18,7 +18,7 @@ public class DaYuan extends CharacterShiShenBase {
 
     @Override
     protected boolean useSkillAuto() {
-        return isHaveState(StateCombined.class) ? tryUseSkill(3) : tryUseSkill(5);
+        return isHaveStatus(StatusCombined.class) ? tryUseSkill(3) : tryUseSkill(5);
     }
 
     @Override
@@ -31,7 +31,7 @@ public class DaYuan extends CharacterShiShenBase {
         super.init(propertiesHolder, bp);
 
         // 免疫来源于其他目标的行动条改变效果
-        addState(new StateIgnoreOtherActionChange(this));
+        addStatus(new StatusIgnoreOtherActionChange(this));
     }
 
     @Override
@@ -52,9 +52,9 @@ public class DaYuan extends CharacterShiShenBase {
         skills.add(new Skill6(this));
     }
 
-    static class StateIgnoreOtherActionChange extends State implements IgnoreActionIncrease, IgnoreActionDecrease {
-        public StateIgnoreOtherActionChange(Character character) {
-            super(character, character, StateType.SPECIAL, StateForm.SPECIAL);
+    static class StatusIgnoreOtherActionChange extends Status implements IgnoreActionIncrease, IgnoreActionDecrease {
+        public StatusIgnoreOtherActionChange(Character character) {
+            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
         }
 
         @Override

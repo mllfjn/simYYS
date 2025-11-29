@@ -8,8 +8,8 @@ import com.mllfjn.simyys.character.propertygetter.PropertiesMap;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
-import com.mllfjn.simyys.state.*;
-import com.mllfjn.simyys.state.Runnable;
+import com.mllfjn.simyys.status.*;
+import com.mllfjn.simyys.status.Runnable;
 import com.mllfjn.simyys.trigger.battleevent.EventBattleStart;
 import com.mllfjn.simyys.trigger.battleevent.EventHpChange;
 import com.mllfjn.simyys.trigger.Trigger;
@@ -23,19 +23,19 @@ public class QiLingFactory {
             return;
         }
         if (s.equals(ZhenMuShou)) {
-            character.bp.addActionTrigger(character, event -> {
+            character.bp.addActionListener(character, event -> {
                 if (event instanceof EventHpChange hc
                         && hc.getCharacter() == character
                         && character.getHp() < character.getMaxHp() * 0.7) {
                     for (Character target : CharacterFinder.findTeammate(character, character.bp.situation.characters)) {
-                        target.addState(new StateQiCritPower(character, target));
+                        target.addStatus(new StatusQiCritPower(character, target));
                     }
                     return true;
                 }
                 return false;
             });
         } else if (s.equals(HuoLing)) {
-            character.bp.addActionTrigger(character, event -> {
+            character.bp.addActionListener(character, event -> {
                 if (event instanceof EventBattleStart) {
                     character.bp.gainGuiHuo(character, 2);
                     return true;
@@ -46,10 +46,10 @@ public class QiLingFactory {
     }
 }
 
-class StateQiCritPower extends State implements AttributeModifier, Displayable {
+class StatusQiCritPower extends Status implements AttributeModifier, Displayable {
 
-    public StateQiCritPower(Character from, Character belongTo) {
-        super(from, belongTo, StateType.BUFF, StateForm.YIN_JI);
+    public StatusQiCritPower(Character from, Character belongTo) {
+        super(from, belongTo, StatusType.BUFF, StatusForm.YIN_JI);
     }
 
     @Override
@@ -68,9 +68,9 @@ class StateQiCritPower extends State implements AttributeModifier, Displayable {
     }
 }
 
-class StateQiHuoLing extends State implements Runnable {
-    public StateQiHuoLing(Character character) {
-        super(character, character, StateType.SPECIAL, StateForm.SPECIAL);
+class StatusQiHuoLing extends Status implements Runnable {
+    public StatusQiHuoLing(Character character) {
+        super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
     }
 
     @Override

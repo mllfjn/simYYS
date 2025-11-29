@@ -5,8 +5,8 @@ import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Info;
-import com.mllfjn.simyys.state.*;
-import com.mllfjn.simyys.state.Runnable;
+import com.mllfjn.simyys.status.*;
+import com.mllfjn.simyys.status.Runnable;
 import com.mllfjn.simyys.trigger.Trigger;
 
 import java.util.*;
@@ -19,29 +19,29 @@ public class TuZhiZhu extends YuHun implements YuHunUnfullMark {
         return YuHunName;
     }
 
-    static class StateTuZhiZhu extends State implements Displayable, Runnable, AttributeModifier {
+    static class StatusTuZhiZhu extends Status implements Displayable, Runnable, AttributeModifier {
         private final TuZhiZhuRecord[] records = new TuZhiZhuRecord[3];
         private int count = 0;
 
-        private StateTuZhiZhu(Character belongTo) {
-            super(null, belongTo, StateType.SPECIAL, StateForm.SPECIAL);
+        private StatusTuZhiZhu(Character belongTo) {
+            super(null, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
         }
 
         public static void enable(Character from, Character target, double num) {
-            Optional<StateTuZhiZhu> OptionalTu = target.getState(StateTuZhiZhu.class);
+            Optional<StatusTuZhiZhu> OptionalTu = target.getStatus(StatusTuZhiZhu.class);
             // 如果目标已经有三层土了，直接返回
             if (OptionalTu.isPresent() && OptionalTu.get().getCount() == 3) {
                 return;
             }
             // 如果目标身上没有土蜘蛛状态,new一个
-            StateTuZhiZhu stateTu = OptionalTu.orElseGet(() -> {
-                StateTuZhiZhu stateTuZhiZhu = new StateTuZhiZhu(target);
-                target.addState(stateTuZhiZhu);
-                return stateTuZhiZhu;
+            StatusTuZhiZhu statusTu = OptionalTu.orElseGet(() -> {
+                StatusTuZhiZhu statusTuZhiZhu = new StatusTuZhiZhu(target);
+                target.addStatus(statusTuZhiZhu);
+                return statusTuZhiZhu;
             });
 
             // 附加土蜘蛛
-            stateTu.add(from, num);
+            statusTu.add(from, num);
         }
 
         private void add(Character from, double num) {

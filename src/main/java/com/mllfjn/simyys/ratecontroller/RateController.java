@@ -72,10 +72,10 @@ public class RateController {
                 , rateControl, calc, Character::getCritRate, (i, crit) -> infos[i].setCrit(crit));
     }
 
-    public static EffectInfo[] mingZhong(String stateName, Character owner, List<Character> targets, int baseRate
+    public static EffectInfo[] mingZhong(String statusName, Character owner, List<Character> targets, int baseRate
             , boolean rateControl, TotalRateCalc calc) {
         EffectInfo[] infos = new EffectInfo[targets.size()];
-        whetherOrNot("命中控制：" + owner.name + "-" + stateName, "命中"
+        whetherOrNot("命中控制：" + owner.name + "-" + statusName, "命中"
                 , targets, Character::getName, rateControl, calc
                 , character -> baseRate * (100 + owner.getEffectHitRate()) / (100 + character.getEffectResistRate())
                 , (i, hit) -> {

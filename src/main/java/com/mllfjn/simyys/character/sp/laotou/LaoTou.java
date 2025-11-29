@@ -29,7 +29,7 @@ public class LaoTou extends CharacterShiShenBase {
 
     @Override
     protected void dieHandle() {
-        getState(StateYuHunBeingTransfer.class).ifPresent(stateYuHunBeingTransfer ->
-                stateYuHunBeingTransfer.stateYuHunTransfer.delete());
+        getStatus(StatusYuHunBeingTransfer.class).ifPresent(status ->
+                status.statusYuHunTransfer.delete());
     }
 }

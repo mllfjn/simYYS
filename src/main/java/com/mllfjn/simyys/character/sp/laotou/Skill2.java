@@ -3,10 +3,10 @@ package com.mllfjn.simyys.character.sp.laotou;
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
-import com.mllfjn.simyys.state.Runnable;
-import com.mllfjn.simyys.state.State;
-import com.mllfjn.simyys.state.StateForm;
-import com.mllfjn.simyys.state.StateType;
+import com.mllfjn.simyys.status.Runnable;
+import com.mllfjn.simyys.status.Status;
+import com.mllfjn.simyys.status.StatusForm;
+import com.mllfjn.simyys.status.StatusType;
 import com.mllfjn.simyys.trigger.Trigger;
 
 import java.util.List;
@@ -16,18 +16,18 @@ class Skill2 {
 
 
     public Skill2(LaoTou laoTou, int level) {
-        laoTou.addState(new StateAfterRound(laoTou, level));
+        laoTou.addStatus(new StatusAfterRound(laoTou, level));
         // lv5-战斗开始后,自身首次受到伤害时开始打盹 TODO
         if (level >= 5) {
 
         }
     }
 
-    static class StateAfterRound extends State implements Runnable {
+    static class StatusAfterRound extends Status implements Runnable {
         private final int level;
 
-        public StateAfterRound(LaoTou laoTou, int level) {
-            super(laoTou, laoTou, StateType.SPECIAL, StateForm.SPECIAL);
+        public StatusAfterRound(LaoTou laoTou, int level) {
+            super(laoTou, laoTou, StatusType.SPECIAL, StatusForm.SPECIAL);
             this.level = level;
         }
 
@@ -48,8 +48,8 @@ class Skill2 {
             });
 
             // 若回合中释放过委以重任,则开始打盹
-            if (belongTo.isHaveState(StateUse3Flag.class)) {
-                belongTo.addState(new StateDaDun((LaoTou) belongTo));
+            if (belongTo.isHaveStatus(StatusUse3Flag.class)) {
+                belongTo.addStatus(new StatusDaDun((LaoTou) belongTo));
                 // lv4-打盹额外获得1点鬼火
                 if (level >= 4) {
                     belongTo.bp.gainGuiHuo(belongTo, 1);

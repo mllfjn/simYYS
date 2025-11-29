@@ -10,14 +10,14 @@ module com.mllfjn.simyys {
     exports com.mllfjn.simyys;
     exports com.mllfjn.simyys.starter;
     exports com.mllfjn.simyys.character;
-    exports com.mllfjn.simyys.state;
+    exports com.mllfjn.simyys.status;
     exports com.mllfjn.simyys.trigger;
     exports com.mllfjn.simyys.interactive;
     exports com.mllfjn.simyys.character.skill;
     exports com.mllfjn.simyys.customnode;
     opens com.mllfjn.simyys.character to javafx.fxml;
     exports com.mllfjn.simyys.guihuo;
-    exports com.mllfjn.simyys.state.determinant;
+    exports com.mllfjn.simyys.status.determinant;
     exports com.mllfjn.simyys.ratecontroller;
     exports com.mllfjn.simyys.character.propertygetter;
     exports com.mllfjn.simyys.utils;

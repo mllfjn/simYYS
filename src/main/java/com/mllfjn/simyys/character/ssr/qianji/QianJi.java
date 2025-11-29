@@ -4,10 +4,10 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
 import com.mllfjn.simyys.character.CharacterShiShenBase;
-import com.mllfjn.simyys.state.State;
-import com.mllfjn.simyys.state.StateForm;
-import com.mllfjn.simyys.state.StateType;
-import com.mllfjn.simyys.state.determinant.IgnoreDebuff;
+import com.mllfjn.simyys.status.Status;
+import com.mllfjn.simyys.status.StatusForm;
+import com.mllfjn.simyys.status.StatusType;
+import com.mllfjn.simyys.status.determinant.IgnoreDebuff;
 import com.mllfjn.simyys.trigger.battleevent.EventRoundDone;
 
 public class QianJi extends CharacterShiShenBase {
@@ -28,7 +28,7 @@ public class QianJi extends CharacterShiShenBase {
         super.init(propertiesHolder, bp);
 
         // 非召唤物的敌方回合结束后,千姬增加10%的行动条
-        bp.addActionTrigger(this, event -> {
+        bp.addActionListener(this, event -> {
             if (event instanceof EventRoundDone erd
                     && !erd.getCharacter().isSummon() // 非召唤物
                     && erd.getCharacter().team != team // 敌方
@@ -39,7 +39,7 @@ public class QianJi extends CharacterShiShenBase {
         });
 
         // 千姬免控,插锤子时自动移除,锤子拔掉自动获取
-        addState(new StateQianJiIgnoreDebuff(this));
+        addStatus(new StatusQianJiIgnoreDebuff(this));
     }
 
     @Override
@@ -80,9 +80,9 @@ public class QianJi extends CharacterShiShenBase {
         return false;
     }
 
-    static class StateQianJiIgnoreDebuff extends State implements IgnoreDebuff {
-        public StateQianJiIgnoreDebuff(Character character) {
-            super(character, character, StateType.SPECIAL, StateForm.SPECIAL);
+    static class StatusQianJiIgnoreDebuff extends Status implements IgnoreDebuff {
+        public StatusQianJiIgnoreDebuff(Character character) {
+            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
         }
     }
 }

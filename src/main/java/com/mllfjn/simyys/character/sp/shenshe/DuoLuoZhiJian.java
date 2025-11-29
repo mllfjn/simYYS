@@ -33,14 +33,14 @@ public class DuoLuoZhiJian extends Character {
         }
 
         bp.addCharacter(this);
-        StateShenSheJianShang.add(shenShe);
+        StatusShenSheJianShang.add(shenShe);
 
         addOwnSkills();
     }
 
     @Override
     public void dieHandle() {
-        StateShenSheJianShang.reduce(shenShe);
+        StatusShenSheJianShang.reduce(shenShe);
     }
 
     @Override

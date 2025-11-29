@@ -10,7 +10,6 @@ import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.ratecontroller.TotalRateCalc;
 import com.mllfjn.simyys.starter.Initializer;
 import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
-import com.mllfjn.simyys.trigger.*;
 import com.mllfjn.simyys.collections.SerializableObservableList;
 import com.mllfjn.simyys.trigger.battleevent.*;
 import com.mllfjn.simyys.utils.Utils;
@@ -399,7 +398,7 @@ public class BattlePane {
         onTrigger(new EventCharacterDie(character));
     }
 
-    public void addActionTrigger(Character character, BattleActionListener listener) {
+    public void addActionListener(Character character, BattleActionListener listener) {
         situation.listenerMap.computeIfAbsent(character, k -> new ArrayList<>()).add(listener);
     }
 

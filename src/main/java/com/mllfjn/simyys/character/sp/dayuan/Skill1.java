@@ -29,7 +29,7 @@ class Skill1 extends Skill {
         interactive.attack(SkillName, target, multiplier[getLevel()], AttackType.DAN_TI);
         // lv5-获得1层神力
         if (getLevel() >= 5) {
-            StateShenLi.addStack(getBelongTo(), 1);
+            StatusShenLi.addStack(getBelongTo(), 1);
         }
     }
 }

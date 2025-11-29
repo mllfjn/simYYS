@@ -3,9 +3,9 @@ package com.mllfjn.simyys.character;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunFactory;
-import com.mllfjn.simyys.state.Displayable;
-import com.mllfjn.simyys.state.State;
-import com.mllfjn.simyys.state.StateShield;
+import com.mllfjn.simyys.status.Displayable;
+import com.mllfjn.simyys.status.Status;
+import com.mllfjn.simyys.status.StatusShield;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -31,7 +31,7 @@ public class CharacterIcon extends VBox {
 
     protected final Character character;
     // 状态栏
-    private final Label stateLabel = new Label();
+    private final Label statusLabel = new Label();
     // 生命条
     private final ProgressBar healthBar = new ProgressBar();
     // 护盾条
@@ -79,8 +79,8 @@ public class CharacterIcon extends VBox {
         shieldBar.setStyle("-fx-accent: lightblue");
         shieldBar.setMaxWidth(MAX_WIDTH);
         // 状态栏
-        stateLabel.setMaxWidth(MAX_WIDTH);
-        stateLabel.setWrapText(true);
+        statusLabel.setMaxWidth(MAX_WIDTH);
+        statusLabel.setWrapText(true);
 
         // 设置队伍相关
         if (character.team == 0) {
@@ -95,7 +95,7 @@ public class CharacterIcon extends VBox {
 
         this.getChildren().addAll(
                 autoTo,
-                stateLabel,
+                statusLabel,
                 healthBar,
                 shieldBar,
                 imagePane,
@@ -145,27 +145,27 @@ public class CharacterIcon extends VBox {
 
     public void update() {
         refreshProperties();
-        refreshStateLabel();
+        refreshStatusLabel();
         refreshHealthBar();
         updateYuHunIcon();
         refreshShieldBar();
     }
 
-    private void refreshStateLabel() {
+    private void refreshStatusLabel() {
         StringJoiner sj = new StringJoiner(Displayable.DELIMITER);
-        // 这里海原贝戟和堕落之剑会显示没必要的无法动作,所以移除了   而且该方法需要遍历states,和下面应该可以合在一起
+        // 这里海原贝戟和堕落之剑会显示没必要的无法动作,所以移除了   而且该方法需要遍历,和下面应该可以合在一起
         /*if (!character.controllable()) {
             sj.add("无法动作");
         }*/
-        for (State state : character.getStates()) {
-            if (state instanceof Displayable d) {
+        for (Status status : character.getStatuses()) {
+            if (status instanceof Displayable d) {
                 String text = d.getText();
                 if (text != null) {
                     sj.add(text);
                 }
             }
         }
-        this.stateLabel.setText(sj.toString());
+        this.statusLabel.setText(sj.toString());
     }
 
     private void refreshProperties() {
@@ -186,9 +186,9 @@ public class CharacterIcon extends VBox {
     private void refreshShieldBar() {
         double shield = 0;
         double maxHp = character.getMaxHp();
-        Iterator<State> iterator = character.getStates().iterator();
+        Iterator<Status> iterator = character.getStatuses().iterator();
         while (shield < maxHp && iterator.hasNext()) {
-            if (iterator.next() instanceof StateShield ss) {
+            if (iterator.next() instanceof StatusShield ss) {
                 shield += ss.getShield();
             }
         }

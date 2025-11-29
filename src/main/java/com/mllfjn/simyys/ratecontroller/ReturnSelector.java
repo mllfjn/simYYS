@@ -1,11 +1,9 @@
 package com.mllfjn.simyys.ratecontroller;
 
-import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 
 public class ReturnSelector {
     private final ToggleGroup group = new ToggleGroup();

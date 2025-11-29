@@ -33,7 +33,7 @@ class Skill2 extends Skill {
             interactive.attack(character, AttackType.ZHEN_SHI, Info.createRealAttack(
                     (from, to) -> to.getHp() * 0.4
             ));
-            character.addState(new StateReduceCritRate(shenQiLou, character, 15));
+            character.addStatus(new StatusReduceCritRate(shenQiLou, character, 15));
         }
 
     }

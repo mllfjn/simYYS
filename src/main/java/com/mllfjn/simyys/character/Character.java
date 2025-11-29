@@ -10,9 +10,9 @@ import com.mllfjn.simyys.character.yuhun.YuHunFactory;
 import com.mllfjn.simyys.character.yuhun.YuHunSealResponse;
 import com.mllfjn.simyys.character.yys.QiLingFactory;
 import com.mllfjn.simyys.interactive.TraceableNumber;
-import com.mllfjn.simyys.state.*;
-import com.mllfjn.simyys.state.Runnable;
-import com.mllfjn.simyys.state.determinant.*;
+import com.mllfjn.simyys.status.*;
+import com.mllfjn.simyys.status.Runnable;
+import com.mllfjn.simyys.status.determinant.*;
 import com.mllfjn.simyys.interactive.Info;
 import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.character.propertygetter.PropertyCheck;
@@ -56,9 +56,9 @@ public abstract class Character implements Serializable{
     private Map<Integer, Integer> lockSKillMap;
 
     // 自身状态
-    private final List<State> states = new ArrayList<>();
+    private final List<Status> statuses = new ArrayList<>();
     // 维持的状态
-    private final List<State> maintainedStates = new ArrayList<>();
+    private final List<Status> maintainedStatuses = new ArrayList<>();
     // 御魂列表
     private final LinkedHashSet<YuHun> yuHunList = new LinkedHashSet<>();
 
@@ -107,7 +107,7 @@ public abstract class Character implements Serializable{
 
         if (properties.get(PropertyKey.GENERAL_MOB_KEY).getBoolean()) {
             this.isMob = true;
-            addState(new MobGuiHuo(this));
+            addStatus(new MobGuiHuo(this));
         }
 
         this.isYYS = properties.get(PropertyKey.GENERAL_YYS_KEY).getBoolean();
@@ -129,7 +129,7 @@ public abstract class Character implements Serializable{
     }
 
     public double getAttack() {
-        return AttributeCounter.getGeneralAttribute(Attribute.ATTACK, baseAttack + additionAttack, getStates());
+        return AttributeCounter.getGeneralAttribute(Attribute.ATTACK, baseAttack + additionAttack, getStatuses());
     }
     public double getHp() {
         return hp;
@@ -138,31 +138,31 @@ public abstract class Character implements Serializable{
         return maxHp;
     }
     public double getSpeed() {
-        return AttributeCounter.getGeneralAttribute(Attribute.SPEED, speed, getStates());
+        return AttributeCounter.getGeneralAttribute(Attribute.SPEED, speed, getStatuses());
     }
     public double getDefense() {
-        return AttributeCounter.getGeneralAttribute(Attribute.DEFENCE, defense, states);
+        return AttributeCounter.getGeneralAttribute(Attribute.DEFENCE, defense, statuses);
     }
     public double getCritRate() {
-        return AttributeCounter.getGeneralAttribute(Attribute.CRIT_RATE, critRate, states);
+        return AttributeCounter.getGeneralAttribute(Attribute.CRIT_RATE, critRate, statuses);
     }
     public double getCritPower() {
-        return AttributeCounter.getGeneralAttribute(Attribute.CRIT_POWER, critPower, states);
+        return AttributeCounter.getGeneralAttribute(Attribute.CRIT_POWER, critPower, statuses);
     }
     public double getEffectHitRate() {
-        return AttributeCounter.getGeneralAttribute(Attribute.EFFECT_HIT_RATE, effectHitRate, states);
+        return AttributeCounter.getGeneralAttribute(Attribute.EFFECT_HIT_RATE, effectHitRate, statuses);
     }
     public double getEffectResistRate() {
-        return AttributeCounter.getGeneralAttribute(Attribute.EFFECT_RESIST_RATE, effectResistRate, states);
+        return AttributeCounter.getGeneralAttribute(Attribute.EFFECT_RESIST_RATE, effectResistRate, statuses);
     }
     public double getZengShang() {
-        return AttributeCounter.getGeneralAttribute(Attribute.ZENG_SHANG, 0, getStates());
+        return AttributeCounter.getGeneralAttribute(Attribute.ZENG_SHANG, 0, getStatuses());
     }
     public double getJianShang() {
-        return AttributeCounter.getGeneralAttribute(Attribute.JIAN_SHANG, 0, getStates());
+        return AttributeCounter.getGeneralAttribute(Attribute.JIAN_SHANG, 0, getStatuses());
     }
     public double getIgnoreDefense() {
-        return AttributeCounter.getGeneralAttribute(Attribute.IGNORE_DEFENCE, 0, getStates());
+        return AttributeCounter.getGeneralAttribute(Attribute.IGNORE_DEFENCE, 0, getStatuses());
     }
 
     public boolean isMob() {
@@ -289,13 +289,13 @@ public abstract class Character implements Serializable{
         this.location = newLocation;
     }
     public void beforeRound() {
-        stateRun(Trigger.BEFORE_ROUND);
+        statusRun(Trigger.BEFORE_ROUND);
 
         // 维持类状态过回合
-        maintainedStates.removeIf(state -> {
-            state.setDuration(state.getDuration() - 1);
-            if (state.getDuration() == 0) {
-                state.delete();
+        maintainedStatuses.removeIf(status -> {
+            status.setDuration(status.getDuration() - 1);
+            if (status.getDuration() == 0) {
+                status.delete();
                 return true;
             }
             return false;
@@ -322,15 +322,15 @@ public abstract class Character implements Serializable{
             bp.addProgress(this.team);
         }
         // 行动后触发状态
-        stateRun(Trigger.AFTER_ROUND_FIRST);
-        stateRun(Trigger.AFTER_ROUND);
+        statusRun(Trigger.AFTER_ROUND_FIRST);
+        statusRun(Trigger.AFTER_ROUND);
 
         // 持续类状态过回合
-        states.removeIf(state -> {
-            if (state.getSettleType() == StateSettleType.CHI_XU) {
-                state.setDuration(state.getDuration() - 1);
-                if (state.getDuration() == 0) {
-                    state.beforeDelete();
+        statuses.removeIf(status -> {
+            if (status.getDurationType() == StatusDurationType.CHI_XU) {
+                status.setDuration(status.getDuration() - 1);
+                if (status.getDuration() == 0) {
+                    status.beforeDelete();
                     return true;
                 }
             }
@@ -394,9 +394,9 @@ public abstract class Character implements Serializable{
     public void beHurt(Info info) {
         TraceableNumber traceableNumber = info.getTraceableNumber();
         // 遍历状态找护盾
-        Iterator<State> iterator = getStates().iterator();
+        Iterator<Status> iterator = getStatuses().iterator();
         while (traceableNumber.getNumber() > 0 && iterator.hasNext()) {
-            if (iterator.next() instanceof StateShield ss) {
+            if (iterator.next() instanceof StatusShield ss) {
                 if (ss.handle(info)) {
                     iterator.remove();
                 } else {
@@ -413,6 +413,7 @@ public abstract class Character implements Serializable{
                 beforeDie(info);
             } else {
                 setHp(getHp() - damage);
+                statusRun(Trigger.AFTER_ATTACK);
             }
         }
     }
@@ -439,16 +440,16 @@ public abstract class Character implements Serializable{
         setHp(getHp() + num);
     }
     public void dispelAllBuff() {
-        getStates().removeIf(state -> state.stateType == StateType.BUFF && state.stateForm == StateForm.ZHUANG_TAI);
+        getStatuses().removeIf(status -> status.statusType == StatusType.BUFF && status.statusForm == StatusForm.ZHUANG_TAI);
     }
     public void dispelAllDebuff() {
-        getStates().removeIf(state -> state.stateType == StateType.DEBUFF && state.stateForm == StateForm.ZHUANG_TAI);
+        getStatuses().removeIf(status -> status.statusType == StatusType.DEBUFF && status.statusForm == StatusForm.ZHUANG_TAI);
     }
     public void dispelDeBuff(int count) {
         // TODO 驱散指定数量的减益状态
     }
     public void removeAllCrowControl() {
-        getStates().removeIf(state -> state instanceof CrowdControl);
+        getStatuses().removeIf(status -> status instanceof CrowdControl);
     }
 
     public CharacterIcon getCharacterIcon() {
@@ -461,58 +462,58 @@ public abstract class Character implements Serializable{
     protected EventHandler<MouseEvent> getEventHandler() {
         return null;
     }
-    public <T extends State> Optional<T> getState(Class<T> clazz) {
-        for (State state : states) {
-            if (clazz.isInstance(state)) {
-                return Optional.of(clazz.cast(state));
+    public <T extends Status> Optional<T> getStatus(Class<T> clazz) {
+        for (Status status : statuses) {
+            if (clazz.isInstance(status)) {
+                return Optional.of(clazz.cast(status));
             }
         }
         return Optional.empty();
     }
-    public boolean isHaveState(Class<? extends State> clazz) {
-        return getState(clazz).isPresent();
+    public boolean isHaveStatus(Class<? extends Status> clazz) {
+        return getStatus(clazz).isPresent();
     }
-    public <T extends State> Optional<T> addState(T newState) {
-        if (newState.stateType == StateType.DEBUFF && isIgnoreDebuff()) {
+    public <T extends Status> Optional<T> addStatus(T newStatus) {
+        if (newStatus.statusType == StatusType.DEBUFF && isIgnoreDebuff()) {
             return Optional.empty();
         }
 
-        states.add(newState);
-        return Optional.of(newState);
+        statuses.add(newStatus);
+        return Optional.of(newStatus);
     }
     public boolean isIgnoreDebuff() {
-        for (State state : getStates()) {
-            if (state instanceof IgnoreDebuff) {
+        for (Status status : getStatuses()) {
+            if (status instanceof IgnoreDebuff) {
                 return true;
             }
         }
         return false;
     }
     public boolean isIgnoreChangeMaxHp() {
-        for (State state : getStates()) {
-            if (state instanceof IgnoreChangeMaxHp) {
+        for (Status status : getStatuses()) {
+            if (status instanceof IgnoreChangeMaxHp) {
                 return true;
             }
         }
         return false;
     }
-    public void addMaintainedState(State state) {
-        maintainedStates.add(state);
+    public void addMaintainedStatus(Status status) {
+        maintainedStatuses.add(status);
     }
 
-    public void removeMaintainedState(State state) {
-        maintainedStates.remove(state);
+    public void removeMaintainedStatus(Status status) {
+        maintainedStatuses.remove(status);
     }
 
 
-    public List<State> getStates() {
-        return states;
+    public List<Status> getStatuses() {
+        return statuses;
     }
-    public <T extends State> void removeState(Class<T> clazz) {
-        for (State state : states) {
-            if (clazz.isInstance(state)) {
-                state.beforeDelete();
-                states.remove(state);
+    public <T extends Status> void removeStatus(Class<T> clazz) {
+        for (Status status : statuses) {
+            if (clazz.isInstance(status)) {
+                status.beforeDelete();
+                statuses.remove(status);
                 return;
             }
         }
@@ -555,8 +556,8 @@ public abstract class Character implements Serializable{
         return yuHunList;
     }
     public void beforeDie(Info info) {
-        for (State state : getStates()) {
-            if (state instanceof PreventDie pd && pd.effective()) {
+        for (Status status : getStatuses()) {
+            if (status instanceof PreventDie pd && pd.effective()) {
                 pd.preventDie();
                 info.getTraceableNumber().addTrace("(" + pd.getName() + "免死生效)");
                 return;
@@ -576,8 +577,8 @@ public abstract class Character implements Serializable{
     protected void dieHandle() {}
     public boolean controllable() {
         // 如果被控了,无法行动
-        for (State state : getStates()) {
-            if (state instanceof CrowdControl) {
+        for (Status status : getStatuses()) {
+            if (status instanceof CrowdControl) {
                 return false;
             }
         }
@@ -594,12 +595,12 @@ public abstract class Character implements Serializable{
         }
         return canUse;
     }
-    private void stateRun(Trigger trigger) {
-        List<State> copy = new ArrayList<>(states);
-        for (State state : copy) {
-            if (state instanceof Runnable r && r.runnable(trigger)) {
+    private void statusRun(Trigger trigger) {
+        List<Status> copy = new ArrayList<>(statuses);
+        for (Status status : copy) {
+            if (status instanceof Runnable r && r.runnable(trigger)) {
                 if (r.run(trigger, bp)) {
-                    states.remove(state);
+                    statuses.remove(status);
                 }
             }
         }

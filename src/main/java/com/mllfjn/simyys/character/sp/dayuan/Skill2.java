@@ -20,19 +20,19 @@ class Skill2 extends Skill {
 
     @Override
     public void usePrivate(BattlePane bp) {
-        Optional<StateCombined> os = getBelongTo().getState(StateCombined.class);
-        os.ifPresent(state -> {
+        Optional<StatusCombined> os = getBelongTo().getStatus(StatusCombined.class);
+        os.ifPresent(status -> {
             // 再次释放时，解除目标 胜天之缘
-            state.from.removeState(StateSTChi.class);
-            state.from.removeState(StateSTQing.class);
+            status.from.removeStatus(StatusSTChi.class);
+            status.from.removeStatus(StatusSTQing.class);
             // 并驱散其全部减益状态与 TODO 控制效果
-            state.from.dispelAllDebuff();
-            state.delete();
+            status.from.dispelAllDebuff();
+            status.delete();
         });
     }
 
     @Override
     public boolean canUse(BattlePane bp) {
-        return super.canUse(bp) && !getBelongTo().isHaveState(StateCombined.class);
+        return super.canUse(bp) && !getBelongTo().isHaveStatus(StatusCombined.class);
     }
 }

@@ -5,10 +5,10 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.customnode.CustomText;
 import com.mllfjn.simyys.customnode.TextFlowLog;
 import com.mllfjn.simyys.ratecontroller.RateController;
-import com.mllfjn.simyys.state.State;
-import com.mllfjn.simyys.state.determinant.IgnoreActionDecrease;
-import com.mllfjn.simyys.state.determinant.IgnoreActionIncrease;
-import com.mllfjn.simyys.state.determinant.InfluenceDamage;
+import com.mllfjn.simyys.status.Status;
+import com.mllfjn.simyys.status.determinant.IgnoreActionDecrease;
+import com.mllfjn.simyys.status.determinant.IgnoreActionIncrease;
+import com.mllfjn.simyys.status.determinant.InfluenceDamage;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -117,8 +117,8 @@ public class Interactive {
             traceableNumber.mul(1.0 / (1 + target.getJianShang() / 100), "减伤");
         }
 
-        for (State state : target.getStates()) {
-            if (state instanceof InfluenceDamage sid && sid.effective(attackType, owner)) {
+        for (Status status : target.getStatuses()) {
+            if (status instanceof InfluenceDamage sid && sid.effective(attackType, owner)) {
                 sid.doInfluence(attackType, info);
             }
         }
@@ -192,24 +192,24 @@ public class Interactive {
                 , type, TextFlowLog.TextColor.HEAL, size));
     }
 
-    public EffectInfo[] effect(String stateName, List<Character> targets, int base, StateSupplier stateSupplier) {
-        EffectInfo[] infos = RateController.mingZhong(stateName, owner, targets, base, bp.isControlRate, bp.calc);
+    public EffectInfo[] effect(String statusName, List<Character> targets, int base, StatusSupplier statusSupplier) {
+        EffectInfo[] infos = RateController.mingZhong(statusName, owner, targets, base, bp.isControlRate, bp.calc);
         for (int i = 0; i < targets.size(); i++) {
             if (infos[i].isHit()) {
-                effect(targets.get(i), stateSupplier);
+                effect(targets.get(i), statusSupplier);
             }
         }
         return infos;
     }
 
-    public void effect(String stateName, Character target, int base, StateSupplier stateSupplier) {
-        if (RateController.mingZhong(stateName, owner, List.of(target), base, bp.isControlRate, bp.calc)[0].isHit()) {
-            effect(target, stateSupplier);
+    public void effect(String statusName, Character target, int base, StatusSupplier statusSupplier) {
+        if (RateController.mingZhong(statusName, owner, List.of(target), base, bp.isControlRate, bp.calc)[0].isHit()) {
+            effect(target, statusSupplier);
         }
     }
 
-    private void effect(Character target, StateSupplier stateSupplier) {
-        target.addState(stateSupplier.get(owner, target));
+    private void effect(Character target, StatusSupplier statusSupplier) {
+        target.addStatus(statusSupplier.get(owner, target));
     }
 
     public void getNewRound(Character target) {
@@ -219,8 +219,8 @@ public class Interactive {
 
     public void increaseLocation(Character target, double increase) {
         // 免疫行动条提升效果
-        for (State state : target.getStates()) {
-            if (state instanceof IgnoreActionIncrease fi && fi.effective(owner)) {
+        for (Status status : target.getStatuses()) {
+            if (status instanceof IgnoreActionIncrease fi && fi.effective(owner)) {
                 return;
             }
         }
@@ -238,8 +238,8 @@ public class Interactive {
 
     public void decreaseLocation(Character target, double decrease) {
         // 免疫行动条提升效果
-        for (State state : target.getStates()) {
-            if (state instanceof IgnoreActionDecrease) {
+        for (Status status : target.getStatuses()) {
+            if (status instanceof IgnoreActionDecrease) {
                 return;
             }
         }

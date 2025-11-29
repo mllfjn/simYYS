@@ -87,7 +87,7 @@ public class ShenQiLou extends Character {
 
             item2.setOnAction(e -> {
                 if (!prepareChangeStage) {
-                    this.bp.addActionTrigger(this, te -> {
+                    this.bp.addActionListener(this, te -> {
                         if (te instanceof EventActionDone) {
                             this.changeStage();
                             return true;

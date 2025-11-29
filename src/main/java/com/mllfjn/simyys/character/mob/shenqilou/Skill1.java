@@ -29,6 +29,6 @@ class Skill1 extends Skill {
 
         belongTo.getInteractive().attack(SkillName, target, 100, AttackType.DAN_TI);
         // 并降低敌人30%的暴击
-        target.addState(new StateReduceCritRate(belongTo, target, 30));
+        target.addStatus(new StatusReduceCritRate(belongTo, target, 30));
     }
 }
