@@ -42,6 +42,10 @@ public class SerializableObservableList<E extends Serializable> implements Seria
         return list.get(index);
     }
 
+    public void clear() {
+        Objects.requireNonNullElse(observableList, list).clear();
+    }
+
     @Override
     @NotNull
     public Iterator<E> iterator() {

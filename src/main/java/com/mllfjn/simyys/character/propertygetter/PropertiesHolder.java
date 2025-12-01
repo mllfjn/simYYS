@@ -9,15 +9,18 @@ import javafx.beans.property.ReadOnlyIntegerWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.MapValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import javafx.util.Callback;
 
 import java.io.Serializable;
 import java.util.AbstractMap;
@@ -182,30 +185,47 @@ public class PropertiesHolder implements Serializable {
     }
 
     private Node getFlagPane(Window owner) {
-        ListView<Object> objectsListView = new ListView<>();
-        objectsListView.setItems(FXCollections.observableArrayList(flagChangeMap.values()));
+        /*ObservableList<Map.Entry<Integer, FlagChangeInfo>> items = FXCollections.observableArrayList(flagChangeMap.entrySet());
+        ListView<Map.Entry<Integer, FlagChangeInfo>> listView = new ListView<>(items);
+        listView.setCellFactory(lv -> new ListCell<>() {
+            @Override
+            protected void updateItem(Map.Entry<Integer, FlagChangeInfo> entry, boolean empty) {
+                super.updateItem(entry, empty);
+                if (entry == null || empty) {
+                    setText(null);
+                } else {
+                    FlagChangeInfo value = entry.getValue();
+                    setText(entry.getKey() + "\t" + value.flagType + "\t" + value.target);
+                }
+            }
+        });*/
         // 创建表格
-        TableView<Map.Entry<Integer, FlagChangeInfo>> tableView = new TableView<>();
+        ObservableList<Map.Entry<Integer, FlagChangeInfo>> items = FXCollections.observableArrayList(flagChangeMap.entrySet());
+        TableView<Map.Entry<Integer, FlagChangeInfo>> tableView = new TableView<>(items);
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         TableColumn<Map.Entry<Integer, FlagChangeInfo>, Integer> keyColumn = new TableColumn<>("行动回合");
-        TableColumn<Map.Entry<Integer, FlagChangeInfo>, String> valueColumn = new TableColumn<>("标记");
+        TableColumn<Map.Entry<Integer, FlagChangeInfo>, String> flagColumn = new TableColumn<>("标记类型");
+        TableColumn<Map.Entry<Integer, FlagChangeInfo>, String> roundColumn = new TableColumn<>("标记目标");
 
         keyColumn.setCellValueFactory(data ->
                 new ReadOnlyIntegerWrapper(data.getValue().getKey()).getReadOnlyProperty().asObject());
-        valueColumn.setCellValueFactory(data -> {
-            FlagChangeInfo value = data.getValue().getValue();
-            return new ReadOnlyStringWrapper(value.flagType.type + "第" + value.target + "个目标");
-        });
+
+        flagColumn.setCellValueFactory(data ->
+                new ReadOnlyStringWrapper(data.getValue().getValue().flagType.type));
+
+        roundColumn.setCellValueFactory(data ->
+                new ReadOnlyStringWrapper(String.valueOf(data.getValue().getValue().target)));
 
         tableView.getColumns().add(keyColumn);
-        tableView.getColumns().add(valueColumn);
+        tableView.getColumns().add(flagColumn);
+        tableView.getColumns().add(roundColumn);
 
-        tableView.setItems(FXCollections.observableArrayList(flagChangeMap.entrySet()));
-        // 排序，注意一定要在setItems后
+        // 排序
         tableView.getSortOrder().add(keyColumn);
         keyColumn.setSortType(TableColumn.SortType.ASCENDING);
-        valueColumn.setSortable(false);
+        flagColumn.setSortable(false);
+        roundColumn.setSortable(false);
 
 
         Button btnAdd = new Button("添加");
@@ -232,6 +252,7 @@ public class PropertiesHolder implements Serializable {
                     flagChangeMap.put(key,value);
                     tableView.getItems().add(new AbstractMap.SimpleEntry<>(key, value));
                     tableView.sort();
+//                    items.add(new AbstractMap.SimpleEntry<>(key, value));
                     tfKey.clear();
                     tfTarget.clear();
                     cbFlagType.getSelectionModel().select(0);
@@ -263,6 +284,11 @@ public class PropertiesHolder implements Serializable {
         });
 
         btnDelete.setOnAction(event -> {
+            /*Map.Entry<Integer, FlagChangeInfo> selectedItem = listView.getSelectionModel().getSelectedItem();
+            if (selectedItem != null) {
+                items.remove(selectedItem);
+                flagChangeMap.remove(selectedItem.getKey());
+            }*/
             Map.Entry<Integer, FlagChangeInfo> selectedItem = tableView.getSelectionModel().getSelectedItem();
             if (selectedItem != null) {
                 tableView.getItems().remove(selectedItem);
@@ -271,21 +297,44 @@ public class PropertiesHolder implements Serializable {
         });
 
         btnModify.setOnAction(event -> {
+            Stage stage = new Stage();
+
             TextField tfTargetOld = new TextField();
+            ComboBox<FlagChangeInfo.FlagType> cbFlagType = new ComboBox<>();
             TextField tfTargetNew = new TextField();
             Button btnConfirm = new Button("确定");
 
-            btnConfirm.setOnAction(e1 -> {
+            cbFlagType.getItems().addAll(FlagChangeInfo.FlagType.values());
+            cbFlagType.getSelectionModel().select(0);
 
+            btnConfirm.setOnAction(e1 -> {
+                int targetOld = Utils.parseIntOrDefault(tfTargetOld.getText(), 0);
+                int targetNew = Utils.parseIntOrDefault(tfTargetNew.getText(), 0);
+                for (Map.Entry<Integer, FlagChangeInfo> item : items) {
+                    FlagChangeInfo value = item.getValue();
+                    if (value.target == targetOld && value.flagType == cbFlagType.getValue()) {
+                        value.target = targetNew;
+                    }
+                }
+//                listView.refresh();
+                tableView.refresh();
+                stage.close();
             });
+
+            HBox hBox = new HBox(tfTargetOld, cbFlagType, tfTargetNew, btnConfirm);
+            stage.setScene(new Scene(hBox));
+            stage.initOwner(owner);
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.show();
         });
 
 
-        TilePane controller = new TilePane(btnAdd, btnDelete);
+        TilePane controller = new TilePane(btnAdd, btnDelete, btnModify);
         controller.setVgap(20);
 
         BorderPane borderPane = new BorderPane();
         borderPane.setCenter(tableView);
+//        borderPane.setCenter(listView);
         borderPane.setRight(controller);
         return borderPane;
     }

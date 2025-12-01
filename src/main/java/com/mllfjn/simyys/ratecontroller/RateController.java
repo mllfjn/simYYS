@@ -63,13 +63,13 @@ public class RateController {
             , List<Character> targets, Info... infos) {
         List<Character> list = new ArrayList<>();
         for (int i = 0; i < targets.size(); i++) {
-            if (infos[i].canCrit() && infos[i].getCrit() != null) {
+            if (infos[i].canCrit() && infos[i].getCrit() == null) {
                 list.add(targets.get(i));
             }
         }
 
         whetherOrNot("暴击控制：" + owner.name + "-" + skillName, "暴击", list, Character::getName
-                , rateControl, calc, Character::getCritRate, (i, crit) -> infos[i].setCrit(crit));
+                , rateControl, calc, character -> owner.getCritRate(), (i, crit) -> infos[i].setCrit(crit));
     }
 
     public static EffectInfo[] mingZhong(String statusName, Character owner, List<Character> targets, int baseRate

@@ -28,6 +28,9 @@ public class PropertySelectMulti  extends PropertyRequire implements Serializabl
     @Override
     public boolean cover(PropertyRequire pr) {
         if (pr instanceof PropertySelectMulti pm) {
+            if (pm.value == null || pm.value.isEmpty()) {
+                return true;
+            }
             String[] values = pm.value.split(",");
             StringJoiner sj = new StringJoiner(",");
             boolean match = true;
