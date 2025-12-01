@@ -1,7 +1,6 @@
 package com.mllfjn.simyys.ratecontroller;
 
 import com.mllfjn.simyys.utils.DecimalFormatUtil;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 
 public class RateCalc {

@@ -153,10 +153,6 @@ public class CharacterIcon extends VBox {
 
     private void refreshStatusLabel() {
         StringJoiner sj = new StringJoiner(Displayable.DELIMITER);
-        // 这里海原贝戟和堕落之剑会显示没必要的无法动作,所以移除了   而且该方法需要遍历,和下面应该可以合在一起
-        /*if (!character.controllable()) {
-            sj.add("无法动作");
-        }*/
         for (Status status : character.getStatuses()) {
             if (status instanceof Displayable d) {
                 String text = d.getText();

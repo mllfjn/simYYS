@@ -58,13 +58,4 @@ public class PropertyCheck extends PropertyRequire implements Serializable {
 
         return node;
     }
-
-    /*@Override
-    public void toString(StringBuilder sb) {
-        if (value) {
-            sb.append("是");
-        } else {
-            sb.append("否");
-        }
-    }*/
 }

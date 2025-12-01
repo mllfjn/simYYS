@@ -13,7 +13,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
-import java.io.Serial;
 import java.io.Serializable;
 
 public class PropertySelectSingle  extends PropertyRequire implements Serializable {

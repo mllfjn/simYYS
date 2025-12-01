@@ -17,9 +17,6 @@ public class PropertyInput extends PropertyRequire implements Serializable {
         this.value = value;
         return this;
     }
-    /*public String getValue() {
-        return value;
-    }*/
     public SimpleStringProperty getProperty() {
         if (property == null) {
             property = new SimpleStringProperty(value);

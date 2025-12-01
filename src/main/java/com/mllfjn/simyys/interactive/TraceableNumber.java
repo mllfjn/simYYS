@@ -3,8 +3,6 @@ package com.mllfjn.simyys.interactive;
 
 import com.mllfjn.simyys.utils.DecimalFormatUtil;
 
-import java.text.DecimalFormat;
-
 public class TraceableNumber {
     private double number;
     private final StringBuilder trace = new StringBuilder();

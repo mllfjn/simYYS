@@ -3,7 +3,6 @@ package com.mllfjn.simyys.interactive;
 import com.mllfjn.simyys.character.Character;
 
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 public class Info {
     private final TraceableNumber traceableNumber = new TraceableNumber();
@@ -23,8 +22,6 @@ public class Info {
     private boolean calZengShang = true;
     // 计算减伤
     private boolean calJianShang = true;
-    /*// 无视护盾 给鬼切铃鹿准备的
-    private boolean ignoreShield = false;*/
 
     // 基本伤害类型
     public static Info createTypicalAttack(int multiplier) {

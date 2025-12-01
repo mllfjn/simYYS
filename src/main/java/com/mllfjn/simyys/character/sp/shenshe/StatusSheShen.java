@@ -75,7 +75,7 @@ public class StatusSheShen extends Status implements IgnoreChangeMaxHp, IgnoreDe
     @Override
     public boolean effective(AttackType attackType, Character character) {
         // lv3-蛇神受到的群体伤害下降30%
-        return level >=3 && attackType == AttackType.QUN_TI;
+        return level >= 3 && attackType == AttackType.QUN_TI;
     }
 
     @Override

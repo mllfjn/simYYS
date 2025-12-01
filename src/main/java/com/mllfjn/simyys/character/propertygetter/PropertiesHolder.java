@@ -182,20 +182,6 @@ public class PropertiesHolder implements Serializable {
     }
 
     private Node getFlagPane(Window owner) {
-        /*ObservableList<Map.Entry<Integer, FlagChangeInfo>> items = FXCollections.observableArrayList(flagChangeMap.entrySet());
-        ListView<Map.Entry<Integer, FlagChangeInfo>> listView = new ListView<>(items);
-        listView.setCellFactory(lv -> new ListCell<>() {
-            @Override
-            protected void updateItem(Map.Entry<Integer, FlagChangeInfo> entry, boolean empty) {
-                super.updateItem(entry, empty);
-                if (entry == null || empty) {
-                    setText(null);
-                } else {
-                    FlagChangeInfo value = entry.getValue();
-                    setText(entry.getKey() + "\t" + value.flagType + "\t" + value.target);
-                }
-            }
-        });*/
         // 创建表格
         ObservableList<Map.Entry<Integer, FlagChangeInfo>> items = FXCollections.observableArrayList(flagChangeMap.entrySet());
         TableView<Map.Entry<Integer, FlagChangeInfo>> tableView = new TableView<>(items);
@@ -249,7 +235,6 @@ public class PropertiesHolder implements Serializable {
                     flagChangeMap.put(key,value);
                     tableView.getItems().add(new AbstractMap.SimpleEntry<>(key, value));
                     tableView.sort();
-//                    items.add(new AbstractMap.SimpleEntry<>(key, value));
                     tfKey.clear();
                     tfTarget.clear();
                     cbFlagType.getSelectionModel().select(0);
@@ -281,11 +266,6 @@ public class PropertiesHolder implements Serializable {
         });
 
         btnDelete.setOnAction(event -> {
-            /*Map.Entry<Integer, FlagChangeInfo> selectedItem = listView.getSelectionModel().getSelectedItem();
-            if (selectedItem != null) {
-                items.remove(selectedItem);
-                flagChangeMap.remove(selectedItem.getKey());
-            }*/
             Map.Entry<Integer, FlagChangeInfo> selectedItem = tableView.getSelectionModel().getSelectedItem();
             if (selectedItem != null) {
                 tableView.getItems().remove(selectedItem);
@@ -313,7 +293,6 @@ public class PropertiesHolder implements Serializable {
                         value.target = targetNew;
                     }
                 }
-//                listView.refresh();
                 tableView.refresh();
                 stage.close();
             });
@@ -331,7 +310,6 @@ public class PropertiesHolder implements Serializable {
 
         BorderPane borderPane = new BorderPane();
         borderPane.setCenter(tableView);
-//        borderPane.setCenter(listView);
         borderPane.setRight(controller);
         return borderPane;
     }

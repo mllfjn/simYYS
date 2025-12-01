@@ -5,8 +5,4 @@ public enum AttackType {
     QUN_TI,
     JIAN_JIE,
     ZHEN_SHI,
-    CHUAN_DAO
-
-
-
 }

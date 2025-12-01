@@ -3,7 +3,7 @@ package com.mllfjn.simyys.character.propertygetter;
 import java.io.Serializable;
 
 public class FlagChangeInfo implements Serializable {
-    public FlagType flagType;
+    public final FlagType flagType;
     public int target;
 
     public FlagChangeInfo(FlagType flagType, int target) {

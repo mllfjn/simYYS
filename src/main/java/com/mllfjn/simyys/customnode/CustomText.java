@@ -1,12 +1,9 @@
 package com.mllfjn.simyys.customnode;
 
-import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-
-import java.io.Serializable;
 
 public class CustomText extends Text {
     private final TextFlowLog.TextType type;

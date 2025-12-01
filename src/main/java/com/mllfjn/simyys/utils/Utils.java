@@ -2,8 +2,6 @@ package com.mllfjn.simyys.utils;
 
 import javafx.scene.control.Alert;
 
-import java.io.Serializable;
-
 public class Utils {
     public static void throwException(String text, Throwable e) {
         System.out.println(e.getMessage());

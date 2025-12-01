@@ -8,7 +8,7 @@ import java.util.*;
 
 public class SerializableItems implements Serializable {
     // 角色列表
-    public List<Character> characters = new ArrayList<>();
+    public final List<Character> characters = new ArrayList<>();
     // 当前行动角色
     public Character characterActing;
     // 记录获得新回合的单位

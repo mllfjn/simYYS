@@ -10,7 +10,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 public class RateController implements Serializable {
-    public static Random random = new Random();
+    public static final Random random = new Random();
 
     /**
      *

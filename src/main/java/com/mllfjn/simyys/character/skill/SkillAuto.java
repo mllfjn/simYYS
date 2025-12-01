@@ -1,7 +1,6 @@
 package com.mllfjn.simyys.character.skill;
 
 import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.character.Character;
 
 public class SkillAuto extends Skill{
     public static final SkillAuto INSTANCE = new SkillAuto();

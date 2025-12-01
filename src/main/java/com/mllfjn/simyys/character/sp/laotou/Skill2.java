@@ -12,7 +12,7 @@ import com.mllfjn.simyys.trigger.Trigger;
 import java.util.List;
 
 class Skill2 {
-    public static final String SkillName = "洪福降临";
+//    public static final String SkillName = "洪福降临";
 
 
     public Skill2(LaoTou laoTou, int level) {
