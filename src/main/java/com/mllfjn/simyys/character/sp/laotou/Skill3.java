@@ -8,7 +8,7 @@ import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunUnfullMark;
 import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.ratecontroller.RateController;
-import com.mllfjn.simyys.status.StatusDurationType;
+import com.mllfjn.simyys.character.status.StatusDurationType;
 
 import java.util.List;
 import java.util.Optional;

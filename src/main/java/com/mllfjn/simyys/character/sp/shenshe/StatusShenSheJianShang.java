@@ -3,10 +3,10 @@ package com.mllfjn.simyys.character.sp.shenshe;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Info;
-import com.mllfjn.simyys.status.Status;
-import com.mllfjn.simyys.status.StatusForm;
-import com.mllfjn.simyys.status.StatusType;
-import com.mllfjn.simyys.status.determinant.InfluenceDamage;
+import com.mllfjn.simyys.character.status.Status;
+import com.mllfjn.simyys.character.status.StatusForm;
+import com.mllfjn.simyys.character.status.StatusType;
+import com.mllfjn.simyys.character.status.determinant.InfluenceDamage;
 
 public class StatusShenSheJianShang extends Status implements InfluenceDamage {
     private int count;

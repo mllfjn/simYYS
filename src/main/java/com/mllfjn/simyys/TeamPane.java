@@ -22,6 +22,7 @@ public class TeamPane implements Serializable {
     public final List<Character> characters = new ArrayList<>();
     private Character auto;
     private GuiHuo guiHuo;
+    private boolean mobTeam = true;
 
     public Pane getPane() {
         if (root == null) {
@@ -70,9 +71,10 @@ public class TeamPane implements Serializable {
         if (center != null) {
             center.getChildren().add(character.getCharacterIcon());
         }
-        if (guiHuo == null && !character.isMob()) {
+        if (mobTeam && !character.isMob()) {
             guiHuo = new GuiHuo(4);
             root.setBottom(guiHuo.getGuiHuoDisplay());
+            mobTeam = false;
         }
     }
 
@@ -120,7 +122,7 @@ public class TeamPane implements Serializable {
     }
 
     public void init() {
-        if (guiHuo != null) {
+        if (!mobTeam) {
             for (Character character : characters) {
                 for (YuHun yuHun : character.getYuHunSet()) {
                     if (yuHun instanceof HuoLing) {
@@ -130,5 +132,9 @@ public class TeamPane implements Serializable {
                 }
             }
         }
+    }
+
+    public boolean isMobTeam() {
+        return mobTeam;
     }
 }

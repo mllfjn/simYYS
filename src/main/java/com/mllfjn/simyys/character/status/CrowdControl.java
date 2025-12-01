@@ -1,4 +1,4 @@
-package com.mllfjn.simyys.status;
+package com.mllfjn.simyys.character.status;
 
 public interface CrowdControl {
 

@@ -2,7 +2,7 @@ package com.mllfjn.simyys.character.mob.shenqilou;
 
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.interactive.Info;
-import com.mllfjn.simyys.status.StatusShield;
+import com.mllfjn.simyys.character.status.StatusShield;
 
 public class StatusShenWuHuDun extends StatusShield {
     public static final String StatusNameChild = "蜃气护盾";

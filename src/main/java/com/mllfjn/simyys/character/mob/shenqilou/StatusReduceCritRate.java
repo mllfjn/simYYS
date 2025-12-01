@@ -2,7 +2,7 @@ package com.mllfjn.simyys.character.mob.shenqilou;
 
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.status.*;
+import com.mllfjn.simyys.character.status.*;
 
 class StatusReduceCritRate extends Status implements AttributeModifier, Displayable {
     public static final String StatusName = "降暴";

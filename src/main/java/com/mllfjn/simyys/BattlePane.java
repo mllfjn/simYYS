@@ -3,6 +3,7 @@ package com.mllfjn.simyys;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.CharacterFactory;
 import com.mllfjn.simyys.character.PropertyKey;
+import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.customnode.CustomTextField;
 import com.mllfjn.simyys.customnode.TextFlowLog;
 import com.mllfjn.simyys.guihuo.MobGuiHuo;
@@ -198,7 +199,7 @@ public class BattlePane {
 
     private void init() {
         for (PropertiesHolder holder : list) {
-            int team = holder.map.get(PropertyKey.GENERAL_TEAM_KEY).getInt();
+            int team = holder.propertiesMap.get(PropertyKey.GENERAL_TEAM_KEY).getInt();
             if (team == 0 || team == 1) {
                 CharacterFactory.getCharacter(holder, this).ifPresent(this::addCharacter);
             }
@@ -410,6 +411,10 @@ public class BattlePane {
         for (List<BattleActionListener> list : situation.listenerMap.values()) {
             list.removeIf(listener -> listener.onBattleAction(event));
         }
+    }
+
+    public boolean isMobBattle(Character character) {
+        return situation.teamPane[CharacterFinder.getEnemyTeam(character)].isMobTeam();
     }
 
     private enum ActionBarType {

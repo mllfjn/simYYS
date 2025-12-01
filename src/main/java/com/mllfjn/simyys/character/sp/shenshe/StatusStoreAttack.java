@@ -2,10 +2,10 @@ package com.mllfjn.simyys.character.sp.shenshe;
 
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.status.AttributeModifier;
-import com.mllfjn.simyys.status.Status;
-import com.mllfjn.simyys.status.StatusForm;
-import com.mllfjn.simyys.status.StatusType;
+import com.mllfjn.simyys.character.status.AttributeModifier;
+import com.mllfjn.simyys.character.status.Status;
+import com.mllfjn.simyys.character.status.StatusForm;
+import com.mllfjn.simyys.character.status.StatusType;
 
 // 这是神蛇被吸攻击的队友身上的状态
 public class StatusStoreAttack extends Status implements AttributeModifier {

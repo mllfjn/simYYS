@@ -3,7 +3,6 @@ package com.mllfjn.simyys.utils;
 import javafx.scene.control.Alert;
 
 import java.io.Serializable;
-import java.lang.reflect.Array;
 
 public class Utils {
     public static void throwException(String text, Throwable e) {

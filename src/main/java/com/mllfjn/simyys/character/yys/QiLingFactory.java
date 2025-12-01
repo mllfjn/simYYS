@@ -6,10 +6,10 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.PropertyKey;
 import com.mllfjn.simyys.character.propertygetter.PropertiesMap;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
+import com.mllfjn.simyys.character.status.*;
+import com.mllfjn.simyys.character.status.Runnable;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
-import com.mllfjn.simyys.status.*;
-import com.mllfjn.simyys.status.Runnable;
 import com.mllfjn.simyys.trigger.battleevent.EventBattleStart;
 import com.mllfjn.simyys.trigger.battleevent.EventHpChange;
 import com.mllfjn.simyys.trigger.Trigger;
@@ -54,12 +54,12 @@ class StatusQiCritPower extends Status implements AttributeModifier, Displayable
 
     @Override
     public boolean isAffectAttribute(Attribute attribute) {
-        return false;
+        return attribute == Attribute.CRIT_POWER;
     }
 
     @Override
     public double getInfluence(Attribute attribute) {
-        return 0;
+        return 30;
     }
 
     @Override

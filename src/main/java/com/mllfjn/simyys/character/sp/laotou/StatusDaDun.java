@@ -2,8 +2,8 @@ package com.mllfjn.simyys.character.sp.laotou;
 
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
-import com.mllfjn.simyys.status.StatusDurationType;
-import com.mllfjn.simyys.status.instance.StatusSleep;
+import com.mllfjn.simyys.character.status.StatusDurationType;
+import com.mllfjn.simyys.character.status.instance.StatusSleep;
 
 import java.util.List;
 

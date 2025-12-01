@@ -17,9 +17,9 @@ public class PropertyInput extends PropertyRequire implements Serializable {
         this.value = value;
         return this;
     }
-    public String getValue() {
+    /*public String getValue() {
         return value;
-    }
+    }*/
     public SimpleStringProperty getProperty() {
         if (property == null) {
             property = new SimpleStringProperty(value);
@@ -48,9 +48,10 @@ public class PropertyInput extends PropertyRequire implements Serializable {
 
         TextField tf = new TextField(value);
         tf.textProperty().addListener((obs, old, val) -> {
-            value = val;
             if (property != null) {
                 property.set(val);
+            } else {
+                value = val;
             }
         });
 

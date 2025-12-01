@@ -27,13 +27,13 @@ public abstract class CharacterShiShenBase extends Character {
     public void init(PropertiesHolder propertiesHolder, BattlePane bp) {
         super.init(propertiesHolder, bp);
 
-        int skillLevel = propertiesHolder.map.get(PropertyKey.SKILL_KEY).getInt();
+        int skillLevel = propertiesHolder.propertiesMap.get(PropertyKey.SKILL_KEY).getInt();
         skill1Level = PropertyKey.getSkillLevel(skillLevel, 1);
         skill2Level = PropertyKey.getSkillLevel(skillLevel, 2);
         skill3Level = PropertyKey.getSkillLevel(skillLevel, 3);
 
         if (canAwakening()) {
-            awakening = propertiesHolder.map.get(PropertyKey.JUE_XING_KEY).getBoolean();
+            awakening = propertiesHolder.propertiesMap.get(PropertyKey.JUE_XING_KEY).getBoolean();
         }
     }
 

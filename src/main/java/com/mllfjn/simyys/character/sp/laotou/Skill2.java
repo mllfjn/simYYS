@@ -3,10 +3,10 @@ package com.mllfjn.simyys.character.sp.laotou;
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
-import com.mllfjn.simyys.status.Runnable;
-import com.mllfjn.simyys.status.Status;
-import com.mllfjn.simyys.status.StatusForm;
-import com.mllfjn.simyys.status.StatusType;
+import com.mllfjn.simyys.character.status.Runnable;
+import com.mllfjn.simyys.character.status.Status;
+import com.mllfjn.simyys.character.status.StatusForm;
+import com.mllfjn.simyys.character.status.StatusType;
 import com.mllfjn.simyys.trigger.Trigger;
 
 import java.util.List;

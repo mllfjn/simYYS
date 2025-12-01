@@ -1,4 +1,4 @@
-package com.mllfjn.simyys.status.determinant;
+package com.mllfjn.simyys.character.status.determinant;
 
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.interactive.AttackType;

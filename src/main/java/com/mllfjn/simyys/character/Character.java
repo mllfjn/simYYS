@@ -1,22 +1,23 @@
 package com.mllfjn.simyys.character;
 
 import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
-import com.mllfjn.simyys.character.propertygetter.PropertiesMap;
+import com.mllfjn.simyys.TeamPane;
+import com.mllfjn.simyys.character.propertygetter.*;
+import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.skill.SkillAuto;
+import com.mllfjn.simyys.character.status.*;
+import com.mllfjn.simyys.character.status.Runnable;
+import com.mllfjn.simyys.character.status.determinant.IgnoreChangeMaxHp;
+import com.mllfjn.simyys.character.status.determinant.IgnoreDebuff;
+import com.mllfjn.simyys.character.status.determinant.PreventDie;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunFactory;
 import com.mllfjn.simyys.character.yuhun.YuHunSealResponse;
 import com.mllfjn.simyys.character.yys.QiLingFactory;
 import com.mllfjn.simyys.interactive.TraceableNumber;
-import com.mllfjn.simyys.status.*;
-import com.mllfjn.simyys.status.Runnable;
-import com.mllfjn.simyys.status.determinant.*;
 import com.mllfjn.simyys.interactive.Info;
 import com.mllfjn.simyys.interactive.Interactive;
-import com.mllfjn.simyys.character.propertygetter.PropertyCheck;
-import com.mllfjn.simyys.character.propertygetter.PropertyInput;
 import com.mllfjn.simyys.guihuo.MobGuiHuo;
 import com.mllfjn.simyys.trigger.*;
 import com.mllfjn.simyys.collections.SerializableObservableList;
@@ -54,6 +55,7 @@ public abstract class Character implements Serializable{
 
     protected final SerializableObservableList<Skill> skills = new SerializableObservableList<>();
     private Map<Integer, Integer> lockSKillMap;
+    private Map<Integer, FlagChangeInfo> flagChangeMap;
 
     // 自身状态
     private final List<Status> statuses = new ArrayList<>();
@@ -90,8 +92,9 @@ public abstract class Character implements Serializable{
     }
     public void init(PropertiesHolder propertiesHolder, BattlePane bp) {
         setBattlePane(bp);
-        this.lockSKillMap = propertiesHolder.lockSKill;
-        PropertiesMap properties = propertiesHolder.map;
+        this.lockSKillMap = propertiesHolder.lockSkillMap;
+        this.flagChangeMap = propertiesHolder.flagChangeMap;
+        PropertiesMap properties = propertiesHolder.propertiesMap;
         this.name = propertiesHolder.name;
         this.speed = properties.get(PropertyKey.GENERAL_SPEED_KEY).getDouble();
         this.baseAttack = properties.get(PropertyKey.GENERAL_BASE_ATTACK_KEY).getDouble();
@@ -303,6 +306,32 @@ public abstract class Character implements Serializable{
 
         if (lockSKillMap != null && lockSKillMap.containsKey(timesToAct)) {
             setLockSkill(lockSKillMap.get(timesToAct));
+        }
+
+        if (flagChangeMap != null && flagChangeMap.containsKey(timesToAct)) {
+            FlagChangeInfo flagChangeInfo = flagChangeMap.get(timesToAct);
+            int targetTeam = flagChangeInfo.flagType == FlagChangeInfo.FlagType.GREEN ? team : 1 - team;
+
+            TeamPane targetTeamPane = bp.situation.teamPane[targetTeam];
+            Character auto = targetTeamPane.getAuto().orElse(null);
+            // 如果目标角色序号值为0且标存在,则取消.如果目标值为0且标不存在,不需要任何操作
+            // 如果目标角色序号值不为0并且值有效,如果目标角色!=现有标,切换标,如果目标角色==现有标不需要任何操作
+            if (flagChangeInfo.target == 0) {
+                if (auto != null) {
+                    targetTeamPane.setAuto(auto);
+                }
+            } else {
+                int targetIndex = flagChangeInfo.target - 1;
+                List<Character> characters = targetTeamPane.getCharacters();
+                if (targetIndex > 0 && targetIndex < characters.size()) {
+                    Character target = characters.get(targetIndex);
+                    if (target != auto) {
+                        targetTeamPane.setAuto(target);
+                    }
+                }
+            }
+
+
         }
     }
     public void round() {

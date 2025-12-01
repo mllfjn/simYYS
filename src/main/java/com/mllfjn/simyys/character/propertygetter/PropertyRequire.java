@@ -7,8 +7,9 @@ import java.io.Serializable;
 
 public abstract class PropertyRequire implements Serializable {
     public abstract Node getNode(String desc, Window owner);
-    public abstract boolean cover(PropertyRequire pr);
 
+    // return false if not conformed
+    public abstract boolean cover(PropertyRequire pr);
 
     public double getDouble() {
         return 0;

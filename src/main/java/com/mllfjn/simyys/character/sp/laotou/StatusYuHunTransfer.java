@@ -1,9 +1,9 @@
 package com.mllfjn.simyys.character.sp.laotou;
 
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunFactory;
-import com.mllfjn.simyys.status.*;
 
 public class StatusYuHunTransfer extends Status implements Displayable {
     private final Class<? extends YuHun> yClass;

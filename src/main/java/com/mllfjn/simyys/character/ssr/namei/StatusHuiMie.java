@@ -3,9 +3,9 @@ package com.mllfjn.simyys.character.ssr.namei;
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.status.*;
-import com.mllfjn.simyys.status.Runnable;
-import com.mllfjn.simyys.status.determinant.PreventDie;
+import com.mllfjn.simyys.character.status.*;
+import com.mllfjn.simyys.character.status.Runnable;
+import com.mllfjn.simyys.character.status.determinant.PreventDie;
 import com.mllfjn.simyys.trigger.Trigger;
 
 public class StatusHuiMie extends Status implements Displayable, Runnable, AttributeModifier, PreventDie {
@@ -24,6 +24,11 @@ public class StatusHuiMie extends Status implements Displayable, Runnable, Attri
     public StatusHuiMie(NaMei from, Character belongTo, int level, boolean awakening) {
         super(from, belongTo, StatusType.BUFF, StatusForm.YIN_JI);
         this.level = level;
+
+        // 我方场上至多存在1个此效果
+        from.getStatus(StatusNaMeiFlag.class).ifPresent(status -> {
+            status.huiMie.delete();
+        });
 
         NaMeiFlag = new StatusNaMeiFlag(from, this, awakening);
         from.addStatus(NaMeiFlag);
@@ -107,7 +112,7 @@ public class StatusHuiMie extends Status implements Displayable, Runnable, Attri
 }
 
 class StatusNaMeiFlag extends Status implements AttributeModifier {
-    private final StatusHuiMie huiMie;
+    public final StatusHuiMie huiMie;
     private final boolean awakening;
 
     public StatusNaMeiFlag(NaMei naMei, StatusHuiMie huiMie, boolean awakening) {

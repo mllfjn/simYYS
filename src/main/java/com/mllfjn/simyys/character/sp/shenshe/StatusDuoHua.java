@@ -3,9 +3,9 @@ package com.mllfjn.simyys.character.sp.shenshe;
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.status.*;
-import com.mllfjn.simyys.status.Runnable;
-import com.mllfjn.simyys.status.instance.StatusSleep;
+import com.mllfjn.simyys.character.status.*;
+import com.mllfjn.simyys.character.status.Runnable;
+import com.mllfjn.simyys.character.status.instance.StatusSleep;
 import com.mllfjn.simyys.trigger.Trigger;
 
 public class StatusDuoHua extends Status implements Displayable, Runnable, AttributeModifier, ActionWhenDie {

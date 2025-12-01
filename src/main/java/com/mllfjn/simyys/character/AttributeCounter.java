@@ -1,7 +1,7 @@
 package com.mllfjn.simyys.character;
 
-import com.mllfjn.simyys.status.AttributeModifier;
-import com.mllfjn.simyys.status.Status;
+import com.mllfjn.simyys.character.status.AttributeModifier;
+import com.mllfjn.simyys.character.status.Status;
 
 import java.util.List;
 

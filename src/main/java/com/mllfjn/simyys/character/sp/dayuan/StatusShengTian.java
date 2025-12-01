@@ -2,9 +2,9 @@ package com.mllfjn.simyys.character.sp.dayuan;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.status.*;
-import com.mllfjn.simyys.status.Runnable;
-import com.mllfjn.simyys.status.determinant.IgnoreActionDecrease;
+import com.mllfjn.simyys.character.status.*;
+import com.mllfjn.simyys.character.status.Runnable;
+import com.mllfjn.simyys.character.status.determinant.IgnoreActionDecrease;
 import com.mllfjn.simyys.trigger.Trigger;
 
 // 该状态在结缘目标身上,belongTo是结缘目标,from是大缘

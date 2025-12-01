@@ -10,11 +10,12 @@ public abstract class Skill implements Serializable {
 
     private final Character belongTo;
     private final int level;
-    private final int coolDown;
+    // 技能冷却时间
+    private int coolDown;
     private final int skillID;
     // 技能本身的消耗
     private int cost;
-
+    // 技能当前的冷却回合数，因为回合结束后判定一次技能冷却，所以设定时要+1
     private int cooling;
     public Character lastUsedTarget;
 
@@ -100,5 +101,9 @@ public abstract class Skill implements Serializable {
 
     public int getSkillID() {
         return skillID;
+    }
+
+    public void setCoolDown(int coolDown) {
+        this.coolDown = coolDown;
     }
 }

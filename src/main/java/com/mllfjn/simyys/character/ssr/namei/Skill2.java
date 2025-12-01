@@ -5,7 +5,7 @@ import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
-import com.mllfjn.simyys.status.*;
+import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.trigger.battleevent.EventBattleStart;
 import com.mllfjn.simyys.trigger.battleevent.EventHpChange;
 

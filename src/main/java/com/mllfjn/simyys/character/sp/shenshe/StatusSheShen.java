@@ -2,13 +2,13 @@ package com.mllfjn.simyys.character.sp.shenshe;
 
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Info;
-import com.mllfjn.simyys.status.*;
-import com.mllfjn.simyys.status.determinant.IgnoreChangeMaxHp;
-import com.mllfjn.simyys.status.determinant.IgnoreDebuff;
-import com.mllfjn.simyys.status.determinant.InfluenceDamage;
-import com.mllfjn.simyys.status.determinant.PreventDie;
+import com.mllfjn.simyys.character.status.determinant.IgnoreChangeMaxHp;
+import com.mllfjn.simyys.character.status.determinant.IgnoreDebuff;
+import com.mllfjn.simyys.character.status.determinant.InfluenceDamage;
+import com.mllfjn.simyys.character.status.determinant.PreventDie;
 import com.mllfjn.simyys.trigger.battleevent.EventActionDone;
 
 // 无法改变生命上限,免疫减益和 TODO 放逐

@@ -3,10 +3,10 @@ package com.mllfjn.simyys.character.yuhun;
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.status.*;
+import com.mllfjn.simyys.character.status.Runnable;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Info;
-import com.mllfjn.simyys.status.*;
-import com.mllfjn.simyys.status.Runnable;
 import com.mllfjn.simyys.trigger.Trigger;
 
 import java.util.*;

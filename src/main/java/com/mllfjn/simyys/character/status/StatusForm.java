@@ -1,4 +1,4 @@
-package com.mllfjn.simyys.status;
+package com.mllfjn.simyys.character.status;
 
 public enum StatusForm {
     ZHUANG_TAI, // 状态,可以驱散

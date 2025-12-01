@@ -1,4 +1,4 @@
-package com.mllfjn.simyys.status;
+package com.mllfjn.simyys.character.status;
 
 public enum StatusDurationType {
     CHI_XU, // 持续，在目标回合结束后减少一回合

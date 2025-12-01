@@ -46,7 +46,7 @@ public class CharacterFinder {
     }
 
     public static int getEnemyTeam(Character character) {
-        return character.team == 0 ? 1 : 0;
+        return 1 - character.team;
     }
 
     public static List<Character> findEnemy(Character character, List<Character> characters) {

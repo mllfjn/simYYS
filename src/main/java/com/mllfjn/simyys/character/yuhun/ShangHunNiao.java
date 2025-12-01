@@ -2,7 +2,7 @@ package com.mllfjn.simyys.character.yuhun;
 
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.status.*;
+import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.trigger.battleevent.BattleActionListener;
 import com.mllfjn.simyys.trigger.battleevent.EventCharacterDie;
 

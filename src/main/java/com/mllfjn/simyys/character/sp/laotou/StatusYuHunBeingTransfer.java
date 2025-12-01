@@ -3,10 +3,10 @@ package com.mllfjn.simyys.character.sp.laotou;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunFactory;
-import com.mllfjn.simyys.status.Displayable;
-import com.mllfjn.simyys.status.Status;
-import com.mllfjn.simyys.status.StatusForm;
-import com.mllfjn.simyys.status.StatusType;
+import com.mllfjn.simyys.character.status.Displayable;
+import com.mllfjn.simyys.character.status.Status;
+import com.mllfjn.simyys.character.status.StatusForm;
+import com.mllfjn.simyys.character.status.StatusType;
 
 public class StatusYuHunBeingTransfer extends Status implements Displayable {
     private final Class<? extends YuHun> yClass;

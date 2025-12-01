@@ -1,4 +1,4 @@
-package com.mllfjn.simyys.status;
+package com.mllfjn.simyys.character.status;
 
 import com.mllfjn.simyys.character.Character;
 
@@ -42,6 +42,9 @@ public abstract class Status implements Serializable {
     }
 
     public void setDuration(int num) {
+        if (durationType == StatusDurationType.NONE) {
+            throw new RuntimeException("给无持续判定的状态设置持续回合");
+        }
         duration = num;
     }
 

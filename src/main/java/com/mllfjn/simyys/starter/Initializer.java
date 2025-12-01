@@ -38,11 +38,13 @@ public class Initializer extends Application {
         Button btnModify = new Button("修改角色");
         Button btnMoveUp = new Button("上移");
         Button btnMoveDown = new Button("下移");
+        Button btnClear = new Button("清空");
 
         btnAdd.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         btnDelete.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         btnMoveUp.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         btnMoveDown.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        btnClear.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
         btnAdd.setOnAction(e -> addCharacter(stage));
         btnDelete.setOnAction(e -> {
@@ -75,8 +77,9 @@ public class Initializer extends Application {
                 customTableView.getSelectionModel().select(index + 1);
             }
         });
+        btnClear.setOnAction(e -> items.clear());
 
-        TilePane tp = new TilePane(btnAdd, btnDelete, btnModify, btnMoveUp, btnMoveDown);
+        TilePane tp = new TilePane(btnAdd, btnDelete, btnModify, btnMoveUp, btnMoveDown, btnClear);
         tp.setVgap(20);
         tp.setPadding(new Insets(20, 10, 20, 10));
 
@@ -105,7 +108,7 @@ public class Initializer extends Application {
                 Button btn = new Button(name);
                 btn.setPrefWidth(100);
                 btn.setOnAction(event -> {
-                    PropertiesHolder propertiesHolder = new PropertiesHolder(name, CharacterFactory.getProperties(name).orElseThrow(), new LinkedHashMap<>());
+                    PropertiesHolder propertiesHolder = new PropertiesHolder(name, CharacterFactory.getProperties(name).orElseThrow(), new LinkedHashMap<>(), new LinkedHashMap<>());
                     propertiesHolder.show(stageSelect);
                     items.add(propertiesHolder);
                 });
@@ -177,7 +180,7 @@ public class Initializer extends Application {
 
                 for (Map.Entry<String, PropertyRequire> entry : currentProperties.entrySet()) {
                     String key = entry.getKey();
-                    PropertyRequire require = item.map.remove(key);
+                    PropertyRequire require = item.propertiesMap.remove(key);
                     if (require == null) {
                         sj.add(item.name + "新增属性：" + entry.getKey());
                         continue;
@@ -188,39 +191,16 @@ public class Initializer extends Application {
                     }
 
                 }
-                if (!item.map.isEmpty()) {
+                if (!item.propertiesMap.isEmpty()) {
                     sj.add(item.name + "的预设中含有当前不存在的属性");
                 }
-                items.add(new PropertiesHolder(item.name, currentProperties, item.lockSKill));
+                items.add(new PropertiesHolder(item.name, currentProperties, item.lockSkillMap, item.flagChangeMap));
             }
 
             String message = sj.toString();
             if (!message.isEmpty()) {
                 Utils.information("部分式神或属性发生变更，请检查：\n" + message);
             }
-
-            /*try (
-                    FileInputStream fis = new FileInputStream(file);
-                    InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
-                    BufferedReader reader = new BufferedReader(isr)){
-
-                Gson gson = new Gson();
-                Saver saver = gson.fromJson(reader, new TypeToken<Saver>(){}.getType());
-
-                for (CharacterInfo info : saver.characterInfo) {
-                    characterPane.addNewLine(info);
-                }
-
-                for (SkillChangeInfo info : saver.skillChangeInfo) {
-                    skillChangePane.addNewLine(info);
-                }
-
-                for (FlagChangeInfo info : saver.flagChangeInfo) {
-                    flagChangePane.addNewLine(info);
-                }
-            } catch (IOException ignored) {
-
-            }*/
         }
     }
 

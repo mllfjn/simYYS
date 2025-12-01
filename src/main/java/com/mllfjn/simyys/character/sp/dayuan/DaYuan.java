@@ -4,11 +4,11 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
 import com.mllfjn.simyys.character.CharacterShiShenBase;
-import com.mllfjn.simyys.status.Status;
-import com.mllfjn.simyys.status.StatusForm;
-import com.mllfjn.simyys.status.StatusType;
-import com.mllfjn.simyys.status.determinant.IgnoreActionDecrease;
-import com.mllfjn.simyys.status.determinant.IgnoreActionIncrease;
+import com.mllfjn.simyys.character.status.Status;
+import com.mllfjn.simyys.character.status.StatusForm;
+import com.mllfjn.simyys.character.status.StatusType;
+import com.mllfjn.simyys.character.status.determinant.IgnoreActionDecrease;
+import com.mllfjn.simyys.character.status.determinant.IgnoreActionIncrease;
 
 public class DaYuan extends CharacterShiShenBase {
     public static final String CharacterName = "纺愿缘结神";

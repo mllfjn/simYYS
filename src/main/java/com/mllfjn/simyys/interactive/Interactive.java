@@ -5,10 +5,10 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.customnode.CustomText;
 import com.mllfjn.simyys.customnode.TextFlowLog;
 import com.mllfjn.simyys.ratecontroller.RateController;
-import com.mllfjn.simyys.status.Status;
-import com.mllfjn.simyys.status.determinant.IgnoreActionDecrease;
-import com.mllfjn.simyys.status.determinant.IgnoreActionIncrease;
-import com.mllfjn.simyys.status.determinant.InfluenceDamage;
+import com.mllfjn.simyys.character.status.Status;
+import com.mllfjn.simyys.character.status.determinant.IgnoreActionDecrease;
+import com.mllfjn.simyys.character.status.determinant.IgnoreActionIncrease;
+import com.mllfjn.simyys.character.status.determinant.InfluenceDamage;
 
 import java.util.*;
 import java.util.function.Consumer;

@@ -1,8 +1,8 @@
 package com.mllfjn.simyys.character.sp.dayuan;
 
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.status.StatusDurationType;
-import com.mllfjn.simyys.status.StatusShield;
+import com.mllfjn.simyys.character.status.StatusDurationType;
+import com.mllfjn.simyys.character.status.StatusShield;
 
 public class StatusDaYuanShield extends StatusShield {
     private StatusDaYuanShield(Character from, Character belongTo) {

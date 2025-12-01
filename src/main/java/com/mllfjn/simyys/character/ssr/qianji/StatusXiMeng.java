@@ -2,8 +2,8 @@ package com.mllfjn.simyys.character.ssr.qianji;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.status.*;
-import com.mllfjn.simyys.status.Runnable;
+import com.mllfjn.simyys.character.status.*;
+import com.mllfjn.simyys.character.status.Runnable;
 import com.mllfjn.simyys.trigger.Trigger;
 
 class StatusXiMeng extends Status implements Runnable, Displayable {

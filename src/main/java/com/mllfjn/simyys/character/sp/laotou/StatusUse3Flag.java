@@ -1,9 +1,9 @@
 package com.mllfjn.simyys.character.sp.laotou;
 
-import com.mllfjn.simyys.status.Status;
-import com.mllfjn.simyys.status.StatusForm;
-import com.mllfjn.simyys.status.StatusDurationType;
-import com.mllfjn.simyys.status.StatusType;
+import com.mllfjn.simyys.character.status.Status;
+import com.mllfjn.simyys.character.status.StatusForm;
+import com.mllfjn.simyys.character.status.StatusDurationType;
+import com.mllfjn.simyys.character.status.StatusType;
 
 class StatusUse3Flag extends Status {
     public StatusUse3Flag(LaoTou laoTou) {

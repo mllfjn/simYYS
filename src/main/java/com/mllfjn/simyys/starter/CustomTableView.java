@@ -23,7 +23,7 @@ public class CustomTableView extends TableView<PropertiesHolder> {
         for (String key : PropertyKey.GENERAL_INPUT_KEYS) {
             TableColumn<PropertiesHolder, String> column = new TableColumn<>(key);
             column.setCellValueFactory(param -> {
-                PropertyInput pi = (PropertyInput) param.getValue().map.get(key);
+                PropertyInput pi = (PropertyInput) param.getValue().propertiesMap.get(key);
                 return pi.getProperty();
             });
             column.setEditable(true);
@@ -34,7 +34,7 @@ public class CustomTableView extends TableView<PropertiesHolder> {
         for (String key : PropertyKey.GENERAL_CHECK_KEYS) {
             TableColumn<PropertiesHolder, Boolean> column = new TableColumn<>(key);
             column.setCellValueFactory(param -> {
-                PropertyCheck pc = (PropertyCheck) param.getValue().map.get(key);
+                PropertyCheck pc = (PropertyCheck) param.getValue().propertiesMap.get(key);
                 return pc.getProperty();
             });
             column.setEditable(true);
@@ -43,7 +43,8 @@ public class CustomTableView extends TableView<PropertiesHolder> {
         }
 
         TableColumn<PropertiesHolder, String> columnTotalAttack = new TableColumn<>("总攻击");
-        columnTotalAttack.setCellValueFactory(param -> param.getValue().getTotalAttack());
+        columnTotalAttack.setCellValueFactory(param ->
+                param.getValue().getTotalAttack());
         this.getColumns().add(2, columnTotalAttack);
     }
 }

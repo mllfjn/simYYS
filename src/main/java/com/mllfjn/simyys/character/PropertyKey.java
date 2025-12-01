@@ -49,4 +49,9 @@ public class PropertyKey {
             default -> 0;
         };
     }
+
+    private static final String[] YYSSkillDesc = new String[]{"技能等级", "契灵术印等级"};
+    public static PropertyMultiInput getYYSSkillPMI() {
+        return new PropertyMultiInput(YYSSkillDesc).setValue(0, "5").setValue(1, "3");
+    }
 }
