@@ -24,7 +24,7 @@ public class Initializer extends Application {
     private final SerializableObservableList<PropertiesHolder> items = new SerializableObservableList<>();
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
         BorderPane borderPane = new BorderPane();
         Scene scene = new Scene(borderPane);
 

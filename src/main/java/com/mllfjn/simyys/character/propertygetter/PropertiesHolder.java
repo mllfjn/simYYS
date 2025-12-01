@@ -14,18 +14,15 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.MapValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import javafx.util.Callback;
 
 import java.io.Serializable;
 import java.util.AbstractMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class PropertiesHolder implements Serializable {
     public final String name;

@@ -59,7 +59,8 @@ class StatusChi extends Status implements Runnable, Displayable {
 class StatusChiNewRound extends Status implements ReduceCost {
     public StatusChiNewRound(DaYuan from, Character belongTo) {
         super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-        setSettleType(StatusDurationType.CHI_XU, 1);
+        // 获得该状态后会结算一个回合,所以要让持续回合+1
+        setSettleType(StatusDurationType.CHI_XU, 2);
     }
 
     @Override

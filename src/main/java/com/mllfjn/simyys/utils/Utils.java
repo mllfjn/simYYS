@@ -28,21 +28,4 @@ public class Utils {
             return defaultValue;
         }
     }
-
-    public static boolean isHaveNonSerializable(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-
-        if (obj instanceof Object[]) {
-            for (Object o : (Object[]) obj) {
-                if (isHaveNonSerializable(o)) {
-                    return true;
-                }
-            }
-            return false;
-        } else {
-            return !(obj instanceof Serializable);
-        }
-    }
 }

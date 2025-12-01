@@ -17,9 +17,9 @@ class Skill2 {
 
     public Skill2(LaoTou laoTou, int level) {
         laoTou.addStatus(new StatusAfterRound(laoTou, level));
-        // lv5-战斗开始后,自身首次受到伤害时开始打盹 TODO
+        // lv5-战斗开始后,自身首次受到伤害时开始打盹
         if (level >= 5) {
-
+            laoTou.addStatus(new StatusFirstAttackListener(laoTou));
         }
     }
 
@@ -62,6 +62,26 @@ class Skill2 {
             }
 
             return false;
+        }
+    }
+
+    static class StatusFirstAttackListener extends Status implements Runnable {
+        private final LaoTou laoTou;
+
+        public StatusFirstAttackListener(LaoTou laoTou) {
+            super(laoTou, laoTou, StatusType.SPECIAL, StatusForm.SPECIAL);
+            this.laoTou = laoTou;
+        }
+
+        @Override
+        public boolean runnable(Trigger trigger) {
+            return trigger == Trigger.AFTER_ATTACK;
+        }
+
+        @Override
+        public boolean run(Trigger trigger, BattlePane bp) {
+            laoTou.addStatus(new StatusDaDun(laoTou));
+            return true;
         }
     }
 }

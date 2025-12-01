@@ -50,7 +50,7 @@ class Skill3 extends Skill {
                 // 如果绿标可以放,给绿标,否则随机
                 target = bp.situation.getAutoTo(shenShe.team)
                         .filter(teammateShiShen::contains)
-                        .orElseGet(() -> RateController.choose(SkillName, teammateShiShen, teammate -> teammate.name, bp.isControlRate, bp.calc));
+                        .orElseGet(() -> RateController.choose(SkillName, teammateShiShen, teammate -> teammate.name, bp.calc));
             }
             lastUsedTarget = target;
             target.addStatus(new StatusDuoHua(shenShe, target));

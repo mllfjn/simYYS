@@ -33,7 +33,7 @@ class Skill3Special extends Skill {
             if (enemy.isEmpty()) {
                 return;
             }
-            interactive.attack(SkillName, RateController.choose(SkillName, enemy, character -> character.name, bp.isControlRate, bp.calc), 128, AttackType.DAN_TI);
+            interactive.attack(SkillName, RateController.choose(SkillName, enemy, character -> character.name, bp.calc), 128, AttackType.DAN_TI);
         }
 
     }

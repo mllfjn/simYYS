@@ -1,7 +1,6 @@
 package com.mllfjn.simyys.character;
 
 import com.mllfjn.simyys.character.propertygetter.*;
-import com.mllfjn.simyys.collections.StringGroup;
 
 public class PropertyKey {
     public static final String GENERAL_SPEED_KEY = "速度";

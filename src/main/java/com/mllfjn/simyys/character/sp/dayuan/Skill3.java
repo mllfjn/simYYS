@@ -63,7 +63,7 @@ class Skill3 extends Skill {
         } else {
             // 既没有5层神力,也没胜天之缘
             List<String> list = List.of(StatusChi.StatusName, StatusQing.StatusName);
-            int i = list.indexOf(RateController.choose(SkillName, list, item -> item, bp.isControlRate, bp.calc));
+            int i = list.indexOf(RateController.choose(SkillName, list, item -> item, bp.calc));
             if (i == 0) {
                 chi = true;
             } else {

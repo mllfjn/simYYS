@@ -8,7 +8,7 @@ import com.mllfjn.simyys.customnode.CustomTextField;
 import com.mllfjn.simyys.customnode.TextFlowLog;
 import com.mllfjn.simyys.guihuo.MobGuiHuo;
 import com.mllfjn.simyys.interactive.Interactive;
-import com.mllfjn.simyys.ratecontroller.TotalRateCalc;
+import com.mllfjn.simyys.ratecontroller.RateCalc;
 import com.mllfjn.simyys.starter.Initializer;
 import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
 import com.mllfjn.simyys.collections.SerializableObservableList;
@@ -19,7 +19,6 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -37,8 +36,7 @@ public class BattlePane {
     // 初始化属性列表
     private final SerializableObservableList<PropertiesHolder> list;
     // 概率控制模式
-    public boolean isControlRate = false;
-    public final TotalRateCalc calc = new TotalRateCalc();
+    public final RateCalc calc = new RateCalc();
     // 交互
     private final Interactive interactive = new Interactive(this);
     // 日志
@@ -141,9 +139,6 @@ public class BattlePane {
         上一个，下一个
         跳过指定回合数*/
 
-        CheckBox rateControl = new CheckBox("概率控制模式");
-        rateControl.selectedProperty().addListener((obs, old, val) -> isControlRate = val);
-
         Button prevBtn = new Button("上一个");
         Button nextBtn = new Button("下一个");
         Button backBtn = new Button("返回");
@@ -173,8 +168,8 @@ public class BattlePane {
         GridPane controller = new GridPane();
         controller.setPadding(new Insets(0, 0, 50, 0)); // 底部留空
 
-        controller.add(rateControl, 0, 0);
-        controller.add(calc.getNode(), 1, 0);
+        controller.add(calc.getControl(), 0, 0);
+        controller.add(calc.getLabel(), 1, 0);
         controller.add(prevBtn, 0, 1);
         controller.add(nextBtn, 1, 1);
         controller.add(round, 0, 2);
@@ -308,7 +303,6 @@ public class BattlePane {
                 Utils.throwException("恢复时出错", e);
                 return;
             }
-
             calc.setCurrentRate(situation.getCurrentRate());
             situation.reset(this);
 

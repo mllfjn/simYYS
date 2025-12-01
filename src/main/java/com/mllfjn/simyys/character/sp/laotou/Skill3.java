@@ -7,6 +7,7 @@ import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunUnfullMark;
 import com.mllfjn.simyys.interactive.Interactive;
+import com.mllfjn.simyys.ratecontroller.RateCalc;
 import com.mllfjn.simyys.ratecontroller.RateController;
 import com.mllfjn.simyys.character.status.StatusDurationType;
 
@@ -58,10 +59,8 @@ class Skill3 extends Skill {
                     doTransfer(target, yuHun);
                 } else {
                     RateController.whetherOrNot(SkillName, "向" + target + "转移御魂", List.of("转移")
-                            , item -> item, bp.isControlRate, bp.calc, item -> 50.0
-                            , (s, aBoolean) -> {
-                                if (aBoolean) doTransfer(target, yuHun);
-                            });
+                            , item -> item, bp.calc, RateCalc::isControlWhetherOther, item -> 50.0
+                            , (s, aBoolean) -> {if (aBoolean) doTransfer(target, yuHun);});
                 }
             });
         });

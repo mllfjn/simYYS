@@ -25,7 +25,7 @@ class Skill1 extends Skill {
         // 对单体敌人造成攻击100%的伤害
         Character target = RateController.choose("请选择攻击对象"
                 , CharacterFinder.findEnemy(belongTo, bp.situation.characters)
-                , Character::getName, belongTo.bp.isControlRate, belongTo.bp.calc);
+                , Character::getName, belongTo.bp.calc);
 
         belongTo.getInteractive().attack(SkillName, target, 100, AttackType.DAN_TI);
         // 并降低敌人30%的暴击

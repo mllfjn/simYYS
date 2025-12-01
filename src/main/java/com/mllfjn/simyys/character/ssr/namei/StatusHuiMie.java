@@ -26,9 +26,7 @@ public class StatusHuiMie extends Status implements Displayable, Runnable, Attri
         this.level = level;
 
         // 我方场上至多存在1个此效果
-        from.getStatus(StatusNaMeiFlag.class).ifPresent(status -> {
-            status.huiMie.delete();
-        });
+        from.getStatus(StatusNaMeiFlag.class).ifPresent(status -> status.huiMie.delete());
 
         NaMeiFlag = new StatusNaMeiFlag(from, this, awakening);
         from.addStatus(NaMeiFlag);

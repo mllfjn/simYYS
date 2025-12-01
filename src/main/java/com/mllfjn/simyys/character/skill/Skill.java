@@ -2,6 +2,8 @@ package com.mllfjn.simyys.character.skill;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.status.ReduceCost;
+import com.mllfjn.simyys.character.status.Status;
 
 import java.io.Serializable;
 
@@ -56,7 +58,7 @@ public abstract class Skill implements Serializable {
 
     private void useBase(BattlePane bp, boolean isCost) {
         if (isCost) {
-            bp.useGuiHuo(getBelongTo(), cost);
+            bp.useGuiHuo(getBelongTo(), getRealCost());
         }
 
         lastUsedTarget = null;
@@ -73,10 +75,23 @@ public abstract class Skill implements Serializable {
         bp.log.addSkill(sb.toString());
     }
 
+    private int getRealCost() {
+        int realCost = cost;
+        for (Status status : belongTo.getStatuses()) {
+            if (status instanceof ReduceCost rc) {
+                realCost -= rc.getReduce();
+                if (realCost <= 0) {
+                    return 0;
+                }
+            }
+        }
+        return realCost;
+    }
+
     public abstract void usePrivate(BattlePane bp);
 
     public boolean canUse(BattlePane bp) {
-        return cooling == 0 && bp.canUseGuiHuo(belongTo, cost);
+        return cooling == 0 && bp.canUseGuiHuo(belongTo, getRealCost());
     }
 
     public Character getBelongTo() {

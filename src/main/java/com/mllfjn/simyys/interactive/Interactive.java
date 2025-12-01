@@ -67,7 +67,7 @@ public class Interactive {
             infos[i] = info;
         }
 
-        RateController.baoJi(skillName, owner, bp.isControlRate, bp.calc, targets, infos);
+        RateController.baoJi(skillName, owner, bp.calc, targets, infos);
 
         for (int i = 0; i < targets.size(); i++) {
             attack(targets.get(i), attackType, infos[i]);
@@ -78,7 +78,7 @@ public class Interactive {
 
     public Info attack(String skillName, Character target, int multiplier, AttackType attackType) {
         Info info = Info.createTypicalAttack(multiplier);
-        RateController.baoJi(skillName, owner, bp.isControlRate, bp.calc, List.of(target), info);
+        RateController.baoJi(skillName, owner, bp.calc, List.of(target), info);
         attack(target, attackType, info);
         return info;
     }
@@ -133,7 +133,7 @@ public class Interactive {
 
     public Info heal(String skillName, Character target, int multiplier) {
         Info info = Info.createTypicalHeal(multiplier);
-        RateController.baoJi(skillName, owner, bp.isControlRate, bp.calc, List.of(target), info);
+        RateController.baoJi(skillName, owner, bp.calc, List.of(target), info);
 
         return heal(target, info);
     }
@@ -144,7 +144,7 @@ public class Interactive {
             infos[i] = Info.createTypicalHeal(multiplier);
         }
 
-        RateController.baoJi(skillName, owner, bp.isControlRate, bp.calc, targets, infos);
+        RateController.baoJi(skillName, owner, bp.calc, targets, infos);
 
         for (int i = 0; i < targets.size(); i++) {
             heal(targets.get(i), infos[i]);
@@ -193,7 +193,7 @@ public class Interactive {
     }
 
     public EffectInfo[] effect(String statusName, List<Character> targets, int base, StatusSupplier statusSupplier) {
-        EffectInfo[] infos = RateController.mingZhong(statusName, owner, targets, base, bp.isControlRate, bp.calc);
+        EffectInfo[] infos = RateController.mingZhong(statusName, owner, targets, base, bp.calc);
         for (int i = 0; i < targets.size(); i++) {
             if (infos[i].isHit()) {
                 effect(targets.get(i), statusSupplier);
@@ -203,7 +203,7 @@ public class Interactive {
     }
 
     public void effect(String statusName, Character target, int base, StatusSupplier statusSupplier) {
-        if (RateController.mingZhong(statusName, owner, List.of(target), base, bp.isControlRate, bp.calc)[0].isHit()) {
+        if (RateController.mingZhong(statusName, owner, List.of(target), base, bp.calc)[0].isHit()) {
             effect(target, statusSupplier);
         }
     }

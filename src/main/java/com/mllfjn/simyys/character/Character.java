@@ -3,7 +3,6 @@ package com.mllfjn.simyys.character;
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.TeamPane;
 import com.mllfjn.simyys.character.propertygetter.*;
-import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.skill.SkillAuto;
 import com.mllfjn.simyys.character.status.*;
@@ -599,6 +598,11 @@ public abstract class Character implements Serializable{
         alive = false;
         bp.removeCharacter(this);
 
+        for (Status status : getStatuses()) {
+            if (status instanceof ActionWhenDie awd) {
+                awd.action(bp);
+            }
+        }
         // 通过老头死亡时可以叠一层伤魂鸟判断，应该先触发死亡，再执行
         dieHandle();
     }

@@ -4,11 +4,12 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.interactive.EffectInfo;
 import com.mllfjn.simyys.interactive.Info;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-public class RateController {
+public class RateController implements Serializable {
     public static Random random = new Random();
 
     /**
@@ -17,13 +18,13 @@ public class RateController {
      * @param event         事件名称
      * @param targets       目标
      * @param stringGetter  获取目标文本
-     * @param rateControl   是否使用概率控制
      * @param calc          总概率计算器
+     * @param controlGetter 概率控制获取
      * @param rateGetter    获取概率
      * @param resultHandler 结果处理
      */
     public static <T> void whetherOrNot(String title, String event, List<T> targets
-            , Function<T, String> stringGetter, boolean rateControl, TotalRateCalc calc
+            , Function<T, String> stringGetter, RateCalc calc, Function<RateCalc, Boolean> controlGetter
             , Function<T, Double> rateGetter, BiConsumer<Integer, Boolean> resultHandler) {
         // 首先根据传入的getter算法计算出每个的概率
         // 其中<=0的,直接算false, >=100的直接算true
@@ -42,7 +43,7 @@ public class RateController {
             } else if (rates[i] >= 100) {
                 returns[i] = true;
             } else {
-                if (rateControl) {
+                if (controlGetter.apply(calc)) {
                     count++;
                 }
             }
@@ -59,7 +60,7 @@ public class RateController {
         }
     }
 
-    public static void baoJi(String skillName, Character owner, boolean rateControl, TotalRateCalc calc
+    public static void baoJi(String skillName, Character owner, RateCalc calc
             , List<Character> targets, Info... infos) {
         List<Character> list = new ArrayList<>();
         for (int i = 0; i < targets.size(); i++) {
@@ -69,14 +70,15 @@ public class RateController {
         }
 
         whetherOrNot("暴击控制：" + owner.name + "-" + skillName, "暴击", list, Character::getName
-                , rateControl, calc, character -> owner.getCritRate(), (i, crit) -> infos[i].setCrit(crit));
+                , calc, RateCalc::isControlCrit, character -> owner.getCritRate()
+                , (i, crit) -> infos[i].setCrit(crit));
     }
 
     public static EffectInfo[] mingZhong(String statusName, Character owner, List<Character> targets, int baseRate
-            , boolean rateControl, TotalRateCalc calc) {
+            , RateCalc calc) {
         EffectInfo[] infos = new EffectInfo[targets.size()];
         whetherOrNot("命中控制：" + owner.name + "-" + statusName, "命中"
-                , targets, Character::getName, rateControl, calc
+                , targets, Character::getName, calc, RateCalc::isControlEffectHit
                 , character -> baseRate * (100 + owner.getEffectHitRate()) / (100 + character.getEffectResistRate())
                 , (i, hit) -> {
                     EffectInfo info = new EffectInfo();
@@ -87,16 +89,16 @@ public class RateController {
     }
 
     public static <T> T choose(String title, List<T> list, Function<T, String> stringGetter
-            , boolean rateControl, TotalRateCalc calc) {
+            ,  RateCalc calc) {
         if (list.size() == 1) {
             return list.get(0);
         }
 
-        if (rateControl) {
+        if (calc.isControlChoose()) {
             ChooseDialog<T> dialog = new ChooseDialog<>(title + "选取", list, stringGetter);
             Optional<T> result = dialog.showAndWait();
             if (result.isPresent()) {
-                calc.add(1.0 / list.size());
+                calc.change(1.0 / list.size());
                 return result.get();
             }
         }

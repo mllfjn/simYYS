@@ -15,10 +15,10 @@ import java.util.function.Function;
 class RateControlDialog extends Stage {
     private final ReturnSelector[] selectors;
     private final Boolean[] result;
-    private final TotalRateCalc calc;
+    private final RateCalc calc;
     private final Label rateLabel = new Label("当前概率：100.00%");
 
-    public <T> RateControlDialog(String title, String event, List<T> list, Function<T, String> stringGetter, double[] rates, Boolean[] result, int count, TotalRateCalc calc) {
+    public <T> RateControlDialog(String title, String event, List<T> list, Function<T, String> stringGetter, double[] rates, Boolean[] result, int count, RateCalc calc) {
         super();
         this.result = result;
         this.calc = calc;
@@ -66,7 +66,7 @@ class RateControlDialog extends Stage {
             }
         }
 
-        calc.add(countCurrentRate());
+        calc.change(countCurrentRate());
     }
 
     private double countCurrentRate(){
