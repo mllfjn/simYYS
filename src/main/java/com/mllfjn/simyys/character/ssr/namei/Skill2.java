@@ -100,7 +100,7 @@ class Skill2 extends Skill {
 class StatusNaMeiSpeed extends Status implements AttributeModifier {
     public StatusNaMeiSpeed(NaMei from, Character belongTo) {
         super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-        setSettleType(StatusDurationType.CHI_XU, 2);
+        setDurationType(StatusDurationType.CHI_XU, 2);
     }
 
     @Override
@@ -117,7 +117,7 @@ class StatusNaMeiSpeed extends Status implements AttributeModifier {
 class StatusNaMeiCritPower extends Status implements AttributeModifier {
     public StatusNaMeiCritPower(NaMei from, Character belongTo) {
         super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-        setSettleType(StatusDurationType.CHI_XU, 2);
+        setDurationType(StatusDurationType.CHI_XU, 2);
     }
 
     @Override

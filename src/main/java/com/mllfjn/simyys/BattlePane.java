@@ -38,7 +38,7 @@ public class BattlePane {
     // 概率控制模式
     public final RateCalc calc = new RateCalc();
     // 交互
-    private final Interactive interactive = new Interactive(this);
+    public final Interactive interactive = new Interactive(this);
     // 日志
     public final TextFlowLog log = new TextFlowLog();
     // 战斗记录,用于撤销
@@ -125,6 +125,10 @@ public class BattlePane {
         } else {
             situation.teamPane[character.team].gainGuiHuo(num);
         }
+    }
+
+    public int getGuiHuoCount(Character character) {
+        return situation.teamPane[character.team].getGuiHuoCount();
     }
 
     public void addProgress(int team) {

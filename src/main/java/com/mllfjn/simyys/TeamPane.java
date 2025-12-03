@@ -108,6 +108,10 @@ public class TeamPane implements Serializable {
         guiHuo.gainGuiHuo(num);
     }
 
+    public int getGuiHuoCount() {
+        return guiHuo.getNow();
+    }
+
     public void addProgress() {
         guiHuo.addProgress();
     }

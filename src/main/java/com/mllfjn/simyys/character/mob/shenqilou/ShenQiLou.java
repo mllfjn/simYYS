@@ -113,6 +113,6 @@ public class ShenQiLou extends Character {
 
     @Override
     protected boolean useSkillAuto() {
-        return tryUseSkill(4);
+        return tryUseSkill(3);
     }
 }

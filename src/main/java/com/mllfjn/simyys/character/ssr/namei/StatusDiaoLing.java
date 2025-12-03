@@ -14,7 +14,7 @@ public class StatusDiaoLing extends Status implements Displayable, AttributeModi
 
     public StatusDiaoLing(Character from, Character belongTo, int duration) {
         super(from, belongTo, StatusType.GENERAL, StatusForm.YIN_JI);
-        setSettleType(StatusDurationType.CHI_XU, duration);
+        setDurationType(StatusDurationType.CHI_XU, duration);
     }
 
     @Override

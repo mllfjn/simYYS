@@ -16,6 +16,8 @@ public class RateCalc {
     private boolean controlWhetherOther = true;
     // 选取
     private boolean controlChoose = true;
+    // 御魂
+    private boolean controlYuHun = true;
 
 
     // 显示概率
@@ -29,13 +31,15 @@ public class RateCalc {
 
         CheckMenuItem menuItemCrit = new CheckMenuItem("控制暴击");
         CheckMenuItem menuItemEffectHit = new CheckMenuItem("控制命中");
-        CheckMenuItem menuItemOther = new CheckMenuItem("控制其他");
+        CheckMenuItem menuItemOther = new CheckMenuItem("控制其他是否");
         CheckMenuItem menuItemChoose = new CheckMenuItem("控制选取");
+        CheckMenuItem menuItemYuHun = new CheckMenuItem("控制御魂");
 
         menuItemCrit.setSelected(true);
         menuItemEffectHit.setSelected(true);
         menuItemOther.setSelected(true);
         menuItemChoose.setSelected(true);
+        menuItemYuHun.setSelected(true);
 
         menuItemCrit.selectedProperty().addListener(
                 (obs, old, val) -> controlCrit = val);
@@ -45,8 +49,11 @@ public class RateCalc {
                 (obs, old, val) -> controlWhetherOther = val);
         menuItemChoose.selectedProperty().addListener(
                 (obs, old, val) -> controlChoose = val);
+        menuItemYuHun.selectedProperty().addListener(
+                (obs, old, val) -> controlYuHun = val);
 
-        control.setContextMenu(new ContextMenu(menuItemCrit, menuItemEffectHit, menuItemOther, menuItemChoose));
+        control.setContextMenu(
+                new ContextMenu(menuItemCrit, menuItemEffectHit, menuItemOther, menuItemChoose, menuItemYuHun));
     }
 
 

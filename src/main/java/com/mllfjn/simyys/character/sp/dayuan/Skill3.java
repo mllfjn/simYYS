@@ -114,7 +114,7 @@ class Skill3 extends Skill {
 
         public StatusCritPower(Character from, Character belongTo) {
             super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-            setSettleType(StatusDurationType.WEI_CHI, 1);
+            setDurationType(StatusDurationType.WEI_CHI, 1);
         }
 
         @Override

@@ -54,6 +54,10 @@ public class GuiHuo implements Serializable {
         repaint();
     }
 
+    public int getNow() {
+        return now;
+    }
+
     public void setMax(int num) {
         max = num;
         now = Math.min(now, max);

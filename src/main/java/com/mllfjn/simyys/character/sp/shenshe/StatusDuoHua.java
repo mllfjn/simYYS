@@ -9,6 +9,8 @@ import com.mllfjn.simyys.character.status.instance.StatusSleep;
 import com.mllfjn.simyys.trigger.Trigger;
 
 public class StatusDuoHua extends Status implements Displayable, Runnable, AttributeModifier, ActionWhenDie {
+    private boolean enable = true;
+
     public StatusDuoHua(Character from, Character belongTo) {
         super(from, belongTo, StatusType.GENERAL, StatusForm.YIN_JI);
     }
@@ -44,11 +46,17 @@ public class StatusDuoHua extends Status implements Displayable, Runnable, Attri
 
     @Override
     public void action(BattlePane bp) {
-        // 携带者阵亡时,神堕八岐大蛇提升40%行动条
-        belongTo.doInteractive(interactive -> interactive.increaseLocation(from, 40));
-        // 并将携带者献祭成1把堕落之剑
-        new DuoLuoZhiJian((ShenShe) from, belongTo, bp, true);
-        // 立即破除1把天羽羽斩封印
-        ((ShenShe)from).poChuZhenYa();
+        if (enable) {
+            // 携带者阵亡时,神堕八岐大蛇提升40%行动条
+            belongTo.doInteractive(interactive -> interactive.increaseLocation(from, 40));
+            // 并将携带者献祭成1把堕落之剑
+            new DuoLuoZhiJian((ShenShe) from, belongTo, bp, false);
+            // 立即破除1把天羽羽斩封印
+            ((ShenShe) from).poChuZhenYa();
+        }
+    }
+
+    public void disable() {
+        enable = false;
     }
 }

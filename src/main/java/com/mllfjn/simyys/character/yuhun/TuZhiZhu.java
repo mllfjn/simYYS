@@ -64,13 +64,10 @@ public class TuZhiZhu extends YuHun implements YuHunUnfullMark {
 
         @Override
         public boolean run(Trigger trigger, BattlePane bp) {
-            // TODO
             for (TuZhiZhuRecord record : records) {
                 record.from.doInteractive(interactive ->
                         interactive.attack(belongTo, AttackType.JIAN_JIE, Info.createJianJieAttack(
-                                (owner, target) -> record.num
-                                , record.from, belongTo
-                        )));
+                                (owner, target) -> record.num, record.from, belongTo)));
             }
             return true;
         }

@@ -8,6 +8,6 @@ import com.mllfjn.simyys.character.status.StatusType;
 class StatusUse3Flag extends Status {
     public StatusUse3Flag(LaoTou laoTou) {
         super(laoTou, laoTou, StatusType.SPECIAL, StatusForm.SPECIAL);
-        setSettleType(StatusDurationType.WEI_CHI, 1);
+        setDurationType(StatusDurationType.WEI_CHI, 1);
     }
 }

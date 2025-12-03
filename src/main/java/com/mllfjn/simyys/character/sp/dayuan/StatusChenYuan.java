@@ -15,7 +15,7 @@ class StatusChi extends Status implements Runnable, Displayable {
     private final boolean isLv2;
     public StatusChi(DaYuan from, Character belongTo, int level) {
         super(from, belongTo, StatusType.BUFF, StatusForm.YIN_JI);
-        setSettleType(StatusDurationType.CHI_XU, 1);
+        setDurationType(StatusDurationType.CHI_XU, 1);
 
         isLv2 = level >= 2;
     }
@@ -60,7 +60,7 @@ class StatusChiNewRound extends Status implements ReduceCost {
     public StatusChiNewRound(DaYuan from, Character belongTo) {
         super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
         // 获得该状态后会结算一个回合,所以要让持续回合+1
-        setSettleType(StatusDurationType.CHI_XU, 2);
+        setDurationType(StatusDurationType.CHI_XU, 2);
     }
 
     @Override
@@ -74,7 +74,7 @@ class StatusQing extends Status implements Runnable, Displayable {
     private final boolean isLv2;
     public StatusQing(DaYuan from, Character belongTo, int level) {
         super(from, belongTo, StatusType.BUFF, StatusForm.YIN_JI);
-        setSettleType(StatusDurationType.CHI_XU, 1);
+        setDurationType(StatusDurationType.CHI_XU, 1);
 
         isLv2 = level >= 2;
     }

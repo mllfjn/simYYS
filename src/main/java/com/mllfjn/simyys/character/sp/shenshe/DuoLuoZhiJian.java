@@ -28,6 +28,7 @@ public class DuoLuoZhiJian extends Character {
         this.setInitEffectResistRate(character.getInitEffectResistRate());
 
         if (xianJi) {
+            character.getStatus(StatusDuoHua.class).ifPresent(StatusDuoHua::disable);
             character.die();
             // TODO 献祭:视同被击败,被献祭的友方无法触发复活效果,无法被复活
         }

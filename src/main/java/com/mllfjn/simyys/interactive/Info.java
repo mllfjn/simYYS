@@ -22,6 +22,8 @@ public class Info {
     private boolean calZengShang = true;
     // 计算减伤
     private boolean calJianShang = true;
+    // 计算御魂
+    private boolean calYuHun = true;
 
     // 基本伤害类型
     public static Info createTypicalAttack(int multiplier) {
@@ -29,7 +31,8 @@ public class Info {
         info.multiplier = multiplier;
         return info;
     }
-    // 真实伤害:无视防御,不会暴击(没写,但是无视增伤和减伤)
+
+    // 真实伤害:无视防御,不会暴击(没写,但是无视增伤,减伤和御魂)
     public static Info createRealAttack(BiFunction<Character, Character, Double> basicNumber) {
         Info info = new Info(basicNumber);
 
@@ -37,14 +40,17 @@ public class Info {
         info.canCrit = false;
         info.calZengShang = false;
         info.calJianShang = false;
+        info.calYuHun = false;
 
         return info;
     }
-    // 间接伤害:TODO 不会触发御魂效果
-    // 无法被分担,对防御为0的敌人必定暴击
+
+    // 间接伤害:不会触发御魂效果,TODO 无法被分担
+    // 对防御为0的敌人必定暴击
     public static Info createJianJieAttack(BiFunction<Character, Character, Double> basicNumber, Character owner, Character target) {
         Info info = new Info(basicNumber);
 
+        info.calYuHun = false;
         if (target.getDefense() - owner.getIgnoreDefense() == 0) {
             info.setCrit(true);
         }
@@ -110,5 +116,9 @@ public class Info {
 
     public boolean canCrit() {
         return canCrit;
+    }
+
+    public boolean isCalYuHun() {
+        return calYuHun;
     }
 }

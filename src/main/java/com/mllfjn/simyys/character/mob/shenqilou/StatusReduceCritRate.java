@@ -12,7 +12,7 @@ class StatusReduceCritRate extends Status implements AttributeModifier, Displaya
         super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
         this.num = num;
 
-        setSettleType(StatusDurationType.CHI_XU, 2);
+        setDurationType(StatusDurationType.CHI_XU, 2);
     }
 
     @Override

@@ -2,6 +2,8 @@ package com.mllfjn.simyys.interactive;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.yuhun.YuHun;
+import com.mllfjn.simyys.character.yuhun.YuHunEffectInfo;
 import com.mllfjn.simyys.customnode.CustomText;
 import com.mllfjn.simyys.customnode.TextFlowLog;
 import com.mllfjn.simyys.ratecontroller.RateController;
@@ -18,6 +20,7 @@ public class Interactive {
     private Character owner;
     private Map<Character, List<CustomText>> currentNumberLog = new LinkedHashMap<>();
     private Set<String> increaseLog = new LinkedHashSet<>();
+    private Map<Character, Set<String>> yuHunEffect = new LinkedHashMap<>();
     private static final TextFlowLog.TextType type = TextFlowLog.TextType.NUMBER;
     private static final TextFlowLog.FontSize size = TextFlowLog.FontSize.SMALL;
 
@@ -44,10 +47,17 @@ public class Interactive {
             bp.log.addText("\n", type, TextFlowLog.TextColor.NORMAL, size);
         });
 
+        yuHunEffect.forEach(((character, strings) ->
+                bp.log.addText("\t" + character.name + "触发御魂：" + String.join("、", strings) + "\n"
+                        , TextFlowLog.TextType.YU_HUN, TextFlowLog.TextColor.NORMAL, TextFlowLog.FontSize.NORMAL)));
+
         increaseLog.forEach(bp.log::addLocationChange);
 
-        currentNumberLog = new LinkedHashMap<>();
-        increaseLog = new LinkedHashSet<>();
+        /*currentNumberLog = new LinkedHashMap<>();
+        increaseLog = new LinkedHashSet<>();*/
+        currentNumberLog.clear();
+        increaseLog.clear();
+        yuHunEffect.clear();
     }
 
     private void addNumberRecord(Character character, CustomText text) {
@@ -115,6 +125,15 @@ public class Interactive {
         // 减伤 实际 = 基础 / (1+减伤) = 基础 * (1.0 / (1+减伤)) https://bbs.nga.cn/read.php?tid=35530141 关于减伤的分类
         if (info.isCalJianShang()) {
             traceableNumber.mul(1.0 / (1 + target.getJianShang() / 100), "减伤");
+        }
+
+        // 御魂 TODO 被攻击的人的御魂
+        if (info.isCalYuHun()) {
+            owner.forEachYuHun(yuHun -> {
+                if (yuHun instanceof YuHunEffectInfo yei) {
+                    yei.effectInfo(info);
+                }
+            });
         }
 
         for (Status status : target.getStatuses()) {
@@ -252,5 +271,9 @@ public class Interactive {
 
         target.setLocation(Math.max(0, location - decrease));
         increaseLog.add(sb.toString());
+    }
+
+    public void addYuHunEffectLog(Character character, String yuHunName) {
+        yuHunEffect.computeIfAbsent(character, k -> new LinkedHashSet<>()).add(yuHunName);
     }
 }

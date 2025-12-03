@@ -91,7 +91,7 @@ public class StatusSheShen extends Status implements IgnoreChangeMaxHp, IgnoreDe
     static class StatusSheShenSpeed extends Status implements AttributeModifier {
         public StatusSheShenSpeed(Character character) {
             super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-            this.setSettleType(StatusDurationType.CHI_XU, 1);
+            this.setDurationType(StatusDurationType.CHI_XU, 1);
         }
 
         @Override

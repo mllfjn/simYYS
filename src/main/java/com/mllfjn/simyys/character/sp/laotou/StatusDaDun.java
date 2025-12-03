@@ -10,7 +10,7 @@ import java.util.List;
 public class StatusDaDun extends StatusSleep {
     public StatusDaDun(LaoTou laoTou) {
         super(laoTou, laoTou);
-        setSettleType(StatusDurationType.WEI_CHI, 1);
+        setDurationType(StatusDurationType.WEI_CHI, 1);
     }
 
     @Override

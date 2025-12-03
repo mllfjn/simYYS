@@ -50,6 +50,7 @@ class Skill2Special extends Skill {
         teammateShiShen.remove(shenShe);
         for (Character character : teammateShiShen) {
             new DuoLuoZhiJian(shenShe, character, bp, true);
+//            character.die();
             StatusAddAttack.addAttack((ShenShe) getBelongTo(), character.getInitAttack() * 0.06);
         }
     }

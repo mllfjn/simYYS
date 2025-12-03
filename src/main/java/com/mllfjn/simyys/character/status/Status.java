@@ -20,7 +20,7 @@ public abstract class Status implements Serializable {
         this.statusForm = statusForm;
     }
 
-    public void setSettleType(StatusDurationType settleType, int duration) {
+    public void setDurationType(StatusDurationType settleType, int duration) {
         if (settleType == StatusDurationType.WEI_CHI) {
             from.removeMaintainedStatus(this);
         }

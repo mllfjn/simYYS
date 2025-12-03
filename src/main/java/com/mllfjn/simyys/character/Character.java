@@ -562,11 +562,24 @@ public abstract class Character implements Serializable{
             sr.enable();
         }
     }
+
     public void addAllYuHun(String[] names) {
         for (String s : names) {
             YuHunFactory.getYuHun(s, this).ifPresent(this::addYuHun);
         }
     }
+
+    public void forEachYuHun(Consumer<YuHun> action) {
+        if (isYuHunSeal()) {
+            return;
+        }
+        yuHunList.forEach(action);
+    }
+
+    private boolean isYuHunSeal() {
+        return false;
+    }
+
     public <T extends YuHun> void removeYuHun(Class<T> tClass) {
         Set<YuHun> yuHunSet = getYuHunSet();
         for (YuHun yuHun : yuHunSet) {

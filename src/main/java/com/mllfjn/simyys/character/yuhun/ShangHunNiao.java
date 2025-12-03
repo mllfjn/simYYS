@@ -3,6 +3,7 @@ package com.mllfjn.simyys.character.yuhun;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
+import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.trigger.battleevent.BattleActionListener;
 import com.mllfjn.simyys.trigger.battleevent.EventCharacterDie;
 
@@ -15,9 +16,12 @@ public class ShangHunNiao extends YuHun implements YuHunSealResponse {
             // 任意非怪物目标死亡时,治疗生命上限20%的生命
             if (event instanceof EventCharacterDie ed && !ed.getCharacter().isMob()) {
                 Character belongTo = getBelongTo();
-                belongTo.getInteractive().heal(YuHunName, belongTo, 20);
+                Interactive interactive = belongTo.getInteractive();
+                interactive.heal(YuHunName, belongTo, 20);
                 // 并提升20%伤害
                 StatusShangHunNiao.addStack(belongTo);
+
+                yuHunEffect();
             }
             return false;
         };

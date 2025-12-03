@@ -7,7 +7,7 @@ import com.mllfjn.simyys.character.status.StatusShield;
 public class StatusDaYuanShield extends StatusShield {
     private StatusDaYuanShield(Character from, Character belongTo) {
         super(from, belongTo, from.getMaxHp() * 0.08);
-        setSettleType(StatusDurationType.CHI_XU, 2);
+        setDurationType(StatusDurationType.CHI_XU, 2);
     }
 
     private void refresh() {

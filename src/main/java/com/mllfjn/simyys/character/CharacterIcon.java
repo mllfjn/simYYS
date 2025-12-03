@@ -38,7 +38,9 @@ public class CharacterIcon extends VBox {
     private final ProgressBar shieldBar = new ProgressBar();
     // 技能选择栏
     private final ComboBox<Skill> skillBox;
-    // 状态显示 TODO UI决定是否显示
+    // 状态显示
+    // TODO UI决定是否显示
+    // TODO 发生改变时标出来
     private final Label[] info = new Label[8];
     // 红绿标的那个标
     private final Node autoTo;

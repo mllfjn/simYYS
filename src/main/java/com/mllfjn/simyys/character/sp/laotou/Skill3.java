@@ -47,7 +47,7 @@ class Skill3 extends Skill {
             // 若目标未处于控制效果,则使其获得新的回合并在该回合结束后移除御魂转移效果
             if (target.controllable()) {
                 interactive.getNewRound(target);
-                statusYHT.setSettleType(StatusDurationType.CHI_XU, 1);
+                statusYHT.setDurationType(StatusDurationType.CHI_XU, 1);
             } else {
                 // 对处于御魂转移效果的目标再次释放时,驱散或解除其所有控制效果
                 target.removeAllCrowControl();
@@ -72,9 +72,10 @@ class Skill3 extends Skill {
 
     private Optional<Class<? extends YuHun>> getFirstFullYuHun() {
         for (YuHun yuHun : getBelongTo().getYuHunSet()) {
-            if (!(yuHun instanceof YuHunUnfullMark)) {
-                return Optional.of(yuHun.getClass());
+            if (yuHun instanceof YuHunUnfullMark) {
+                continue;
             }
+            return Optional.of(yuHun.getClass());
         }
         return Optional.empty();
     }
