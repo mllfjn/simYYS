@@ -1,6 +1,9 @@
 package com.mllfjn.simyys.character.skill;
 
 import com.mllfjn.simyys.BattlePane;
+import com.mllfjn.simyys.character.Character;
+
+import java.util.Optional;
 
 public class SkillAuto extends Skill{
     public static final SkillAuto INSTANCE = new SkillAuto();
@@ -14,5 +17,7 @@ public class SkillAuto extends Skill{
     }
 
     @Override
-    public void usePrivate(BattlePane bp) {}
+    public Optional<Character> usePrivate(BattlePane bp) {
+        return Optional.empty();
+    }
 }

@@ -27,17 +27,6 @@ public class QianJi extends CharacterShiShenBase {
     public void init(PropertiesHolder propertiesHolder, BattlePane bp) {
         super.init(propertiesHolder, bp);
 
-        // 非召唤物的敌方回合结束后,千姬增加10%的行动条
-        bp.addActionListener(this, event -> {
-            if (event instanceof EventRoundDone erd
-                    && !erd.getCharacter().isSummon() // 非召唤物
-                    && erd.getCharacter().team != team // 敌方
-            ) {
-                QianJi.this.doInteractive(interactive -> interactive.increaseLocation(QianJi.this, 10));
-            }
-            return false;
-        });
-
         // 千姬免控,插锤子时自动移除,锤子拔掉自动获取
         addStatus(new StatusQianJiIgnoreDebuff(this));
     }

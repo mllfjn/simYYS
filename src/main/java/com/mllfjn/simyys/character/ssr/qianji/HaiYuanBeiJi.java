@@ -51,7 +51,7 @@ public class HaiYuanBeiJi extends Character {
                             , attackInfo.getTraceableNumber().getNumber() * 0.3));
                 }
             } else if (event instanceof EventUseGuiHuo eg && eg.getTeam() == team) {
-                chaoSheng.addStack(eg.getNum(), this.bp);
+                chaoSheng.addStack(eg.getNum());
             }
             return false;
         });
@@ -75,7 +75,7 @@ public class HaiYuanBeiJi extends Character {
     }
 
     public void addChaoSheng(int count) {
-        chaoSheng.addStack(count, bp);
+        chaoSheng.addStack(count);
     }
 
     @Override
@@ -97,11 +97,13 @@ class StatusChaoSheng extends Status implements Displayable, IgnoreDebuff {
         }
     }
 
-    public void addStack(int count, BattlePane bp) {
+    public void addStack(int count) {
         stack += count;
         while (stack >= 7) {
             stack -= 7;
-            List<Character> teammate = CharacterFinder.findTeammate(belongTo, bp.situation.characters);
+            List<Character> teammate = new CharacterFinder(belongTo)
+                    .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                    .getList();
             for (Character character : teammate) {
                 StatusQianJiZengShang.addStack(character);
             }

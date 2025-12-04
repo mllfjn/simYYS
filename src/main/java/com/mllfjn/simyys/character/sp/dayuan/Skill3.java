@@ -11,6 +11,7 @@ import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.ratecontroller.RateController;
 
 import java.util.List;
+import java.util.Optional;
 
 class Skill3 extends Skill {
     public static final String SkillName = "与世结缘";
@@ -25,7 +26,7 @@ class Skill3 extends Skill {
     }
 
     @Override
-    public void usePrivate(BattlePane bp) {
+    public Optional<Character> usePrivate(BattlePane bp) {
         DaYuan daYuan = (DaYuan) getBelongTo();
         int level = getLevel();
 
@@ -35,9 +36,10 @@ class Skill3 extends Skill {
                 // 然后是结缘的式神
                 .or(() -> daYuan.getStatus(StatusCombined.class).map(status -> status.from))
                 // 最后是攻击最高的
-                .orElseGet(() -> CharacterFinder.find(bp.situation.characters, daYuan.team, CharacterFinder.Property.ATTACK, CharacterFinder.Criteria.MAX));
+                .orElseGet(() -> new CharacterFinder(daYuan)
+                        .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
+                        .get(CharacterFinder.Property.ATTACK, CharacterFinder.Criteria.MAX));
 
-        lastUsedTarget = target;
         Interactive interactive = daYuan.getInteractive();
 
         // 获得1层神力
@@ -84,10 +86,14 @@ class Skill3 extends Skill {
 
         // 自身神力3层及以上时,额外治疗所选目标以外的友方生命上限8%的生命
         if (shenLiStack >= 3) {
-            List<Character> targets = CharacterFinder.findTeammate(daYuan, bp.situation.characters);
+            List<Character> targets = new CharacterFinder(daYuan)
+                    .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                    .getList();
             targets.remove(target);
             heal(interactive, targets);
         }
+
+        return Optional.of(target);
     }
 
 

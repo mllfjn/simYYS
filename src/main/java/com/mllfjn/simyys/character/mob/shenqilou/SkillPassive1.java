@@ -11,6 +11,8 @@ import com.mllfjn.simyys.character.status.StatusType;
 import com.mllfjn.simyys.character.status.Trigger;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
+import java.util.Optional;
+
 class SkillPassive1 extends Skill implements PassiveSkill {
     public static final String SkillName = "蜃雾笼罩";
 
@@ -37,8 +39,8 @@ class SkillPassive1 extends Skill implements PassiveSkill {
     }
 
     @Override
-    public void usePrivate(BattlePane bp) {
-
+    public Optional<Character> usePrivate(BattlePane bp) {
+        return Optional.empty();
     }
 
     static class StatusAfterRound extends Status implements Runnable {

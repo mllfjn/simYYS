@@ -4,6 +4,8 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.CharacterShiShenBase;
 
+import java.util.List;
+
 public class ShenShe extends CharacterShiShenBase {
     public static final String CharacterName = "神堕八岐大蛇";
 
@@ -29,7 +31,11 @@ public class ShenShe extends CharacterShiShenBase {
     @Override
     public void dieHandle() {
         // 阵亡时将封存的攻击全部归还
-        for (Character teammate : CharacterFinder.findTeammateShiShen(this, bp.situation.characters)) {
+        List<Character> list = new CharacterFinder(this)
+                .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                .filterShiShen()
+                .getList();
+        for (Character teammate : list) {
             teammate.removeStatus(StatusStoreAttack.class);
         }
     }

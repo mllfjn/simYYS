@@ -7,6 +7,8 @@ import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
 
+import java.util.Optional;
+
 class Skill3 extends Skill {
     public static final String SkillName = "绀连击";
 
@@ -20,13 +22,14 @@ class Skill3 extends Skill {
     }
 
     @Override
-    public void usePrivate(BattlePane bp) {
+    public Optional<Character> usePrivate(BattlePane bp) {
         // 进行四连击,对群体目标造成100%的伤害。
         Interactive interactive = getBelongTo().getInteractive();
         for (int i = 0; i < 4; i++) {
             interactive.attack(SkillName
-                    , CharacterFinder.findEnemy(getBelongTo(), bp.situation.characters)
+                    , new CharacterFinder(getBelongTo()).setTargetTeam(CharacterFinder.TargetTeam.ENEMY).getList()
                     , 100, AttackType.QUN_TI);
         }
+        return Optional.empty();
     }
 }

@@ -6,6 +6,7 @@ import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 
 import java.util.List;
+import java.util.Optional;
 
 class Skill2Special extends Skill {
     public static final String SkillName = "蛇神之噬";
@@ -25,17 +26,17 @@ class Skill2Special extends Skill {
     }
 
     @Override
-    public void usePrivate(BattlePane bp) {
+    public Optional<Character> usePrivate(BattlePane bp) {
         ShenShe shenShe = (ShenShe) getBelongTo();
         // 展开终焉审判幻境,幻境中,神堕八岐大蛇免疫减益和 TODO 放逐
         shenShe.addStatus(new StatusZhongYan(shenShe));
         // 夺取阴阳师位进行接下来的战斗
-        List<Character> teammate = CharacterFinder.findTeammate(shenShe, bp.situation.characters);
-        for (Character character : teammate) {
-            if (character.isYYS()) {
-                character.die();
-                break;
-            }
+        Character yys = new CharacterFinder(shenShe)
+                .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                .filterYYS(true)
+                .getFirst();
+        if (yys != null) {
+            yys.die();
         }
         // 获得新回合
         shenShe.doInteractive(interactive -> interactive.getNewRound(shenShe));
@@ -46,12 +47,16 @@ class Skill2Special extends Skill {
         new DuoLuoZhiJian(shenShe, shenShe, bp, false);
         // 将剩余非召唤物的友方目标献祭为堕落之剑,并夺取其6%的初始攻击
         // 既然献祭之后立马就死而且不能复活,那就没必要减了直接加上就行
-        List<Character> teammateShiShen = CharacterFinder.findTeammateShiShen(shenShe, bp.situation.characters);
-        teammateShiShen.remove(shenShe);
+        List<Character> teammateShiShen = new CharacterFinder(shenShe)
+                .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                .filterShiShen()
+                .filterSelf()
+                .getList();
         for (Character character : teammateShiShen) {
             new DuoLuoZhiJian(shenShe, character, bp, true);
 //            character.die();
             StatusAddAttack.addAttack((ShenShe) getBelongTo(), character.getInitAttack() * 0.06);
         }
+        return Optional.empty();
     }
 }

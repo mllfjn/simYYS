@@ -6,9 +6,9 @@ import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
-import com.mllfjn.simyys.ratecontroller.RateController;
 
 import java.util.List;
+import java.util.Optional;
 
 class Skill3Special extends Skill {
     public static final String SkillName = "终焉裁决";
@@ -23,18 +23,23 @@ class Skill3Special extends Skill {
     }
 
     @Override
-    public void usePrivate(BattlePane bp) {
+    public Optional<Character> usePrivate(BattlePane bp) {
         Interactive interactive = getBelongTo().getInteractive();
         // 对全体敌方造成攻击313%伤害
-        interactive.attack(SkillName, CharacterFinder.findEnemy(getBelongTo(), bp.situation.characters), 313, AttackType.QUN_TI);
+        List<Character> targets = new CharacterFinder(getBelongTo())
+                .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
+                .getList();
+        interactive.attack(SkillName, targets, 313, AttackType.QUN_TI);
         // 之后追击4次,每次对随机敌方目标造成攻击128%伤害
         for (int i = 0; i < 4; i++) {
-            List<Character> enemy = CharacterFinder.findEnemy(getBelongTo(), bp.situation.characters);
-            if (enemy.isEmpty()) {
-                return;
+            Character target = new CharacterFinder(getBelongTo())
+                    .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
+                    .getRandom();
+            if (target == null) {
+                break;
             }
-            interactive.attack(SkillName, RateController.choose(SkillName, enemy, character -> character.name, bp.calc), 128, AttackType.DAN_TI);
+            interactive.attack(SkillName, target, 128, AttackType.DAN_TI);
         }
-
+        return Optional.empty();
     }
 }

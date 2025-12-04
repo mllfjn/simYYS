@@ -28,7 +28,7 @@ class Skill3 extends Skill {
     }
 
     @Override
-    public void usePrivate(BattlePane bp) {
+    public Optional<Character> usePrivate(BattlePane bp) {
         LaoTou belongTo = (LaoTou) getBelongTo();
         Interactive interactive = belongTo.getInteractive();
         int level = getLevel();
@@ -36,11 +36,11 @@ class Skill3 extends Skill {
         // 二技能需要确认是否释放过三
         belongTo.addStatus(new StatusUse3Flag(belongTo));
         // 恢复非召唤物友方目标生命上限(系数)的生命
-        List<Character> teammate = CharacterFinder.findTeammateExceptSummon(belongTo, bp.situation.characters);
-        teammate.remove(belongTo);
-        Character target = CharacterFinder.findPriorAuto(teammate, bp
-                , belongTo.team, CharacterFinder.Property.ATTACK, CharacterFinder.Criteria.MAX);
-        lastUsedTarget = target;
+        Character target = new CharacterFinder(belongTo)
+                .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                .filterSummon(false)
+                .filterSelf()
+                .getPriorAuto(CharacterFinder.Property.ATTACK, CharacterFinder.Criteria.MAX);
         interactive.recovery(target, belongTo.getMaxHp() * multiplier[level] / 100);
 
         target.getStatus(StatusYuHunTransfer.class).ifPresentOrElse(statusYHT -> {
@@ -64,6 +64,7 @@ class Skill3 extends Skill {
                 }
             });
         });
+        return Optional.of(target);
     }
 
     private void doTransfer(Character target, Class<? extends YuHun> yuHun) {

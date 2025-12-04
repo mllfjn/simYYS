@@ -17,7 +17,9 @@ public class StatusDaDun extends StatusSleep {
     public void beforeDelete() {
         belongTo.doInteractive(interactive -> {
             // 沉睡维持期间被移除时，恢复全体非召唤物友方目标生命上限14%的生命
-            List<Character> teammate = CharacterFinder.findTeammateExceptSummon(belongTo, belongTo.bp.situation.characters);
+            List<Character> teammate = new CharacterFinder(belongTo)
+                    .filterSummon(false)
+                    .getList();
             for (Character character : teammate) {
                 interactive.recovery(character, belongTo.getMaxHp() * 0.14);
             }

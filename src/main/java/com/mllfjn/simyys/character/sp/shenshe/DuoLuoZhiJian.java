@@ -5,6 +5,8 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.interactive.Interactive;
 
+import java.util.Optional;
+
 public class DuoLuoZhiJian extends Character {
     public static final String CharacterName = "堕落之剑";
     private final ShenShe shenShe;
@@ -73,7 +75,7 @@ public class DuoLuoZhiJian extends Character {
         }
 
         @Override
-        public void usePrivate(BattlePane bp) {
+        public Optional<Character> usePrivate(BattlePane bp) {
             DuoLuoZhiJian belongTo = ((DuoLuoZhiJian) getBelongTo());
             Interactive interactive = belongTo.getInteractive();
             // 行动时恢复20%生命
@@ -82,6 +84,7 @@ public class DuoLuoZhiJian extends Character {
             bp.gainGuiHuo(belongTo, 1);
             // 并为神堕八岐大蛇提升15%行动条
             interactive.increaseLocation(belongTo.shenShe, 15);
+            return Optional.empty();
         }
     }
 }

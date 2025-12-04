@@ -9,6 +9,7 @@ import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.ratecontroller.RateController;
 
 import java.util.List;
+import java.util.Optional;
 
 class Skill3 extends Skill {
     public static final String SkillName = "审判仪式";
@@ -29,30 +30,24 @@ class Skill3 extends Skill {
     }
 
     @Override
-    public void usePrivate(BattlePane bp) {
+    public Optional<Character> usePrivate(BattlePane bp) {
         ShenShe shenShe = (ShenShe) getBelongTo();
         Interactive interactive = shenShe.getInteractive();
-        StatusSheShen sheShen= shenShe.getStatus(StatusSheShen.class).orElseThrow();
+        StatusSheShen sheShen = shenShe.getStatus(StatusSheShen.class).orElseThrow();
 
         // 破除一把天羽羽斩的镇压
         shenShe.poChuZhenYa();
 
         // 指定1位除自身外友方式神附加堕化
-        List<Character> teammateShiShen = CharacterFinder.findTeammateShiShen(shenShe, bp.situation.characters);
-        // 去除已经有堕化的和自己
-        teammateShiShen.removeIf(teammate -> teammate.isHaveStatus(StatusDuoHua.class) || teammate == shenShe);
-        if (!teammateShiShen.isEmpty()) {
-            Character target;
-            if (teammateShiShen.size() == 1) {
-                // 如果只有一个目标了,直接给
-                target = teammateShiShen.get(0);
-            } else {
-                // 如果绿标可以放,给绿标,否则随机
-                target = bp.situation.getAutoTo(shenShe.team)
-                        .filter(teammateShiShen::contains)
-                        .orElseGet(() -> RateController.choose(SkillName, teammateShiShen, teammate -> teammate.name, bp.calc));
-            }
-            lastUsedTarget = target;
+        Character target = new CharacterFinder(shenShe)
+                .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                .filterShiShen()
+                .filterSelf()
+                // 去除已经有堕化的
+                .filter(character -> !character.isHaveStatus(StatusDuoHua.class))
+                .getAutoOrElseRandom();
+
+        if (target != null) {
             target.addStatus(new StatusDuoHua(shenShe, target));
         }
 
@@ -80,7 +75,10 @@ class Skill3 extends Skill {
             multiplier += 25 * times;
         }
         // 对敌方全体造成攻击188%伤害
-        interactive.attack(SkillName, CharacterFinder.findEnemy(shenShe, bp.situation.characters), multiplier, AttackType.QUN_TI);
+        List<Character> targets = new CharacterFinder(shenShe)
+                .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
+                .getList();
+        interactive.attack(SkillName, targets, multiplier, AttackType.QUN_TI);
 
 
         // 回到本体
@@ -89,5 +87,6 @@ class Skill3 extends Skill {
         if (getLevel() >= 2) {
             interactive.recovery(shenShe, shenShe.getMaxHp() * 0.12 * times);
         }
+        return Optional.ofNullable(target);
     }
 }

@@ -10,6 +10,7 @@ import com.mllfjn.simyys.interactive.Interactive;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 class Skill3 extends Skill {
     public static final String SkillName = "灭世之舞";
@@ -24,13 +25,16 @@ class Skill3 extends Skill {
     }
 
     @Override
-    public void usePrivate(BattlePane bp) {
+    public Optional<Character> usePrivate(BattlePane bp) {
         Interactive interactive = getBelongTo().getInteractive();
         // 目标首先为红标,其次是生命最高单位
-        List<Character> enemy = CharacterFinder.findEnemy(getBelongTo(), bp.situation.characters);
-        Character target = CharacterFinder.findPriorAuto(bp, CharacterFinder.getEnemyTeam(getBelongTo())
-                , CharacterFinder.Property.HP, CharacterFinder.Criteria.MAX);
-        lastUsedTarget = target;
+        Character target = new CharacterFinder(getBelongTo())
+                .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
+                .getPriorAuto(CharacterFinder.Property.HP, CharacterFinder.Criteria.MAX);
+
+        List<Character> enemy = new CharacterFinder(getBelongTo())
+                .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
+                .getList();
         // 没有测试是先上凋零还是先造成伤害,这里猜测是先凋零
 
         // 这种对不同单位的概率不同的情况好像不太常见,就不写通用逻辑了
@@ -58,8 +62,9 @@ class Skill3 extends Skill {
         interactive.attack(SkillName, enemy, 120, AttackType.QUN_TI);
         // 攻击指定敌方目标造成攻击120%伤害
         interactive.attack(SkillName, target, 120, AttackType.DAN_TI);
-        // 并额外使其获得恍惚
+        // TODO 并额外使其获得恍惚
 
+        return Optional.of(target);
     }
 
     private void addDiaoLing(NaMei naMei, Interactive interactive, List<Character> list, boolean isMob) {

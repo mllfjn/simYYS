@@ -6,6 +6,7 @@ import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 
 import java.util.List;
+import java.util.Optional;
 
 abstract class SkillJieYuan extends Skill {
     public SkillJieYuan(Character belongTo, int skillID) {
@@ -18,15 +19,15 @@ abstract class SkillJieYuan extends Skill {
     }
 
     public Character getTarget(BattlePane bp) {
-        List<Character> list = CharacterFinder.findTeammate(getBelongTo(), bp.situation.characters);
-        list.remove(getBelongTo());
-        return CharacterFinder.findPriorAuto(list, bp, getBelongTo().team, CharacterFinder.Property.ATTACK, CharacterFinder.Criteria.MAX);
+        return new CharacterFinder(getBelongTo())
+                .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                .filterSelf()
+                .getPriorAuto(CharacterFinder.Property.ATTACK, CharacterFinder.Criteria.MAX);
     }
 
     @Override
-    public void usePrivate(BattlePane bp) {
+    public Optional<Character> usePrivate(BattlePane bp) {
         Character target = getTarget(bp);
-        lastUsedTarget = target;
         // 为自身以外的指定友方目标缔结胜天之缘·赤(Skill5)或胜天之缘·青(Skill6)
         jieYuan(target);
         // 并提升自身2层神力
@@ -36,6 +37,7 @@ abstract class SkillJieYuan extends Skill {
         getBelongTo().removeSkill(6);
         // 释放后可以获得解除结缘的技能二
         getBelongTo().addSkill(new Skill2(getBelongTo()));
+        return Optional.of(target);
     }
 
     abstract void jieYuan(Character target);

@@ -13,6 +13,7 @@ import com.mllfjn.simyys.character.status.Trigger;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
 import java.util.List;
+import java.util.Optional;
 
 class Skill2 extends Skill implements PassiveSkill {
     public static final String SkillName = "洪福降临";
@@ -34,8 +35,8 @@ class Skill2 extends Skill implements PassiveSkill {
     }
 
     @Override
-    public void usePrivate(BattlePane bp) {
-
+    public Optional<Character> usePrivate(BattlePane bp) {
+        return Optional.empty();
     }
 
     @Override
@@ -66,7 +67,9 @@ class Skill2 extends Skill implements PassiveSkill {
             // 自身回合结束时，击退全体敌方目标10%行动条
             // lv2-击退行动条效果提升至15%
             belongTo.doInteractive(interactive -> {
-                List<Character> enemy = CharacterFinder.findEnemy(belongTo, belongTo.bp.situation.characters);
+                List<Character> enemy = new CharacterFinder(belongTo)
+                        .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
+                        .getList();
                 for (Character character : enemy) {
                     interactive.decreaseLocation(character, level >= 2 ? 15 : 10);
                 }

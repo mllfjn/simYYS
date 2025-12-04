@@ -8,6 +8,8 @@ import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.battleevent.EventBattleStart;
 
+import java.util.Optional;
+
 class SkillJF extends Skill {
     public static final String SkillName = "通灵·疾风";
     public static final int[] multiplier = new int[]{0, 10, 15, 20, 25, 30};
@@ -37,12 +39,11 @@ class SkillJF extends Skill {
     }
 
     @Override
-    public void usePrivate(BattlePane bp) {
+    public Optional<Character> usePrivate(BattlePane bp) {
         Character belongTo = getBelongTo();
-        Character target = CharacterFinder.findPriorAuto(bp, belongTo.team
-                , CharacterFinder.Property.ATTACK, CharacterFinder.Criteria.MAX);
-
-        lastUsedTarget = target;
+        Character target = new CharacterFinder(belongTo)
+                .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                .getPriorAuto(CharacterFinder.Property.ATTACK, CharacterFinder.Criteria.MAX);
 
         // 增加其(系数)攻击
         int multi = multiplier[getLevel()];
@@ -60,6 +61,8 @@ class SkillJF extends Skill {
             belongTo.setLocation(target.getLocation());
             target.setLocation(100);
         }
+
+        return Optional.of(target);
     }
 
     public static class StatusJF extends Status implements AttributeModifier {

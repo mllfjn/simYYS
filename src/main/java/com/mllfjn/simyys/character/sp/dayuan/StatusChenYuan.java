@@ -88,8 +88,10 @@ class StatusQing extends Status implements Runnable, Displayable {
     @Override
     public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
         // 回合开始时驱散自身以外的全体友方1个减益状态与控制效果
-        List<Character> teammate = CharacterFinder.findTeammate(belongTo, bp.situation.characters);
-        teammate.remove(belongTo);
+        List<Character> teammate = new CharacterFinder(belongTo)
+                .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                .filterSelf()
+                .getList();
         for (Character character : teammate) {
             character.dispelDeBuff(1);
         }

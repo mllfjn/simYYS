@@ -15,9 +15,12 @@ import com.mllfjn.simyys.battleevent.EventBattleStart;
 import com.mllfjn.simyys.battleevent.EventHpChange;
 import com.mllfjn.simyys.character.status.Trigger;
 
+import java.util.List;
+
 public class QiLingFactory {
     public static final String ZhenMuShou = "镇墓兽";
     public static final String HuoLing = "火灵";
+
     public static void addQiLing(PropertiesMap map, Character character) {
         String s = map.get(PropertyKey.QI_LING_KEY).getString();
         if (s == null || s.isEmpty()) {
@@ -28,7 +31,10 @@ public class QiLingFactory {
                 if (event instanceof EventHpChange hc
                         && hc.getCharacter() == character
                         && character.getHp() < character.getMaxHp() * 0.7) {
-                    for (Character target : CharacterFinder.findTeammate(character, character.bp.situation.characters)) {
+                    List<Character> list = new CharacterFinder(character)
+                            .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                            .getList();
+                    for (Character target : list) {
                         target.addStatus(new StatusQiCritPower(character, target));
                     }
                     return true;
@@ -82,10 +88,11 @@ class StatusQiHuoLing extends Status implements Runnable {
     @Override
     public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
         Interactive interactive = belongTo.getInteractive();
+        List<Character> targets = new CharacterFinder(belongTo)
+                .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
+                .getList();
         for (int i = 0; i < 3; i++) {
-            interactive.attack("火灵之力"
-                    , CharacterFinder.findEnemy(belongTo, bp.situation.characters)
-                    , 100, AttackType.QUN_TI);
+            interactive.attack("火灵之力", targets, 100, AttackType.QUN_TI);
         }
         return false;
     }

@@ -7,6 +7,7 @@ import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.battleevent.EventBattleStart;
 
 import java.util.List;
+import java.util.Optional;
 
 class Skill2 extends Skill {
     public static final String SkillName = "神堕之力";
@@ -39,7 +40,7 @@ class Skill2 extends Skill {
     }
 
     @Override
-    public void usePrivate(BattlePane bp) {
+    public Optional<Character> usePrivate(BattlePane bp) {
 
         // 若连续释放，每次消耗鬼火递增1点
         // 用技能将其设置为2，回合结束后自动-1变为1，当为0时说明上一回合没有使用
@@ -50,8 +51,11 @@ class Skill2 extends Skill {
         continuousUse = 2;
 
 
-        List<Character> teammates = CharacterFinder.findTeammateShiShen(getBelongTo(), bp.situation.characters);
-        teammates.remove(getBelongTo());
+        List<Character> teammates = new CharacterFinder(getBelongTo())
+                .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                .filterShiShen()
+                .filterSelf()
+                .getList();
 
         // 释放化身蛇神姿态,将除自身外所有友方式神初始攻击的6%封存于1把天羽羽斩中
         double attack = 0;
@@ -60,6 +64,7 @@ class Skill2 extends Skill {
             attack += teammate.getInitAttack() * 0.06;
         }
         getBelongTo().addStatus(new StatusSheShen(getBelongTo(), getLevel(), attack));
+        return Optional.empty();
     }
 
     @Override

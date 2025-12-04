@@ -412,7 +412,7 @@ public class BattlePane {
     }
 
     public boolean isMobBattle(Character character) {
-        return situation.teamPane[CharacterFinder.getEnemyTeam(character)].isMobTeam();
+        return situation.teamPane[1 - character.team].isMobTeam();
     }
 
     private enum ActionBarType {

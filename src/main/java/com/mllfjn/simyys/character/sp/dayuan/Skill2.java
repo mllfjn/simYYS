@@ -29,9 +29,8 @@ class Skill2 extends Skill {
     }
 
     @Override
-    public void usePrivate(BattlePane bp) {
-        Optional<StatusCombined> os = getBelongTo().getStatus(StatusCombined.class);
-        os.ifPresent(status -> {
+    public Optional<Character> usePrivate(BattlePane bp) {
+        getBelongTo().getStatus(StatusCombined.class).ifPresent(status -> {
             // 再次释放时，解除目标 胜天之缘
             status.from.removeStatus(StatusSTChi.class);
             status.from.removeStatus(StatusSTQing.class);
@@ -39,6 +38,7 @@ class Skill2 extends Skill {
             status.from.dispelAllDebuff();
             status.delete();
         });
+        return Optional.empty();
     }
 
     @Override

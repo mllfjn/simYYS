@@ -6,6 +6,7 @@ import com.mllfjn.simyys.character.status.ReduceCost;
 import com.mllfjn.simyys.character.status.Status;
 
 import java.io.Serializable;
+import java.util.Optional;
 
 public abstract class Skill implements Serializable {
     public static final String[] SKILL_LABEL = new String[]{"普攻", "贰", "叁", "肆", "伍", "陆", "柒", "捌", "玖", "拾"};
@@ -19,7 +20,6 @@ public abstract class Skill implements Serializable {
     private int cost;
     // 技能当前的冷却回合数，因为回合结束后判定一次技能冷却，所以设定时要+1
     private int cooling;
-    public Character lastUsedTarget;
 
     public Skill(Character belongTo, int level, int cost, int coolDown, int skillID) {
         this.belongTo = belongTo;
@@ -61,16 +61,13 @@ public abstract class Skill implements Serializable {
             bp.useGuiHuo(getBelongTo(), getRealCost());
         }
 
-        lastUsedTarget = null;
-        usePrivate(bp);
+        Optional<Character> target = usePrivate(bp);
 
         if (coolDown != 0) {
             cooling = coolDown + 1;
         }
         StringBuilder sb = new StringBuilder(belongTo.name);
-        if (lastUsedTarget != null) {
-            sb.append("对").append(lastUsedTarget.name);
-        }
+        target.ifPresent(character -> sb.append("对").append(character.name));
         sb.append("使用了").append(getName());
         bp.log.addSkill(sb.toString());
     }
@@ -88,7 +85,7 @@ public abstract class Skill implements Serializable {
         return realCost;
     }
 
-    public abstract void usePrivate(BattlePane bp);
+    public abstract Optional<Character> usePrivate(BattlePane bp);
 
     public boolean canUse(BattlePane bp) {
         return cooling == 0 && bp.canUseGuiHuo(belongTo, getRealCost());

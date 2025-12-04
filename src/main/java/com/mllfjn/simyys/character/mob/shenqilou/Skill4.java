@@ -9,6 +9,7 @@ import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
 
 import java.util.List;
+import java.util.Optional;
 
 class Skill4 extends Skill {
     public static final String SkillName = "强力——钳鳌重击";
@@ -23,14 +24,17 @@ class Skill4 extends Skill {
     }
 
     @Override
-    public void usePrivate(BattlePane bp) {
+    public Optional<Character> usePrivate(BattlePane bp) {
         Interactive interactive = getBelongTo().getInteractive();
-        List<Character> targets = CharacterFinder.findEnemy(getBelongTo(), bp.situation.characters);
+        List<Character> targets = new CharacterFinder(getBelongTo())
+                .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
+                .getList();
         // 对群体造成攻击400%的伤害
         interactive.attack(SkillName, targets, 400, AttackType.QUN_TI);
         // 有50%概率眩晕目标1回合
         interactive.effect(StatusStun.StatusName, targets, 50, false
                 , (from, to) -> new StatusStun(from, to, 1));
+        return Optional.empty();
     }
 
     @Override

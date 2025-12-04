@@ -4,7 +4,9 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
-import com.mllfjn.simyys.ratecontroller.RateController;
+import com.mllfjn.simyys.interactive.AttackType;
+
+import java.util.Optional;
 
 class Skill1 extends Skill {
     public static final String SkillName = "天剑";
@@ -20,10 +22,13 @@ class Skill1 extends Skill {
     }
 
     @Override
-    public void usePrivate(BattlePane bp) {
+    public Optional<Character> usePrivate(BattlePane bp) {
         // 对敌方目标造成攻击(系数)伤害
         Character belongTo = getBelongTo();
-        belongTo.getInteractive().attack(SkillName, RateController.choose())
-        CharacterFinder.findEnemy(belongTo, bp.situation.characters);
+        Character target = new CharacterFinder(belongTo)
+                .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
+                .getRandom();
+        belongTo.getInteractive().attack(SkillName, target, multiplier[getLevel()], AttackType.DAN_TI);
+        return Optional.of(target);
     }
 }

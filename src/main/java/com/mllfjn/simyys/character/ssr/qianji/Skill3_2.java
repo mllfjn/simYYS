@@ -11,6 +11,9 @@ import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.character.status.Trigger;
 
+import java.util.List;
+import java.util.Optional;
+
 class Skill3_2 extends Skill {
     public static final String SkillName = "永生之汐";
 
@@ -24,16 +27,18 @@ class Skill3_2 extends Skill {
     }
 
     @Override
-    public void usePrivate(BattlePane bp) {
+    public Optional<Character> usePrivate(BattlePane bp) {
         Interactive interactive = getBelongTo().getInteractive();
         // 对敌方全体造成攻击(120 + 悲歌层数*100)%的伤害
-        interactive.attack(SkillName, CharacterFinder.findEnemy(getBelongTo(), bp.situation.characters)
+        List<Character> targets = new CharacterFinder(getBelongTo()).setTargetTeam(CharacterFinder.TargetTeam.ENEMY).getList();
+        interactive.attack(SkillName, targets
                 , 120 + getBelongTo().getStatus(StatusBeiGe.class).orElseThrow().getStack() * 100
                 , AttackType.QUN_TI);
         // 释放后移除悲歌,并将技能替换为海潮入梦(3-1)
         QianJi qianJi = (QianJi) getBelongTo();
         removeBeiGeAndChangeSkill(qianJi);
         qianJi.getHaiYuanBeiJi().die();
+        return Optional.empty();
     }
 
     public static void removeBeiGeAndChangeSkill(QianJi qianJi) {
