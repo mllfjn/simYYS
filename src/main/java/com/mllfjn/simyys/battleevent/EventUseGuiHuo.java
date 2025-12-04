@@ -1,6 +1,6 @@
-package com.mllfjn.simyys.trigger.battleevent;
+package com.mllfjn.simyys.battleevent;
 
-public class EventUseGuiHuo extends TriggerEvent {
+public class EventUseGuiHuo extends BattleEvent {
     private final int team;
     private final int num;
     public EventUseGuiHuo(int team, int num) {

@@ -2,7 +2,13 @@ package com.mllfjn.simyys.character.mob.shenqilou;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
+import com.mllfjn.simyys.character.status.instance.StatusStun;
+import com.mllfjn.simyys.interactive.AttackType;
+import com.mllfjn.simyys.interactive.Interactive;
+
+import java.util.List;
 
 class Skill4 extends Skill {
     public static final String SkillName = "强力——钳鳌重击";
@@ -18,15 +24,19 @@ class Skill4 extends Skill {
 
     @Override
     public void usePrivate(BattlePane bp) {
+        Interactive interactive = getBelongTo().getInteractive();
+        List<Character> targets = CharacterFinder.findEnemy(getBelongTo(), bp.situation.characters);
         // 对群体造成攻击400%的伤害
-
+        interactive.attack(SkillName, targets, 400, AttackType.QUN_TI);
         // 有50%概率眩晕目标1回合
+        interactive.effect(StatusStun.StatusName, targets, 50, false
+                , (from, to) -> new StatusStun(from, to, 1));
     }
 
     @Override
     public boolean canUse(BattlePane bp) {
-        // 蜃气楼仅在回合开始仍被[蜃气笼罩]，且不处于[蜃气勘破]状态时时，才能用此技能
-        // TODO
-        return super.canUse(bp);
+        // 蜃气楼仅在回合开始仍被[蜃气笼罩]，且不处于[蜃气勘破]（TODO ？这是什么）
+        //  状态时，才能用此技能
+        return getBelongTo().isHaveStatus(StatusShenWuHuDun.class) && super.canUse(bp);
     }
 }

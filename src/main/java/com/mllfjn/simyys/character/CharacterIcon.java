@@ -1,6 +1,8 @@
 package com.mllfjn.simyys.character;
 
+import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.skill.Skill;
+import com.mllfjn.simyys.character.skill.SkillAuto;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunFactory;
 import com.mllfjn.simyys.character.status.Displayable;
@@ -11,15 +13,15 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Text;
+import javafx.util.Callback;
 
 import java.util.Iterator;
 import java.util.Optional;
@@ -27,7 +29,44 @@ import java.util.StringJoiner;
 
 public class CharacterIcon extends VBox {
     public static final double MAX_WIDTH = CharacterFactory.ImageSize.LARGE.size * 1.1;
-
+    private static final Callback<ListView<Skill>, ListCell<Skill>> skillCellFactory = new Callback<>() {
+        @Override
+        public ListCell<Skill> call(ListView<Skill> skillListView) {
+            return new ListCell<>() {
+                @Override
+                protected void updateItem(Skill skill, boolean b) {
+                    super.updateItem(skill, b);
+                    if (b || skill == null) {
+                        setText(null);
+                        setGraphic(null);
+                    } else {
+                        if (skill instanceof PassiveSkill) {
+                            // 被动技能不可点击
+                            setText("被动 " + skill.getName());
+                            setDisable(true);
+                        } else if (skill instanceof SkillAuto) {
+                            // 妖术
+                            setText("妖术");
+                        } else {
+                            Text text = new Text(skill.toString());
+                            StringBuilder sb = new StringBuilder();
+                            sb.append("火:").append(skill.getRealCost());
+                            int cooling = skill.getCooling();
+                            if (cooling != 0) {
+                                sb.append("冷:").append(cooling);
+                            }
+                            Label additionalText = new Label(sb.toString());
+                            additionalText.setAlignment(Pos.CENTER_RIGHT);
+                            additionalText.setMaxWidth(Double.MAX_VALUE);
+                            HBox hBox = new HBox(text, additionalText);
+                            HBox.setHgrow(additionalText, Priority.ALWAYS);
+                            setGraphic(hBox);
+                        }
+                    }
+                }
+            };
+        }
+    };
 
     protected final Character character;
     // 状态栏
@@ -39,7 +78,7 @@ public class CharacterIcon extends VBox {
     // 技能选择栏
     private final ComboBox<Skill> skillBox;
     // 状态显示
-    // TODO UI决定是否显示
+    // TODO UI决定是否显示，难点在于头像对齐，上下贴在头像旁
     // TODO 发生改变时标出来
     private final Label[] info = new Label[8];
     // 红绿标的那个标
@@ -74,6 +113,7 @@ public class CharacterIcon extends VBox {
                 character.setLockSkill(val.getSkillID());
             }
         });
+        skillBox.setCellFactory(skillCellFactory);
         skillBox.setMaxWidth(MAX_WIDTH);
         // 生命
         healthBar.setMaxWidth(MAX_WIDTH);
@@ -151,6 +191,12 @@ public class CharacterIcon extends VBox {
         refreshHealthBar();
         updateYuHunIcon();
         refreshShieldBar();
+        refreshSkillBox();
+    }
+
+    private void refreshSkillBox() {
+        skillBox.setCellFactory(null);
+        skillBox.setCellFactory(skillCellFactory);
     }
 
     private void refreshStatusLabel() {

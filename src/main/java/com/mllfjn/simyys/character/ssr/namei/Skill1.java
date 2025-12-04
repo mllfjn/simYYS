@@ -28,7 +28,8 @@ class Skill1 extends Skill {
         // lv5-并有25%基础概率附加凋零,持续1回合
         // 没有测试是先上凋零还是先造成伤害,这里猜测是先凋零
         if (getLevel() == 5) {
-            interactive.effect(StatusDiaoLing.text, target, 25, (naMei, character) -> new StatusDiaoLing(naMei, character, 1));
+            interactive.effect(StatusDiaoLing.text, target, 25, true
+                    , (naMei, character) -> new StatusDiaoLing(naMei, character, 1));
         }
 
         // 造成攻击(系数)伤害

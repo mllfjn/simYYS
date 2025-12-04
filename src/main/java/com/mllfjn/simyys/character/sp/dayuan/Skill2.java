@@ -3,6 +3,11 @@ package com.mllfjn.simyys.character.sp.dayuan;
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
+import com.mllfjn.simyys.character.status.Status;
+import com.mllfjn.simyys.character.status.StatusForm;
+import com.mllfjn.simyys.character.status.StatusType;
+import com.mllfjn.simyys.character.status.determinant.IgnoreActionDecrease;
+import com.mllfjn.simyys.character.status.determinant.IgnoreActionIncrease;
 
 import java.util.Optional;
 
@@ -11,6 +16,11 @@ class Skill2 extends Skill {
 
     public Skill2(Character belongTo) {
         super(belongTo, 1, 1, 0, 2);
+    }
+
+    public static void addStatus(Character belongTo) {
+        // 免疫来源于其他目标的行动条改变效果
+        belongTo.addStatus(new StatusIgnoreOtherActionChange(belongTo));
     }
 
     @Override
@@ -34,5 +44,16 @@ class Skill2 extends Skill {
     @Override
     public boolean canUse(BattlePane bp) {
         return super.canUse(bp) && !getBelongTo().isHaveStatus(StatusCombined.class);
+    }
+
+    static class StatusIgnoreOtherActionChange extends Status implements IgnoreActionIncrease, IgnoreActionDecrease {
+        public StatusIgnoreOtherActionChange(Character character) {
+            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
+        }
+
+        @Override
+        public boolean effective(Character from) {
+            return from != belongTo;
+        }
     }
 }

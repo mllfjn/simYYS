@@ -3,7 +3,7 @@ package com.mllfjn.simyys.character.ssr.namei;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.interactive.AttackType;
-import com.mllfjn.simyys.interactive.Info;
+import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamage;
 
 public class StatusChenLun extends Status implements CrowdControl, InfluenceDamage, Displayable {
@@ -23,9 +23,9 @@ public class StatusChenLun extends Status implements CrowdControl, InfluenceDama
     }
 
     @Override
-    public void doInfluence(AttackType attackType, Info info) {
+    public void doInfluence(AttackType attackType, AttackInfo attackInfo) {
         // 提示5%,lv5-提升增至10%
-        info.getTraceableNumber().mul(level == 5 ? 1.1 : 1.05, text);
+        attackInfo.getTraceableNumber().mul(level == 5 ? 1.1 : 1.05, text);
     }
 
     @Override

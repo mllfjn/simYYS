@@ -66,7 +66,7 @@ public class RateCalc {
         if (currentRate == 1) {
             label.setText("");
         } else {
-            label.setText("当前概率：" + DecimalFormatUtil.df_2_1.format(currentRate));
+            label.setText("当前概率：" + DecimalFormatUtil.df_2_1_percent.format(currentRate));
         }
     }
 
@@ -101,5 +101,9 @@ public class RateCalc {
 
     public boolean isControlWhetherOther() {
         return mainSwitch && controlWhetherOther;
+    }
+
+    public boolean isControlYuHun() {
+        return mainSwitch && controlYuHun;
     }
 }

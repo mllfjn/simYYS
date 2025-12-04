@@ -27,14 +27,6 @@ public class DaYuan extends CharacterShiShenBase {
     }
 
     @Override
-    public void init(PropertiesHolder propertiesHolder, BattlePane bp) {
-        super.init(propertiesHolder, bp);
-
-        // 免疫来源于其他目标的行动条改变效果
-        addStatus(new StatusIgnoreOtherActionChange(this));
-    }
-
-    @Override
     protected String getDefaultSkillLevel() {
         return "515";
     }
@@ -46,21 +38,11 @@ public class DaYuan extends CharacterShiShenBase {
 
     @Override
     public void addOwnSkills() {
-        skills.add(new Skill1(this, skill1Level));
-        skills.add(new Skill3(this, skill3Level));
-        skills.add(new Skill5(this));
-        skills.add(new Skill6(this));
-    }
-
-    static class StatusIgnoreOtherActionChange extends Status implements IgnoreActionIncrease, IgnoreActionDecrease {
-        public StatusIgnoreOtherActionChange(Character character) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public boolean effective(Character from) {
-            return from != belongTo;
-        }
+        addSkill(new Skill1(this, skill1Level));
+        Skill2.addStatus(this);
+        addSkill(new Skill3(this, skill3Level));
+        addSkill(new Skill5(this));
+        addSkill(new Skill6(this));
     }
 }
 

@@ -4,7 +4,8 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.Runnable;
-import com.mllfjn.simyys.trigger.Trigger;
+import com.mllfjn.simyys.character.status.Trigger;
+import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
 public class MobGuiHuo extends Status implements Runnable, Displayable {
     private static final int max = 3;
@@ -39,7 +40,7 @@ public class MobGuiHuo extends Status implements Runnable, Displayable {
         return trigger == Trigger.BEFORE_ROUND && now < max;
     }
     @Override
-    public boolean run(Trigger trigger, BattlePane bp) {
+    public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
         now++;
         return false;
     }

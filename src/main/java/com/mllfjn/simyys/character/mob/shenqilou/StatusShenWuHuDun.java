@@ -1,26 +1,35 @@
 package com.mllfjn.simyys.character.mob.shenqilou;
 
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.interactive.Info;
+import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.character.status.StatusShield;
 
-public class StatusShenWuHuDun extends StatusShield {
+class StatusShenWuHuDun extends StatusShield {
     public static final String StatusNameChild = "蜃气护盾";
 
     private int count = 3;
 
-    public StatusShenWuHuDun(Character from, Character belongTo) {
+    private StatusShenWuHuDun(Character character) {
         // 获得最大生命值100%蜃雾护盾
-        super(from, belongTo, belongTo.getMaxHp());
+        super(character, character, character.getMaxHp());
+    }
+
+    public static void get(Character character) {
+        character.getStatus(StatusShenWuHuDun.class).ifPresentOrElse(
+                status -> {
+                    status.setShield(character.getMaxHp());
+                    status.count = 3;
+                }
+                , () -> character.addStatus(new StatusShenWuHuDun(character)));
     }
 
     @Override
-    public boolean handle(Info info) {
-        if (super.handle(info)) {
+    public boolean handle(AttackInfo attackInfo) {
+        if (super.handle(attackInfo)) {
             return true;
         }
         // 使用暴击伤害攻击蜃气楼可击破护盾,抵挡3次暴击伤害后，护盾消失。
-        if (info.isCrit()) {
+        if (attackInfo.isCrit()) {
             count--;
         }
         return count == 0;
@@ -28,6 +37,6 @@ public class StatusShenWuHuDun extends StatusShield {
 
     @Override
     public String getText() {
-        return StatusNameChild;
+        return StatusNameChild + count;
     }
 }

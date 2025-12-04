@@ -2,7 +2,7 @@ package com.mllfjn.simyys.ratecontroller;
 
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.interactive.EffectInfo;
-import com.mllfjn.simyys.interactive.Info;
+import com.mllfjn.simyys.interactive.AttackInfo;
 
 import java.io.Serializable;
 import java.util.*;
@@ -55,41 +55,48 @@ public class RateController implements Serializable {
 
         for (int i = 0; i < size; i++) {
             if (returns[i] == null) {
-                resultHandler.accept(i, random.nextDouble() * 100 < rates[i]);
+                returns[i] = random.nextDouble() * 100 < rates[i];
             }
+            resultHandler.accept(i, returns[i]);
         }
     }
 
     public static void baoJi(String skillName, Character owner, RateCalc calc
-            , List<Character> targets, Info... infos) {
+            , List<Character> targets, AttackInfo... attackInfos) {
         List<Character> list = new ArrayList<>();
         for (int i = 0; i < targets.size(); i++) {
-            if (infos[i].canCrit() && infos[i].getCrit() == null) {
+            if (attackInfos[i].canCrit() && attackInfos[i].getCrit() == null) {
                 list.add(targets.get(i));
             }
         }
 
         whetherOrNot("暴击控制：" + owner.name + "-" + skillName, "暴击", list, Character::getName
                 , calc, RateCalc::isControlCrit, character -> owner.getCritRate()
-                , (i, crit) -> infos[i].setCrit(crit));
+                , (i, crit) -> attackInfos[i].setCrit(crit));
     }
 
-    public static EffectInfo[] mingZhong(String statusName, Character owner, List<Character> targets, int baseRate
-            , RateCalc calc) {
+    public static EffectInfo[] mingZhong(String statusName, Character owner, List<Character> targets
+            , int baseRate, boolean calHit, RateCalc calc) {
         EffectInfo[] infos = new EffectInfo[targets.size()];
         whetherOrNot("命中控制：" + owner.name + "-" + statusName, "命中"
                 , targets, Character::getName, calc, RateCalc::isControlEffectHit
-                , character -> baseRate * (100 + owner.getEffectHitRate()) / (100 + character.getEffectResistRate())
+                , character -> {
+                    if (calHit) {
+                        return baseRate * (100 + owner.getEffectHitRate()) / (100 + character.getEffectResistRate());
+                    } else {
+                        return (double) baseRate;
+                    }
+                }
                 , (i, hit) -> {
                     EffectInfo info = new EffectInfo();
-                    info.setHit(true);
+                    info.setHit(hit);
                     infos[i] = info;
                 });
         return infos;
     }
 
     public static <T> T choose(String title, List<T> list, Function<T, String> stringGetter
-            ,  RateCalc calc) {
+            , RateCalc calc) {
         if (list.size() == 1) {
             return list.get(0);
         }

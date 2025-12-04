@@ -75,7 +75,7 @@ class RateControlDialog extends Stage {
             currentRate *= selector.getCurrentRate();
         }
 
-        rateLabel.setText("当前概率：" + DecimalFormatUtil.df_2_2.format(currentRate));
+        rateLabel.setText("当前概率：" + DecimalFormatUtil.df_2_2_percent.format(currentRate));
 
         return currentRate;
     }

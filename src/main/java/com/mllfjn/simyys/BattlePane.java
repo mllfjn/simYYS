@@ -1,5 +1,6 @@
 package com.mllfjn.simyys;
 
+import com.mllfjn.simyys.battleevent.*;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.CharacterFactory;
 import com.mllfjn.simyys.character.PropertyKey;
@@ -12,7 +13,6 @@ import com.mllfjn.simyys.ratecontroller.RateCalc;
 import com.mllfjn.simyys.starter.Initializer;
 import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
 import com.mllfjn.simyys.collections.SerializableObservableList;
-import com.mllfjn.simyys.trigger.battleevent.*;
 import com.mllfjn.simyys.utils.Utils;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -405,7 +405,7 @@ public class BattlePane {
         situation.listenerMap.get(character).remove(listener);
     }
 
-    public void onTrigger(TriggerEvent event) {
+    public void onTrigger(BattleEvent event) {
         for (List<BattleActionListener> list : situation.listenerMap.values()) {
             list.removeIf(listener -> listener.onBattleAction(event));
         }

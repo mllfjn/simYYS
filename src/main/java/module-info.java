@@ -11,7 +11,6 @@ module com.mllfjn.simyys {
     exports com.mllfjn.simyys.starter;
     exports com.mllfjn.simyys.character;
     exports com.mllfjn.simyys.character.status;
-    exports com.mllfjn.simyys.trigger;
     exports com.mllfjn.simyys.interactive;
     exports com.mllfjn.simyys.character.skill;
     exports com.mllfjn.simyys.customnode;
@@ -26,6 +25,7 @@ module com.mllfjn.simyys {
     opens com.mllfjn.simyys.collections to javafx.fxml;
     exports com.mllfjn.simyys.character.yuhun;
     opens com.mllfjn.simyys.character.yuhun to javafx.fxml;
-    exports com.mllfjn.simyys.trigger.battleevent;
+    exports com.mllfjn.simyys.battleevent;
+    exports com.mllfjn.simyys.character.status.triggerParam;
 
 }

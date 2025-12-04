@@ -1,22 +1,52 @@
 package com.mllfjn.simyys.character.yuhun;
 
 import com.mllfjn.simyys.BattlePane;
+import com.mllfjn.simyys.battleevent.BattleActionListener;
+import com.mllfjn.simyys.battleevent.BattleEvent;
+import com.mllfjn.simyys.battleevent.EventActionDone;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.Runnable;
+import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackType;
-import com.mllfjn.simyys.interactive.Info;
-import com.mllfjn.simyys.trigger.Trigger;
+import com.mllfjn.simyys.interactive.AttackInfo;
+import com.mllfjn.simyys.character.status.Trigger;
 
+import java.io.Serializable;
 import java.util.*;
 
-public class TuZhiZhu extends YuHun implements YuHunUnfullMark {
+public class TuZhiZhu extends YuHun implements YuHunUnfullMark, YuHunEffectInfo {
     public static final String YuHunName = "土蜘蛛";
+
+    private double num = 0;
 
     @Override
     public String getName() {
         return YuHunName;
+    }
+
+    @Override
+    public void effectInfo(AttackInfo attackInfo) {
+        Character target = attackInfo.getTarget();
+        // 对怪物造成伤害时
+        if (!target.isMob()) {
+            return;
+        }
+
+        if (num == 0) {
+            getBelongTo().bp.addActionListener(getBelongTo(),
+                    event -> {
+                        if (event instanceof EventActionDone) {
+                            StatusTuZhiZhu.enable(getBelongTo(), target, this.num);
+                            this.num = 0;
+                            return true;
+                        }
+                        return false;
+                    });
+        }
+
+        num += 0.1 * attackInfo.getTraceableNumber().getNumber();
     }
 
     static class StatusTuZhiZhu extends Status implements Displayable, Runnable, AttributeModifier {
@@ -63,11 +93,11 @@ public class TuZhiZhu extends YuHun implements YuHunUnfullMark {
         }
 
         @Override
-        public boolean run(Trigger trigger, BattlePane bp) {
+        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
             for (TuZhiZhuRecord record : records) {
                 record.from.doInteractive(interactive ->
-                        interactive.attack(belongTo, AttackType.JIAN_JIE, Info.createJianJieAttack(
-                                (owner, target) -> record.num, record.from, belongTo)));
+                        interactive.attack(belongTo, AttackType.JIAN_JIE, AttackInfo.createJianJieAttack(
+                                record.from, belongTo, (owner, target) -> record.num)));
             }
             return true;
         }
@@ -82,7 +112,7 @@ public class TuZhiZhu extends YuHun implements YuHunUnfullMark {
             return -belongTo.getInitSpeed() * 0.1 * count;
         }
 
-        record TuZhiZhuRecord(Character from, double num) {
+        record TuZhiZhuRecord(Character from, double num) implements Serializable {
         }
     }
 }

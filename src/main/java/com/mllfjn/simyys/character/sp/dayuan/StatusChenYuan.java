@@ -6,7 +6,8 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.Runnable;
-import com.mllfjn.simyys.trigger.Trigger;
+import com.mllfjn.simyys.character.status.Trigger;
+import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
 import java.util.List;
 
@@ -26,7 +27,7 @@ class StatusChi extends Status implements Runnable, Displayable {
     }
 
     @Override
-    public boolean run(Trigger trigger, BattlePane bp) {
+    public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
         // 回合后立即获得1个回合,且
         if (trigger == Trigger.AFTER_ROUND) {
             // 无法连续触发此效果
@@ -85,7 +86,7 @@ class StatusQing extends Status implements Runnable, Displayable {
     }
 
     @Override
-    public boolean run(Trigger trigger, BattlePane bp) {
+    public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
         // 回合开始时驱散自身以外的全体友方1个减益状态与控制效果
         List<Character> teammate = CharacterFinder.findTeammate(belongTo, bp.situation.characters);
         teammate.remove(belongTo);
@@ -142,7 +143,7 @@ class StatusQingJianShang extends Status implements AttributeModifier {
         }
 
         @Override
-        public boolean run(Trigger trigger, BattlePane bp) {
+        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
             qing.delete();
             return true;
         }

@@ -8,11 +8,12 @@ import com.mllfjn.simyys.character.propertygetter.PropertiesMap;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.Runnable;
+import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
-import com.mllfjn.simyys.trigger.battleevent.EventBattleStart;
-import com.mllfjn.simyys.trigger.battleevent.EventHpChange;
-import com.mllfjn.simyys.trigger.Trigger;
+import com.mllfjn.simyys.battleevent.EventBattleStart;
+import com.mllfjn.simyys.battleevent.EventHpChange;
+import com.mllfjn.simyys.character.status.Trigger;
 
 public class QiLingFactory {
     public static final String ZhenMuShou = "镇墓兽";
@@ -79,7 +80,7 @@ class StatusQiHuoLing extends Status implements Runnable {
     }
 
     @Override
-    public boolean run(Trigger trigger, BattlePane bp) {
+    public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
         Interactive interactive = belongTo.getInteractive();
         for (int i = 0; i < 3; i++) {
             interactive.attack("火灵之力"

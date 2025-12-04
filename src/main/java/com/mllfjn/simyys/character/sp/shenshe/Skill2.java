@@ -4,7 +4,7 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
-import com.mllfjn.simyys.trigger.battleevent.EventBattleStart;
+import com.mllfjn.simyys.battleevent.EventBattleStart;
 
 import java.util.List;
 

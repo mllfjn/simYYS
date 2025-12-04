@@ -2,7 +2,9 @@ package com.mllfjn.simyys.character;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.TeamPane;
+import com.mllfjn.simyys.battleevent.EventAttack;
 import com.mllfjn.simyys.character.propertygetter.*;
+import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.skill.SkillAuto;
 import com.mllfjn.simyys.character.status.*;
@@ -10,17 +12,18 @@ import com.mllfjn.simyys.character.status.Runnable;
 import com.mllfjn.simyys.character.status.determinant.IgnoreChangeMaxHp;
 import com.mllfjn.simyys.character.status.determinant.IgnoreDebuff;
 import com.mllfjn.simyys.character.status.determinant.PreventDie;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
+import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunFactory;
 import com.mllfjn.simyys.character.yuhun.YuHunSealResponse;
 import com.mllfjn.simyys.character.yys.QiLingFactory;
 import com.mllfjn.simyys.interactive.TraceableNumber;
-import com.mllfjn.simyys.interactive.Info;
+import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.guihuo.MobGuiHuo;
-import com.mllfjn.simyys.trigger.*;
 import com.mllfjn.simyys.collections.SerializableObservableList;
-import com.mllfjn.simyys.trigger.battleevent.EventHpChange;
+import com.mllfjn.simyys.battleevent.EventHpChange;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
@@ -52,7 +55,7 @@ public abstract class Character implements Serializable{
     private boolean isYYS;
     protected boolean isSummon;
 
-    protected final SerializableObservableList<Skill> skills = new SerializableObservableList<>();
+    private final SerializableObservableList<Skill> skills = new SerializableObservableList<>();
     private Map<Integer, Integer> lockSKillMap;
     private Map<Integer, FlagChangeInfo> flagChangeMap;
 
@@ -67,7 +70,11 @@ public abstract class Character implements Serializable{
     public transient BattlePane bp;
     public PropertiesMap getProperties() {
         PropertiesMap map = new PropertiesMap();
-        map.put(PropertyKey.GENERAL_SPEED_KEY, new PropertyInput());
+        for (String key : PropertyKey.GENERAL_INPUT_KEYS) {
+            map.put(key, new PropertyInput());
+        }
+        ((PropertyInput) map.get(PropertyKey.GENERAL_BASE_ATTACK_KEY)).setValue(getDefaultBaseAttack());
+        /*map.put(PropertyKey.GENERAL_SPEED_KEY, new PropertyInput());
         map.put(PropertyKey.GENERAL_BASE_ATTACK_KEY, new PropertyInput().setValue(getDefaultBaseAttack()));
         map.put(PropertyKey.GENERAL_YU_HUN_ATTACK_KEY, new PropertyInput());
         map.put(PropertyKey.GENERAL_HP_KEY, new PropertyInput());
@@ -75,12 +82,16 @@ public abstract class Character implements Serializable{
         map.put(PropertyKey.GENERAL_CRIT_RATE_KEY, new PropertyInput());
         map.put(PropertyKey.GENERAL_CRIT_POWER_KEY, new PropertyInput());
         map.put(PropertyKey.GENERAL_EFFECT_HIT_RATE_KEY, new PropertyInput());
-        map.put(PropertyKey.GENERAL_EFFECT_RESIST_RATE_KEY, new PropertyInput());
+        map.put(PropertyKey.GENERAL_EFFECT_RESIST_RATE_KEY, new PropertyInput());*/
 
-        map.put(PropertyKey.GENERAL_TEAM_KEY, new PropertyCheck());
+        for (String key : PropertyKey.GENERAL_CHECK_KEYS) {
+            map.put(key, new PropertyCheck());
+        }
+
+        /*map.put(PropertyKey.GENERAL_TEAM_KEY, new PropertyCheck());
         map.put(PropertyKey.GENERAL_MOB_KEY, new PropertyCheck());
         map.put(PropertyKey.GENERAL_YYS_KEY, new PropertyCheck());
-        map.put(PropertyKey.GENERAL_SUMMON_KEY, new PropertyCheck());
+        map.put(PropertyKey.GENERAL_SUMMON_KEY, new PropertyCheck());*/
 
         return map;
     }
@@ -248,7 +259,11 @@ public abstract class Character implements Serializable{
     }
 
     public void setLockSkill(int i) {
-        getSkill(i).ifPresent(skill -> lockSkill = i);
+        getSkill(i).ifPresent(skill -> {
+            if (!(skill instanceof PassiveSkill)) {
+                lockSkill = i;
+            }
+        });
         if (characterIcon != null) {
             characterIcon.selectLockSkill();
         }
@@ -291,7 +306,7 @@ public abstract class Character implements Serializable{
         this.location = newLocation;
     }
     public void beforeRound() {
-        statusRun(Trigger.BEFORE_ROUND);
+        statusRun(Trigger.BEFORE_ROUND, null);
 
         // 维持类状态过回合
         maintainedStatuses.removeIf(status -> {
@@ -322,7 +337,7 @@ public abstract class Character implements Serializable{
             } else {
                 int targetIndex = flagChangeInfo.target - 1;
                 List<Character> characters = targetTeamPane.getCharacters();
-                if (targetIndex > 0 && targetIndex < characters.size()) {
+                if (targetIndex >= 0 && targetIndex < characters.size()) {
                     Character target = characters.get(targetIndex);
                     if (target != auto) {
                         targetTeamPane.setAuto(target);
@@ -350,8 +365,8 @@ public abstract class Character implements Serializable{
             bp.addProgress(this.team);
         }
         // 行动后触发状态
-        statusRun(Trigger.AFTER_ROUND_FIRST);
-        statusRun(Trigger.AFTER_ROUND);
+        statusRun(Trigger.AFTER_ROUND_FIRST, null);
+        statusRun(Trigger.AFTER_ROUND, null);
 
         // 持续类状态过回合
         statuses.removeIf(status -> {
@@ -414,34 +429,42 @@ public abstract class Character implements Serializable{
         if (characterIcon != null) {
             characterIcon.endChangeSkill();
         }
+
+        if (skill instanceof PassiveSkill ps) {
+            ps.enable();
+        }
     }
     protected boolean useSkillAuto() {
         return false;
     }
 
-    public void beHurt(Info info) {
-        TraceableNumber traceableNumber = info.getTraceableNumber();
+    public void checkShield(AttackInfo attackInfo) {
+        TraceableNumber traceableNumber = attackInfo.getTraceableNumber();
         // 遍历状态找护盾
         Iterator<Status> iterator = getStatuses().iterator();
         while (traceableNumber.getNumber() > 0 && iterator.hasNext()) {
             if (iterator.next() instanceof StatusShield ss) {
-                if (ss.handle(info)) {
+                if (ss.handle(attackInfo)) {
                     iterator.remove();
                 } else {
                     break;
                 }
             }
         }
-        double damage = traceableNumber.getNumber();
-        // 如果护盾没能抵消完伤害
+    }
+
+    public void beHurt(AttackInfo attackInfo) {
+        double damage = attackInfo.getTraceableNumber().getNumber();
         if (damage > 0) {
             // 如果剩余血量比伤害小,进入死亡判定
             if (getHp() <= damage) {
-                info.getTraceableNumber().addTrace("\t(击杀)");
-                beforeDie(info);
+                attackInfo.getTraceableNumber().addTrace("\t(击杀)");
+                beforeDie(attackInfo);
             } else {
+                // 受到攻击
                 setHp(getHp() - damage);
-                statusRun(Trigger.AFTER_ATTACK);
+                // 触发攻击的目标身上的状态
+                statusRun(Trigger.AFTER_ATTACK, new ParamAfterAttack(attackInfo));
             }
         }
     }
@@ -457,8 +480,8 @@ public abstract class Character implements Serializable{
         }
     }
 
-    public void beHeal(Info info) {
-        setHp(getHp() + info.getTraceableNumber().getNumber());
+    public void beHeal(AttackInfo attackInfo) {
+        setHp(getHp() + attackInfo.getTraceableNumber().getNumber());
     }
 
     /**
@@ -548,6 +571,10 @@ public abstract class Character implements Serializable{
 
     }
 
+    public void removeStatus(Status status) {
+        statuses.remove(status);
+    }
+
     public Interactive getInteractive() {
         return bp.getInteractive(this);
     }
@@ -596,11 +623,12 @@ public abstract class Character implements Serializable{
     public LinkedHashSet<YuHun> getYuHunSet() {
         return yuHunList;
     }
-    public void beforeDie(Info info) {
+
+    public void beforeDie(AttackInfo attackInfo) {
         for (Status status : getStatuses()) {
             if (status instanceof PreventDie pd && pd.effective()) {
                 pd.preventDie();
-                info.getTraceableNumber().addTrace("(" + pd.getName() + "免死生效)");
+                attackInfo.getTraceableNumber().addTrace("(" + pd.getName() + "免死生效)");
                 return;
             }
         }
@@ -641,11 +669,12 @@ public abstract class Character implements Serializable{
         }
         return canUse;
     }
-    private void statusRun(Trigger trigger) {
+
+    private void statusRun(Trigger trigger, TriggerParam param) {
         List<Status> copy = new ArrayList<>(statuses);
         for (Status status : copy) {
             if (status instanceof Runnable r && r.runnable(trigger)) {
-                if (r.run(trigger, bp)) {
+                if (r.run(trigger, bp, param)) {
                     statuses.remove(status);
                 }
             }

@@ -22,9 +22,9 @@ public class LaoTou extends CharacterShiShenBase {
 
     @Override
     public void addOwnSkills() {
-        skills.add(new Skill1(this, skill1Level));
-        new Skill2(this, skill2Level);
-        skills.add(new Skill3(this, skill3Level));
+        addSkill(new Skill1(this, skill1Level));
+        addSkill(new Skill2(this, skill2Level));
+        addSkill(new Skill3(this, skill3Level));
     }
 
     @Override

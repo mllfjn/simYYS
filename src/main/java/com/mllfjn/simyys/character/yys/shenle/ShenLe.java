@@ -10,7 +10,7 @@ import com.mllfjn.simyys.utils.Utils;
 
 public class ShenLe extends CharacterYYSBase {
     public static final String CharacterName = "神乐";
-    private static final String SKILL1_KEY = "普攻·伞击等级";
+    private static final String SKILL1_KEY = "伞击等级";
     private static final String SKILL_JF_KEY = "通灵·疾风等级";
 
     private Skill1 skill1;
@@ -47,7 +47,7 @@ public class ShenLe extends CharacterYYSBase {
 
     @Override
     public void addOwnSkills() {
-        skills.add(skill1);
-        skills.add(skillJF);
+        addSkill(skill1);
+        addSkill(skillJF);
     }
 }

@@ -4,12 +4,12 @@ import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.interactive.AttackType;
-import com.mllfjn.simyys.interactive.Info;
+import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.character.status.determinant.IgnoreChangeMaxHp;
 import com.mllfjn.simyys.character.status.determinant.IgnoreDebuff;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamage;
 import com.mllfjn.simyys.character.status.determinant.PreventDie;
-import com.mllfjn.simyys.trigger.battleevent.EventActionDone;
+import com.mllfjn.simyys.battleevent.EventActionDone;
 
 // 无法改变生命上限,免疫减益和 TODO 放逐
 public class StatusSheShen extends Status implements IgnoreChangeMaxHp, IgnoreDebuff, PreventDie, InfluenceDamage, Displayable {
@@ -79,8 +79,8 @@ public class StatusSheShen extends Status implements IgnoreChangeMaxHp, IgnoreDe
     }
 
     @Override
-    public void doInfluence(AttackType attackType, Info info) {
-        info.getTraceableNumber().mul(0.7, text);
+    public void doInfluence(AttackType attackType, AttackInfo attackInfo) {
+        attackInfo.getTraceableNumber().mul(0.7, text);
     }
 
     @Override

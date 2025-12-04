@@ -5,9 +5,10 @@ import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.Runnable;
+import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
-import com.mllfjn.simyys.trigger.Trigger;
+import com.mllfjn.simyys.character.status.Trigger;
 
 public class StatusDiaoLing extends Status implements Displayable, AttributeModifier, Runnable {
     public static final String text = "凋零";
@@ -38,7 +39,7 @@ public class StatusDiaoLing extends Status implements Displayable, AttributeModi
     }
 
     @Override
-    public boolean run(Trigger trigger, BattlePane bp) {
+    public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
         Interactive interactive = from.getInteractive();
         // 回合结束时受到施加者攻击120%间接伤害
         interactive.attack(text, belongTo, 120, AttackType.JIAN_JIE);

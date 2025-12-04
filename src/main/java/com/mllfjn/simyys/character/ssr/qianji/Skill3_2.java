@@ -6,9 +6,10 @@ import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.Runnable;
+import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
-import com.mllfjn.simyys.trigger.Trigger;
+import com.mllfjn.simyys.character.status.Trigger;
 
 class Skill3_2 extends Skill {
     public static final String SkillName = "永生之汐";
@@ -55,7 +56,7 @@ class StatusBeiGe extends Status implements Runnable, Displayable {
     }
 
     @Override
-    public boolean run(Trigger trigger, BattlePane bp) {
+    public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
         // 千姬回合开始时获得1层悲歌(没写,但是上限应该是5层)
         if (stack < 5) {
             stack++;

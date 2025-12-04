@@ -75,7 +75,7 @@ public abstract class Skill implements Serializable {
         bp.log.addSkill(sb.toString());
     }
 
-    private int getRealCost() {
+    public int getRealCost() {
         int realCost = cost;
         for (Status status : belongTo.getStatuses()) {
             if (status instanceof ReduceCost rc) {
@@ -100,6 +100,10 @@ public abstract class Skill implements Serializable {
 
     public int getLevel() {
         return this.level;
+    }
+
+    public int getCooling() {
+        return cooling;
     }
 
     public void pastRound() {

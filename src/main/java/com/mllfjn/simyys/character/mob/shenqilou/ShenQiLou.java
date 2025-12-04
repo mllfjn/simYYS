@@ -4,8 +4,9 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.PropertyKey;
 import com.mllfjn.simyys.character.propertygetter.*;
+import com.mllfjn.simyys.character.status.instance.StatusBoss;
 import com.mllfjn.simyys.collections.StringGroup;
-import com.mllfjn.simyys.trigger.battleevent.EventActionDone;
+import com.mllfjn.simyys.battleevent.EventActionDone;
 import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -41,6 +42,7 @@ public class ShenQiLou extends Character {
     public void init(PropertiesHolder propertiesHolder, BattlePane bp) {
         super.init(propertiesHolder, bp);
 
+        addStatus(new StatusBoss(this));
     }
 
     @Override
@@ -105,14 +107,18 @@ public class ShenQiLou extends Character {
 
     @Override
     public void addOwnSkills() {
-        skills.add(new Skill1(this));
-        skills.add(new Skill2(this));
-        skills.add(new Skill3(this));
-        skills.add(new Skill4(this));
+        addSkill(new Skill1(this));
+        addSkill(new Skill2(this));
+        addSkill(new Skill3(this));
+        addSkill(new Skill4(this));
+        addSkill(new SkillPassive1(this));
+        addSkill(new SkillPassive2(this));
     }
 
     @Override
     protected boolean useSkillAuto() {
-        return tryUseSkill(3);
+        // 只要带盾，直接放4.钳鳌重击
+        // 如果没盾有3火,优先放3.绀连击,在冷却放2.蜃气爆弹
+        return tryUseSkill(4) || tryUseSkill(3) || tryUseSkill(2);
     }
 }

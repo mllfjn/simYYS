@@ -6,7 +6,8 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.Runnable;
 import com.mllfjn.simyys.character.status.instance.StatusSleep;
-import com.mllfjn.simyys.trigger.Trigger;
+import com.mllfjn.simyys.character.status.Trigger;
+import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
 public class StatusDuoHua extends Status implements Displayable, Runnable, AttributeModifier, ActionWhenDie {
     private boolean enable = true;
@@ -36,7 +37,7 @@ public class StatusDuoHua extends Status implements Displayable, Runnable, Attri
     }
 
     @Override
-    public boolean run(Trigger trigger, BattlePane bp) {
+    public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
         // 回合开始时腐蚀自身当前24%生命,视为失去生命,且可解除睡眠状态
         belongTo.lostHP(belongTo.getHp()*0.24);
         StatusSleep.removeSleep(belongTo);

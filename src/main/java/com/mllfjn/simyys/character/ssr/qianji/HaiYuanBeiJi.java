@@ -1,12 +1,14 @@
 package com.mllfjn.simyys.character.ssr.qianji;
 
 import com.mllfjn.simyys.BattlePane;
+import com.mllfjn.simyys.battleevent.EventAttack;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.determinant.IgnoreDebuff;
-import com.mllfjn.simyys.trigger.battleevent.EventUseGuiHuo;
+import com.mllfjn.simyys.battleevent.EventUseGuiHuo;
+import com.mllfjn.simyys.interactive.AttackInfo;
 
 import java.util.List;
 
@@ -37,8 +39,18 @@ public class HaiYuanBeiJi extends Character {
         // 放下锤子后开始记录悲歌层数
         qianJi.addStatus(new StatusBeiGe(qianJi));
 
+        // 在场时为友方单位恢复受到伤害30%的生命值,友方单位每使用1点鬼火
+        // TODO 有50%的概率
+        // 使海原贝戟叠加1层潮声
         bp.addActionListener(this, event -> {
-            if (event instanceof EventUseGuiHuo eg && eg.getTeam() == team) {
+            if (event instanceof EventAttack ea) {
+                AttackInfo attackInfo = ea.getAttackInfo();
+                Character target = attackInfo.getTarget();
+                if (target.team == this.team && target.alive) {
+                    this.doInteractive(interactive -> interactive.recovery(target
+                            , attackInfo.getTraceableNumber().getNumber() * 0.3));
+                }
+            } else if (event instanceof EventUseGuiHuo eg && eg.getTeam() == team) {
                 chaoSheng.addStack(eg.getNum(), this.bp);
             }
             return false;

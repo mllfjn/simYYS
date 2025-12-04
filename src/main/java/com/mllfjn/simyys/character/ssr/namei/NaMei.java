@@ -26,9 +26,9 @@ public class NaMei extends CharacterShiShenBase {
 
     @Override
     public void addOwnSkills() {
-        skills.add(new Skill1(this, skill1Level));
-        skills.add(new Skill2(this, awakening, skill2Level));
-        skills.add(new Skill3(this, skill3Level));
+        addSkill(new Skill1(this, skill1Level));
+        addSkill(new Skill2(this, awakening, skill2Level));
+        addSkill(new Skill3(this, skill3Level));
     }
 
     @Override

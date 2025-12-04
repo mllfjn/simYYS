@@ -5,7 +5,8 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.Runnable;
 import com.mllfjn.simyys.character.status.determinant.IgnoreActionDecrease;
-import com.mllfjn.simyys.trigger.Trigger;
+import com.mllfjn.simyys.character.status.Trigger;
+import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
 // 该状态在结缘目标身上,belongTo是结缘目标,from是大缘
 abstract class StatusShengTian extends Status implements IgnoreActionDecrease, Runnable {
@@ -28,7 +29,7 @@ abstract class StatusShengTian extends Status implements IgnoreActionDecrease, R
     }
 
     @Override
-    public boolean run(Trigger trigger, BattlePane bp) {
+    public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
         // (自身与)处于胜天之缘的目标回合结束后,均会提升对方30%行动条
         // 这里拉条来源必须要是from-大缘自己,因为大缘免疫其他目标拉条
         from.doInteractive(interactive -> interactive.increaseLocation(from, 30));
@@ -84,7 +85,7 @@ class StatusCombined extends Status implements Runnable {
     }
 
     @Override
-    public boolean run(Trigger trigger, BattlePane bp) {
+    public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
         // 自身(与处于)胜天之缘的目标回合结束后,均会提升对方30%行动条
 
         belongTo.doInteractive(interactive -> interactive.increaseLocation(from, 30));

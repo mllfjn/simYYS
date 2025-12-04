@@ -6,7 +6,8 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.Runnable;
 import com.mllfjn.simyys.character.status.determinant.PreventDie;
-import com.mllfjn.simyys.trigger.Trigger;
+import com.mllfjn.simyys.character.status.Trigger;
+import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
 public class StatusHuiMie extends Status implements Displayable, Runnable, AttributeModifier, PreventDie {
     private static final String text = "毁灭";
@@ -52,7 +53,7 @@ public class StatusHuiMie extends Status implements Displayable, Runnable, Attri
     }
 
     @Override
-    public boolean run(Trigger trigger, BattlePane bp) {
+    public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
         if (stack < 6) {
             stack++;
         }

@@ -8,7 +8,7 @@ import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.character.status.StatusForm;
 import com.mllfjn.simyys.character.status.StatusType;
 import com.mllfjn.simyys.character.status.determinant.IgnoreDebuff;
-import com.mllfjn.simyys.trigger.battleevent.EventRoundDone;
+import com.mllfjn.simyys.battleevent.EventRoundDone;
 
 public class QianJi extends CharacterShiShenBase {
     public static final String CharacterName = "千姬";
@@ -54,8 +54,8 @@ public class QianJi extends CharacterShiShenBase {
 
     @Override
     public void addOwnSkills() {
-        skills.add(new Skill1(this, skill1Level));
-        skills.add(new Skill2(this, skill2Level));
+        addSkill(new Skill1(this, skill1Level));
+        addSkill(new Skill2(this, skill2Level));
         getSkill3_1();
     }
 

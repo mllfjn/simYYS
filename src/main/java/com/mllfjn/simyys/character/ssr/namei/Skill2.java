@@ -6,8 +6,8 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.trigger.battleevent.EventBattleStart;
-import com.mllfjn.simyys.trigger.battleevent.EventHpChange;
+import com.mllfjn.simyys.battleevent.EventBattleStart;
+import com.mllfjn.simyys.battleevent.EventHpChange;
 
 import java.util.HashSet;
 import java.util.List;

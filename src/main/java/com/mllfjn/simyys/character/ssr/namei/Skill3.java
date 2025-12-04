@@ -72,7 +72,7 @@ class Skill3 extends Skill {
         // 并有25%基础概率施加凋零,持续1回合
         // lv4-对怪物释放时,施加凋零的基础概率提升至80%
         // lv3-释放时,施加的凋零持续事件增至2回合
-        EffectInfo[] infos = interactive.effect(sb.toString(), list, isMob ? 80 : 25
+        EffectInfo[] infos = interactive.effect(sb.toString(), list, isMob ? 80 : 25, true
                 , (from, to) -> new StatusDiaoLing(from, to, getLevel() >= 3 ? 2 : 1));
 
         // lv2-凋零命中时施加沉沦,持续1回合

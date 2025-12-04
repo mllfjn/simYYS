@@ -6,7 +6,7 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.trigger.battleevent.EventBattleStart;
+import com.mllfjn.simyys.battleevent.EventBattleStart;
 
 class SkillJF extends Skill {
     public static final String SkillName = "通灵·疾风";

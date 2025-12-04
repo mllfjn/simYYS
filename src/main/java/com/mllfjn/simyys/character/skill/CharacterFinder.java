@@ -53,6 +53,10 @@ public class CharacterFinder {
         return characters.stream().filter(character1 -> character1.team != character.team).collect(Collectors.toCollection(ArrayList::new));
     }
 
+    public static Character findRandom(List<Character> characters) {
+
+    }
+
     public enum Property {
         HP(Character::getHp),
         ATTACK(Character::getAttack);

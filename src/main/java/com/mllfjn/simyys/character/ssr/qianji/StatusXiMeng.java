@@ -4,7 +4,8 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.Runnable;
-import com.mllfjn.simyys.trigger.Trigger;
+import com.mllfjn.simyys.character.status.Trigger;
+import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
 class StatusXiMeng extends Status implements Runnable, Displayable {
     public StatusXiMeng(Character from, Character belongTo) {
@@ -23,7 +24,7 @@ class StatusXiMeng extends Status implements Runnable, Displayable {
     }
 
     @Override
-    public boolean run(Trigger trigger, BattlePane bp) {
+    public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
         // TODO 扣除3点鬼火,对怪物不生效
         return true;
     }

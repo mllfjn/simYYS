@@ -1,4 +1,4 @@
-package com.mllfjn.simyys.trigger;
+package com.mllfjn.simyys.character.status;
 
 public enum Trigger {
     BEFORE_ROUND, // 回合前
