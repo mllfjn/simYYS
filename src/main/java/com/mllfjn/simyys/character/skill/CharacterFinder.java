@@ -50,7 +50,7 @@ public class CharacterFinder {
     }
 
     public CharacterFinder filterShiShen() {
-        stream = stream.filter(character -> !character.isMob() && !character.isSummon() && !character.isYYS());
+        stream = stream.filter(character -> !character.isSummon() && !character.isYYS());
         return this;
     }
 

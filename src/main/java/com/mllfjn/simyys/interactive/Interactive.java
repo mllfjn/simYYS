@@ -3,7 +3,8 @@ package com.mllfjn.simyys.interactive;
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.battleevent.EventAttack;
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.character.yuhun.YuHunEffectInfo;
+import com.mllfjn.simyys.character.yuhun.YuHunAttack;
+import com.mllfjn.simyys.character.yuhun.list.DiZhenNian;
 import com.mllfjn.simyys.customnode.CustomText;
 import com.mllfjn.simyys.customnode.TextFlowLog;
 import com.mllfjn.simyys.ratecontroller.RateController;
@@ -16,13 +17,15 @@ import java.util.*;
 import java.util.function.Consumer;
 
 public class Interactive {
-    private final BattlePane bp;
-    private Character owner;
-    private Map<Character, List<CustomText>> currentNumberLog = new LinkedHashMap<>();
-    private Set<String> increaseLog = new LinkedHashSet<>();
-    private Map<Character, Set<String>> yuHunEffect = new LinkedHashMap<>();
     private static final TextFlowLog.TextType type = TextFlowLog.TextType.NUMBER;
     private static final TextFlowLog.FontSize size = TextFlowLog.FontSize.SMALL;
+
+    private Character owner;
+
+    private final BattlePane bp;
+    private final Map<Character, List<CustomText>> currentNumberLog = new LinkedHashMap<>();
+    private final Set<String> increaseLog = new LinkedHashSet<>();
+    private final Map<Character, Set<String>> yuHunEffect = new LinkedHashMap<>();
 
     public Interactive(BattlePane bp) {
         this.bp = bp;
@@ -53,8 +56,6 @@ public class Interactive {
 
         increaseLog.forEach(bp.log::addLocationChange);
 
-        /*currentNumberLog = new LinkedHashMap<>();
-        increaseLog = new LinkedHashSet<>();*/
         currentNumberLog.clear();
         increaseLog.clear();
         yuHunEffect.clear();
@@ -94,6 +95,11 @@ public class Interactive {
     }
 
     public void attack(Character target, AttackType attackType, AttackInfo attackInfo) {
+        // https://bbs.nga.cn/read.php?tid=26176854  阴阳师底层机制——单次伤害型技能中的结算顺序总结
+        // https://bbs.nga.cn/read.php?tid=35530141 关于减伤的分类
+        // https://bbs.nga.cn/read.php?tid=24250479 伤害结算机制详细分析
+
+
         if (!target.alive) {
             return;
         }
@@ -112,6 +118,7 @@ public class Interactive {
         }
 
         // 防御
+        // 网切应该在这里触发
         if (attackInfo.isCalDefense()) {
             double realDefense = target.getDefense() - owner.getIgnoreDefense();
             traceableNumber.mul(300.0 / (300 + realDefense), "防御");
@@ -122,9 +129,19 @@ public class Interactive {
             traceableNumber.mul(1 + owner.getZengShang() / 100, "增伤");
         }
 
-        // 减伤 实际 = 基础 / (1+减伤) = 基础 * (1.0 / (1+减伤)) https://bbs.nga.cn/read.php?tid=35530141 关于减伤的分类
-        if (attackInfo.isCalJianShang()) {
-            traceableNumber.mul(1.0 / (1 + target.getJianShang() / 100), "减伤");
+        // 易伤
+        if (attackInfo.isCalYiShang()) {
+            traceableNumber.mul(target.getYiShang(), "易伤");
+        }
+
+        // 地震鲶
+        // 挺奇怪的,好像只有地震鲶才在这里触发,其他御魂都是要在护盾之后
+        if (attackInfo.isCalYuHun()) {
+            target.forEachYuHun(yuHun -> {
+                if (yuHun instanceof DiZhenNian d) {
+                    d.takeEffect();
+                }
+            });
         }
 
         // 护盾
@@ -140,7 +157,7 @@ public class Interactive {
         // 御魂 TODO 被攻击的人的御魂
         if (traceableNumber.getNumber() > 0 && attackInfo.isCalYuHun()) {
             owner.forEachYuHun(yuHun -> {
-                if (yuHun instanceof YuHunEffectInfo yei) {
+                if (yuHun instanceof YuHunAttack yei) {
                     yei.effectInfo(attackInfo);
                 }
             });
@@ -148,13 +165,15 @@ public class Interactive {
 
         target.beHurt(attackInfo);
 
-        addNumberRecord(target
-                , new CustomText(traceableNumber.getNumberString() + " "
+
+        addNumberRecord(target, new CustomText(traceableNumber.getNumberString() + " "
                         , traceableNumber.getTrace(), type
                         , attackInfo.isCrit() ? TextFlowLog.TextColor.CRITICAL : TextFlowLog.TextColor.ATTACK, size));
 
-        // 广播攻击信息
-        bp.onTrigger(new EventAttack(attackInfo));
+        if (!attackInfo.isCancel()) {
+            // 广播攻击信息
+            bp.onTrigger(new EventAttack(attackInfo));
+        }
     }
 
     public AttackInfo heal(String skillName, Character target, int multiplier) {

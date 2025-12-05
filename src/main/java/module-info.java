@@ -27,5 +27,7 @@ module com.mllfjn.simyys {
     opens com.mllfjn.simyys.character.yuhun to javafx.fxml;
     exports com.mllfjn.simyys.battleevent;
     exports com.mllfjn.simyys.character.status.triggerParam;
+    exports com.mllfjn.simyys.character.yuhun.list;
+    opens com.mllfjn.simyys.character.yuhun.list to javafx.fxml;
 
 }

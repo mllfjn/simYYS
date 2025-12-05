@@ -1,6 +1,7 @@
 package com.mllfjn.simyys.character.yuhun;
 
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.yuhun.list.*;
 import com.mllfjn.simyys.utils.PicUtil;
 import com.mllfjn.simyys.utils.Utils;
 import javafx.scene.image.Image;

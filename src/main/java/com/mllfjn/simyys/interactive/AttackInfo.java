@@ -12,7 +12,7 @@ public class AttackInfo {
     // 基础数值
     private final BiFunction<Character, Character, Double> basicNumber;
     // 伤害溯源
-    private final TraceableNumber traceableNumber = new TraceableNumber();
+    private final TraceableNumber traceableNumber;
 
 
     // 技能系数
@@ -26,9 +26,12 @@ public class AttackInfo {
     // 计算增伤
     private boolean calZengShang = true;
     // 计算减伤
-    private boolean calJianShang = true;
+    private boolean calYiShang = true;
     // 计算御魂
     private boolean calYuHun = true;
+
+    // 是否被取消
+    private boolean cancel = false;
 
     // 基本伤害类型
     public static AttackInfo createTypicalAttack(Character attacker, Character target, int multiplier) {
@@ -45,7 +48,7 @@ public class AttackInfo {
         attackInfo.calDefense = false;
         attackInfo.canCrit = false;
         attackInfo.calZengShang = false;
-        attackInfo.calJianShang = false;
+        attackInfo.calYiShang = false;
         attackInfo.calYuHun = false;
 
         return attackInfo;
@@ -84,6 +87,8 @@ public class AttackInfo {
         this.attacker = attacker;
         this.target = target;
         this.basicNumber = basicNumber;
+
+        traceableNumber = new TraceableNumber(attacker.name);
     }
 
     public TraceableNumber getTraceableNumber() {
@@ -120,8 +125,8 @@ public class AttackInfo {
         return calZengShang;
     }
 
-    public boolean isCalJianShang() {
-        return calJianShang;
+    public boolean isCalYiShang() {
+        return calYiShang;
     }
 
     public boolean canCrit() {
@@ -134,5 +139,13 @@ public class AttackInfo {
 
     public Character getTarget() {
         return target;
+    }
+
+    public boolean isCancel() {
+        return cancel;
+    }
+
+    public void setCancel(boolean cancel) {
+        this.cancel = cancel;
     }
 }

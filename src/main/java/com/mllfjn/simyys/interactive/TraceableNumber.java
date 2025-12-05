@@ -7,8 +7,8 @@ public class TraceableNumber {
     private double number;
     private final StringBuilder trace = new StringBuilder();
 
-    public TraceableNumber() {
-        trace.append("计算过程：");
+    public TraceableNumber(String owner) {
+        trace.append("来自").append(owner).append(" ").append("计算过程：");
     }
 
     public void add(double num, String desc) {

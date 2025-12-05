@@ -2,7 +2,6 @@ package com.mllfjn.simyys.character;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.TeamPane;
-import com.mllfjn.simyys.battleevent.EventAttack;
 import com.mllfjn.simyys.character.propertygetter.*;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.skill.Skill;
@@ -12,12 +11,13 @@ import com.mllfjn.simyys.character.status.Runnable;
 import com.mllfjn.simyys.character.status.determinant.IgnoreChangeMaxHp;
 import com.mllfjn.simyys.character.status.determinant.IgnoreDebuff;
 import com.mllfjn.simyys.character.status.determinant.PreventDie;
+import com.mllfjn.simyys.character.status.determinant.RejectAllStatuses;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunFactory;
 import com.mllfjn.simyys.character.yuhun.YuHunSealResponse;
-import com.mllfjn.simyys.character.yys.QiLingFactory;
+import com.mllfjn.simyys.character.list.yys.QiLingFactory;
 import com.mllfjn.simyys.interactive.TraceableNumber;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.Interactive;
@@ -32,7 +32,7 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.function.Consumer;
 
-public abstract class Character implements Serializable{
+public abstract class Character implements Serializable {
     public String name;
     public int team;
     public int timesToAct;
@@ -68,6 +68,7 @@ public abstract class Character implements Serializable{
 
     private transient CharacterIcon characterIcon;
     public transient BattlePane bp;
+
     public PropertiesMap getProperties() {
         PropertiesMap map = new PropertiesMap();
         for (String key : PropertyKey.GENERAL_INPUT_KEYS) {
@@ -95,11 +96,13 @@ public abstract class Character implements Serializable{
 
         return map;
     }
+
     protected abstract String getDefaultBaseAttack();
 
     public String getName() {
         return name;
     }
+
     public void init(PropertiesHolder propertiesHolder, BattlePane bp) {
         setBattlePane(bp);
         this.lockSKillMap = propertiesHolder.lockSkillMap;
@@ -137,6 +140,7 @@ public abstract class Character implements Serializable{
             }
         }
     }
+
     public void setBattlePane(BattlePane bp) {
         this.bp = bp;
     }
@@ -144,36 +148,64 @@ public abstract class Character implements Serializable{
     public double getAttack() {
         return AttributeCounter.getGeneralAttribute(Attribute.ATTACK, baseAttack + additionAttack, getStatuses());
     }
+
     public double getHp() {
         return hp;
     }
+
     public double getMaxHp() {
         return maxHp;
     }
+
     public double getSpeed() {
         return AttributeCounter.getGeneralAttribute(Attribute.SPEED, speed, getStatuses());
     }
+
     public double getDefense() {
         return AttributeCounter.getGeneralAttribute(Attribute.DEFENCE, defense, statuses);
     }
+
     public double getCritRate() {
         return AttributeCounter.getGeneralAttribute(Attribute.CRIT_RATE, critRate, statuses);
     }
+
     public double getCritPower() {
         return AttributeCounter.getGeneralAttribute(Attribute.CRIT_POWER, critPower, statuses);
     }
+
     public double getEffectHitRate() {
         return AttributeCounter.getGeneralAttribute(Attribute.EFFECT_HIT_RATE, effectHitRate, statuses);
     }
+
     public double getEffectResistRate() {
         return AttributeCounter.getGeneralAttribute(Attribute.EFFECT_RESIST_RATE, effectResistRate, statuses);
     }
+
     public double getZengShang() {
         return AttributeCounter.getGeneralAttribute(Attribute.ZENG_SHANG, 0, getStatuses());
     }
-    public double getJianShang() {
-        return AttributeCounter.getGeneralAttribute(Attribute.JIAN_SHANG, 0, getStatuses());
+
+    public double getYiShang() {
+        // 易伤系数b=1+x(当x>0)
+        // b=1/(1-x)(当x<0)
+        // x=敌方易伤效果之和 - 敌方减伤效果之和。
+        // 易伤效果举例：灭、丑女的咒火、缚姬放蛇；
+        // 减伤效果举例：生、骁川、兵俑开嘲讽。
+        // 举例：晴明贴了灭易伤30%，敌方有不知火星火结界的18%减伤效果，则x=0.12，b=1.12。
+        // 鬼吞的大妖之力也是减伤，所以100%减伤只是将伤害降低到一半。
+
+        double yiShang = AttributeCounter.getGeneralAttribute(Attribute.YI_SHANG, 0, getStatuses());
+        double jianShang = AttributeCounter.getGeneralAttribute(Attribute.JIAN_SHANG, 0, getStatuses());
+
+        double x = (yiShang - jianShang) / 100;
+
+        if (x >= 0) {
+            return 1 + x;
+        } else {
+            return 1 / (1 - x);
+        }
     }
+
     public double getIgnoreDefense() {
         return AttributeCounter.getGeneralAttribute(Attribute.IGNORE_DEFENCE, 0, getStatuses());
     }
@@ -181,9 +213,11 @@ public abstract class Character implements Serializable{
     public boolean isMob() {
         return isMob;
     }
+
     public boolean isYYS() {
         return isYYS;
     }
+
     public boolean isSummon() {
         return isSummon;
     }
@@ -191,27 +225,35 @@ public abstract class Character implements Serializable{
     public double getInitAttack() {
         return baseAttack + additionAttack;
     }
+
     public double getInitBaseAttack() {
         return baseAttack;
     }
+
     public double getInitAdditionAttack() {
         return additionAttack;
     }
+
     public double getInitDefense() {
         return defense;
     }
+
     public double getInitSpeed() {
         return speed;
     }
+
     public double getInitCritRate() {
         return critRate;
     }
+
     public double getInitCritPower() {
         return critPower;
     }
+
     public double getInitEffectHitRate() {
         return effectHitRate;
     }
+
     public double getInitEffectResistRate() {
         return effectResistRate;
     }
@@ -220,24 +262,31 @@ public abstract class Character implements Serializable{
     protected void setInitBaseAttack(double baseAttack) {
         this.baseAttack = baseAttack;
     }
+
     protected void setInitAdditionAttack(double additionAttack) {
         this.additionAttack = additionAttack;
     }
+
     protected void setInitDefense(double defense) {
         this.defense = defense;
     }
+
     protected void setInitCritRate(double critRate) {
         this.critRate = critRate;
     }
+
     protected void setInitCritPower(double critPower) {
         this.critPower = critPower;
     }
+
     protected void setInitSpeed(double speed) {
         this.speed = speed;
     }
+
     protected void setInitEffectHitRate(double effectHitRate) {
         this.effectHitRate = effectHitRate;
     }
+
     protected void setInitEffectResistRate(double effectResistRate) {
         this.effectResistRate = effectResistRate;
     }
@@ -253,6 +302,7 @@ public abstract class Character implements Serializable{
             setHp(maxHp);
         }
     }
+
     public void setHp(double num) {
         this.hp = Math.min(maxHp, num);
         bp.onTrigger(new EventHpChange(this));
@@ -268,20 +318,26 @@ public abstract class Character implements Serializable{
             characterIcon.selectLockSkill();
         }
     }
+
     public int getLockSkill() {
         return this.lockSkill;
     }
+
     public void addSkills() {
         skills.add(SkillAuto.INSTANCE);
         addOwnSkills();
     }
+
     protected abstract void addOwnSkills();
+
     public static double getTTA(double distance, double speed) {
         return distance / speed;
     }
+
     public double getTTA() {
         return getTTA(100.0 - this.getLocation(), this.getSpeed());
     }
+
     public static boolean before(double distance1, double v1, double distance2, double v2) {
         double tta1 = getTTA(distance1, v1);
         double tta2 = getTTA(distance2, v2);
@@ -296,15 +352,19 @@ public abstract class Character implements Serializable{
 
         return v1 > v2;
     }
+
     public boolean before(Character character) {
         return before(100.0 - this.getLocation(), this.getSpeed(), 100 - character.getLocation(), character.getSpeed());
     }
+
     public double getLocation() {
         return location;
     }
+
     public void setLocation(double newLocation) {
         this.location = newLocation;
     }
+
     public void beforeRound() {
         statusRun(Trigger.BEFORE_ROUND, null);
 
@@ -348,6 +408,7 @@ public abstract class Character implements Serializable{
 
         }
     }
+
     public void round() {
         if (lockSkill != 0) {
             Optional<Skill> os = getSkill(lockSkill);
@@ -359,6 +420,7 @@ public abstract class Character implements Serializable{
             getSkill(1).ifPresent(skill -> skill.use(bp));
         }
     }
+
     public void afterRound() {
         // 非怪物或者召唤物推进鬼火条
         if (!isMob() && !isSummon) {
@@ -382,6 +444,7 @@ public abstract class Character implements Serializable{
         // 技能冷却
         skills.forEach(Skill::pastRound);
     }
+
     public Optional<Skill> getSkill(int skillID) {
         for (Skill skill : skills) {
             if (skill.getSkillID() == skillID) {
@@ -390,6 +453,7 @@ public abstract class Character implements Serializable{
         }
         return Optional.empty();
     }
+
     public void removeSkill(int skillID) {
         Optional<Skill> os = getSkill(skillID);
         os.ifPresent(skill -> {
@@ -405,14 +469,17 @@ public abstract class Character implements Serializable{
             }
         });
     }
+
     public boolean tryUseSkill(int skillID) {
         return getSkill(skillID)
                 .map(skill -> skill.tryUse(bp))
                 .orElse(false);
     }
+
     public ObservableList<Skill> getReadOnlySkillList() {
         return skills.getObservableList();
     }
+
     public void addSkill(Skill skill) {
         int i = 0;
         Iterator<Skill> iterator = skills.iterator();
@@ -434,6 +501,7 @@ public abstract class Character implements Serializable{
             ps.enable();
         }
     }
+
     protected boolean useSkillAuto() {
         return false;
     }
@@ -485,20 +553,24 @@ public abstract class Character implements Serializable{
     }
 
     /**
-     *  恢复：区别于治疗，不受减疗效果影响，不触发治疗相关效果，不会暴击
+     * 恢复：区别于治疗，不受减疗效果影响，不触发治疗相关效果，不会暴击
      */
     public void recovery(double num) {
         setHp(getHp() + num);
     }
+
     public void dispelAllBuff() {
         getStatuses().removeIf(status -> status.statusType == StatusType.BUFF && status.statusForm == StatusForm.ZHUANG_TAI);
     }
+
     public void dispelAllDebuff() {
         getStatuses().removeIf(status -> status.statusType == StatusType.DEBUFF && status.statusForm == StatusForm.ZHUANG_TAI);
     }
+
     public void dispelDeBuff(int count) {
         // TODO 驱散指定数量的减益状态
     }
+
     public void removeAllCrowControl() {
         getStatuses().removeIf(status -> status instanceof CrowdControl);
     }
@@ -510,9 +582,11 @@ public abstract class Character implements Serializable{
         }
         return characterIcon;
     }
+
     protected EventHandler<MouseEvent> getEventHandler() {
         return null;
     }
+
     public <T extends Status> Optional<T> getStatus(Class<T> clazz) {
         for (Status status : statuses) {
             if (clazz.isInstance(status)) {
@@ -521,17 +595,32 @@ public abstract class Character implements Serializable{
         }
         return Optional.empty();
     }
+
     public boolean isHaveStatus(Class<? extends Status> clazz) {
         return getStatus(clazz).isPresent();
     }
+
     public <T extends Status> Optional<T> addStatus(T newStatus) {
-        if (newStatus.statusType == StatusType.DEBUFF && isIgnoreDebuff()) {
+        // 拒绝添加所有状态:堕落之剑和青女房
+        for (Status status : getStatuses()) {
+            if (status instanceof RejectAllStatuses
+                    || newStatus.statusType == StatusType.DEBUFF && status instanceof IgnoreDebuff
+            ) {
+                return Optional.empty();
+            }
+        }
+        /*if (isHaveStatus(RejectAllStatusesInstance.class)) {
             return Optional.empty();
         }
+
+        if (newStatus.statusType == StatusType.DEBUFF && isIgnoreDebuff()) {
+            return Optional.empty();
+        }*/
 
         statuses.add(newStatus);
         return Optional.of(newStatus);
     }
+
     public boolean isIgnoreDebuff() {
         for (Status status : getStatuses()) {
             if (status instanceof IgnoreDebuff) {
@@ -540,6 +629,7 @@ public abstract class Character implements Serializable{
         }
         return false;
     }
+
     public boolean isIgnoreChangeMaxHp() {
         for (Status status : getStatuses()) {
             if (status instanceof IgnoreChangeMaxHp) {
@@ -548,6 +638,7 @@ public abstract class Character implements Serializable{
         }
         return false;
     }
+
     public void addMaintainedStatus(Status status) {
         maintainedStatuses.add(status);
     }
@@ -560,6 +651,7 @@ public abstract class Character implements Serializable{
     public List<Status> getStatuses() {
         return statuses;
     }
+
     public <T extends Status> void removeStatus(Class<T> clazz) {
         for (Status status : statuses) {
             if (clazz.isInstance(status)) {
@@ -575,6 +667,8 @@ public abstract class Character implements Serializable{
         statuses.remove(status);
     }
 
+    // 区别:getInteractive会将interactive的owner设为该角色且不再改变
+    // doInteractive会在完成操作后将interactive的owner归位
     public Interactive getInteractive() {
         return bp.getInteractive(this);
     }
@@ -603,7 +697,7 @@ public abstract class Character implements Serializable{
         yuHunList.forEach(action);
     }
 
-    private boolean isYuHunSeal() {
+    public boolean isYuHunSeal() {
         return false;
     }
 
@@ -629,12 +723,14 @@ public abstract class Character implements Serializable{
             if (status instanceof PreventDie pd && pd.effective()) {
                 pd.preventDie();
                 attackInfo.getTraceableNumber().addTrace("(" + pd.getName() + "免死生效)");
+                attackInfo.setCancel(true);
                 return;
             }
         }
 
         die();
     }
+
     public void die() {
         alive = false;
         bp.removeCharacter(this);
@@ -648,7 +744,9 @@ public abstract class Character implements Serializable{
         dieHandle();
     }
 
-    protected void dieHandle() {}
+    protected void dieHandle() {
+    }
+
     public boolean controllable() {
         // 如果被控了,无法行动
         for (Status status : getStatuses()) {

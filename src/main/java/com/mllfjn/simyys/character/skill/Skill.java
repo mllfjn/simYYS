@@ -1,6 +1,8 @@
 package com.mllfjn.simyys.character.skill;
 
 import com.mllfjn.simyys.BattlePane;
+import com.mllfjn.simyys.battleevent.EventUsedSkill;
+import com.mllfjn.simyys.battleevent.EventWillUseSkill;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.ReduceCost;
 import com.mllfjn.simyys.character.status.Status;
@@ -40,6 +42,8 @@ public abstract class Skill implements Serializable {
     }
 
     public void use(BattlePane bp) {
+        bp.onTrigger(new EventWillUseSkill(belongTo, this));
+
         useBase(bp, true);
     }
 

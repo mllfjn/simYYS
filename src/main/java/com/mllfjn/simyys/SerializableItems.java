@@ -17,7 +17,7 @@ public class SerializableItems implements Serializable {
     public boolean disablePush = false;
     // 队伍面板，负责显示头像和管理鬼火条
     public final TeamPane[] teamPane = new TeamPane[2];
-    // 全局监听器,用于幻境,结界
+    // 全局监听器,可用于幻境,结界
     public final Map<Character, List<BattleActionListener>> listenerMap = new HashMap<>();
     // 保存的概率
     private double currentRate;

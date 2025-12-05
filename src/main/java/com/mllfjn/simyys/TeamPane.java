@@ -1,7 +1,7 @@
 package com.mllfjn.simyys;
 
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.character.yuhun.HuoLing;
+import com.mllfjn.simyys.character.yuhun.list.HuoLing;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.guihuo.GuiHuo;
 import javafx.geometry.Insets;
