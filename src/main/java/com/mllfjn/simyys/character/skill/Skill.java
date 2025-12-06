@@ -1,7 +1,6 @@
 package com.mllfjn.simyys.character.skill;
 
 import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.battleevent.EventUsedSkill;
 import com.mllfjn.simyys.battleevent.EventWillUseSkill;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.ReduceCost;
@@ -29,6 +28,20 @@ public abstract class Skill implements Serializable {
         this.cost = cost;
         this.coolDown = coolDown;
         this.skillID = skillID;
+    }
+
+    public static Skill getInstance(String name) {
+        return new Skill(null, 0, 0, 0, 0) {
+            @Override
+            public String getName() {
+                return name;
+            }
+
+            @Override
+            public Optional<Character> usePrivate(BattlePane bp) {
+                return Optional.empty();
+            }
+        };
     }
 
     public abstract String getName();

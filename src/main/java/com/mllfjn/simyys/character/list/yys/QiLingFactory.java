@@ -6,6 +6,7 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.PropertyKey;
 import com.mllfjn.simyys.character.propertygetter.PropertiesMap;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
+import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.Runnable;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
@@ -92,7 +93,7 @@ class StatusQiHuoLing extends Status implements Runnable {
                 .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
                 .getList();
         for (int i = 0; i < 3; i++) {
-            interactive.attack("火灵之力", targets, 100, AttackType.QUN_TI);
+            interactive.attack(Skill.getInstance("火灵之力"), targets, 100, AttackType.QUN_TI);
         }
         return false;
     }

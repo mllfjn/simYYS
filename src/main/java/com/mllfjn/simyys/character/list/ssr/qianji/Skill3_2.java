@@ -31,7 +31,7 @@ class Skill3_2 extends Skill {
         Interactive interactive = getBelongTo().getInteractive();
         // 对敌方全体造成攻击(120 + 悲歌层数*100)%的伤害
         List<Character> targets = new CharacterFinder(getBelongTo()).setTargetTeam(CharacterFinder.TargetTeam.ENEMY).getList();
-        interactive.attack(SkillName, targets
+        interactive.attack(this, targets
                 , 120 + getBelongTo().getStatus(StatusBeiGe.class).orElseThrow().getStack() * 100
                 , AttackType.QUN_TI);
         // 释放后移除悲歌,并将技能替换为海潮入梦(3-1)

@@ -59,6 +59,11 @@ public class YuanLaiGuang extends Character {
         if (skill[0] > 0) {
             addSkill(new Skill6Passive(this, skill[1]));
         }
+
+        skill = ((PropertyMultiInput) map.get(Skill7Passive.SkillName)).getValuesInt();
+        if (skill[0] > 0) {
+            addSkill(new Skill7Passive(this, skill[0], skill[1]));
+        }
     }
 
     @Override

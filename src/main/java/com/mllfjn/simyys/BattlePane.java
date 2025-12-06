@@ -4,7 +4,6 @@ import com.mllfjn.simyys.battleevent.*;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.CharacterFactory;
 import com.mllfjn.simyys.character.PropertyKey;
-import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.customnode.CustomTextField;
 import com.mllfjn.simyys.customnode.TextFlowLog;
 import com.mllfjn.simyys.guihuo.MobGuiHuo;
@@ -31,8 +30,6 @@ import java.util.function.Consumer;
 public class BattlePane {
     // 所有需要在返回上一步时恢复的内容封装在这里
     public SerializableItems situation = new SerializableItems();
-    // 返回初始化界面
-    private final Initializer.Back back;
     // 初始化属性列表
     private final SerializableObservableList<PropertiesHolder> list;
     // 概率控制模式
@@ -52,17 +49,43 @@ public class BattlePane {
     private final VBox container = new VBox();
 
 
+    private final List<String> actionList;
+    private final Set<String> usedCharacterName;
+
+
     public BattlePane(Stage stage, Initializer.Back back, SerializableObservableList<PropertiesHolder> list) {
-        this.back = back;
         this.list = list;
+        this.actionList = null;
+        this.usedCharacterName = null;
         stage.setScene(new Scene(root));
 
-        setupUI();
+        setupUI(back);
         init();
         repaint();
     }
 
-    private void setupUI() {
+    // 该构造方法用于预测模式
+    public BattlePane(SerializableObservableList<PropertiesHolder> list, Set<String> usedCharacterName, int round) {
+        this.list = list;
+        this.usedCharacterName = usedCharacterName;
+        this.actionList = new ArrayList<>();
+
+        init();
+
+        skip(round - 1);
+    }
+
+    private void addToActionList(String name) {
+        if (usedCharacterName.contains(name)) {
+            actionList.add(name);
+        }
+    }
+
+    public List<String> getActionList() {
+        return actionList;
+    }
+
+    private void setupUI(Initializer.Back back) {
         // 右边是主操作区
         // 主体偏上是行动条，点击切换模式
         // 右下角是控制区
@@ -76,7 +99,7 @@ public class BattlePane {
         // 控制区
         BorderPane right = new BorderPane();
         right.setTop(actionBar);
-        right.setBottom(configureControlPane());
+        right.setBottom(configureControlPane(back));
         root.setRight(right);
         configureActionBar();
         reloadTeamPane();
@@ -135,7 +158,7 @@ public class BattlePane {
         situation.addProgress(team);
     }
 
-    private GridPane configureControlPane() {
+    private GridPane configureControlPane(Initializer.Back back) {
         /*控制区
         控制区的内容
         1、概率控制模式的开关
@@ -159,9 +182,7 @@ public class BattlePane {
         CustomTextField round = new CustomTextField();
         Button skip = new Button("跳过回合");
         skip.setOnAction(event -> {
-            for (int i = 0; i < Utils.parseIntOrDefault(round.getText(), 0); i++) {
-                next(false);
-            }
+            skip(Utils.parseIntOrDefault(round.getText(), 0));
             repaint();
         });
 
@@ -205,6 +226,7 @@ public class BattlePane {
         }
 
         getNextActor();
+        addToActionList(situation.characterActing.name);
 
         // 战斗开始
         onTrigger(new EventBattleStart());
@@ -317,6 +339,12 @@ public class BattlePane {
 
     }
 
+    private void skip(int round) {
+        for (int i = 0; i < round; i++) {
+            next(false);
+        }
+    }
+
     private void next(boolean skip) {
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
              ObjectOutputStream oos = new ObjectOutputStream(bos)
@@ -345,6 +373,7 @@ public class BattlePane {
             getNextActor();
             interactive.display();
             log.characterAct(situation.characterActing);
+            addToActionList(situation.characterActing.name);
         } while (!situation.characterActing.controllable());
 
         log.next();

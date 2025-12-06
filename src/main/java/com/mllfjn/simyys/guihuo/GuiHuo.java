@@ -66,6 +66,8 @@ public class GuiHuo implements Serializable {
 
     private void repaint() {
         // 当前鬼火：4/8  进度：2/5(+4)
-        guiHuoDisplay.setText("当前鬼火:" + now + "/" + max + "-进度:" + progress + "/5(+" + increment + ")");
+        if (guiHuoDisplay != null) {
+            guiHuoDisplay.setText("当前鬼火:" + now + "/" + max + "-进度:" + progress + "/5(+" + increment + ")");
+        }
     }
 }

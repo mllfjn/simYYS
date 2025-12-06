@@ -41,7 +41,7 @@ class Skill3 extends Skill {
                 .filterSummon(false)
                 .filterSelf()
                 .getPriorAuto(CharacterFinder.Property.ATTACK, CharacterFinder.Criteria.MAX);
-        interactive.recovery(target, belongTo.getMaxHp() * multiplier[level] / 100);
+        interactive.recovery(this, target, belongTo.getMaxHp() * multiplier[level] / 100);
 
         target.getStatus(StatusYuHunTransfer.class).ifPresentOrElse(statusYHT -> {
             // 若目标未处于控制效果,则使其获得新的回合并在该回合结束后移除御魂转移效果

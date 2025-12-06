@@ -31,7 +31,7 @@ class Skill1 extends Skill {
         Character target = new CharacterFinder(belongTo)
                 .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
                 .getRandom();
-        belongTo.getInteractive().attack(SkillName, target,
+        belongTo.getInteractive().attack(this, target,
                 multiplier[getLevel()] + shuYin * 20, AttackType.DAN_TI);
         return Optional.of(target);
     }

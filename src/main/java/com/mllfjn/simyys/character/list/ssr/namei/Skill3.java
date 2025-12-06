@@ -59,9 +59,9 @@ class Skill3 extends Skill {
         }
 
         // 攻击敌方全体造成攻击120%伤害
-        interactive.attack(SkillName, enemy, 120, AttackType.QUN_TI);
+        interactive.attack(this, enemy, 120, AttackType.QUN_TI);
         // 攻击指定敌方目标造成攻击120%伤害
-        interactive.attack(SkillName, target, 120, AttackType.DAN_TI);
+        interactive.attack(this, target, 120, AttackType.DAN_TI);
         // TODO 并额外使其获得恍惚
 
         return Optional.of(target);

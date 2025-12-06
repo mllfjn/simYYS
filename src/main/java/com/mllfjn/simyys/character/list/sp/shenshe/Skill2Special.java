@@ -52,12 +52,10 @@ class Skill2Special extends Skill {
                 .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
                 .filterShiShen()
                 .filterSelf()
+                // 这里不知道为什么会青女房会例外,免疫减益的不止这一个啊
+                .filter(character -> !character.isHaveStatus(QingNvFang.getStatusClass()))
                 .getList();
         for (Character character : teammateShiShen) {
-            // 这里不知道为什么会青女房会例外,免疫减益的不止这一个啊
-            if (character.isHaveStatus(QingNvFang.getStatusClass())) {
-                continue;
-            }
             new DuoLuoZhiJian(shenShe, character, bp, true);
             StatusAddAttack.addAttack((ShenShe) getBelongTo(), character.getInitAttack() * 0.06);
         }

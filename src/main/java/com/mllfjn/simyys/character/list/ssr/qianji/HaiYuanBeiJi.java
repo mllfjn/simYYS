@@ -5,6 +5,7 @@ import com.mllfjn.simyys.battleevent.EventAttack;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
+import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.determinant.IgnoreDebuff;
 import com.mllfjn.simyys.battleevent.EventUseGuiHuo;
@@ -52,7 +53,8 @@ public class HaiYuanBeiJi extends Character {
                 if (number > 0) {
                     Character target = attackInfo.getTarget();
                     if (target.team == this.team && target.alive) {
-                        this.doInteractive(interactive -> interactive.recovery(target
+                        this.doInteractive(interactive
+                                -> interactive.recovery(Skill.getInstance(HaiYuanBeiJi.CharacterName), target
                                 , number * 0.3));
                     }
                 }

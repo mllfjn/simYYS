@@ -30,7 +30,7 @@ class Skill1 extends Skill {
                 .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
                 .getPriorAuto(CharacterFinder.Property.HP, CharacterFinder.Criteria.MIN);
 
-        getBelongTo().getInteractive().attack(SkillName, target, multiplier[getLevel()] + 20 * shuYin, AttackType.DAN_TI);
+        getBelongTo().getInteractive().attack(this, target, multiplier[getLevel()] + 20 * shuYin, AttackType.DAN_TI);
 
         return Optional.of(target);
     }

@@ -34,7 +34,7 @@ class Skill2 extends Skill {
                 .getList();
         for (Character character : target) {
             interactive.attack(character, AttackType.ZHEN_SHI, AttackInfo.createRealAttack(
-                    shenQiLou, character, (from, to) -> to.getHp() * 0.4
+                    shenQiLou, this, character, (from, to) -> to.getHp() * 0.4
             ));
             character.addStatus(new StatusReduceCritRate(shenQiLou, character, 15));
         }

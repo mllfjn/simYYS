@@ -8,6 +8,7 @@ import com.mllfjn.simyys.character.status.Displayable;
 import com.mllfjn.simyys.character.status.Runnable;
 import com.mllfjn.simyys.character.status.StatusShield;
 import com.mllfjn.simyys.character.status.Trigger;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 
@@ -93,13 +94,24 @@ class Skill6Passive extends Skill implements PassiveSkill {
 
         @Override
         public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.BEFORE_ROUND;
+            return trigger == Trigger.BEFORE_ROUND || trigger == Trigger.AFTER_ATTACK;
         }
 
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            // 源赖光回合开始时刷新此上限
-            reset();
+            if (trigger == Trigger.BEFORE_ROUND) {
+                // 源赖光回合开始时刷新此上限
+                reset();
+            } else if (trigger == Trigger.AFTER_ATTACK) {
+                belongTo.getSkill(7).ifPresent(skill -> {
+                    AttackInfo attackInfo = ((ParamAfterAttack) param).attackInfo;
+                    // 鬼兵部附身的目标受到攻击但未受到伤害时，鬼兵部劈斩目标来源
+                    if (attackInfo.getTraceableNumber().getNumber() == 0) {
+                        ((Skill7Passive) skill).piZhan(attackInfo.getAttacker());
+                    }
+                });
+            }
+
             return false;
         }
 

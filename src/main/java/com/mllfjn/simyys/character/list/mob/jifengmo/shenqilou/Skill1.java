@@ -27,7 +27,7 @@ class Skill1 extends Skill {
         Character target = new CharacterFinder(belongTo)
                 .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
                 .getRandom();
-        belongTo.getInteractive().attack(SkillName, target, 120, AttackType.DAN_TI);
+        belongTo.getInteractive().attack(this, target, 120, AttackType.DAN_TI);
         // 并降低敌人30%的暴击
         target.addStatus(new StatusReduceCritRate(belongTo, target, 30));
         return Optional.of(target);

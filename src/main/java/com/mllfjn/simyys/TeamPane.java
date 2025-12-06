@@ -73,14 +73,18 @@ public class TeamPane implements Serializable {
         }
         if (mobTeam && !character.isMob()) {
             guiHuo = new GuiHuo(4);
-            root.setBottom(guiHuo.getGuiHuoDisplay());
+            if (root != null) {
+                root.setBottom(guiHuo.getGuiHuoDisplay());
+            }
             mobTeam = false;
         }
     }
 
     public void removeCharacter(Character character) {
         characters.remove(character);
-        center.getChildren().remove(character.getCharacterIcon());
+        if (center != null) {
+            center.getChildren().remove(character.getCharacterIcon());
+        }
         if (auto == character) {
             auto = null;
         }

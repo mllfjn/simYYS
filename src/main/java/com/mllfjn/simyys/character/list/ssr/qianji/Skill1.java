@@ -30,7 +30,7 @@ class Skill1 extends Skill {
         Interactive interactive = getBelongTo().getInteractive();
 
         // 对敌方目标造成攻击(系数)伤害
-        interactive.attack(SkillName, target, multiplier[getLevel()], AttackType.DAN_TI);
+        interactive.attack(this, target, multiplier[getLevel()], AttackType.DAN_TI);
 
         // lv5-若海原贝戟存在,增加1层潮声
         if (getLevel() == 5) {

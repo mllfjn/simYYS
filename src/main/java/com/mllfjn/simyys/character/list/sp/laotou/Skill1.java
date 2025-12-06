@@ -31,7 +31,7 @@ class Skill1 extends Skill {
                 .getPriorAuto(CharacterFinder.Property.HP, CharacterFinder.Criteria.MIN);
 
         // 造成攻击（系数）伤害
-        interactive.attack(SkillName, target, multiplier[getLevel()], AttackType.DAN_TI);
+        interactive.attack(this, target, multiplier[getLevel()], AttackType.DAN_TI);
         return Optional.of(target);
     }
 }

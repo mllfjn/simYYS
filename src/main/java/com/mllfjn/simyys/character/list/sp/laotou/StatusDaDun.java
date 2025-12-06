@@ -2,12 +2,14 @@ package com.mllfjn.simyys.character.list.sp.laotou;
 
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
+import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.StatusDurationType;
 import com.mllfjn.simyys.character.status.instance.StatusSleep;
 
 import java.util.List;
 
 public class StatusDaDun extends StatusSleep {
+    public static final String StatusName = "打盹";
     public StatusDaDun(LaoTou laoTou) {
         super(laoTou, laoTou);
         setDurationType(StatusDurationType.WEI_CHI, 1);
@@ -23,7 +25,7 @@ public class StatusDaDun extends StatusSleep {
                         .filterSummon(false)
                         .getList();
                 for (Character character : teammate) {
-                    interactive.recovery(character, belongTo.getMaxHp() * 0.14);
+                    interactive.recovery(Skill.getInstance(StatusName), character, belongTo.getMaxHp() * 0.14);
                 }
             });
         }

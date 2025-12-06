@@ -30,7 +30,7 @@ class Skill4 extends Skill {
                 .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
                 .getList();
         // 对群体造成攻击400%的伤害
-        interactive.attack(SkillName, targets, 400, AttackType.QUN_TI);
+        interactive.attack(this, targets, 400, AttackType.QUN_TI);
         // 有50%概率眩晕目标1回合
         interactive.effect(StatusStun.StatusName, targets, 50, false
                 , (from, to) -> new StatusStun(from, to, 1));

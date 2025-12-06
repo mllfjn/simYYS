@@ -83,7 +83,7 @@ public class DuoLuoZhiJian extends Character {
             DuoLuoZhiJian belongTo = ((DuoLuoZhiJian) getBelongTo());
             Interactive interactive = belongTo.getInteractive();
             // 行动时恢复20%生命
-            interactive.recovery(belongTo, belongTo.getMaxHp() * 0.2);
+            interactive.recovery(Skill.getInstance(DuoLuoZhiJian.CharacterName), belongTo, belongTo.getMaxHp() * 0.2);
             // 获得1点鬼火
             bp.gainGuiHuo(belongTo, 1);
             // 并为神堕八岐大蛇提升15%行动条

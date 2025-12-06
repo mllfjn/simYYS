@@ -3,6 +3,7 @@ package com.mllfjn.simyys.interactive;
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.battleevent.EventAttack;
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.yuhun.YuHunAttack;
 import com.mllfjn.simyys.character.yuhun.list.DiZhenNian;
 import com.mllfjn.simyys.customnode.CustomText;
@@ -71,14 +72,14 @@ public class Interactive {
         currentNumberLog.get(character).add(text);
     }
 
-    public AttackInfo[] attack(String skillName, List<Character> targets, int multiplier, AttackType attackType) {
+    public AttackInfo[] attack(Skill skill, List<Character> targets, int multiplier, AttackType attackType) {
         AttackInfo[] attackInfos = new AttackInfo[targets.size()];
         for (int i = 0; i < targets.size(); i++) {
-            AttackInfo attackInfo = AttackInfo.createTypicalAttack(owner, targets.get(i), multiplier);
+            AttackInfo attackInfo = AttackInfo.createTypicalAttack(owner, skill, targets.get(i), multiplier);
             attackInfos[i] = attackInfo;
         }
 
-        RateController.baoJi(skillName, owner, bp.calc, targets, attackInfos);
+        RateController.baoJi(skill.getName(), owner, bp.calc, targets, attackInfos);
 
         for (int i = 0; i < targets.size(); i++) {
             attack(targets.get(i), attackType, attackInfos[i]);
@@ -87,9 +88,9 @@ public class Interactive {
         return attackInfos;
     }
 
-    public AttackInfo attack(String skillName, Character target, int multiplier, AttackType attackType) {
-        AttackInfo attackInfo = AttackInfo.createTypicalAttack(owner, target, multiplier);
-        RateController.baoJi(skillName, owner, bp.calc, List.of(target), attackInfo);
+    public AttackInfo attack(Skill skill, Character target, int multiplier, AttackType attackType) {
+        AttackInfo attackInfo = AttackInfo.createTypicalAttack(owner, skill, target, multiplier);
+        RateController.baoJi(skill.getName(), owner, bp.calc, List.of(target), attackInfo);
         attack(target, attackType, attackInfo);
         return attackInfo;
     }
@@ -176,20 +177,20 @@ public class Interactive {
         }
     }
 
-    public AttackInfo heal(String skillName, Character target, int multiplier) {
-        AttackInfo attackInfo = AttackInfo.createTypicalHeal(owner, target, multiplier);
-        RateController.baoJi(skillName, owner, bp.calc, List.of(target), attackInfo);
+    public AttackInfo heal(Skill skill, Character target, int multiplier) {
+        AttackInfo attackInfo = AttackInfo.createTypicalHeal(owner, skill, target, multiplier);
+        RateController.baoJi(skill.getName(), owner, bp.calc, List.of(target), attackInfo);
 
         return heal(target, attackInfo);
     }
 
-    public void heal(String skillName, List<Character> targets, int multiplier) {
+    public void heal(Skill skill, List<Character> targets, int multiplier) {
         AttackInfo[] attackInfos = new AttackInfo[targets.size()];
         for (int i = 0; i < targets.size(); i++) {
-            attackInfos[i] = AttackInfo.createTypicalHeal(owner, targets.get(i), multiplier);
+            attackInfos[i] = AttackInfo.createTypicalHeal(owner, skill, targets.get(i), multiplier);
         }
 
-        RateController.baoJi(skillName, owner, bp.calc, targets, attackInfos);
+        RateController.baoJi(skill.getName(), owner, bp.calc, targets, attackInfos);
 
         for (int i = 0; i < targets.size(); i++) {
             heal(targets.get(i), attackInfos[i]);
@@ -224,8 +225,8 @@ public class Interactive {
         return attackInfo;
     }
 
-    public void recovery(Character target, double num) {
-        AttackInfo attackInfo = AttackInfo.createRecovery(owner, target, (c1, c2) -> num);
+    public void recovery(Skill skill, Character target, double num) {
+        AttackInfo attackInfo = AttackInfo.createRecovery(owner, skill, target, (c1, c2) -> num);
         TraceableNumber traceableNumber = attackInfo.getTraceableNumber();
 
         traceableNumber.add(num, "恢复数值");

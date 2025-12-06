@@ -101,7 +101,7 @@ public class TuZhiZhu extends YuHun implements YuHunUnfullMark, YuHunAttack {
                 }
                 record.from.doInteractive(interactive ->
                         interactive.attack(belongTo, AttackType.JIAN_JIE, AttackInfo.createJianJieAttack(
-                                record.from, belongTo, (owner, target) -> record.num)));
+                                record.from, null, belongTo, (owner, target) -> record.num)));
             }
             return true;
         }

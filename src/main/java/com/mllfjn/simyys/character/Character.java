@@ -531,10 +531,11 @@ public abstract class Character implements Serializable {
             } else {
                 // 受到攻击
                 setHp(getHp() - damage);
-                // 触发攻击的目标身上的状态
-                statusRun(Trigger.AFTER_ATTACK, new ParamAfterAttack(attackInfo));
             }
         }
+
+        // 触发攻击的目标身上的状态
+        statusRun(Trigger.AFTER_ATTACK, new ParamAfterAttack(attackInfo));
     }
 
     /**

@@ -103,7 +103,7 @@ class Skill3 extends Skill {
         if (getLevel() >= 4) {
             StatusDaYuanShield.install(getBelongTo(), target);
         }
-        return interactive.heal(SkillName, target, 8);
+        return interactive.heal(this, target, 8);
     }
 
     private void heal(Interactive interactive, List<Character> targets) {
@@ -112,7 +112,7 @@ class Skill3 extends Skill {
                 StatusDaYuanShield.install(getBelongTo(), target);
             }
         }
-        interactive.heal(SkillName, targets, 8);
+        interactive.heal(this, targets, 8);
     }
 
     static class StatusCritPower extends Status implements AttributeModifier {

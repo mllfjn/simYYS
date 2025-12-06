@@ -3,12 +3,11 @@ package com.mllfjn.simyys.character.yuhun.list;
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.Runnable;
-import com.mllfjn.simyys.character.status.determinant.IgnoreDebuff;
 import com.mllfjn.simyys.character.status.determinant.PreventDie;
 import com.mllfjn.simyys.character.status.determinant.RejectAllStatuses;
-import com.mllfjn.simyys.character.status.instance.RejectAllStatusesInstance;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 
@@ -94,8 +93,10 @@ public class QingNvFang extends YuHun {
 
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            // 若冰封结束时仍存货,则再次恢复100%生命
-            belongTo.doInteractive(interactive -> interactive.recovery(belongTo, belongTo.getMaxHp()));
+            // 若冰封结束时仍存活,则再次恢复100%生命
+            belongTo.doInteractive(
+                    interactive -> interactive.recovery(Skill.getInstance(QingNvFang.YuHunName)
+                            , belongTo, belongTo.getMaxHp()));
             return true;
         }
 

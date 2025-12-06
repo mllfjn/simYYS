@@ -22,6 +22,8 @@ import java.util.*;
 
 public class Initializer extends Application {
     private final SerializableObservableList<PropertiesHolder> items = new SerializableObservableList<>();
+    private SerializableObservableList<String> predictionOrder = new SerializableObservableList<>();
+    private int round;
 
     @Override
     public void start(Stage stage) {
@@ -39,12 +41,17 @@ public class Initializer extends Application {
         Button btnMoveUp = new Button("上移");
         Button btnMoveDown = new Button("下移");
         Button btnClear = new Button("清空");
+        Button btnPreOrder = new Button("设置行动顺序");
+        Button btnCheck = new Button("检查是否符合");
 
         btnAdd.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         btnDelete.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        btnModify.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         btnMoveUp.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         btnMoveDown.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         btnClear.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        btnPreOrder.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        btnCheck.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
         btnAdd.setOnAction(e -> addCharacter(stage));
         btnDelete.setOnAction(e -> {
@@ -78,8 +85,23 @@ public class Initializer extends Application {
             }
         });
         btnClear.setOnAction(e -> items.clear());
+        btnPreOrder.setOnAction(e -> showPrediction(stage));
+        btnCheck.setOnAction(e -> {
+            BattlePane battlePane = new BattlePane(items, getUsedCharacterName(), round);
+            List<String> actionList = battlePane.getActionList();
 
-        TilePane tp = new TilePane(btnAdd, btnDelete, btnModify, btnMoveUp, btnMoveDown, btnClear);
+            boolean correct = true;
+            for (int i = 0; i < predictionOrder.size(); i++) {
+                if (actionList != null && !predictionOrder.get(i).equals(actionList.get(i))) {
+                    correct = false;
+                    break;
+                }
+            }
+
+            Utils.information(correct ? "符合" : "不符合");
+        });
+
+        TilePane tp = new TilePane(btnAdd, btnDelete, btnModify, btnMoveUp, btnMoveDown, btnClear, btnPreOrder, btnCheck);
         tp.setVgap(20);
         tp.setPadding(new Insets(20, 10, 20, 10));
 
@@ -91,6 +113,115 @@ public class Initializer extends Application {
         stage.setHeight(900);
         stage.setTitle("配置式神");
         stage.show();
+    }
+
+    private void showPrediction(Stage owner) {
+        Stage stage = new Stage();
+        // center TablePane
+        // or ListView
+        ListView<String> listView = new ListView<>();
+        SerializableObservableList<String> list = predictionOrder;
+        listView.setItems(list.getObservableList());
+
+        listView.setCellFactory(param -> new ListCell<>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (item == null || empty) {
+                    setText(null);
+                } else {
+                    setText("\t" + (getIndex() + 1) + "\t" + item);
+                }
+            }
+        });
+
+        // top 回合输入框
+        TextField tf = new TextField(String.valueOf(round));
+        tf.textProperty().addListener((obs, old, val) ->
+                round = Utils.parseIntOrDefault(val, 0));
+
+        // right controller
+        Button btnAdd = new Button("添加");
+        Button btnDelete = new Button("删除");
+        Button btnMoveUp = new Button("上移");
+        Button btnMoveDown = new Button("下移");
+        Button btnClear = new Button("清空");
+
+        VBox controller = new VBox(btnAdd, btnDelete, btnMoveUp, btnMoveDown, btnClear);
+
+        btnAdd.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        btnDelete.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        btnMoveUp.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        btnMoveDown.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        btnClear.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+
+        btnAdd.setOnAction(e -> {
+            Set<String> set = getUsedCharacterName();
+            if (set == null) return;
+
+            TilePane tp = new TilePane();
+            for (String s : set) {
+                Button btn = new Button(s);
+                btn.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+                btn.setOnAction(e1 -> predictionOrder.add(s));
+                tp.getChildren().add(btn);
+            }
+
+            Stage addStage = new Stage();
+            addStage.setScene(new Scene(tp));
+            addStage.initModality(Modality.APPLICATION_MODAL);
+            addStage.initOwner(stage);
+
+            addStage.showAndWait();
+        });
+
+        btnDelete.setOnAction(e -> {
+            int index = listView.getSelectionModel().getSelectedIndex();
+            if (index >= 0 && index < list.size()) {
+                list.remove(index);
+                if (index < list.size()) {
+                    listView.getSelectionModel().select(index);
+                }
+            }
+        });
+
+        btnMoveUp.setOnAction(e -> {
+            int index = listView.getSelectionModel().getSelectedIndex();
+            if (index > 0 && index < list.size()) {
+                list.add(index - 1, list.remove(index));
+                listView.getSelectionModel().select(index - 1);
+            }
+        });
+        btnMoveDown.setOnAction(e -> {
+            int index = listView.getSelectionModel().getSelectedIndex();
+            if (index < list.size() - 1 && index >= 0) {
+                list.add(index + 1, list.remove(index));
+                listView.getSelectionModel().select(index + 1);
+            }
+        });
+        btnClear.setOnAction(e -> list.clear());
+
+        BorderPane borderPane = new BorderPane();
+        borderPane.setCenter(listView);
+        borderPane.setTop(tf);
+        borderPane.setRight(controller);
+
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.initOwner(owner);
+        stage.setScene(new Scene(borderPane));
+        stage.showAndWait();
+    }
+
+    private Set<String> getUsedCharacterName() {
+        Set<String> set = new LinkedHashSet<>();
+        for (PropertiesHolder item : items) {
+            set.add(item.name);
+        }
+        if (set.isEmpty()) {
+            Utils.information("请先添加角色");
+            return null;
+        }
+        return set;
     }
 
     private void addCharacter(Stage owner) {
@@ -144,7 +275,6 @@ public class Initializer extends Application {
         borderPane.setTop(controlPane);
     }
 
-    @SuppressWarnings("unchecked")
     private void loadData(Stage stage) {
         FileChooser fileChooser = new FileChooser();
         File directory = new File("save");
@@ -156,18 +286,26 @@ public class Initializer extends Application {
 
         File file = fileChooser.showOpenDialog(stage);
         if (file != null) {
-            SerializableObservableList<PropertiesHolder> readItems = null;
+            SerializableRecord readRecord = null;
             try (FileInputStream fis = new FileInputStream(file);
                  ObjectInputStream ois = new ObjectInputStream(fis)
             ) {
-                readItems = (SerializableObservableList<PropertiesHolder>) ois.readObject();
+                readRecord = ((SerializableRecord) ois.readObject());
+//                readItems = (SerializableObservableList<PropertiesHolder>) ois.readObject();
             } catch (Exception e) {
                 Utils.throwException("读取文件时出错", e);
             }
 
-            if (readItems == null) {
+            if (readRecord == null || readRecord.items == null) {
                 return;
             }
+
+            round = readRecord.round;
+            if (predictionOrder.size() == 0) {
+                predictionOrder = readRecord.predictionOrder;
+            }
+
+            SerializableObservableList<PropertiesHolder> readItems = readRecord.items;
 
             StringJoiner sj = new StringJoiner("\n");
             for (PropertiesHolder item : readItems) {
@@ -221,7 +359,7 @@ public class Initializer extends Application {
                     FileOutputStream fos = new FileOutputStream(file);
                     ObjectOutputStream oos = new ObjectOutputStream(fos)
             ) {
-                oos.writeObject(items);
+                oos.writeObject(new SerializableRecord(items, round, predictionOrder));
             } catch (Exception e) {
                 Utils.throwException("保存时出错", e);
             }
@@ -231,5 +369,9 @@ public class Initializer extends Application {
 
     public interface Back {
         void back();
+    }
+
+    record SerializableRecord(SerializableObservableList<PropertiesHolder> items
+            , int round, SerializableObservableList<String> predictionOrder) implements Serializable {
     }
 }

@@ -77,14 +77,14 @@ class Skill3 extends Skill {
         List<Character> targets = new CharacterFinder(shenShe)
                 .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
                 .getList();
-        interactive.attack(SkillName, targets, multiplier, AttackType.QUN_TI);
+        interactive.attack(this, targets, multiplier, AttackType.QUN_TI);
 
 
         // 回到本体
         sheShen.backToNormal();
         // lv2-释放时蛇神每剩余20%生命,为自身恢复12%生命
         if (getLevel() >= 2) {
-            interactive.recovery(shenShe, shenShe.getMaxHp() * 0.12 * times);
+            interactive.recovery(this, shenShe, shenShe.getMaxHp() * 0.12 * times);
         }
         return Optional.ofNullable(target);
     }
