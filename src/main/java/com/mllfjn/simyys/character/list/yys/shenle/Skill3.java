@@ -10,14 +10,14 @@ import com.mllfjn.simyys.battleevent.EventBattleStart;
 
 import java.util.Optional;
 
-class SkillJF extends Skill {
+class Skill3 extends Skill {
     public static final String SkillName = "通灵·疾风";
     public static final int[] multiplier = new int[]{0, 10, 15, 20, 25, 30};
 
     private final int shuYin;
     private boolean mobBattle = false;
 
-    public SkillJF(Character belongTo, int level, int shuYin) {
+    public Skill3(Character belongTo, int level, int shuYin) {
         super(belongTo, level, 0, 1, 2);
         this.shuYin = shuYin;
         belongTo.bp.addActionListener(belongTo, event -> {

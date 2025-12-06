@@ -324,7 +324,7 @@ public abstract class Character implements Serializable {
     }
 
     public void addSkills() {
-        skills.add(SkillAuto.INSTANCE);
+        addSkill(SkillAuto.INSTANCE);
         addOwnSkills();
     }
 

@@ -1,6 +1,7 @@
 package com.mllfjn.simyys.character.list.sp.dayuan;
 
 import com.mllfjn.simyys.BattlePane;
+import com.mllfjn.simyys.battleevent.EventRoundDone;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
@@ -34,7 +35,16 @@ class StatusChi extends Status implements Runnable, Displayable {
             if (!belongTo.isHaveStatus(StatusChiNewRound.class)) {
                 // 回合结束后立即获得1个回合,且新回合释放妖术技能消耗的鬼火减少2点(已包含在StatusChiNewRound中)
                 belongTo.doInteractive(interactive -> interactive.getNewRound(belongTo));
-                belongTo.addStatus(new StatusChiNewRound((DaYuan) from, belongTo));
+//                belongTo.addStatus(new StatusChiNewRound((DaYuan) from, belongTo));
+
+                belongTo.bp.addActionListener(belongTo, event -> {
+                    if (event instanceof EventRoundDone) {
+                        belongTo.addStatus(new StatusChiNewRound((DaYuan) from, belongTo));
+                        return true;
+                    }
+                    return false;
+                });
+
             }
         } else {
             // lv2 拥有尘缘的目标回合开始时立即获得1点鬼火
@@ -60,8 +70,7 @@ class StatusChi extends Status implements Runnable, Displayable {
 class StatusChiNewRound extends Status implements ReduceCost {
     public StatusChiNewRound(DaYuan from, Character belongTo) {
         super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-        // 获得该状态后会结算一个回合,所以要让持续回合+1
-        setDurationType(StatusDurationType.CHI_XU, 2);
+        setDurationType(StatusDurationType.CHI_XU, 1);
     }
 
     @Override
@@ -98,7 +107,8 @@ class StatusQing extends Status implements Runnable, Displayable {
         // 并使自身减伤提升50%
         belongTo.addStatus(new StatusQingJianShang((DaYuan) from, belongTo));
         // lv2-回合开始时立即获得1点鬼火
-        if (isLv2) {
+        // 和赤一起加的时候由赤来回火
+        if (isLv2 && !belongTo.isHaveStatus(StatusChi.class)) {
             belongTo.bp.gainGuiHuo(belongTo, 1);
         }
         return false;

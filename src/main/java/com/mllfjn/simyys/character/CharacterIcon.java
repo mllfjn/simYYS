@@ -230,10 +230,12 @@ public class CharacterIcon extends VBox {
     private void refreshShieldBar() {
         double shield = 0;
         double maxHp = character.getMaxHp();
-        Iterator<Status> iterator = character.getStatuses().iterator();
-        while (shield < maxHp && iterator.hasNext()) {
-            if (iterator.next() instanceof StatusShield ss) {
+        for (Status status : character.getStatuses()) {
+            if (status instanceof StatusShield ss) {
                 shield += ss.getShield();
+                if (shield >= maxHp) {
+                    break;
+                }
             }
         }
         if (shield > 0) {

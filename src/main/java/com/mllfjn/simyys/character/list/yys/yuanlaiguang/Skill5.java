@@ -13,7 +13,7 @@ import com.mllfjn.simyys.character.status.StatusType;
 import java.util.Optional;
 
 class Skill5 extends Skill {
-    public static final String SkillName = "只加爆伤的血之契";
+    public static final String SkillName = "血之契";
 
     private final int shuYin;
 
@@ -35,8 +35,6 @@ class Skill5 extends Skill {
                 .filterSelf()
                 .getPriorAuto(CharacterFinder.Property.ATTACK, CharacterFinder.Criteria.MAX);
 
-        // TODO 鬼兵部同时附身给另一友方目标
-
         // 提升自身lv1-22, lv2-26, lv4-30暴击
         int level = getLevel();
         yuan.addStatus(new StatusCritRate(yuan, level == 1 ? 22 : level < 4 ? 26 : 30));
@@ -47,7 +45,18 @@ class Skill5 extends Skill {
             target.addStatus(new StatusCritPower(yuan, target, 15 * shuYin));
         }
 
-        // TODO lv3, lv5-释放后鬼兵部伤害吸收系数提升
+        // 与鬼胄相关的内容
+        getBelongTo().getSkill(6).ifPresent(skill -> {
+            Skill6Passive skill6 = ((Skill6Passive) skill);
+            // lv3, lv5-释放后鬼兵部伤害吸收系数提升
+            if (level >= 3) {
+                skill6.setAbsorb(level == 5 ? 0.5 : 0.4);
+            }
+
+            // 鬼兵部同时附身给另一友方目标
+            skill6.fuShen(target);
+        });
+
 
         return Optional.of(target);
     }

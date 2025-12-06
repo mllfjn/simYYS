@@ -48,11 +48,15 @@ public class HaiYuanBeiJi extends Character {
         bp.addActionListener(this, event -> {
             if (event instanceof EventAttack ea) {
                 AttackInfo attackInfo = ea.getAttackInfo();
-                Character target = attackInfo.getTarget();
-                if (target.team == this.team && target.alive) {
-                    this.doInteractive(interactive -> interactive.recovery(target
-                            , attackInfo.getTraceableNumber().getNumber() * 0.3));
+                double number = attackInfo.getTraceableNumber().getNumber();
+                if (number > 0) {
+                    Character target = attackInfo.getTarget();
+                    if (target.team == this.team && target.alive) {
+                        this.doInteractive(interactive -> interactive.recovery(target
+                                , number * 0.3));
+                    }
                 }
+
             } else if (event instanceof EventUseGuiHuo eg && eg.getTeam() == team) {
                 chaoSheng.addStack(eg.getNum());
             }

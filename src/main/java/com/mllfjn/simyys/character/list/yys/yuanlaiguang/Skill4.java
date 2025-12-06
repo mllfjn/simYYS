@@ -7,9 +7,9 @@ import com.mllfjn.simyys.character.skill.Skill;
 import java.util.Optional;
 
 class Skill4 extends Skill {
-    public static final String SkillName = "没做的鬼神之策";
+    public static final String SkillName = "鬼神之策";
 
-    public Skill4(Character belongTo, int level) {
+    public Skill4(Character belongTo, int level, int shuYin) {
         super(belongTo, level, 0, 1, 4);
     }
 

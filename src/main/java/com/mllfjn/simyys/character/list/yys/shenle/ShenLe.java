@@ -4,17 +4,14 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.PropertyKey;
 import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
 import com.mllfjn.simyys.character.propertygetter.PropertiesMap;
-import com.mllfjn.simyys.character.propertygetter.PropertyMultiInput;
 import com.mllfjn.simyys.character.list.yys.CharacterYYSBase;
-import com.mllfjn.simyys.utils.Utils;
+import com.mllfjn.simyys.character.propertygetter.PropertyMultiInput;
 
 public class ShenLe extends CharacterYYSBase {
     public static final String CharacterName = "神乐";
-    private static final String SKILL1_KEY = "伞击等级";
-    private static final String SKILL_JF_KEY = "通灵·疾风等级";
-
-    private Skill1 skill1;
-    private SkillJF skillJF;
+    public static final String[] SkillNames = new String[]{Skill1.SkillName, Skill3.SkillName};
+    public static final String[] DefaultSkillLevels = new String[]{"5", "5"};
+    public static final String[] DefaultShuYin = new String[]{"0", "3"};
 
     public ShenLe() {
 
@@ -23,8 +20,8 @@ public class ShenLe extends CharacterYYSBase {
     @Override
     public PropertiesMap getProperties() {
         PropertiesMap map = super.getProperties();
-        map.put(SKILL1_KEY, PropertyKey.getYYSSkillPMI());
-        map.put(SKILL_JF_KEY, PropertyKey.getYYSSkillPMI());
+
+        PropertyKey.addYYSSkill(map, SkillNames, DefaultSkillLevels, DefaultShuYin);
 
         return map;
     }
@@ -32,22 +29,20 @@ public class ShenLe extends CharacterYYSBase {
     @Override
     public void init(PropertiesHolder propertiesHolder, BattlePane bp) {
         super.init(propertiesHolder, bp);
-        String[] skill1Values = ((PropertyMultiInput) propertiesHolder.propertiesMap.get(SKILL1_KEY)).getValues();
-        skill1 = new Skill1(this
-                , Utils.parseIntOrDefault(skill1Values[0], 0)
-                , Utils.parseIntOrDefault(skill1Values[1], 0)
-        );
 
-        String[] skillJFValues = ((PropertyMultiInput) propertiesHolder.propertiesMap.get(SKILL_JF_KEY)).getValues();
-        skillJF = new SkillJF(this
-                , Utils.parseIntOrDefault(skillJFValues[0], 0)
-                , Utils.parseIntOrDefault(skillJFValues[1], 0)
-        );
+        PropertiesMap map = propertiesHolder.propertiesMap;
+
+        int[] skill = ((PropertyMultiInput) map.get(Skill1.SkillName)).getValuesInt();
+        addSkill(new Skill1(this, skill[0], skill[1]));
+
+        skill = ((PropertyMultiInput) map.get(Skill3.SkillName)).getValuesInt();
+        if (skill[0] > 0) {
+            addSkill(new Skill3(this, skill[0], skill[1]));
+        }
     }
 
     @Override
     public void addOwnSkills() {
-        addSkill(skill1);
-        addSkill(skillJF);
+
     }
 }

@@ -21,7 +21,7 @@ public class StatusShield extends Status implements Displayable {
     /**
      *
      * @param attackInfo 伤害信息
-     * @return return true if shield run out
+     * @return return true if shield run out or somehow should be removed
      */
     public boolean handle(AttackInfo attackInfo) {
         TraceableNumber traceableNumber = attackInfo.getTraceableNumber();

@@ -1,8 +1,10 @@
 package com.mllfjn.simyys.character.propertygetter;
 
+import com.mllfjn.simyys.utils.Utils;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.stage.Window;
 
@@ -24,6 +26,14 @@ public class PropertyMultiInput extends PropertyRequire {
         return values;
     }
 
+    public int[] getValuesInt() {
+        int[] valuesInt = new int[values.length];
+        for (int i = 0; i < values.length; i++) {
+            valuesInt[i] = Utils.parseIntOrDefault(values[i], 0);
+        }
+        return valuesInt;
+    }
+
     @Override
     public Node getNode(String desc, Window owner) {
         Label label = new Label(desc);
@@ -35,7 +45,7 @@ public class PropertyMultiInput extends PropertyRequire {
             int ii = i;
             TextField tf = new TextField(values[i]);
             // 当输入框内容为空时显示信息
-            tf.setPromptText(this.desc[i]);
+            tf.setTooltip(new Tooltip(this.desc[i]));
             tf.textProperty().addListener((obs, old, val) -> values[ii] = val);
             node.getChildren().add(tf);
         }

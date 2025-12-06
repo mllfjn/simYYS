@@ -1,6 +1,7 @@
 package com.mllfjn.simyys.character.yuhun.list;
 
 import com.mllfjn.simyys.BattlePane;
+import com.mllfjn.simyys.battleevent.EventRoundDone;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.Runnable;
@@ -63,7 +64,13 @@ public class HuoZhiChe extends YuHun implements YuHunSealResponse {
             if (stack == 4) {
                 stack = 0;
                 belongTo.getInteractive().getNewRound(belongTo);
-                belongTo.addStatus(new StatusReduceCost(belongTo, 1));
+                belongTo.bp.addActionListener(belongTo, event -> {
+                    if (event instanceof EventRoundDone) {
+                        belongTo.addStatus(new StatusReduceCost(belongTo, 1));
+                        return true;
+                    }
+                    return false;
+                });
             }
             return false;
         }

@@ -5,7 +5,7 @@ import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.character.status.StatusShield;
 
 class StatusShenWuHuDun extends StatusShield {
-    public static final String StatusNameChild = "蜃气护盾";
+    public static final String StatusName = "蜃气护盾";
 
     private int count = 3;
 
@@ -37,6 +37,6 @@ class StatusShenWuHuDun extends StatusShield {
 
     @Override
     public String getText() {
-        return StatusNameChild + count;
+        return StatusName + count;
     }
 }

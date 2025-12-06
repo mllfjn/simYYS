@@ -50,7 +50,13 @@ public class PropertyKey {
     }
 
     private static final String[] YYSSkillDesc = new String[]{"技能等级", "契灵术印等级"};
-    public static PropertyMultiInput getYYSSkillPMI() {
-        return new PropertyMultiInput(YYSSkillDesc).setValue(0, "5").setValue(1, "3");
+
+    public static void addYYSSkill(PropertiesMap map
+            , String[] names, String[] defaultLevels, String[] defaultShuYin) {
+        for (int i = 0; i < names.length; i++) {
+            map.put(names[i], new PropertyMultiInput(YYSSkillDesc)
+                    .setValue(0, defaultLevels[i])
+                    .setValue(1, defaultShuYin[i]));
+        }
     }
 }
