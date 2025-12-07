@@ -75,24 +75,10 @@ public abstract class Character implements Serializable {
             map.put(key, new PropertyInput());
         }
         ((PropertyInput) map.get(PropertyKey.GENERAL_BASE_ATTACK_KEY)).setValue(getDefaultBaseAttack());
-        /*map.put(PropertyKey.GENERAL_SPEED_KEY, new PropertyInput());
-        map.put(PropertyKey.GENERAL_BASE_ATTACK_KEY, new PropertyInput().setValue(getDefaultBaseAttack()));
-        map.put(PropertyKey.GENERAL_YU_HUN_ATTACK_KEY, new PropertyInput());
-        map.put(PropertyKey.GENERAL_HP_KEY, new PropertyInput());
-        map.put(PropertyKey.GENERAL_DEFENSE_KEY, new PropertyInput());
-        map.put(PropertyKey.GENERAL_CRIT_RATE_KEY, new PropertyInput());
-        map.put(PropertyKey.GENERAL_CRIT_POWER_KEY, new PropertyInput());
-        map.put(PropertyKey.GENERAL_EFFECT_HIT_RATE_KEY, new PropertyInput());
-        map.put(PropertyKey.GENERAL_EFFECT_RESIST_RATE_KEY, new PropertyInput());*/
 
         for (String key : PropertyKey.GENERAL_CHECK_KEYS) {
             map.put(key, new PropertyCheck());
         }
-
-        /*map.put(PropertyKey.GENERAL_TEAM_KEY, new PropertyCheck());
-        map.put(PropertyKey.GENERAL_MOB_KEY, new PropertyCheck());
-        map.put(PropertyKey.GENERAL_YYS_KEY, new PropertyCheck());
-        map.put(PropertyKey.GENERAL_SUMMON_KEY, new PropertyCheck());*/
 
         return map;
     }
@@ -314,9 +300,8 @@ public abstract class Character implements Serializable {
                 lockSkill = i;
             }
         });
-        if (characterIcon != null) {
-            characterIcon.selectLockSkill();
-        }
+
+        doIfCharacterIconExist(CharacterIcon::selectLockSkill);
     }
 
     public int getLockSkill() {
@@ -384,15 +369,16 @@ public abstract class Character implements Serializable {
 
         if (flagChangeMap != null && flagChangeMap.containsKey(timesToAct)) {
             FlagChangeInfo flagChangeInfo = flagChangeMap.get(timesToAct);
-            int targetTeam = flagChangeInfo.flagType == FlagChangeInfo.FlagType.GREEN ? team : 1 - team;
+            FlagChangeInfo.FlagType flagType = flagChangeInfo.flagType;
+            int targetTeam = (flagType == FlagChangeInfo.FlagType.GREEN ? team : 1 - team);
 
             TeamPane targetTeamPane = bp.situation.teamPane[targetTeam];
-            Character auto = targetTeamPane.getAuto().orElse(null);
+            Character auto = targetTeamPane.getAuto(flagType).orElse(null);
             // 如果目标角色序号值为0且标存在,则取消.如果目标值为0且标不存在,不需要任何操作
             // 如果目标角色序号值不为0并且值有效,如果目标角色!=现有标,切换标,如果目标角色==现有标不需要任何操作
             if (flagChangeInfo.target == 0) {
                 if (auto != null) {
-                    targetTeamPane.setAuto(auto);
+                    targetTeamPane.setAuto(auto, flagType);
                 }
             } else {
                 int targetIndex = flagChangeInfo.target - 1;
@@ -400,7 +386,7 @@ public abstract class Character implements Serializable {
                 if (targetIndex >= 0 && targetIndex < characters.size()) {
                     Character target = characters.get(targetIndex);
                     if (target != auto) {
-                        targetTeamPane.setAuto(target);
+                        targetTeamPane.setAuto(target, flagType);
                     }
                 }
             }
@@ -457,16 +443,12 @@ public abstract class Character implements Serializable {
     public void removeSkill(int skillID) {
         Optional<Skill> os = getSkill(skillID);
         os.ifPresent(skill -> {
-            if (characterIcon != null) {
-                characterIcon.startChangeSkill();
-            }
+            doIfCharacterIconExist(CharacterIcon::startChangeSkill);
             skills.remove(skill);
             if (skillID == lockSkill) {
                 lockSkill = 0;
             }
-            if (characterIcon != null) {
-                characterIcon.endChangeSkill();
-            }
+            doIfCharacterIconExist(CharacterIcon::endChangeSkill);
         });
     }
 
@@ -487,15 +469,9 @@ public abstract class Character implements Serializable {
             i++;
         }
 
-        if (characterIcon != null) {
-            characterIcon.startChangeSkill();
-        }
-
+        doIfCharacterIconExist(CharacterIcon::startChangeSkill);
         skills.add(i, skill);
-
-        if (characterIcon != null) {
-            characterIcon.endChangeSkill();
-        }
+        doIfCharacterIconExist(CharacterIcon::endChangeSkill);
 
         if (skill instanceof PassiveSkill ps) {
             ps.enable();
@@ -584,6 +560,12 @@ public abstract class Character implements Serializable {
         return characterIcon;
     }
 
+    public void doIfCharacterIconExist(Consumer<CharacterIcon> action) {
+        if (characterIcon != null) {
+            action.accept(characterIcon);
+        }
+    }
+
     protected EventHandler<MouseEvent> getEventHandler() {
         return null;
     }
@@ -610,13 +592,6 @@ public abstract class Character implements Serializable {
                 return Optional.empty();
             }
         }
-        /*if (isHaveStatus(RejectAllStatusesInstance.class)) {
-            return Optional.empty();
-        }
-
-        if (newStatus.statusType == StatusType.DEBUFF && isIgnoreDebuff()) {
-            return Optional.empty();
-        }*/
 
         statuses.add(newStatus);
         return Optional.of(newStatus);

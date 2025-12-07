@@ -4,6 +4,7 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.battleevent.EventActionDone;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.Runnable;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
@@ -101,7 +102,7 @@ public class TuZhiZhu extends YuHun implements YuHunUnfullMark, YuHunAttack {
                 }
                 record.from.doInteractive(interactive ->
                         interactive.attack(belongTo, AttackType.JIAN_JIE, AttackInfo.createJianJieAttack(
-                                record.from, null, belongTo, (owner, target) -> record.num)));
+                                record.from, Skill.getInstance(TuZhiZhu.YuHunName), belongTo, (owner, target) -> record.num)));
             }
             return true;
         }

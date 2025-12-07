@@ -2,6 +2,7 @@ package com.mllfjn.simyys.character.skill;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.propertygetter.FlagChangeInfo;
 import com.mllfjn.simyys.ratecontroller.RateController;
 
 import java.util.ArrayList;
@@ -77,9 +78,9 @@ public class CharacterFinder {
     public Character getPriorAuto(Property property, Criteria criteria) {
         // 如果自动目标存在,且列表中有该目标,直接返回
         // 否则返回和get方法一样的结果
+        Character auto = getAuto();
+
         List<Character> list = getList();
-        Character auto = bp.situation.getAutoTo(targetTeam == TargetTeam.TEAMMATE ? owner.team : getEnemyTeam())
-                .orElse(null);
         if (auto != null && list.contains(auto)) {
             return auto;
         } else {
@@ -90,14 +91,28 @@ public class CharacterFinder {
 
     public Character getAutoOrElseRandom() {
         List<Character> list = getList();
-        Character auto = bp.situation.getAutoTo(targetTeam == TargetTeam.TEAMMATE ? owner.team : getEnemyTeam())
-                .orElse(null);
+        Character auto = getAuto();
         if (auto != null && list.contains(auto)) {
             return auto;
         } else {
             stream = list.stream();
             return getRandom();
         }
+    }
+
+    private Character getAuto() {
+        int target;
+        FlagChangeInfo.FlagType flagType;
+
+        if (targetTeam == TargetTeam.TEAMMATE) {
+            target = owner.team;
+            flagType = FlagChangeInfo.FlagType.GREEN;
+        } else {
+            target = getEnemyTeam();
+            flagType = FlagChangeInfo.FlagType.RED;
+        }
+
+        return bp.situation.getAutoTo(target, flagType).orElse(null);
     }
 
     public Character get(Property property, Criteria criteria) {

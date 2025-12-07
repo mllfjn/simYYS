@@ -1,6 +1,7 @@
 package com.mllfjn.simyys;
 
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.propertygetter.FlagChangeInfo;
 import com.mllfjn.simyys.character.yuhun.list.HuoLing;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.guihuo.GuiHuo;
@@ -20,7 +21,7 @@ public class TeamPane implements Serializable {
     private transient BorderPane root;
 
     public final List<Character> characters = new ArrayList<>();
-    private Character auto;
+    private final Character[] autos = new Character[2];
     private GuiHuo guiHuo;
     private boolean mobTeam = true;
 
@@ -32,6 +33,11 @@ public class TeamPane implements Serializable {
             center.setAlignment(Pos.CENTER);
             for (Character character : characters) {
                 center.getChildren().add(character.getCharacterIcon());
+                if (character == autos[0]) {
+                    character.getCharacterIcon().setIsAuto(FlagChangeInfo.FlagType.GREEN, true);
+                } else if (character == autos[1]) {
+                    character.getCharacterIcon().setIsAuto(FlagChangeInfo.FlagType.RED, true);
+                }
             }
 
             root = new BorderPane();
@@ -43,27 +49,31 @@ public class TeamPane implements Serializable {
         return root;
     }
 
-    public void setAuto(Character characterSelected) {
+    public void setAuto(Character characterSelected, FlagChangeInfo.FlagType flagType) {
+        Character auto = autos[flagType.index];
+
         // 如果没标任何人，给选择目标设置标
         if (auto == null) {
-            auto = characterSelected;
-            auto.getCharacterIcon().setIsAuto(true);
+            autos[flagType.index] = characterSelected;
+            characterSelected.doIfCharacterIconExist(
+                    characterIcon -> characterIcon.setIsAuto(flagType, true));
         } else {
             // 如果已有标，先取消标
-            auto.getCharacterIcon().setIsAuto(false);
+            auto.doIfCharacterIconExist(characterIcon -> characterIcon.setIsAuto(flagType, false));
             // 如果已有标，且和选择的目标是一个，置null
             if (auto == characterSelected) {
-                auto = null;
+                autos[flagType.index] = null;
             } else {
                 // 如果已有标，且和选择的目标不是一个，换到新目标
-                auto = characterSelected;
-                characterSelected.getCharacterIcon().setIsAuto(true);
+                autos[flagType.index] = characterSelected;
+                characterSelected.doIfCharacterIconExist(
+                        characterIcon -> characterIcon.setIsAuto(flagType, true));
             }
         }
     }
 
-    public Optional<Character> getAuto() {
-        return Optional.ofNullable(auto);
+    public Optional<Character> getAuto(FlagChangeInfo.FlagType flagType) {
+        return Optional.ofNullable(autos[flagType.index]);
     }
 
     public void addCharacter(Character character) {
@@ -85,8 +95,11 @@ public class TeamPane implements Serializable {
         if (center != null) {
             center.getChildren().remove(character.getCharacterIcon());
         }
-        if (auto == character) {
-            auto = null;
+
+        for (int i = 0; i < autos.length; i++) {
+            if (autos[i] == character) {
+                autos[i] = null;
+            }
         }
     }
 

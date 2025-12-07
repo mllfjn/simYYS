@@ -49,14 +49,8 @@ public class BattlePane {
     private final VBox container = new VBox();
 
 
-    private final List<String> actionList;
-    private final Set<String> usedCharacterName;
-
-
     public BattlePane(Stage stage, Initializer.Back back, SerializableObservableList<PropertiesHolder> list) {
         this.list = list;
-        this.actionList = null;
-        this.usedCharacterName = null;
         stage.setScene(new Scene(root));
 
         setupUI(back);
@@ -65,24 +59,10 @@ public class BattlePane {
     }
 
     // 该构造方法用于预测模式
-    public BattlePane(SerializableObservableList<PropertiesHolder> list, Set<String> usedCharacterName, int round) {
+    public BattlePane(SerializableObservableList<PropertiesHolder> list) {
         this.list = list;
-        this.usedCharacterName = usedCharacterName;
-        this.actionList = new ArrayList<>();
 
         init();
-
-        skip(round - 1);
-    }
-
-    private void addToActionList(String name) {
-        if (usedCharacterName.contains(name)) {
-            actionList.add(name);
-        }
-    }
-
-    public List<String> getActionList() {
-        return actionList;
     }
 
     private void setupUI(Initializer.Back back) {
@@ -226,7 +206,6 @@ public class BattlePane {
         }
 
         getNextActor();
-        addToActionList(situation.characterActing.name);
 
         // 战斗开始
         onTrigger(new EventBattleStart());
@@ -345,7 +324,7 @@ public class BattlePane {
         }
     }
 
-    private void next(boolean skip) {
+    public void next(boolean skip) {
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
              ObjectOutputStream oos = new ObjectOutputStream(bos)
         ) {
@@ -373,7 +352,6 @@ public class BattlePane {
             getNextActor();
             interactive.display();
             log.characterAct(situation.characterActing);
-            addToActionList(situation.characterActing.name);
         } while (!situation.characterActing.controllable());
 
         log.next();
@@ -406,6 +384,10 @@ public class BattlePane {
         next.setLocation(0);
         next.timesToAct++;
         next.beforeRound();
+    }
+
+    public Character getCharacterActing() {
+        return situation.characterActing;
     }
 
     public Interactive getInteractive(Character character) {

@@ -13,12 +13,14 @@ public class FlagChangeInfo implements Serializable {
 
 
     public enum FlagType {
-        GREEN("绿标"),
-        RED("红标");
+        GREEN("绿标", 0),
+        RED("红标", 1);
         public final String type;
+        public final int index;
 
-        FlagType(String type) {
+        FlagType(String type, int index) {
             this.type = type;
+            this.index = index;
         }
 
 

@@ -6,6 +6,11 @@ public class LaoTou extends CharacterShiShenBase {
     public static final String CharacterName = "晨晖惠比寿";
 
     @Override
+    protected boolean useSkillAuto() {
+        return tryUseSkill(3);
+    }
+
+    @Override
     protected String getDefaultSkillLevel() {
         return "555";
     }

@@ -4,6 +4,7 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
+import com.mllfjn.simyys.character.yuhun.list.QingNvFang;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
 
@@ -44,6 +45,8 @@ class Skill3 extends Skill {
                 .filterSelf()
                 // 去除已经有堕化的
                 .filter(character -> !character.isHaveStatus(StatusDuoHua.class))
+                // 去除青女房
+                .filter(character -> !character.isHaveStatus(QingNvFang.getStatusClass()))
                 .getAutoOrElseRandom();
 
         if (target != null) {

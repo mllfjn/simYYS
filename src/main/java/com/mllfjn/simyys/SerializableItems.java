@@ -2,6 +2,7 @@ package com.mllfjn.simyys;
 
 import com.mllfjn.simyys.battleevent.BattleActionListener;
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.propertygetter.FlagChangeInfo;
 
 import java.io.Serializable;
 import java.util.*;
@@ -27,8 +28,8 @@ public class SerializableItems implements Serializable {
         teamPane[1] = new TeamPane();
     }
 
-    public Optional<Character> getAutoTo(int team) {
-        return teamPane[team].getAuto();
+    public Optional<Character> getAutoTo(int team, FlagChangeInfo.FlagType flagType) {
+        return teamPane[team].getAuto(flagType);
     }
 
     public double getCurrentRate() {
@@ -67,11 +68,24 @@ public class SerializableItems implements Serializable {
     public void removeCharacter(Character character) {
         characters.remove(character);
         teamPane[character.team].removeCharacter(character);
+
         listenerMap.remove(character);
     }
 
     public void addCharacter(Character character) {
         characters.add(character);
         teamPane[character.team].addCharacter(character);
+    }
+
+    public void setAuto(Character characterSelected, FlagChangeInfo.FlagType flagType) {
+        // CS是需要设置红绿标的目标
+        // 如果flagType是绿标,那么给CS所在的队伍设置绿标,CS本人设置绿标
+        // 如果flagType是红标,那么给CS对面的队伍设置红标,CS本人设置红标
+
+        if (flagType == FlagChangeInfo.FlagType.GREEN) {
+            teamPane[characterSelected.team].setAuto(characterSelected, flagType);
+        } else {
+            teamPane[characterSelected.team == 0 ? 1 : 0].setAuto(characterSelected, flagType);
+        }
     }
 }

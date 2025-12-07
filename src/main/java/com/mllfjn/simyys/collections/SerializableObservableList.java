@@ -46,6 +46,10 @@ public class SerializableObservableList<E extends Serializable> implements Seria
         Objects.requireNonNullElse(observableList, list).clear();
     }
 
+    public boolean isEmpty() {
+        return list.isEmpty();
+    }
+
     @Override
     @NotNull
     public Iterator<E> iterator() {

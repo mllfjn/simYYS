@@ -26,7 +26,7 @@ class Skill1 extends Skill {
         // 对单体敌人造成攻击100%的伤害
         Character target = new CharacterFinder(belongTo)
                 .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
-                .getRandom();
+                .getAutoOrElseRandom();
         belongTo.getInteractive().attack(this, target, 120, AttackType.DAN_TI);
         // 并降低敌人30%的暴击
         target.addStatus(new StatusReduceCritRate(belongTo, target, 30));

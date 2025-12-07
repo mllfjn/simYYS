@@ -1,5 +1,6 @@
 package com.mllfjn.simyys.character;
 
+import com.mllfjn.simyys.character.propertygetter.FlagChangeInfo;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.skill.SkillAuto;
@@ -50,11 +51,11 @@ public class CharacterIcon extends VBox {
                         } else {
                             Text text = new Text(skill.toString());
                             StringBuilder sb = new StringBuilder();
-                            sb.append("火:").append(skill.getRealCost());
                             int cooling = skill.getCooling();
                             if (cooling != 0) {
                                 sb.append("冷:").append(cooling);
                             }
+                            sb.append("火:").append(skill.getRealCost());
                             Label additionalText = new Label(sb.toString());
                             additionalText.setAlignment(Pos.CENTER_RIGHT);
                             additionalText.setMaxWidth(Double.MAX_VALUE);
@@ -78,11 +79,13 @@ public class CharacterIcon extends VBox {
     // 技能选择栏
     private final ComboBox<Skill> skillBox;
     // 状态显示
-    // TODO UI决定是否显示，难点在于头像对齐，上下贴在头像旁
+    // TODO UI决定是否显示，难点在于头像对齐，上下贴在头像旁 可以让所有角色同时不显示
     // TODO 发生改变时标出来
     private final Label[] info = new Label[8];
     // 红绿标的那个标
-    private final Node autoTo;
+    private final HBox autoTo;
+    // 左键点击时的红绿标菜单
+    private final ContextMenu autoToMenu;
     // 图片区域,包括头像和御魂
     private final AnchorPane imagePane = new AnchorPane();
     // 御魂显示
@@ -124,16 +127,31 @@ public class CharacterIcon extends VBox {
         statusLabel.setMaxWidth(MAX_WIDTH);
         statusLabel.setWrapText(true);
 
+        // 红绿标
+        autoTo = new HBox();
+        autoTo.setAlignment(Pos.CENTER);
+        Node green = CharacterFactory.getImage(FlagChangeInfo.FlagType.GREEN.type, CharacterFactory.ImageSize.LABEL);
+        Node red = CharacterFactory.getImage(FlagChangeInfo.FlagType.RED.type, CharacterFactory.ImageSize.LABEL);
+
+        green.setVisible(false);
+        red.setVisible(false);
+        autoTo.getChildren().addAll(green, red);
+
+        MenuItem autoToGreen = new MenuItem(FlagChangeInfo.FlagType.GREEN.type);
+        MenuItem autoToRed = new MenuItem(FlagChangeInfo.FlagType.RED.type);
+
+        autoToGreen.setOnAction(
+                e -> character.bp.situation.setAuto(character, FlagChangeInfo.FlagType.GREEN));
+        autoToRed.setOnAction(
+                e -> character.bp.situation.setAuto(character, FlagChangeInfo.FlagType.RED));
+        autoToMenu = new ContextMenu(autoToGreen, autoToRed);
+
         // 设置队伍相关
         if (character.team == 0) {
             healthBar.setStyle("-fx-accent: orange");
-            this.autoTo = CharacterFactory.getImage("绿标", CharacterFactory.ImageSize.LABEL);
         } else {
             healthBar.setStyle("-fx-accent: red");
-            this.autoTo = CharacterFactory.getImage("红标", CharacterFactory.ImageSize.LABEL);
         }
-
-        setIsAuto(false);
 
         this.getChildren().addAll(
                 autoTo,
@@ -155,11 +173,16 @@ public class CharacterIcon extends VBox {
     }
 
     protected void onMouseClicked(MouseEvent event) {
-        if (eventHandler == null || event.getButton() == MouseButton.PRIMARY) {
-            character.bp.situation.teamPane[character.team].setAuto(character);
+        if (event.getButton() == MouseButton.PRIMARY || eventHandler == null) {
+            autoToMenu.show(this, event.getScreenX(), event.getScreenY());
+//            character.bp.situation.teamPane[character.team].setAuto(character);
         } else {
             eventHandler.handle(event);
         }
+    }
+
+    public void setIsAuto(FlagChangeInfo.FlagType flagType, boolean isAuto) {
+        autoTo.getChildren().get(flagType.index).setVisible(isAuto);
     }
 
     public void selectLockSkill() {
@@ -259,10 +282,6 @@ public class CharacterIcon extends VBox {
                 }
             }
         }
-    }
-
-    public void setIsAuto(boolean visible) {
-        autoTo.setVisible(visible);
     }
 
     private ImageView getImagePosition(int index) {

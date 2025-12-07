@@ -1,7 +1,10 @@
 package com.mllfjn.simyys.starter;
 
 import com.mllfjn.simyys.BattlePane;
+import com.mllfjn.simyys.character.propertygetter.FlagChangeInfo;
 import com.mllfjn.simyys.collections.SerializableObservableList;
+import com.mllfjn.simyys.customnode.ListViewWithBasicController;
+import com.mllfjn.simyys.customnode.NodeWithController;
 import com.mllfjn.simyys.utils.Utils;
 import com.mllfjn.simyys.character.CharacterFactory;
 import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
@@ -24,36 +27,22 @@ public class Initializer extends Application {
     private final SerializableObservableList<PropertiesHolder> items = new SerializableObservableList<>();
     private final Prediction prediction = new Prediction();
 
+    private SerializableObservableList<ExtraFlag> extraFlags = new SerializableObservableList<>();
+    private SerializableObservableList<ExtraLockSkill> extraLockSkills = new SerializableObservableList<>();
+
     @Override
     public void start(Stage stage) {
-        BorderPane borderPane = new BorderPane();
-        Scene scene = new Scene(borderPane);
-
-        getController(stage, scene, borderPane);
-
         CustomTableView customTableView = new CustomTableView();
         customTableView.setItems(items.getObservableList());
 
-        Button btnAdd = new Button("添加角色");
-        Button btnDelete = new Button("删除角色");
-        Button btnModify = new Button("修改角色");
-        Button btnMoveUp = new Button("上移");
-        Button btnMoveDown = new Button("下移");
-        Button btnClear = new Button("清空");
-        Button btnPreOrder = new Button("设置行动顺序");
-        Button btnCheck = new Button("检查是否符合");
+        NodeWithController borderPane = new NodeWithController();
+        borderPane.setNode(customTableView);
 
-        btnAdd.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-        btnDelete.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-        btnModify.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-        btnMoveUp.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-        btnMoveDown.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-        btnClear.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-        btnPreOrder.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-        btnCheck.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        Scene scene = new Scene(borderPane);
+        getController(stage, scene, borderPane);
 
-        btnAdd.setOnAction(e -> addCharacter(stage));
-        btnDelete.setOnAction(e -> {
+        borderPane.addControlButton("添加角色", e -> addCharacter(stage));
+        borderPane.addControlButton("删除角色", e -> {
             int index = customTableView.getSelectionModel().getSelectedIndex();
             if (index >= 0 && index < items.size()) {
                 items.remove(index);
@@ -62,50 +51,45 @@ public class Initializer extends Application {
                 }
             }
         });
-        btnModify.setOnAction(e -> {
+        borderPane.addControlButton("修改角色", e -> {
             PropertiesHolder item = customTableView.getSelectionModel().getSelectedItem();
             if (item != null) {
                 item.show(stage);
                 customTableView.refresh();
             }
         });
-        btnMoveUp.setOnAction(e -> {
+        borderPane.addControlButton("上移", e -> {
             int index = customTableView.getSelectionModel().getSelectedIndex();
             if (index > 0 && index < items.size()) {
                 items.add(index - 1, items.remove(index));
                 customTableView.getSelectionModel().select(index - 1);
             }
         });
-        btnMoveDown.setOnAction(e -> {
+        borderPane.addControlButton("下移", e -> {
             int index = customTableView.getSelectionModel().getSelectedIndex();
             if (index < items.size() - 1 && index >= 0) {
                 items.add(index + 1, items.remove(index));
                 customTableView.getSelectionModel().select(index + 1);
             }
         });
-        btnClear.setOnAction(e -> items.clear());
-        btnPreOrder.setOnAction(e -> showPrediction(stage));
-        btnCheck.setOnAction(e -> {
-            BattlePane battlePane = new BattlePane(items, getUsedCharacterName(), round);
-            List<String> actionList = battlePane.getActionList();
+        borderPane.addControlButton("清空", e -> items.clear());
+        borderPane.addControlButton("额外红绿标", e -> {
+            // TODO
+            ListViewWithBasicController<ExtraFlag> listViewPane = new ListViewWithBasicController<>(extraFlags);
+            /*listViewPane.setDefaultControlButtons(e -> {
+                // String int int combobox int
+                TextField tfName = new TextField();
+                TextField tfTeam = new TextField();
+                TextField tfRound = new TextField();
+            });*/
+        });
+        borderPane.addControlButton("额外锁技能", e -> {
 
-            boolean correct = true;
-            for (int i = 0; i < predictionOrder.size(); i++) {
-                if (actionList != null && !predictionOrder.get(i).equals(actionList.get(i))) {
-                    correct = false;
-                    break;
-                }
-            }
 
-            Utils.information(correct ? "符合" : "不符合");
         });
 
-        TilePane tp = new TilePane(btnAdd, btnDelete, btnModify, btnMoveUp, btnMoveDown, btnClear, btnPreOrder, btnCheck);
-        tp.setVgap(20);
-        tp.setPadding(new Insets(20, 10, 20, 10));
-
-        borderPane.setCenter(customTableView);
-        borderPane.setRight(tp);
+        borderPane.addControlButton("设置行动顺序", e -> prediction.showPrediction(stage, items));
+        borderPane.addControlButton("检查是否符合", e -> prediction.check(items));
 
         stage.setScene(scene);
         stage.setWidth(1800);
@@ -181,7 +165,6 @@ public class Initializer extends Application {
                  ObjectInputStream ois = new ObjectInputStream(fis)
             ) {
                 readRecord = ((SerializableRecord) ois.readObject());
-//                readItems = (SerializableObservableList<PropertiesHolder>) ois.readObject();
             } catch (Exception e) {
                 Utils.throwException("读取文件时出错", e);
             }
@@ -190,9 +173,16 @@ public class Initializer extends Application {
                 return;
             }
 
-            round = readRecord.round;
-            if (predictionOrder.size() == 0) {
-                predictionOrder = readRecord.predictionOrder;
+            if (prediction.predictionOrder.isEmpty()) {
+                prediction.predictionOrder = readRecord.prediction.predictionOrder;
+            }
+
+            if (extraFlags.isEmpty()) {
+                extraFlags = readRecord.extraFlags;
+            }
+
+            if (extraLockSkills.isEmpty()) {
+                extraLockSkills = readRecord.extraLockSkills;
             }
 
             SerializableObservableList<PropertiesHolder> readItems = readRecord.items;
@@ -249,7 +239,7 @@ public class Initializer extends Application {
                     FileOutputStream fos = new FileOutputStream(file);
                     ObjectOutputStream oos = new ObjectOutputStream(fos)
             ) {
-                oos.writeObject(new SerializableRecord(items, round, predictionOrder));
+                oos.writeObject(new SerializableRecord(items, extraFlags, extraLockSkills, prediction));
             } catch (Exception e) {
                 Utils.throwException("保存时出错", e);
             }
@@ -261,7 +251,16 @@ public class Initializer extends Application {
         void back();
     }
 
-    record SerializableRecord(SerializableObservableList<PropertiesHolder> items
-            , int round, SerializableObservableList<String> predictionOrder) implements Serializable {
+    record ExtraFlag(String name, int team, int timesToAct, FlagChangeInfo flagChangeInfo) implements Serializable {
+    }
+
+    record ExtraLockSkill(String name, int team, int timesToAct, int skillId) implements Serializable {
+    }
+
+    record SerializableRecord(
+            SerializableObservableList<PropertiesHolder> items
+            , SerializableObservableList<ExtraFlag> extraFlags
+            , SerializableObservableList<ExtraLockSkill> extraLockSkills,
+            Prediction prediction) implements Serializable {
     }
 }

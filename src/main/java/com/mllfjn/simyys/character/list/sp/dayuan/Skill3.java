@@ -3,6 +3,7 @@ package com.mllfjn.simyys.character.list.sp.dayuan;
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.propertygetter.FlagChangeInfo;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
@@ -32,7 +33,7 @@ class Skill3 extends Skill {
 
         Character target = bp.situation
                 // 目标首先是绿标
-                .getAutoTo(daYuan.team)
+                .getAutoTo(daYuan.team, FlagChangeInfo.FlagType.GREEN)
                 // 然后是结缘的式神
                 .or(() -> daYuan.getStatus(StatusCombined.class).map(status -> status.from))
                 // 最后是攻击最高的
