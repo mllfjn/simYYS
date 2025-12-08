@@ -1,6 +1,7 @@
 package com.mllfjn.simyys.character.skill;
 
 import com.mllfjn.simyys.BattlePane;
+import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.propertygetter.FlagChangeInfo;
 import com.mllfjn.simyys.ratecontroller.RateController;
@@ -8,7 +9,6 @@ import com.mllfjn.simyys.ratecontroller.RateController;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -75,7 +75,7 @@ public class CharacterFinder {
         return this;
     }
 
-    public Character getPriorAuto(Property property, Criteria criteria) {
+    public Character getPriorAuto(Attribute attribute, Criteria criteria) {
         // 如果自动目标存在,且列表中有该目标,直接返回
         // 否则返回和get方法一样的结果
         Character auto = getAuto();
@@ -85,7 +85,7 @@ public class CharacterFinder {
             return auto;
         } else {
             stream = list.stream();
-            return get(property, criteria);
+            return get(attribute, criteria);
         }
     }
 
@@ -115,8 +115,8 @@ public class CharacterFinder {
         return bp.situation.getAutoTo(target, flagType).orElse(null);
     }
 
-    public Character get(Property property, Criteria criteria) {
-        Comparator<Character> comparator = Comparator.comparing(property.getGetter());
+    public Character get(Attribute attribute, Criteria criteria) {
+        Comparator<Character> comparator = Comparator.comparing(attribute.getGetter());
         return (criteria == Criteria.MAX ? stream.max(comparator) : stream.min(comparator)).orElse(null);
     }
 
@@ -138,22 +138,6 @@ public class CharacterFinder {
 
     public int getEnemyTeam() {
         return 1 - owner.team;
-    }
-
-    public enum Property {
-        HP(Character::getHp),
-        ATTACK(Character::getAttack),
-        CRIT_POWER(Character::getCritPower);
-
-        private final Function<Character, Double> getter;
-
-        Property(Function<Character, Double> getter) {
-            this.getter = getter;
-        }
-
-        public Function<Character, Double> getGetter() {
-            return getter;
-        }
     }
 
     public enum Criteria {

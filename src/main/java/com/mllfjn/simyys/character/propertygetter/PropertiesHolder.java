@@ -20,11 +20,14 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.AbstractMap;
 import java.util.Map;
 
 public class PropertiesHolder implements Serializable {
+    @Serial
+    private final static long serialVersionUID = 8684276067154875826L;
     public final String name;
     public final PropertiesMap propertiesMap;
     public final Map<Integer, Integer> lockSkillMap;
@@ -40,7 +43,7 @@ public class PropertiesHolder implements Serializable {
         this.flagChangeMap = flagChangeMap;
     }
 
-    public void show(Window owner) {
+    public void show(Scene OwnerScent) {
         Stage stage = new Stage();
 
         TabPane tabPane = new TabPane();
@@ -55,8 +58,11 @@ public class PropertiesHolder implements Serializable {
         tabPane.getTabs().addAll(tabProperty, tabSkill, tabFlag);
 
         stage.setTitle(name);
-        stage.initOwner(owner);
-        stage.initModality(Modality.WINDOW_MODAL);
+        OwnerScent.getRoot().setMouseTransparent(true);
+        stage.setOnCloseRequest(event -> OwnerScent.getRoot().setMouseTransparent(false));
+        /*stage.initOwner(OwnerScent);
+        stage.initModality(Modality.WINDOW_MODAL);*/
+
         stage.setWidth(600);
         stage.setHeight(800);
         stage.setScene(new Scene(tabPane));

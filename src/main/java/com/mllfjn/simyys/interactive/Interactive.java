@@ -120,8 +120,8 @@ public class Interactive {
         }
 
         // 防御
-        if (attackInfo.isCalDefense()) {
-            double realDefense = target.getDefense() - owner.getIgnoreDefense();
+        if (attackInfo.isCalDefence()) {
+            double realDefense = target.getDefence() - owner.getIgnoreDefense();
             traceableNumber.mul(300.0 / (300 + realDefense), "防御");
         }
 
@@ -137,6 +137,7 @@ public class Interactive {
 
         // 地震鲶
         // 挺奇怪的,好像只有地震鲶才在这里触发,其他御魂都是要在护盾之后
+        // 发现雪幽魂被攻击减速也是在这里
         if (attackInfo.isCalYuHun()) {
             target.forEachYuHun(yuHun -> {
                 if (yuHun instanceof DiZhenNian d) {
@@ -150,14 +151,14 @@ public class Interactive {
 
         // 攻击者身上状态类影响
         for (Status status : owner.getStatuses()) {
-            if (status instanceof InfluenceDamageWhenAttack iwa && iwa.effective(attackType, attackInfo)) {
+            if (status instanceof InfluenceDamageWhenAttack iwa) {
                 iwa.doInfluenceWhenAttack(attackType, attackInfo);
             }
         }
 
         // 被攻击者身上状态类影响
         for (Status status : target.getStatuses()) {
-            if (status instanceof InfluenceDamageBeingAttack sid && sid.effective(attackType, attackInfo)) {
+            if (status instanceof InfluenceDamageBeingAttack sid) {
                 sid.doInfluenceBeingAttack(attackType, attackInfo);
             }
         }

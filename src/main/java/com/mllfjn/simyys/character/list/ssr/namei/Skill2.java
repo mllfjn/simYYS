@@ -84,9 +84,9 @@ class Skill2 extends Skill {
         // 先机时只能给攻击最高的友方式神,其他时候可以给除自身以外的任意友方包括阴阳师
         if (useFront) {
             characterFinder.filterYYS(false);
-            return characterFinder.get(CharacterFinder.Property.ATTACK, CharacterFinder.Criteria.MAX);
+            return characterFinder.get(Attribute.ATTACK, CharacterFinder.Criteria.MAX);
         } else {
-            return characterFinder.getPriorAuto(CharacterFinder.Property.ATTACK, CharacterFinder.Criteria.MAX);
+            return characterFinder.getPriorAuto(Attribute.ATTACK, CharacterFinder.Criteria.MAX);
         }
     }
 

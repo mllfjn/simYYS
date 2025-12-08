@@ -1,7 +1,9 @@
 package com.mllfjn.simyys.character.list.mob.jifengmo;
 
 import com.mllfjn.simyys.BattlePane;
+import com.mllfjn.simyys.battleevent.EventBattleStart;
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.Runnable;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
@@ -9,9 +11,26 @@ import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.AttackType;
 
+import java.util.List;
+
 public class CiTiao7JiXing {
     public static final String CiTiaoName = "疾行";
 
+    public static void install(Character character) {
+        character.bp.addActionListener(character, event -> {
+            if (event instanceof EventBattleStart) {
+                List<Character> targets = new CharacterFinder(character)
+                        .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
+                        .getList();
+
+                for (Character target : targets) {
+                    target.addStatus(new StatusJXListener(character, target));
+                }
+                return true;
+            }
+            return false;
+        });
+    }
 
     static class StatusJXListener extends Status implements InfluenceDamageWhenAttack, Runnable {
         private boolean increase = false;

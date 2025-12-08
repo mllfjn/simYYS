@@ -8,6 +8,7 @@ import com.mllfjn.simyys.character.status.StatusForm;
 import com.mllfjn.simyys.character.status.StatusType;
 
 public class CiTiao4MengHuo {
+    public static final String CiTiaoName = "猛火";
 
     public static void install(Character character) {
         character.bp.addActionListener(character, event -> {

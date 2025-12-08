@@ -25,7 +25,7 @@ public class AttackInfo {
     // 是否暴击
     private Boolean crit;
     // 计算防御
-    private boolean calDefense = true;
+    private boolean calDefence = true;
     // 计算增伤
     private boolean calZengShang = true;
     // 计算减伤
@@ -49,7 +49,7 @@ public class AttackInfo {
             , BiFunction<Character, Character, Double> basicNumber) {
         AttackInfo attackInfo = new AttackInfo(attacker, skill, target, basicNumber);
 
-        attackInfo.calDefense = false;
+        attackInfo.calDefence = false;
         attackInfo.canCrit = false;
         attackInfo.calZengShang = false;
         attackInfo.calYiShang = false;
@@ -65,7 +65,7 @@ public class AttackInfo {
         AttackInfo attackInfo = new AttackInfo(attacker, skill, target, basicNumber);
 
         attackInfo.calYuHun = false;
-        if (target.getDefense() - target.getIgnoreDefense() == 0) {
+        if (target.getDefence() - target.getIgnoreDefense() == 0) {
             attackInfo.setCrit(true);
         }
 
@@ -123,8 +123,8 @@ public class AttackInfo {
         return multiplier;
     }
 
-    public boolean isCalDefense() {
-        return calDefense;
+    public boolean isCalDefence() {
+        return calDefence;
     }
 
     public boolean isCalZengShang() {

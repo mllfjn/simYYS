@@ -21,7 +21,7 @@ public class CiTiao6DouHun {
             if (event instanceof EventBattleStart) {
                 Character maxCritPower = new CharacterFinder(character)
                         .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
-                        .get(CharacterFinder.Property.CRIT_POWER, CharacterFinder.Criteria.MAX);
+                        .get(Attribute.CRIT_POWER, CharacterFinder.Criteria.MAX);
                 maxCritPower.addStatus(new StatusDHAttack(character, maxCritPower));
                 return true;
             }

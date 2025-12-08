@@ -40,7 +40,7 @@ class Skill3 extends Skill {
                 .orElseGet(() -> new CharacterFinder(daYuan)
                         .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
                         .filterSelf()
-                        .get(CharacterFinder.Property.ATTACK, CharacterFinder.Criteria.MAX));
+                        .get(Attribute.ATTACK, CharacterFinder.Criteria.MAX));
 
         Interactive interactive = daYuan.getInteractive();
 

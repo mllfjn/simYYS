@@ -1,5 +1,6 @@
 package com.mllfjn.simyys.collections;
 
+import com.mllfjn.simyys.character.list.mob.jifengmo.*;
 import com.mllfjn.simyys.character.list.yys.QiLingFactory;
 import com.mllfjn.simyys.character.yuhun.list.*;
 
@@ -7,7 +8,15 @@ import java.io.Serializable;
 
 public record StringGroup(String label, String... values) implements Serializable {
     public final static StringGroup[] JI_FENG_MO_CI_TIAO
-            = new StringGroup[]{new StringGroup("词条", "巧劲", "易碎", "咒术", "猛火", "狂风", "斗魂", "疾行")};
+            = new StringGroup[]{new StringGroup("词条"
+            , CiTiao1QiaoJin.CiTiaoName
+            , CiTiao2YiSui.CiTiaoName
+            , CiTiao3ZhouShu.CiTiaoName
+            , CiTiao4MengHuo.CiTiaoName
+            , CiTiao5KuangFeng.CiTiaoName
+            , CiTiao6DouHun.CiTiaoName
+            , CiTiao7JiXing.CiTiaoName
+    )};
 
     public final static StringGroup[] YU_HUN = new StringGroup[]{
             new StringGroup("攻击两件套", KuangGu.YuHunName),

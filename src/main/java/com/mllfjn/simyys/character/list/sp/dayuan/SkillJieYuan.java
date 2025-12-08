@@ -1,6 +1,7 @@
 package com.mllfjn.simyys.character.list.sp.dayuan;
 
 import com.mllfjn.simyys.BattlePane;
+import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
@@ -21,7 +22,7 @@ abstract class SkillJieYuan extends Skill {
         return new CharacterFinder(getBelongTo())
                 .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
                 .filterSelf()
-                .getPriorAuto(CharacterFinder.Property.ATTACK, CharacterFinder.Criteria.MAX);
+                .getPriorAuto(Attribute.ATTACK, CharacterFinder.Criteria.MAX);
     }
 
     @Override

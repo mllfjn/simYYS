@@ -33,7 +33,7 @@ class Skill5 extends Skill {
         Character target = new CharacterFinder(yuan)
                 .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
                 .filterSelf()
-                .getPriorAuto(CharacterFinder.Property.ATTACK, CharacterFinder.Criteria.MAX);
+                .getPriorAuto(Attribute.ATTACK, CharacterFinder.Criteria.MAX);
 
         // 提升自身lv1-22, lv2-26, lv4-30暴击
         int level = getLevel();

@@ -29,7 +29,7 @@ public class Prediction implements Serializable {
 
     public SerializableObservableList<CharacterNameAndTeam> predictionOrder = new SerializableObservableList<>();
 
-    public void showPrediction(Stage owner, SerializableObservableList<PropertiesHolder> items) {
+    public void showPrediction(Scene ownerScene, SerializableObservableList<PropertiesHolder> items) {
         Stage stage = new Stage();
         ListViewWithBasicController<CharacterNameAndTeam> customListView
                 = new ListViewWithBasicController<>(predictionOrder);
@@ -100,8 +100,8 @@ public class Prediction implements Serializable {
             addStage.showAndWait();
         });
 
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.initOwner(owner);
+        ownerScene.getRoot().setMouseTransparent(true);
+        stage.setOnCloseRequest(event -> ownerScene.getRoot().setMouseTransparent(false));
         stage.setScene(new Scene(customListView));
         stage.showAndWait();
     }

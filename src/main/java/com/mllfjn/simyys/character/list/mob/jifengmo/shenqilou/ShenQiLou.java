@@ -3,6 +3,7 @@ package com.mllfjn.simyys.character.list.mob.jifengmo.shenqilou;
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.PropertyKey;
+import com.mllfjn.simyys.character.list.mob.jifengmo.CiTiaoManager;
 import com.mllfjn.simyys.character.propertygetter.*;
 import com.mllfjn.simyys.character.status.instance.StatusBoss;
 import com.mllfjn.simyys.collections.StringGroup;
@@ -11,6 +12,8 @@ import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseEvent;
+
+import static com.mllfjn.simyys.character.PropertyKey.JI_FENG_MO_CI_TIAO_KEY;
 
 public class ShenQiLou extends Character {
     public static final String CharacterName = "蜃气楼";
@@ -42,6 +45,8 @@ public class ShenQiLou extends Character {
     public void init(PropertiesHolder propertiesHolder, BattlePane bp) {
         super.init(propertiesHolder, bp);
 
+        CiTiaoManager.installCiTiao(propertiesHolder.propertiesMap.get(JI_FENG_MO_CI_TIAO_KEY).getString(), this);
+
         addStatus(new StatusBoss(this));
     }
 
@@ -59,7 +64,7 @@ public class ShenQiLou extends Character {
         ((PropertyCheck) map.get(PropertyKey.GENERAL_MOB_KEY)).setValue(true);
         ((PropertyCheck) map.get(PropertyKey.GENERAL_TEAM_KEY)).setValue(true);
 
-        map.put(PropertyKey.JI_FENG_MO_CI_TIAO_KEY, new PropertySelectSingle(StringGroup.JI_FENG_MO_CI_TIAO));
+        map.put(JI_FENG_MO_CI_TIAO_KEY, new PropertySelectSingle(StringGroup.JI_FENG_MO_CI_TIAO));
         return map;
     }
 

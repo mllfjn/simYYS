@@ -2,6 +2,7 @@ package com.mllfjn.simyys.character.list.ssr.qianji;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.battleevent.EventRoundDone;
+import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
@@ -39,7 +40,7 @@ class Skill2 extends Skill {
         Interactive interactive = getBelongTo().getInteractive();
         Character target = new CharacterFinder(getBelongTo())
                 .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
-                .getPriorAuto(CharacterFinder.Property.HP, CharacterFinder.Criteria.MAX);
+                .getPriorAuto(Attribute.HP, CharacterFinder.Criteria.MAX);
         // 对敌方目标造成攻击(系数)伤害
         interactive.attack(this, target, multiplier[getLevel()], AttackType.DAN_TI);
         // 若海原贝戟在场,额外附加汐梦

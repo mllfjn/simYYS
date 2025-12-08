@@ -1,6 +1,7 @@
 package com.mllfjn.simyys.character.list.ssr.namei;
 
 import com.mllfjn.simyys.BattlePane;
+import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
@@ -26,7 +27,7 @@ class Skill1 extends Skill1PuGongBase {
     public Optional<Character> usePrivate(BattlePane bp) {
         Character target = new CharacterFinder(getBelongTo())
                 .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
-                .getPriorAuto(CharacterFinder.Property.HP, CharacterFinder.Criteria.MIN);
+                .getPriorAuto(Attribute.HP, CharacterFinder.Criteria.MIN);
         Interactive interactive = getBelongTo().getInteractive();
 
         // lv5-并有25%基础概率附加凋零,持续1回合

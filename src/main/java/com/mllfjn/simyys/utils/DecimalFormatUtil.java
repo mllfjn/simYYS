@@ -6,4 +6,5 @@ public class DecimalFormatUtil {
     public static final DecimalFormat df_2_1_percent = new DecimalFormat("0.00#%");
     public static final DecimalFormat df_2_2_percent = new DecimalFormat("0.00##%");
     public static final DecimalFormat df_0_2 = new DecimalFormat("0.##");
+    public static final DecimalFormat df_0_3 = new DecimalFormat("0.###");
 }

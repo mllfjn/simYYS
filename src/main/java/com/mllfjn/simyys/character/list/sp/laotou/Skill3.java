@@ -1,6 +1,7 @@
 package com.mllfjn.simyys.character.list.sp.laotou;
 
 import com.mllfjn.simyys.BattlePane;
+import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
@@ -40,7 +41,7 @@ class Skill3 extends Skill {
                 .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
                 .filterSummon(false)
                 .filterSelf()
-                .getPriorAuto(CharacterFinder.Property.ATTACK, CharacterFinder.Criteria.MAX);
+                .getPriorAuto(Attribute.ATTACK, CharacterFinder.Criteria.MAX);
         interactive.recovery(this, target, belongTo.getMaxHp() * multiplier[level] / 100);
 
         target.getStatus(StatusYuHunTransfer.class).ifPresentOrElse(statusYHT -> {

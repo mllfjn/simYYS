@@ -1,6 +1,7 @@
 package com.mllfjn.simyys.character.list.ssr.namei;
 
 import com.mllfjn.simyys.BattlePane;
+import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
@@ -30,7 +31,7 @@ class Skill3 extends Skill {
         // 目标首先为红标,其次是生命最高单位
         Character target = new CharacterFinder(getBelongTo())
                 .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
-                .getPriorAuto(CharacterFinder.Property.HP, CharacterFinder.Criteria.MAX);
+                .getPriorAuto(Attribute.HP, CharacterFinder.Criteria.MAX);
 
         List<Character> enemy = new CharacterFinder(getBelongTo())
                 .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)

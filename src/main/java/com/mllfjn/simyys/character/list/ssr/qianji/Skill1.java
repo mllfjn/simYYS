@@ -1,6 +1,7 @@
 package com.mllfjn.simyys.character.list.ssr.qianji;
 
 import com.mllfjn.simyys.BattlePane;
+import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
@@ -27,7 +28,7 @@ class Skill1 extends Skill1PuGongBase {
     public Optional<Character> usePrivate(BattlePane bp) {
         Character target = new CharacterFinder(getBelongTo())
                 .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
-                .getPriorAuto(CharacterFinder.Property.HP, CharacterFinder.Criteria.MIN);
+                .getPriorAuto(Attribute.HP, CharacterFinder.Criteria.MIN);
         Interactive interactive = getBelongTo().getInteractive();
 
         // 对敌方目标造成攻击(系数)伤害

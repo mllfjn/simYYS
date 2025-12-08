@@ -1,6 +1,7 @@
 package com.mllfjn.simyys.character.list.sp.laotou;
 
 import com.mllfjn.simyys.BattlePane;
+import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
@@ -29,7 +30,7 @@ class Skill1 extends Skill1PuGongBase {
         Interactive interactive = laoTou.getInteractive();
         Character target = new CharacterFinder(laoTou)
                 .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
-                .getPriorAuto(CharacterFinder.Property.HP, CharacterFinder.Criteria.MIN);
+                .getPriorAuto(Attribute.HP, CharacterFinder.Criteria.MIN);
 
         // 造成攻击（系数）伤害
         interactive.attack(this, target, multiplier[getLevel()], AttackType.DAN_TI);

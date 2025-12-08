@@ -54,7 +54,7 @@ public class Initializer extends Application {
         borderPane.addControlButton("修改角色", e -> {
             PropertiesHolder item = customTableView.getSelectionModel().getSelectedItem();
             if (item != null) {
-                item.show(stage);
+                item.show(scene);
                 customTableView.refresh();
             }
         }, scene, KeyCode.E);
@@ -72,7 +72,11 @@ public class Initializer extends Application {
                 customTableView.getSelectionModel().select(index + 1);
             }
         });
-        borderPane.addControlButton("清空", e -> items.clear());
+        borderPane.addControlButton("清空", e -> {
+            items.clear();
+            prediction.predictionOrder.clear();
+            // TODO 还要清空红绿标和锁技能
+        });
         borderPane.addControlButton("额外红绿标", e -> {
             // TODO
 //            ListViewWithBasicController<ExtraFlag> listViewPane = new ListViewWithBasicController<>(extraFlags);
@@ -88,7 +92,7 @@ public class Initializer extends Application {
 
         });
 
-        borderPane.addControlButton("设置行动顺序", e -> prediction.showPrediction(stage, items));
+        borderPane.addControlButton("设置行动顺序", e -> prediction.showPrediction(scene, items));
         borderPane.addControlButton("检查是否符合", e -> prediction.check(items
                 , stage, () -> stage.setScene(scene)), scene, KeyCode.C);
 
@@ -102,6 +106,7 @@ public class Initializer extends Application {
     private void addCharacter(Stage owner) {
         Stage stageSelect = new Stage();
         GridPane gp = new GridPane();
+        Scene scene = new Scene(gp);
         gp.setPadding(new Insets(20));
         gp.setHgap(10);
         gp.setVgap(10);
@@ -115,7 +120,7 @@ public class Initializer extends Application {
                 btn.setPrefWidth(100);
                 btn.setOnAction(event -> {
                     PropertiesHolder propertiesHolder = new PropertiesHolder(name, CharacterFactory.getProperties(name).orElseThrow(), new LinkedHashMap<>(), new LinkedHashMap<>());
-                    propertiesHolder.show(stageSelect);
+                    propertiesHolder.show(scene);
                     items.add(propertiesHolder);
                 });
                 tp.getChildren().add(btn);
@@ -128,7 +133,7 @@ public class Initializer extends Application {
         stageSelect.setTitle("添加角色");
         stageSelect.initOwner(owner);
         stageSelect.initModality(Modality.WINDOW_MODAL);
-        stageSelect.setScene(new Scene(gp));
+        stageSelect.setScene(scene);
         stageSelect.showAndWait();
     }
 

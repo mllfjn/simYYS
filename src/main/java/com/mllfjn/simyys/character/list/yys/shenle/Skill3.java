@@ -43,7 +43,7 @@ class Skill3 extends Skill {
         Character belongTo = getBelongTo();
         Character target = new CharacterFinder(belongTo)
                 .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
-                .getPriorAuto(CharacterFinder.Property.ATTACK, CharacterFinder.Criteria.MAX);
+                .getPriorAuto(Attribute.ATTACK, CharacterFinder.Criteria.MAX);
 
         // 增加其(系数)攻击
         int multi = multiplier[getLevel()];

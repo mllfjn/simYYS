@@ -28,13 +28,13 @@ public class CiTiao1QiaoJin {
             if (event instanceof EventBattleStart) {
                 Character maxAttack = new CharacterFinder(character)
                         .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
-                        .get(CharacterFinder.Property.ATTACK, CharacterFinder.Criteria.MAX);
+                        .get(Attribute.ATTACK, CharacterFinder.Criteria.MAX);
                 maxAttack.bp.addActionListener(maxAttack, e -> {
                     if (e instanceof EventUsePuGong eup) {
                         if (eup.getAttacker() == maxAttack) {
                             Optional<StatusQJNewRoundMark> optional = maxAttack.getStatus(StatusQJNewRoundMark.class);
                             if (optional.isEmpty()) {
-                                maxAttack.addStatus(new StatusQJJianShang(character, maxAttack));
+                                maxAttack.addStatus(new StatusQJNewRoundMark(character, maxAttack));
                                 maxAttack.doInteractive(interactive -> interactive.getNewRound(maxAttack));
                             }
                         }
@@ -84,12 +84,18 @@ public class CiTiao1QiaoJin {
                 AttackInfo attackInfo = pa.attackInfo;
                 Character attacker = attackInfo.getAttacker();
                 Skill skill = attackInfo.getSkill();
-                if (skill.getSkillID() == 1 && attacker.team != belongTo.team) {
+                if (skill.getSkillID() == 1
+                        && attacker.team != belongTo.team
+                        && attackInfo.getTraceableNumber().getNumber() > 0) {
                     double number = attackInfo.getTraceableNumber().getNumber();
                     List<Character> targets = new CharacterFinder(belongTo)
                             .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
                             .filterSelf()
                             .getList();
+
+                    if (attacker.getStatus(StatusAddStackAfterRound.class).isEmpty()) {
+                        attacker.addStatus(new StatusAddStackAfterRound(attacker));
+                    }
 
                     attacker.doInteractive(interactive -> {
                         for (Character target : targets) {
@@ -108,15 +114,15 @@ public class CiTiao1QiaoJin {
     static class StatusQJJianShang extends Status implements Displayable, AttributeModifier {
         private int stack = 0;
 
-        public StatusQJJianShang(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
+        private StatusQJJianShang(Character character) {
+            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
         }
 
-        public static void addStack(Character from, Character to) {
-            StatusQJJianShang status = to.getStatus(StatusQJJianShang.class)
+        public static void addStack(Character character) {
+            StatusQJJianShang status = character.getStatus(StatusQJJianShang.class)
                     .orElseGet(() -> {
-                        StatusQJJianShang newStatus = new StatusQJJianShang(from, to);
-                        to.addStatus(newStatus);
+                        StatusQJJianShang newStatus = new StatusQJJianShang(character);
+                        character.addStatus(newStatus);
                         return newStatus;
                     });
 
@@ -140,6 +146,29 @@ public class CiTiao1QiaoJin {
         @Override
         public String getText() {
             return CiTiao1QiaoJin.CiTiaoName + stack;
+        }
+    }
+
+    static class StatusAddStackAfterRound extends Status implements Runnable {
+
+        public StatusAddStackAfterRound(Character character) {
+            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
+        }
+
+        @Override
+        public boolean runnable(Trigger trigger) {
+            return trigger == Trigger.AFTER_ROUND;
+        }
+
+        @Override
+        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
+            List<Character> targets = new CharacterFinder(belongTo)
+                    .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                    .getList();
+            for (Character character : targets) {
+                StatusQJJianShang.addStack(character);
+            }
+            return true;
         }
     }
 }

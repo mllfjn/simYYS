@@ -44,7 +44,7 @@ public abstract class Character implements Serializable {
     private double hp;
     private double baseAttack;
     private double additionAttack;
-    private double defense;
+    private double defence;
     private double critRate;
     private double critPower;
     private double effectHitRate;
@@ -101,7 +101,7 @@ public abstract class Character implements Serializable {
         this.team = properties.get(PropertyKey.GENERAL_TEAM_KEY).getBoolean() ? 1 : 0;
         this.hp = properties.get(PropertyKey.GENERAL_HP_KEY).getDouble();
         this.maxHp = hp;
-        this.defense = properties.get(PropertyKey.GENERAL_DEFENSE_KEY).getDouble();
+        this.defence = properties.get(PropertyKey.GENERAL_DEFENSE_KEY).getDouble();
         this.critRate = properties.get(PropertyKey.GENERAL_CRIT_RATE_KEY).getDouble();
         this.critPower = properties.get(PropertyKey.GENERAL_CRIT_POWER_KEY).getDouble();
         this.effectHitRate = properties.get(PropertyKey.GENERAL_EFFECT_HIT_RATE_KEY).getDouble();
@@ -147,8 +147,8 @@ public abstract class Character implements Serializable {
         return AttributeCounter.getGeneralAttribute(Attribute.SPEED, speed, getStatuses());
     }
 
-    public double getDefense() {
-        return AttributeCounter.getGeneralAttribute(Attribute.DEFENCE, defense, statuses);
+    public double getDefence() {
+        return AttributeCounter.getGeneralAttribute(Attribute.DEFENCE, defence, statuses);
     }
 
     public double getCritRate() {
@@ -221,7 +221,7 @@ public abstract class Character implements Serializable {
     }
 
     public double getInitDefense() {
-        return defense;
+        return defence;
     }
 
     public double getInitSpeed() {
@@ -254,7 +254,7 @@ public abstract class Character implements Serializable {
     }
 
     protected void setInitDefense(double defense) {
-        this.defense = defense;
+        this.defence = defense;
     }
 
     protected void setInitCritRate(double critRate) {

@@ -81,7 +81,7 @@ public class CharacterIcon extends VBox {
     // 状态显示
     // TODO UI决定是否显示，难点在于头像对齐，上下贴在头像旁 可以让所有角色同时不显示
     // TODO 发生改变时标出来
-    private final Label[] info = new Label[8];
+    private final MemoryLabel[] info = new MemoryLabel[8];
     // 红绿标的那个标
     private final HBox autoTo;
     // 左键点击时的红绿标菜单
@@ -161,10 +161,20 @@ public class CharacterIcon extends VBox {
                 imagePane,
                 skillBox
         );
-        for (int i = 0; i < info.length; i++) {
-            info[i] = new Label();
-            info[i].setMaxWidth(MAX_WIDTH);
-            this.getChildren().add(info[i]);
+
+        info[0] = new MemoryLabel(character, Attribute.HP) {
+            @Override
+            public void setLabelText() {
+                label.setText("生命:" + String.format("%.2f(%.2f%%)", num, num / character.getMaxHp() * 100));
+                healthBar.setProgress(num / character.getMaxHp());
+            }
+        };
+        for (int i = 1; i < info.length; i++) {
+            MemoryLabel memoryLabel = new MemoryLabel(character, Attribute.values()[i]);
+            info[i] = memoryLabel;
+            Label label = memoryLabel.label;
+            label.setMaxWidth(MAX_WIDTH);
+            this.getChildren().add(label);
         }
     }
 
@@ -211,7 +221,7 @@ public class CharacterIcon extends VBox {
     public void update() {
         refreshProperties();
         refreshStatusLabel();
-        refreshHealthBar();
+//        refreshHealthBar();
         updateYuHunIcon();
         refreshShieldBar();
         refreshSkillBox();
@@ -236,8 +246,14 @@ public class CharacterIcon extends VBox {
     }
 
     private void refreshProperties() {
+        for (MemoryLabel memoryLabel : info) {
+            memoryLabel.refresh();
+        }
+    }
+
+    /*private void refreshProperties() {
         info[0].setText("攻击:" + String.format("%.2f", character.getAttack()));
-        info[2].setText("防御:" + String.format("%.2f", character.getDefense()));
+        info[2].setText("防御:" + String.format("%.2f", character.getDefence()));
         info[3].setText("速度:" + String.format("%.2f", character.getSpeed()));
         info[4].setText("暴击:" + String.format("%.2f", character.getCritRate()));
         info[5].setText("爆伤:" + String.format("%.2f", character.getCritPower()));
@@ -248,7 +264,7 @@ public class CharacterIcon extends VBox {
     private void refreshHealthBar() {
         info[1].setText("生命:" + String.format("%.2f(%.2f%%)", character.getHp(), character.getHp() / character.getMaxHp() * 100));
         this.healthBar.setProgress(character.getHp() / character.getMaxHp());
-    }
+    }*/
 
     private void refreshShieldBar() {
         double shield = 0;
@@ -318,5 +334,45 @@ public class CharacterIcon extends VBox {
         }
 
         return yuHunIcon[index];
+    }
+
+    static class MemoryLabel {
+        protected final Label label = new Label();
+        protected final Character character;
+        protected final Attribute attribute;
+
+        protected double num;
+
+        public MemoryLabel(Character character, Attribute attribute) {
+            this.attribute = attribute;
+            this.character = character;
+            num = attribute.getGetter().apply(character);
+            setLabelText();
+//            refresh();
+        }
+
+        public void refresh() {
+            double newNumber = attribute.getGetter().apply(character);
+            if (newNumber != num) {
+                num = newNumber;
+                setLabelText();
+                setChanged(true);
+            } else {
+                setChanged(false);
+            }
+        }
+
+        protected void setLabelText() {
+            label.setText(attribute.getText() + ":" + String.format("%.2f", num));
+        }
+
+        private void setChanged(boolean changed) {
+            if (changed) {
+                // 如果变更就换成红色
+                label.setStyle("-fx-text-fill: red");
+            } else {
+                label.setStyle("-fx-text-fill: black");
+            }
+        }
     }
 }
