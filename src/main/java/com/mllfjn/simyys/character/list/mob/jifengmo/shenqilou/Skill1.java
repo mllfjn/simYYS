@@ -3,16 +3,16 @@ package com.mllfjn.simyys.character.list.mob.jifengmo.shenqilou;
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
-import com.mllfjn.simyys.character.skill.Skill;
+import com.mllfjn.simyys.character.skill.Skill1PuGongBase;
 import com.mllfjn.simyys.interactive.AttackType;
 
 import java.util.Optional;
 
-class Skill1 extends Skill {
+class Skill1 extends Skill1PuGongBase {
     private static final String SkillName = "极-钳击";
 
     public Skill1(Character belongTo) {
-        super(belongTo, 0, 0, 0, 1);
+        super(belongTo, 0);
     }
 
     @Override

@@ -431,6 +431,10 @@ public abstract class Character implements Serializable {
         skills.forEach(Skill::pastRound);
     }
 
+    public boolean isInRound() {
+        return bp.situation.characterActing == this;
+    }
+
     public Optional<Skill> getSkill(int skillID) {
         for (Skill skill : skills) {
             if (skill.getSkillID() == skillID) {

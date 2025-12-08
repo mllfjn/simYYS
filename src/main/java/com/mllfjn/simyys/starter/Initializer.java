@@ -3,7 +3,6 @@ package com.mllfjn.simyys.starter;
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.propertygetter.FlagChangeInfo;
 import com.mllfjn.simyys.collections.SerializableObservableList;
-import com.mllfjn.simyys.customnode.ListViewWithBasicController;
 import com.mllfjn.simyys.customnode.NodeWithController;
 import com.mllfjn.simyys.utils.Utils;
 import com.mllfjn.simyys.character.CharacterFactory;
@@ -15,6 +14,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
@@ -41,7 +41,7 @@ public class Initializer extends Application {
         Scene scene = new Scene(borderPane);
         getController(stage, scene, borderPane);
 
-        borderPane.addControlButton("添加角色", e -> addCharacter(stage));
+        borderPane.addControlButton("添加角色", e -> addCharacter(stage), scene, KeyCode.A);
         borderPane.addControlButton("删除角色", e -> {
             int index = customTableView.getSelectionModel().getSelectedIndex();
             if (index >= 0 && index < items.size()) {
@@ -50,14 +50,14 @@ public class Initializer extends Application {
                     customTableView.getSelectionModel().select(index);
                 }
             }
-        });
+        }, scene, KeyCode.D);
         borderPane.addControlButton("修改角色", e -> {
             PropertiesHolder item = customTableView.getSelectionModel().getSelectedItem();
             if (item != null) {
                 item.show(stage);
                 customTableView.refresh();
             }
-        });
+        }, scene, KeyCode.E);
         borderPane.addControlButton("上移", e -> {
             int index = customTableView.getSelectionModel().getSelectedIndex();
             if (index > 0 && index < items.size()) {
@@ -75,7 +75,7 @@ public class Initializer extends Application {
         borderPane.addControlButton("清空", e -> items.clear());
         borderPane.addControlButton("额外红绿标", e -> {
             // TODO
-            ListViewWithBasicController<ExtraFlag> listViewPane = new ListViewWithBasicController<>(extraFlags);
+//            ListViewWithBasicController<ExtraFlag> listViewPane = new ListViewWithBasicController<>(extraFlags);
             /*listViewPane.setDefaultControlButtons(e -> {
                 // String int int combobox int
                 TextField tfName = new TextField();
@@ -89,7 +89,8 @@ public class Initializer extends Application {
         });
 
         borderPane.addControlButton("设置行动顺序", e -> prediction.showPrediction(stage, items));
-        borderPane.addControlButton("检查是否符合", e -> prediction.check(items));
+        borderPane.addControlButton("检查是否符合", e -> prediction.check(items
+                , stage, () -> stage.setScene(scene)), scene, KeyCode.C);
 
         stage.setScene(scene);
         stage.setWidth(1800);
@@ -153,7 +154,7 @@ public class Initializer extends Application {
         FileChooser fileChooser = new FileChooser();
         File directory = new File("save");
         if (!directory.exists() && !directory.mkdir()) {
-            Utils.information("创建目录失败");
+            Utils.error("创建目录失败");
         }
         fileChooser.setInitialDirectory(directory);
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("队伍预设", "*.team"));
@@ -227,7 +228,7 @@ public class Initializer extends Application {
         FileChooser fileChooser = new FileChooser();
         File directory = new File("save");
         if (!directory.exists() && !directory.mkdir()) {
-            Utils.information("创建目录失败");
+            Utils.error("创建目录失败");
         }
         fileChooser.setInitialDirectory(directory);
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("队伍预设", "*.team"));
@@ -245,10 +246,6 @@ public class Initializer extends Application {
             }
 
         }
-    }
-
-    public interface Back {
-        void back();
     }
 
     record ExtraFlag(String name, int team, int timesToAct, FlagChangeInfo flagChangeInfo) implements Serializable {

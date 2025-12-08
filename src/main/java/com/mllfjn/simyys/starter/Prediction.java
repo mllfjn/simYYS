@@ -17,12 +17,15 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class Prediction implements Serializable {
     public static final String NOT_PREDICTION = "不限";
+    @Serial
+    private static final long serialVersionUID = -4891093640103493137L;
 
     public SerializableObservableList<CharacterNameAndTeam> predictionOrder = new SerializableObservableList<>();
 
@@ -103,7 +106,11 @@ public class Prediction implements Serializable {
         stage.showAndWait();
     }
 
-    public void check(SerializableObservableList<PropertiesHolder> items) {
+    public void check(SerializableObservableList<PropertiesHolder> items, Stage stage, Runnable back) {
+        if (items.isEmpty()) {
+            Utils.information("请先添加角色");
+            return;
+        }
         BattlePane battlePane = new BattlePane(items);
 
         for (int i = 0; i < predictionOrder.size(); i++) {
@@ -118,9 +125,10 @@ public class Prediction implements Serializable {
             Character real = battlePane.getCharacterActing();
             // 预测错误
             if (!preName.equals(real.name) || real.team != preTeam) {
-                Utils.information("不符合预期!\n" +
-                        "第" + (i + 1) + "个角色\n预测为:队伍" + preTeam + "的" + preName
-                        + "\n实际为:队伍" + real.team + "的" + real.name);
+                Utils.error("不符合预期!\n" +
+                                "第" + (i + 1) + "个角色\n预测为:队伍" + preTeam + "-" + preName
+                                + "\n实际为:队伍" + real.team + "-" + real.name
+                        , "跳转至不符合位置", () -> battlePane.predictionShow(stage, back));
                 return;
             }
             battlePane.next(false);
@@ -135,7 +143,7 @@ public class Prediction implements Serializable {
                     , item.propertiesMap.get(PropertyKey.GENERAL_TEAM_KEY).getBoolean() ? 1 : 0));
         }
         if (set.isEmpty()) {
-            Utils.information("请先添加角色");
+            Utils.error("请先添加角色");
             return null;
         }
         return set;

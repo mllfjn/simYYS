@@ -158,4 +158,8 @@ public class AttackInfo {
     public void setCancel(boolean cancel) {
         this.cancel = cancel;
     }
+
+    public Skill getSkill() {
+        return skill;
+    }
 }

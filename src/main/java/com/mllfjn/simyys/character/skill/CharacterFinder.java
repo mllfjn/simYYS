@@ -142,7 +142,8 @@ public class CharacterFinder {
 
     public enum Property {
         HP(Character::getHp),
-        ATTACK(Character::getAttack);
+        ATTACK(Character::getAttack),
+        CRIT_POWER(Character::getCritPower);
 
         private final Function<Character, Double> getter;
 

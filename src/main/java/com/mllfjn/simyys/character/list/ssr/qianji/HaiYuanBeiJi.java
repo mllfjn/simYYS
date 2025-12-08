@@ -9,7 +9,7 @@ import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.determinant.IgnoreDebuff;
 import com.mllfjn.simyys.battleevent.EventUseGuiHuo;
-import com.mllfjn.simyys.character.status.determinant.InfluenceDamage;
+import com.mllfjn.simyys.character.status.determinant.InfluenceDamageBeingAttack;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.AttackType;
 
@@ -101,19 +101,14 @@ public class HaiYuanBeiJi extends Character {
         return false;
     }
 
-    static class StatusJianShang extends Status implements InfluenceDamage {
+    static class StatusJianShang extends Status implements InfluenceDamageBeingAttack {
 
         public StatusJianShang(Character character) {
             super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
         }
 
         @Override
-        public boolean effective(AttackType attackType, Character character) {
-            return true;
-        }
-
-        @Override
-        public void doInfluence(AttackType attackType, AttackInfo attackInfo) {
+        public void doInfluenceBeingAttack(AttackType attackType, AttackInfo attackInfo) {
             attackInfo.getTraceableNumber().mul(0.7, "千姬减伤");
         }
     }

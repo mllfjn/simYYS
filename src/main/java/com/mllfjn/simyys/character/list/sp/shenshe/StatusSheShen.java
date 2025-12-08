@@ -7,12 +7,12 @@ import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.character.status.determinant.IgnoreChangeMaxHp;
 import com.mllfjn.simyys.character.status.determinant.IgnoreDebuff;
-import com.mllfjn.simyys.character.status.determinant.InfluenceDamage;
+import com.mllfjn.simyys.character.status.determinant.InfluenceDamageBeingAttack;
 import com.mllfjn.simyys.character.status.determinant.PreventDie;
 import com.mllfjn.simyys.battleevent.EventActionDone;
 
 // 无法改变生命上限,免疫减益和 TODO 放逐
-public class StatusSheShen extends Status implements IgnoreChangeMaxHp, IgnoreDebuff, PreventDie, InfluenceDamage, Displayable {
+public class StatusSheShen extends Status implements IgnoreChangeMaxHp, IgnoreDebuff, PreventDie, InfluenceDamageBeingAttack, Displayable {
     public static final String text = "蛇神";
     // 变身前的血量和上限
     private final double originalMaxHp;
@@ -71,16 +71,11 @@ public class StatusSheShen extends Status implements IgnoreChangeMaxHp, IgnoreDe
         belongTo.setHp(originalHp);
     }
 
-
     @Override
-    public boolean effective(AttackType attackType, Character character) {
-        // lv3-蛇神受到的群体伤害下降30%
-        return level >= 3 && attackType == AttackType.QUN_TI;
-    }
-
-    @Override
-    public void doInfluence(AttackType attackType, AttackInfo attackInfo) {
-        attackInfo.getTraceableNumber().mul(0.7, text);
+    public void doInfluenceBeingAttack(AttackType attackType, AttackInfo attackInfo) {
+        if (level >= 3 && attackType == AttackType.QUN_TI) {
+            attackInfo.getTraceableNumber().mul(0.7, text);
+        }
     }
 
     @Override

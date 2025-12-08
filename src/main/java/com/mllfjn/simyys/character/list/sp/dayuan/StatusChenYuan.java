@@ -67,15 +67,15 @@ class StatusChi extends Status implements Runnable, Displayable {
 }
 
 // 该状态标记目标处于尘缘·赤获得的新回合中,新回合释放妖术技能消耗的鬼火减少2点
-class StatusChiNewRound extends Status implements ReduceCost {
+class StatusChiNewRound extends Status implements ForceChangeCost {
     public StatusChiNewRound(DaYuan from, Character belongTo) {
         super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
         setDurationType(StatusDurationType.CHI_XU, 1);
     }
 
     @Override
-    public int getReduce() {
-        return 2;
+    public int getChange() {
+        return -2;
     }
 }
 

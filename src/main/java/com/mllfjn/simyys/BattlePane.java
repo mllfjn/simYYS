@@ -14,11 +14,15 @@ import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
 import com.mllfjn.simyys.collections.SerializableObservableList;
 import com.mllfjn.simyys.utils.Utils;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -49,11 +53,12 @@ public class BattlePane {
     private final VBox container = new VBox();
 
 
-    public BattlePane(Stage stage, Initializer.Back back, SerializableObservableList<PropertiesHolder> list) {
+    public BattlePane(Stage stage, Runnable back, SerializableObservableList<PropertiesHolder> list) {
         this.list = list;
-        stage.setScene(new Scene(root));
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
 
-        setupUI(back);
+        setupUI(back, scene);
         init();
         repaint();
     }
@@ -65,7 +70,14 @@ public class BattlePane {
         init();
     }
 
-    private void setupUI(Initializer.Back back) {
+    public void predictionShow(Stage stage, Runnable back) {
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        setupUI(back, scene);
+        repaint();
+    }
+
+    private void setupUI(Runnable back, Scene scene) {
         // 右边是主操作区
         // 主体偏上是行动条，点击切换模式
         // 右下角是控制区
@@ -79,7 +91,7 @@ public class BattlePane {
         // 控制区
         BorderPane right = new BorderPane();
         right.setTop(actionBar);
-        right.setBottom(configureControlPane(back));
+        right.setBottom(configureControlPane(back, scene));
         root.setRight(right);
         configureActionBar();
         reloadTeamPane();
@@ -138,7 +150,7 @@ public class BattlePane {
         situation.addProgress(team);
     }
 
-    private GridPane configureControlPane(Initializer.Back back) {
+    private GridPane configureControlPane(Runnable back, Scene scene) {
         /*控制区
         控制区的内容
         1、概率控制模式的开关
@@ -146,25 +158,36 @@ public class BattlePane {
         上一个，下一个
         跳过指定回合数*/
 
-        Button prevBtn = new Button("上一个");
-        Button nextBtn = new Button("下一个");
-        Button backBtn = new Button("返回");
+        Button prevBtn = new Button("上一个(Q)");
+        Button nextBtn = new Button("下一个(E)");
+        Button backBtn = new Button("返回(B)");
         prevBtn.setOnAction(event -> prev());
         nextBtn.setOnAction(event -> {
             next(false);
             repaint();
         });
-        backBtn.setOnAction(event -> back.back());
+        backBtn.setOnAction(event -> back.run());
         prevBtn.setPrefSize(100, 25);
         nextBtn.setPrefSize(100, 25);
         backBtn.setPrefSize(100, 25);
 
         CustomTextField round = new CustomTextField();
-        Button skip = new Button("跳过回合");
+        Button skip = new Button("跳过回合(S)");
         skip.setOnAction(event -> {
             skip(Utils.parseIntOrDefault(round.getText(), 0));
             repaint();
         });
+
+        KeyCombination kcq = new KeyCodeCombination(KeyCode.Q);
+        KeyCombination kce = new KeyCodeCombination(KeyCode.E);
+        KeyCombination kcs = new KeyCodeCombination(KeyCode.S);
+        KeyCombination kcb = new KeyCodeCombination(KeyCode.B);
+
+        ObservableMap<KeyCombination, Runnable> accelerators = scene.getAccelerators();
+        accelerators.put(kcq, prevBtn::fire);
+        accelerators.put(kce, nextBtn::fire);
+        accelerators.put(kcb, backBtn::fire);
+        accelerators.put(kcs, skip::fire);
 
         round.setPrefSize(100, 25);
         skip.setPrefSize(100, 25);

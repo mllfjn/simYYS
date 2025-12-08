@@ -3,10 +3,10 @@ package com.mllfjn.simyys.character.status.instance;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
 
-public class StatusReduceCost extends Status implements ReduceCost {
+public class StatusForceChangeCost extends Status implements ForceChangeCost {
     private final int reduce;
 
-    public StatusReduceCost(Character character, int reduce) {
+    public StatusForceChangeCost(Character character, int reduce) {
         super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
         this.reduce = reduce;
 
@@ -14,7 +14,7 @@ public class StatusReduceCost extends Status implements ReduceCost {
     }
 
     @Override
-    public int getReduce() {
-        return reduce;
+    public int getChange() {
+        return -reduce;
     }
 }

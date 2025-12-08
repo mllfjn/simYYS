@@ -5,7 +5,7 @@ import com.mllfjn.simyys.battleevent.EventRoundDone;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.Runnable;
-import com.mllfjn.simyys.character.status.instance.StatusReduceCost;
+import com.mllfjn.simyys.character.status.instance.StatusForceChangeCost;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunSealResponse;
@@ -66,7 +66,7 @@ public class HuoZhiChe extends YuHun implements YuHunSealResponse {
                 belongTo.getInteractive().getNewRound(belongTo);
                 belongTo.bp.addActionListener(belongTo, event -> {
                     if (event instanceof EventRoundDone) {
-                        belongTo.addStatus(new StatusReduceCost(belongTo, 1));
+                        belongTo.addStatus(new StatusForceChangeCost(belongTo, 1));
                         return true;
                     }
                     return false;

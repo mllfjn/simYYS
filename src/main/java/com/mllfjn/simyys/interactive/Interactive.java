@@ -4,6 +4,7 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.battleevent.EventAttack;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
+import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
 import com.mllfjn.simyys.character.yuhun.YuHunAttack;
 import com.mllfjn.simyys.character.yuhun.list.DiZhenNian;
 import com.mllfjn.simyys.customnode.CustomText;
@@ -12,7 +13,7 @@ import com.mllfjn.simyys.ratecontroller.RateController;
 import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.character.status.determinant.IgnoreActionDecrease;
 import com.mllfjn.simyys.character.status.determinant.IgnoreActionIncrease;
-import com.mllfjn.simyys.character.status.determinant.InfluenceDamage;
+import com.mllfjn.simyys.character.status.determinant.InfluenceDamageBeingAttack;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -119,7 +120,6 @@ public class Interactive {
         }
 
         // 防御
-        // 网切应该在这里触发
         if (attackInfo.isCalDefense()) {
             double realDefense = target.getDefense() - owner.getIgnoreDefense();
             traceableNumber.mul(300.0 / (300 + realDefense), "防御");
@@ -148,10 +148,17 @@ public class Interactive {
         // 护盾
         target.checkShield(attackInfo);
 
-        // 状态类影响
+        // 攻击者身上状态类影响
+        for (Status status : owner.getStatuses()) {
+            if (status instanceof InfluenceDamageWhenAttack iwa && iwa.effective(attackType, attackInfo)) {
+                iwa.doInfluenceWhenAttack(attackType, attackInfo);
+            }
+        }
+
+        // 被攻击者身上状态类影响
         for (Status status : target.getStatuses()) {
-            if (status instanceof InfluenceDamage sid && sid.effective(attackType, owner)) {
-                sid.doInfluence(attackType, attackInfo);
+            if (status instanceof InfluenceDamageBeingAttack sid && sid.effective(attackType, attackInfo)) {
+                sid.doInfluenceBeingAttack(attackType, attackInfo);
             }
         }
 

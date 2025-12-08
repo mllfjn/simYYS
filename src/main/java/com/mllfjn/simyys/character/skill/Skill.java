@@ -1,9 +1,9 @@
 package com.mllfjn.simyys.character.skill;
 
 import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.battleevent.EventWillUseSkill;
+import com.mllfjn.simyys.battleevent.EventUsePuGong;
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.character.status.ReduceCost;
+import com.mllfjn.simyys.character.status.ForceChangeCost;
 import com.mllfjn.simyys.character.status.Status;
 
 import java.io.Serializable;
@@ -55,9 +55,11 @@ public abstract class Skill implements Serializable {
     }
 
     public void use(BattlePane bp) {
-        bp.onTrigger(new EventWillUseSkill(belongTo, this));
+//        bp.onTrigger(new EventWillUseSkill(belongTo, this));
 
         useBase(bp, true);
+
+//        bp.onTrigger(new EventSkillDone(this));
     }
 
     // 技能本身的消耗，妒火之类的状态不要改这个
@@ -73,12 +75,19 @@ public abstract class Skill implements Serializable {
         useBase(bp, false);
     }
 
-    private void useBase(BattlePane bp, boolean isCost) {
+    protected void useBase(BattlePane bp, boolean isCost) {
+        int realCost = 0;
         if (isCost) {
-            bp.useGuiHuo(getBelongTo(), getRealCost());
+            realCost = getRealCost();
+            bp.useGuiHuo(getBelongTo(), realCost);
         }
 
         Optional<Character> target = usePrivate(bp);
+
+        // 广播使用普攻
+        if (this instanceof Skill1PuGongBase) {
+            bp.onTrigger(new EventUsePuGong(belongTo, target.orElse(null)));
+        }
 
         if (coolDown != 0) {
             cooling = coolDown + 1;
@@ -86,14 +95,17 @@ public abstract class Skill implements Serializable {
         StringBuilder sb = new StringBuilder(belongTo.name);
         target.ifPresent(character -> sb.append("对").append(character.name));
         sb.append("使用了").append(getName());
+        if (realCost != 0) {
+            sb.append("\n\t\t消耗鬼火:").append(realCost);
+        }
         bp.log.addSkill(sb.toString());
     }
 
     public int getRealCost() {
         int realCost = cost;
         for (Status status : belongTo.getStatuses()) {
-            if (status instanceof ReduceCost rc) {
-                realCost -= rc.getReduce();
+            if (status instanceof ForceChangeCost rc) {
+                realCost += rc.getChange();
                 if (realCost <= 0) {
                     return 0;
                 }

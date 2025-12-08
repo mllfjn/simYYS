@@ -17,6 +17,7 @@ public class CustomText extends Text {
     public CustomText(String text, String tooltipText, TextFlowLog.TextType type, TextFlowLog.TextColor textColor, TextFlowLog.FontSize fontSize) {
         this(text, type, textColor, fontSize);
         Tooltip tooltip = new Tooltip(tooltipText);
+        tooltip.setFont(new Font(TextFlowLog.FontSize.NORMAL.size));
         tooltip.setShowDuration(Duration.INDEFINITE);
         Tooltip.install(this, tooltip);
     }
