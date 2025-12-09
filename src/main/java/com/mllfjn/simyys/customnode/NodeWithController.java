@@ -27,10 +27,14 @@ public class NodeWithController extends BorderPane {
     }
 
     public void addControlButton(String text, EventHandler<ActionEvent> value) {
+        addControlButton(text, value, controller.getChildren().size());
+    }
+
+    public void addControlButton(String text, EventHandler<ActionEvent> value, int index) {
         Button button = new Button(text);
         button.setOnAction(value);
         button.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-        controller.getChildren().add(button);
+        controller.getChildren().add(index, button);
     }
 
     public void addControlButton(String text, EventHandler<ActionEvent> value

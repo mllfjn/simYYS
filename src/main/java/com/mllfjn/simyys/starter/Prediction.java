@@ -21,6 +21,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Prediction implements Serializable {
     public static final String NOT_PREDICTION = "不限";
@@ -47,63 +48,74 @@ public class Prediction implements Serializable {
             }
         });
 
-        customListView.setDefaultControlButtons(e -> {
-            Set<CharacterNameAndTeam> set = getUsedCharacterName(items);
-            if (set == null) return;
+        customListView.setDefaultControlButtons(
+                e -> showAddStage(customListView, items, stage, new AtomicInteger(predictionOrder.size())));
 
-            FlowPane fp0 = new FlowPane();
-            FlowPane fp1 = new FlowPane();
-            for (CharacterNameAndTeam c : set) {
-                String name = c.name();
-                int team = c.team();
-
-                Button button = new Button(name);
-                button.setOnAction(e1 -> {
-                    predictionOrder.add(new CharacterNameAndTeam(name, team));
-                    customListView.getListView().scrollTo(predictionOrder.size() - 1);
-                });
-                button.setPrefWidth(100);
-
-                if (team == 0) {
-                    fp0.getChildren().add(button);
-                } else {
-                    fp1.getChildren().add(button);
-                }
-            }
-
-            Button btnNot = new Button(NOT_PREDICTION);
-            btnNot.setOnAction(e1 -> {
-                predictionOrder.add(new CharacterNameAndTeam(NOT_PREDICTION, 0));
-                customListView.getListView().scrollTo(predictionOrder.size() - 1);
-            });
-            btnNot.setPrefWidth(100);
-
-            GridPane gp = new GridPane();
-            gp.add(new Text("特殊"), 0, 0);
-            gp.add(btnNot, 1, 0);
-
-            gp.add(new Text("己方"), 0, 1);
-            gp.add(fp0, 1, 1);
-
-            gp.add(new Text("敌方"), 0, 2);
-            gp.add(fp1, 1, 2);
-
-            gp.setHgap(20);
-            gp.setVgap(20);
-            gp.setPadding(new Insets(20));
-
-            Stage addStage = new Stage();
-            addStage.setScene(new Scene(gp));
-            addStage.initModality(Modality.APPLICATION_MODAL);
-            addStage.initOwner(stage);
-
-            addStage.showAndWait();
-        });
+        customListView.addControlButton("从当前位置开始添加", e -> showAddStage(customListView, items, stage
+                , new AtomicInteger(customListView.getListView().getSelectionModel().getSelectedIndex())), 1);
 
         ownerScene.getRoot().setMouseTransparent(true);
         stage.setOnCloseRequest(event -> ownerScene.getRoot().setMouseTransparent(false));
         stage.setScene(new Scene(customListView));
         stage.showAndWait();
+    }
+
+    private void showAddStage(ListViewWithBasicController<CharacterNameAndTeam> customListView
+            , SerializableObservableList<PropertiesHolder> items, Stage stage, AtomicInteger startIndex) {
+        Set<CharacterNameAndTeam> set = getUsedCharacterName(items);
+        if (set == null) return;
+
+        FlowPane fp0 = new FlowPane();
+        FlowPane fp1 = new FlowPane();
+        for (CharacterNameAndTeam c : set) {
+            String name = c.name();
+            int team = c.team();
+
+            Button button = new Button(name);
+            button.setOnAction(e1 -> {
+                startIndex.set(startIndex.get() + 1);
+                predictionOrder.add(startIndex.get(), new CharacterNameAndTeam(name, team));
+                customListView.getListView().scrollTo(startIndex.get());
+                customListView.getListView().getSelectionModel().select(startIndex.get());
+            });
+            button.setPrefWidth(100);
+
+            if (team == 0) {
+                fp0.getChildren().add(button);
+            } else {
+                fp1.getChildren().add(button);
+            }
+        }
+
+        Button btnNot = new Button(NOT_PREDICTION);
+        btnNot.setOnAction(e1 -> {
+            startIndex.set(startIndex.get() + 1);
+            predictionOrder.add(startIndex.get(), new CharacterNameAndTeam(NOT_PREDICTION, 0));
+            customListView.getListView().scrollTo(startIndex.get());
+            customListView.getListView().getSelectionModel().select(startIndex.get());
+        });
+        btnNot.setPrefWidth(100);
+
+        GridPane gp = new GridPane();
+        gp.add(new Text("特殊"), 0, 0);
+        gp.add(btnNot, 1, 0);
+
+        gp.add(new Text("己方"), 0, 1);
+        gp.add(fp0, 1, 1);
+
+        gp.add(new Text("敌方"), 0, 2);
+        gp.add(fp1, 1, 2);
+
+        gp.setHgap(20);
+        gp.setVgap(20);
+        gp.setPadding(new Insets(20));
+
+        Stage addStage = new Stage();
+        addStage.setScene(new Scene(gp));
+        addStage.initModality(Modality.APPLICATION_MODAL);
+        addStage.initOwner(stage);
+
+        addStage.showAndWait();
     }
 
     public void check(SerializableObservableList<PropertiesHolder> items, Stage stage, Runnable back) {

@@ -161,14 +161,16 @@ public class CharacterIcon extends VBox {
                 imagePane,
                 skillBox
         );
-
-        info[0] = new MemoryLabel(character, Attribute.HP) {
+        MemoryLabel hpML = new MemoryLabel(character, Attribute.HP) {
             @Override
             public void setLabelText() {
                 label.setText("生命:" + String.format("%.2f(%.2f%%)", num, num / character.getMaxHp() * 100));
                 healthBar.setProgress(num / character.getMaxHp());
             }
         };
+        info[0] = hpML;
+        hpML.label.setMaxWidth(MAX_WIDTH);
+        this.getChildren().add(hpML.label);
         for (int i = 1; i < info.length; i++) {
             MemoryLabel memoryLabel = new MemoryLabel(character, Attribute.values()[i]);
             info[i] = memoryLabel;
@@ -348,7 +350,6 @@ public class CharacterIcon extends VBox {
             this.character = character;
             num = attribute.getGetter().apply(character);
             setLabelText();
-//            refresh();
         }
 
         public void refresh() {

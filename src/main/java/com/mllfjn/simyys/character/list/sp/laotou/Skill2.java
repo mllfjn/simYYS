@@ -1,6 +1,7 @@
 package com.mllfjn.simyys.character.list.sp.laotou;
 
 import com.mllfjn.simyys.BattlePane;
+import com.mllfjn.simyys.battleevent.EventRoundDone;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
@@ -94,11 +95,8 @@ class Skill2 extends Skill implements PassiveSkill {
     }
 
     static class StatusFirstAttackListener extends Status implements Runnable {
-        private final LaoTou laoTou;
-
         public StatusFirstAttackListener(LaoTou laoTou) {
             super(laoTou, laoTou, StatusType.SPECIAL, StatusForm.SPECIAL);
-            this.laoTou = laoTou;
         }
 
         @Override
@@ -108,7 +106,13 @@ class Skill2 extends Skill implements PassiveSkill {
 
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            laoTou.addStatus(new StatusDaDun(laoTou));
+            belongTo.bp.addActionListener(belongTo, event -> {
+                if (event instanceof EventRoundDone) {
+                    belongTo.addStatus(new StatusDaDun(belongTo));
+                    return true;
+                }
+                return false;
+            });
             return true;
         }
     }

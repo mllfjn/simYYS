@@ -11,7 +11,8 @@ import java.util.List;
 
 public class StatusDaDun extends StatusSleep implements Displayable {
     public static final String StatusName = "打盹";
-    public StatusDaDun(LaoTou laoTou) {
+
+    public StatusDaDun(Character laoTou) {
         super(laoTou, laoTou);
         setDurationType(StatusDurationType.WEI_CHI, 1);
     }
