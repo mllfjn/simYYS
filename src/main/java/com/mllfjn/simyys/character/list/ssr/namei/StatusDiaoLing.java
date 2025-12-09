@@ -5,13 +5,12 @@ import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.Runnable;
+import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackType;
-import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.character.status.Trigger;
 
-public class StatusDiaoLing extends Status implements Displayable, AttributeModifier, Runnable {
+public class StatusDiaoLing extends Status implements Displayable, AttributeModifier, StatusRunnable {
     public static final String text = "凋零";
 
     public StatusDiaoLing(Character from, Character belongTo, int duration) {
@@ -43,7 +42,7 @@ public class StatusDiaoLing extends Status implements Displayable, AttributeModi
     public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
         // 回合结束时受到施加者攻击120%间接伤害
         from.doInteractive(
-                interactive -> interactive.attack(Skill.getInstance(text), belongTo, 120, AttackType.JIAN_JIE));
+                interactive -> interactive.attackTypical(Skill.getInstance(text), belongTo, 120, AttackType.JIAN_JIE));
 
         return false;
     }

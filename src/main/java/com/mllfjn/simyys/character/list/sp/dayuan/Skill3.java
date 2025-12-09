@@ -7,6 +7,7 @@ import com.mllfjn.simyys.character.propertygetter.FlagChangeInfo;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
+import com.mllfjn.simyys.character.status.instance.StatusBiHu;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.ratecontroller.RateController;
@@ -79,6 +80,18 @@ class Skill3 extends Skill {
         }
         if (qing) {
             target.addStatus(new StatusQing(daYuan, target, level));
+        }
+
+        // lv3-释放时额外为自身与目标施加庇护，维持1回合
+        if (level >= 3) {
+            StatusBiHu biHuDaYuan = new StatusBiHu(daYuan, daYuan);
+            biHuDaYuan.setDurationType(StatusDurationType.WEI_CHI, 1);
+            daYuan.addStatus(biHuDaYuan);
+            if (target != daYuan) {
+                StatusBiHu biHuTarget = new StatusBiHu(daYuan, target);
+                biHuTarget.setDurationType(StatusDurationType.WEI_CHI, 1);
+                target.addStatus(biHuTarget);
+            }
         }
 
         // lv5 - 若治疗暴击,则额外提升该目标暴击伤害 **必须在治疗目标之后,治疗其他队友之前**

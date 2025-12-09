@@ -29,7 +29,7 @@ class Skill3Special extends Skill {
         List<Character> targets = new CharacterFinder(getBelongTo())
                 .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
                 .getList();
-        interactive.attack(this, targets, 313, AttackType.QUN_TI);
+        interactive.attackTypical(this, targets, 313, AttackType.QUN_TI);
         // 之后追击4次,每次对随机敌方目标造成攻击128%伤害
         for (int i = 0; i < 4; i++) {
             Character target = new CharacterFinder(getBelongTo())
@@ -38,7 +38,7 @@ class Skill3Special extends Skill {
             if (target == null) {
                 break;
             }
-            interactive.attack(this, target, 128, AttackType.DAN_TI);
+            interactive.attackTypical(this, target, 128, AttackType.DAN_TI);
         }
         return Optional.empty();
     }

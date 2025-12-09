@@ -3,12 +3,12 @@ package com.mllfjn.simyys.character.status.instance;
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.Runnable;
+import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
 // TODO 无法动作和受到伤害时自动移除效果没有写
-public class StatusSleep extends Status implements Displayable, CrowdControl, Runnable {
+public class StatusSleep extends Status implements Displayable, CrowdControl, StatusRunnable {
 
     public StatusSleep(Character from, Character belongTo) {
         super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);

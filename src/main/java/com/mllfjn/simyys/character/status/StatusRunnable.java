@@ -3,7 +3,7 @@ package com.mllfjn.simyys.character.status;
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
-public interface Runnable {
+public interface StatusRunnable {
     boolean runnable(Trigger trigger);
 
     /**

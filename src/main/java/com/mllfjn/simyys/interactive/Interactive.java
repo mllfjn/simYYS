@@ -4,7 +4,9 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.battleevent.EventAttack;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
+import com.mllfjn.simyys.character.status.Trigger;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAddCrowdControl;
 import com.mllfjn.simyys.character.yuhun.YuHunAttack;
 import com.mllfjn.simyys.character.yuhun.list.DiZhenNian;
 import com.mllfjn.simyys.customnode.CustomText;
@@ -16,6 +18,7 @@ import com.mllfjn.simyys.character.status.determinant.IgnoreActionIncrease;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamageBeingAttack;
 
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 public class Interactive {
@@ -73,7 +76,7 @@ public class Interactive {
         currentNumberLog.get(character).add(text);
     }
 
-    public AttackInfo[] attack(Skill skill, List<Character> targets, int multiplier, AttackType attackType) {
+    public AttackInfo[] attackTypical(Skill skill, List<Character> targets, int multiplier, AttackType attackType) {
         AttackInfo[] attackInfos = new AttackInfo[targets.size()];
         for (int i = 0; i < targets.size(); i++) {
             AttackInfo attackInfo = AttackInfo.createTypicalAttack(owner, skill, targets.get(i), multiplier);
@@ -83,24 +86,33 @@ public class Interactive {
         RateController.baoJi(skill.getName(), owner, bp.calc, targets, attackInfos);
 
         for (int i = 0; i < targets.size(); i++) {
-            attack(targets.get(i), attackType, attackInfos[i]);
+            attack(attackInfos[i], attackType);
         }
 
         return attackInfos;
     }
 
-    public AttackInfo attack(Skill skill, Character target, int multiplier, AttackType attackType) {
+    public AttackInfo attackTypical(Skill skill, Character target, int multiplier, AttackType attackType) {
         AttackInfo attackInfo = AttackInfo.createTypicalAttack(owner, skill, target, multiplier);
-        RateController.baoJi(skill.getName(), owner, bp.calc, List.of(target), attackInfo);
-        attack(target, attackType, attackInfo);
+        attack(attackInfo, attackType);
         return attackInfo;
     }
 
-    public void attack(Character target, AttackType attackType, AttackInfo attackInfo) {
-        // https://bbs.nga.cn/read.php?tid=26176854  阴阳师底层机制——单次伤害型技能中的结算顺序总结
+    public AttackInfo attack(AttackInfo attackInfo, AttackType attackType) {
+        if (attackInfo.canCrit() && !attackInfo.isCrit()) {
+            RateController.baoJi(attackInfo.getSkill().getName(), owner, bp.calc
+                    , List.of(attackInfo.getTarget()), attackInfo);
+        }
+        attackBase(attackInfo, attackType);
+        return attackInfo;
+    }
+
+    private void attackBase(AttackInfo attackInfo, AttackType attackType) {
+        // https://bbs.nga.cn/read.php?tid=26176854 阴阳师底层机制——单次伤害型技能中的结算顺序总结
         // https://bbs.nga.cn/read.php?tid=35530141 关于减伤的分类
         // https://bbs.nga.cn/read.php?tid=24250479 伤害结算机制详细分析
 
+        Character target = attackInfo.getTarget();
 
         if (!target.alive) {
             return;
@@ -176,8 +188,8 @@ public class Interactive {
 
 
         addNumberRecord(target, new CustomText(traceableNumber.getNumberString() + " "
-                        , traceableNumber.getTrace(), type
-                        , attackInfo.isCrit() ? TextFlowLog.TextColor.CRITICAL : TextFlowLog.TextColor.ATTACK, size));
+                , traceableNumber.getTrace(), type
+                , attackInfo.isCrit() ? TextFlowLog.TextColor.CRITICAL : TextFlowLog.TextColor.ATTACK, size));
 
         if (!attackInfo.isCancel()) {
             // 广播攻击信息
@@ -246,24 +258,33 @@ public class Interactive {
                 , type, TextFlowLog.TextColor.HEAL, size));
     }
 
-    public EffectInfo[] effect(String statusName, List<Character> targets, int baseRate, boolean calHit, StatusSupplier statusSupplier) {
-        EffectInfo[] infos = RateController.mingZhong(statusName, owner, targets, baseRate, calHit, bp.calc);
+    public EffectInfo[] effect(Skill skill, String statusName, List<Character> targets, int baseRate, boolean calHit
+            , BiFunction<Character, Character, Status> statusSupplier) {
+        EffectInfo[] infos = RateController
+                .mingZhong(skill, statusName, owner, targets, statusSupplier, baseRate, calHit, bp.calc);
         for (int i = 0; i < targets.size(); i++) {
-            if (infos[i].isHit()) {
-                effect(targets.get(i), statusSupplier);
-            }
+            effect(infos[i], targets.get(i), statusSupplier);
         }
         return infos;
     }
 
-    public void effect(String statusName, Character target, int baseRate, boolean calHit, StatusSupplier statusSupplier) {
-        if (RateController.mingZhong(statusName, owner, List.of(target), baseRate, calHit, bp.calc)[0].isHit()) {
-            effect(target, statusSupplier);
-        }
+    public void effect(Skill skill, String statusName, Character target, int baseRate, boolean calHit
+            , BiFunction<Character, Character, Status> statusSupplier) {
+
+        EffectInfo info = RateController
+                .mingZhong(skill, statusName, owner, List.of(target), statusSupplier, baseRate, calHit, bp.calc)[0];
+
+        effect(info, target, statusSupplier);
     }
 
-    private void effect(Character target, StatusSupplier statusSupplier) {
-        target.addStatus(statusSupplier.get(owner, target));
+    private void effect(EffectInfo effectInfo, Character target
+            , BiFunction<Character, Character, Status> statusSupplier) {
+        if (effectInfo.isHit()) {
+            target.statusRun(Trigger.ADDING_CROWD_CONTROL, new ParamAddCrowdControl(effectInfo));
+            if (!effectInfo.isCancel()) {
+                target.addStatus(statusSupplier.apply(owner, target));
+            }
+        }
     }
 
     public void getNewRound(Character target) {

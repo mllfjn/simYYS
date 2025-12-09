@@ -1,13 +1,17 @@
 package com.mllfjn.simyys.ratecontroller;
 
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.skill.Skill;
+import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.interactive.EffectInfo;
 import com.mllfjn.simyys.interactive.AttackInfo;
 
 import java.io.Serializable;
 import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class RateController implements Serializable {
     public static final Random random = new Random();
@@ -75,8 +79,8 @@ public class RateController implements Serializable {
                 , (i, crit) -> attackInfos[i].setCrit(crit));
     }
 
-    public static EffectInfo[] mingZhong(String statusName, Character owner, List<Character> targets
-            , int baseRate, boolean calHit, RateCalc calc) {
+    public static EffectInfo[] mingZhong(Skill skill, String statusName, Character owner, List<Character> targets
+            , BiFunction<Character, Character, Status> statusSupplier, int baseRate, boolean calHit, RateCalc calc) {
         EffectInfo[] infos = new EffectInfo[targets.size()];
         whetherOrNot("命中控制：" + owner.name + "-" + statusName, "命中"
                 , targets, Character::getName, calc, RateCalc::isControlEffectHit
@@ -88,7 +92,7 @@ public class RateController implements Serializable {
                     }
                 }
                 , (i, hit) -> {
-                    EffectInfo info = new EffectInfo();
+                    EffectInfo info = new EffectInfo(statusSupplier, owner, targets.get(i), skill);
                     info.setHit(hit);
                     infos[i] = info;
                 });

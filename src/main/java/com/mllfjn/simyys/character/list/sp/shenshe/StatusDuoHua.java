@@ -4,12 +4,12 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.Runnable;
+import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.instance.StatusSleep;
 import com.mllfjn.simyys.character.status.Trigger;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
-public class StatusDuoHua extends Status implements Displayable, Runnable, AttributeModifier, ActionWhenDie {
+public class StatusDuoHua extends Status implements Displayable, StatusRunnable, AttributeModifier, ActionWhenDie {
     private boolean enable = true;
 
     public StatusDuoHua(Character from, Character belongTo) {

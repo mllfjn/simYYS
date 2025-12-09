@@ -11,5 +11,11 @@ public abstract class Skill1PuGongBase extends Skill {
     @Override
     public void use(BattlePane bp) {
         useBase(bp, false);
+        useDone();
+    }
+
+    @Override
+    public boolean canUse(BattlePane bp) {
+        return true;
     }
 }

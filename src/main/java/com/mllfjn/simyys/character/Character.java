@@ -7,7 +7,7 @@ import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.skill.SkillAuto;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.Runnable;
+import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.determinant.IgnoreChangeMaxHp;
 import com.mllfjn.simyys.character.status.determinant.IgnoreDebuff;
 import com.mllfjn.simyys.character.status.determinant.PreventDie;
@@ -748,10 +748,10 @@ public abstract class Character implements Serializable {
         return canUse;
     }
 
-    private void statusRun(Trigger trigger, TriggerParam param) {
+    public void statusRun(Trigger trigger, TriggerParam param) {
         List<Status> copy = new ArrayList<>(statuses);
         for (Status status : copy) {
-            if (status instanceof Runnable r && r.runnable(trigger)) {
+            if (status instanceof StatusRunnable r && r.runnable(trigger)) {
                 if (r.run(trigger, bp, param)) {
 //                    statuses.remove(status);
                     status.delete();

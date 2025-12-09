@@ -3,11 +3,11 @@ package com.mllfjn.simyys.character.list.ssr.qianji;
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.Runnable;
+import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.Trigger;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
-class StatusXiMeng extends Status implements Runnable, Displayable {
+class StatusXiMeng extends Status implements StatusRunnable, Displayable {
     public StatusXiMeng(Character from, Character belongTo) {
         super(from, belongTo, StatusType.DEBUFF, StatusForm.YIN_JI);
     }

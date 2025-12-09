@@ -26,7 +26,7 @@ class Skill3 extends Skill {
         // 进行四连击,对群体目标造成100%的伤害。
         Interactive interactive = getBelongTo().getInteractive();
         for (int i = 0; i < 4; i++) {
-            interactive.attack(this
+            interactive.attackTypical(this
                     , new CharacterFinder(getBelongTo()).setTargetTeam(CharacterFinder.TargetTeam.ENEMY).getList()
                     , 100, AttackType.QUN_TI);
         }

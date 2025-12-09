@@ -7,6 +7,8 @@ import com.mllfjn.simyys.character.status.ForceChangeCost;
 import com.mllfjn.simyys.character.status.Status;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public abstract class Skill implements Serializable {
@@ -21,6 +23,9 @@ public abstract class Skill implements Serializable {
     private int cost;
     // 技能当前的冷却回合数，因为回合结束后判定一次技能冷却，所以设定时要+1
     private int cooling;
+
+    // 当技能结束时，遍历通知
+    private final List<SkillListener> skillListeners = new ArrayList<>();
 
     public Skill(Character belongTo, int level, int cost, int coolDown, int skillID) {
         this.belongTo = belongTo;
@@ -59,7 +64,14 @@ public abstract class Skill implements Serializable {
 
         useBase(bp, true);
 
-//        bp.onTrigger(new EventSkillDone(this));
+        useDone();
+    }
+
+    protected void useDone() {
+        if (!skillListeners.isEmpty()) {
+            skillListeners.forEach(SkillListener::run);
+            skillListeners.clear();
+        }
     }
 
     // 技能本身的消耗，妒火之类的状态不要改这个
@@ -150,5 +162,21 @@ public abstract class Skill implements Serializable {
 
     public void setCoolDown(int coolDown) {
         this.coolDown = coolDown;
+    }
+
+    public void addSkillListener(Runnable runnable) {
+        skillListeners.add(new SkillListener(runnable));
+    }
+
+    static class SkillListener {
+        private final Runnable runnable;
+
+        public SkillListener(Runnable runnable) {
+            this.runnable = runnable;
+        }
+
+        public void run() {
+            runnable.run();
+        }
     }
 }

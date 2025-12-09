@@ -6,7 +6,7 @@ import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.Runnable;
+import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunAttack;
@@ -51,7 +51,7 @@ public class TuZhiZhu extends YuHun implements YuHunUnfullMark, YuHunAttack {
         num += 0.1 * attackInfo.getTraceableNumber().getNumber();
     }
 
-    static class StatusTuZhiZhu extends Status implements Displayable, Runnable, AttributeModifier {
+    static class StatusTuZhiZhu extends Status implements Displayable, StatusRunnable, AttributeModifier {
         private final TuZhiZhuRecord[] records = new TuZhiZhuRecord[3];
         private int count = 0;
 
@@ -101,8 +101,9 @@ public class TuZhiZhu extends YuHun implements YuHunUnfullMark, YuHunAttack {
                     break;
                 }
                 record.from.doInteractive(interactive ->
-                        interactive.attack(belongTo, AttackType.JIAN_JIE, AttackInfo.createJianJieAttack(
-                                record.from, Skill.getInstance(TuZhiZhu.YuHunName), belongTo, (owner, target) -> record.num)));
+                        interactive.attack(AttackInfo.createJianJieAttack(
+                                record.from, Skill.getInstance(TuZhiZhu.YuHunName), belongTo
+                                , (owner, target) -> record.num), AttackType.JIAN_JIE));
             }
             return true;
         }

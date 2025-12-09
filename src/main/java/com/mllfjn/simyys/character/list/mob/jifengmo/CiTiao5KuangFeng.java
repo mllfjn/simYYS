@@ -4,7 +4,7 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.Runnable;
+import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
@@ -20,7 +20,7 @@ public class CiTiao5KuangFeng {
     }
 
 
-    static class StatusKFListener extends Status implements Runnable {
+    static class StatusKFListener extends Status implements StatusRunnable {
 
         public StatusKFListener(Character character) {
             super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
@@ -38,11 +38,10 @@ public class CiTiao5KuangFeng {
                 Character attacker = attackInfo.getAttacker();
                 // 自身（指玩家，这里是对面的队伍）回合内造成伤害时，额外对其造成真实伤害，伤害量等同于该次伤害的20%
                 if (attacker.isInRound() && !(attackInfo.getSkill() instanceof SkillKF)) {
-                    belongTo.doInteractive(
-                            interactive -> interactive.attack(belongTo, AttackType.ZHEN_SHI
-                                    , AttackInfo.createRealAttack(attacker, SkillKFInstance, belongTo
-                                            , (c1, c2) ->
-                                                    attackInfo.getTraceableNumber().getNumber() * 0.2)));
+                    belongTo.doInteractive(interactive -> interactive
+                            .attack(AttackInfo.createRealAttack(attacker, SkillKFInstance, belongTo
+                                            , (c1, c2) -> attackInfo.getTraceableNumber().getNumber() * 0.2)
+                                    , AttackType.ZHEN_SHI));
                 }
             }
             return false;

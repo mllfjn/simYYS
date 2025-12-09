@@ -5,7 +5,7 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.Runnable;
+import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
@@ -31,7 +31,7 @@ class Skill3_2 extends Skill {
         Interactive interactive = getBelongTo().getInteractive();
         // 对敌方全体造成攻击(120 + 悲歌层数*100)%的伤害
         List<Character> targets = new CharacterFinder(getBelongTo()).setTargetTeam(CharacterFinder.TargetTeam.ENEMY).getList();
-        interactive.attack(this, targets
+        interactive.attackTypical(this, targets
                 , 120 + getBelongTo().getStatus(StatusBeiGe.class).orElseThrow().getStack() * 100
                 , AttackType.QUN_TI);
         // 释放后移除悲歌,并将技能替换为海潮入梦(3-1)
@@ -47,7 +47,7 @@ class Skill3_2 extends Skill {
     }
 }
 
-class StatusBeiGe extends Status implements Runnable, Displayable {
+class StatusBeiGe extends Status implements StatusRunnable, Displayable {
     private static final String StatusName = "悲歌";
     private int stack;
 

@@ -3,7 +3,6 @@ package com.mllfjn.simyys.character.list.yys.yuanlaiguang;
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
-import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.skill.Skill1PuGongBase;
 import com.mllfjn.simyys.interactive.AttackType;
 
@@ -32,7 +31,7 @@ class Skill1 extends Skill1PuGongBase {
         Character target = new CharacterFinder(belongTo)
                 .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
                 .getRandom();
-        belongTo.getInteractive().attack(this, target,
+        belongTo.getInteractive().attackTypical(this, target,
                 multiplier[getLevel()] + shuYin * 20, AttackType.DAN_TI);
         return Optional.of(target);
     }

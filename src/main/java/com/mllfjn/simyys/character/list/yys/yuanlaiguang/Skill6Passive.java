@@ -5,7 +5,7 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.Displayable;
-import com.mllfjn.simyys.character.status.Runnable;
+import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.StatusShield;
 import com.mllfjn.simyys.character.status.Trigger;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
@@ -58,7 +58,7 @@ class Skill6Passive extends Skill implements PassiveSkill {
         return Optional.empty();
     }
 
-    static class StatusShieldGZ extends StatusShield implements Runnable, Displayable {
+    static class StatusShieldGZ extends StatusShield implements StatusRunnable, Displayable {
         public static final String StatusName = "鬼兵部";
         private double maxShield;
         private double absorb = 0.3;

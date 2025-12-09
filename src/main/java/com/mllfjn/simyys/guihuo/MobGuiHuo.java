@@ -3,11 +3,11 @@ package com.mllfjn.simyys.guihuo;
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.Runnable;
+import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.Trigger;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
-public class MobGuiHuo extends Status implements Runnable, Displayable {
+public class MobGuiHuo extends Status implements StatusRunnable, Displayable {
     private static final int max = 3;
     private int now;
 

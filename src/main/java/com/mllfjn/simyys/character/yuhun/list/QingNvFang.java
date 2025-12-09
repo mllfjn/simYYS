@@ -5,7 +5,7 @@ import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.Runnable;
+import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.determinant.PreventDie;
 import com.mllfjn.simyys.character.status.determinant.RejectAllStatuses;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
@@ -69,7 +69,7 @@ public class QingNvFang extends YuHun {
         }
     }
 
-    static class StatusQNFBF extends Status implements AttributeModifier, RejectAllStatuses, Runnable, Displayable {
+    static class StatusQNFBF extends Status implements AttributeModifier, RejectAllStatuses, StatusRunnable, Displayable {
 
         public StatusQNFBF(Character character) {
             super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);

@@ -6,7 +6,7 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.skill.Skill;
-import com.mllfjn.simyys.character.status.Runnable;
+import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.character.status.StatusForm;
 import com.mllfjn.simyys.character.status.StatusType;
@@ -50,7 +50,7 @@ class Skill2 extends Skill implements PassiveSkill {
         getBelongTo().removeStatus(status);
     }
 
-    static class StatusAfterRound extends Status implements Runnable {
+    static class StatusAfterRound extends Status implements StatusRunnable {
         private final int level;
 
         public StatusAfterRound(LaoTou laoTou, int level) {
@@ -94,7 +94,7 @@ class Skill2 extends Skill implements PassiveSkill {
         }
     }
 
-    static class StatusFirstAttackListener extends Status implements Runnable {
+    static class StatusFirstAttackListener extends Status implements StatusRunnable {
         public StatusFirstAttackListener(LaoTou laoTou) {
             super(laoTou, laoTou, StatusType.SPECIAL, StatusForm.SPECIAL);
         }

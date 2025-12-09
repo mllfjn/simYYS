@@ -27,7 +27,7 @@ class Skill1 extends Skill1PuGongBase {
         Character target = new CharacterFinder(belongTo)
                 .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
                 .getAutoOrElseRandom();
-        belongTo.getInteractive().attack(this, target, 120, AttackType.DAN_TI);
+        belongTo.getInteractive().attackTypical(this, target, 120, AttackType.DAN_TI);
         // 并降低敌人30%的暴击
         target.addStatus(new StatusReduceCritRate(belongTo, target, 30));
         return Optional.of(target);

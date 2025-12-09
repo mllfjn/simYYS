@@ -4,7 +4,6 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
-import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.skill.Skill1PuGongBase;
 import com.mllfjn.simyys.interactive.AttackType;
 
@@ -32,7 +31,7 @@ class Skill1 extends Skill1PuGongBase {
                 .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
                 .getPriorAuto(Attribute.HP, CharacterFinder.Criteria.MIN);
 
-        getBelongTo().getInteractive().attack(this, target, multiplier[getLevel()] + 20 * shuYin, AttackType.DAN_TI);
+        getBelongTo().getInteractive().attackTypical(this, target, multiplier[getLevel()] + 20 * shuYin, AttackType.DAN_TI);
 
         return Optional.of(target);
     }

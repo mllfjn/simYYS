@@ -6,13 +6,13 @@ import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.Runnable;
+import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.Trigger;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
 import java.util.List;
 
-class StatusChi extends Status implements Runnable, Displayable {
+class StatusChi extends Status implements StatusRunnable, Displayable {
     public static final String StatusName = "尘缘·赤";
     private final boolean isLv2;
     public StatusChi(DaYuan from, Character belongTo, int level) {
@@ -79,7 +79,7 @@ class StatusChiNewRound extends Status implements ForceChangeCost {
     }
 }
 
-class StatusQing extends Status implements Runnable, Displayable {
+class StatusQing extends Status implements StatusRunnable, Displayable {
     public static final String StatusName = "尘缘·青";
     private final boolean isLv2;
     public StatusQing(DaYuan from, Character belongTo, int level) {
@@ -142,7 +142,7 @@ class StatusQingJianShang extends Status implements AttributeModifier {
     }
 
     // 该状态在大缘身上，用于控制尘缘·青的减伤，在下回合开始时run，删除青的减伤
-    private static class StatusQingJianShangEnd extends Status implements Runnable {
+    private static class StatusQingJianShangEnd extends Status implements StatusRunnable {
         private final StatusQingJianShang qing;
         public StatusQingJianShangEnd(Character character, StatusQingJianShang qing) {
             super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);

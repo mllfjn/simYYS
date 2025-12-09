@@ -1,10 +1,10 @@
 package com.mllfjn.simyys.character.yuhun.list;
 
 import com.mllfjn.simyys.BattlePane;
+import com.mllfjn.simyys.battleevent.EventBattleStart;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.Runnable;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
+import com.mllfjn.simyys.character.status.instance.StatusBiHu;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 
 public class ShenQiLou extends YuHun {
@@ -20,26 +20,42 @@ public class ShenQiLou extends YuHun {
         super.init(character);
 
         // 与怪物的战斗开始时，获得庇护
-        if (character.bp.isMobBattle(character)) {
-
-        }
+        character.bp.addActionListener(character, event -> {
+            if (event instanceof EventBattleStart) {
+                if (character.bp.isMobBattle(character)) {
+                    if (character.getStatus(StatusBiHuSQL.class).isEmpty()) {
+                        character.addStatus(new StatusBiHuSQL(character));
+                    }
+                }
+                return true;
+            }
+            return false;
+        });
     }
 
 
-    static class StatusSQLListener extends Status implements Runnable {
+    static class StatusBiHuSQL extends StatusBiHu {
+
+        public StatusBiHuSQL(Character character) {
+            super(character, character);
+        }
+
+        @Override
+        public void beforeDelete() {
+            belongTo.addStatus(new StatusSQLListener(belongTo));
+        }
+    }
+
+    static class StatusSQLListener extends Status {
 
         public StatusSQLListener(Character character) {
             super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
+            setDurationType(StatusDurationType.CHI_XU, 5);
         }
 
         @Override
-        public boolean runnable(Trigger trigger) {
-            return false;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            return false;
+        public void beforeDelete() {
+            belongTo.addStatus(new StatusBiHuSQL(belongTo));
         }
     }
 }

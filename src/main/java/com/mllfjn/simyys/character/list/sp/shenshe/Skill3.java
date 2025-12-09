@@ -80,7 +80,7 @@ class Skill3 extends Skill {
         List<Character> targets = new CharacterFinder(shenShe)
                 .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
                 .getList();
-        interactive.attack(this, targets, multiplier, AttackType.QUN_TI);
+        interactive.attackTypical(this, targets, multiplier, AttackType.QUN_TI);
 
 
         // 回到本体

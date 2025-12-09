@@ -8,7 +8,7 @@ import com.mllfjn.simyys.character.propertygetter.PropertiesMap;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.Runnable;
+import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
@@ -76,7 +76,7 @@ class StatusQiCritPower extends Status implements AttributeModifier, Displayable
     }
 }
 
-class StatusQiHuoLing extends Status implements Runnable {
+class StatusQiHuoLing extends Status implements StatusRunnable {
     public StatusQiHuoLing(Character character) {
         super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
     }
@@ -93,7 +93,7 @@ class StatusQiHuoLing extends Status implements Runnable {
                 .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
                 .getList();
         for (int i = 0; i < 3; i++) {
-            interactive.attack(Skill.getInstance("火灵之力"), targets, 100, AttackType.QUN_TI);
+            interactive.attackTypical(Skill.getInstance("火灵之力"), targets, 100, AttackType.QUN_TI);
         }
         return false;
     }

@@ -5,7 +5,7 @@ import com.mllfjn.simyys.battleevent.EventBattleStart;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.Runnable;
+import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
@@ -32,7 +32,7 @@ public class CiTiao7JiXing {
         });
     }
 
-    static class StatusJXListener extends Status implements InfluenceDamageWhenAttack, Runnable {
+    static class StatusJXListener extends Status implements InfluenceDamageWhenAttack, StatusRunnable {
         private boolean increase = false;
 
         public StatusJXListener(Character from, Character belongTo) {

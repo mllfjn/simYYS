@@ -4,12 +4,12 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.Runnable;
+import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.determinant.PreventDie;
 import com.mllfjn.simyys.character.status.Trigger;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
-public class StatusHuiMie extends Status implements Displayable, Runnable, AttributeModifier, PreventDie {
+public class StatusHuiMie extends Status implements Displayable, StatusRunnable, AttributeModifier, PreventDie {
     private static final String text = "毁灭";
     // 毁灭等级
     private int stack = 1;
@@ -79,7 +79,7 @@ public class StatusHuiMie extends Status implements Displayable, Runnable, Attri
         // 造成伤害时无视100点防御
         // lv4-友方每因毁灭降低100点防御,额外无视40点防御,至多额外无视200点防御
         if (attribute == Attribute.IGNORE_DEFENCE) {
-            return 100 + level >= 4 ? (stack - 1) * 40 : 0;
+            return 100 + (level >= 4 ? (stack - 1) * 40 : 0);
         }
 
         return 0;
@@ -108,26 +108,28 @@ public class StatusHuiMie extends Status implements Displayable, Runnable, Attri
     public String getName() {
         return text;
     }
+
+
+    static class StatusNaMeiFlag extends Status implements AttributeModifier {
+        public final StatusHuiMie huiMie;
+        private final boolean awakening;
+
+        public StatusNaMeiFlag(NaMei naMei, StatusHuiMie huiMie, boolean awakening) {
+            super(naMei, naMei, StatusType.SPECIAL, StatusForm.SPECIAL);
+            this.huiMie = huiMie;
+            this.awakening = awakening;
+        }
+
+        @Override
+        public boolean isAffectAttribute(Attribute attribute) {
+            // 觉醒-伊邪那美攻击时,也可触发友方目标当前毁灭的防御无视效果
+            return awakening && attribute == Attribute.IGNORE_DEFENCE;
+        }
+
+        @Override
+        public double getInfluence(Attribute attribute) {
+            return huiMie.getInfluence(Attribute.IGNORE_DEFENCE);
+        }
+    }
 }
 
-class StatusNaMeiFlag extends Status implements AttributeModifier {
-    public final StatusHuiMie huiMie;
-    private final boolean awakening;
-
-    public StatusNaMeiFlag(NaMei naMei, StatusHuiMie huiMie, boolean awakening) {
-        super(naMei, naMei, StatusType.SPECIAL, StatusForm.SPECIAL);
-        this.huiMie = huiMie;
-        this.awakening = awakening;
-    }
-
-    @Override
-    public boolean isAffectAttribute(Attribute attribute) {
-        // 觉醒-伊邪那美攻击时,也可触发友方目标当前毁灭的防御无视效果
-        return awakening && attribute == Attribute.IGNORE_DEFENCE;
-    }
-
-    @Override
-    public double getInfluence(Attribute attribute) {
-        return huiMie.getInfluence(Attribute.IGNORE_DEFENCE);
-    }
-}

@@ -23,7 +23,7 @@ class Skill2 extends Skill {
     private int times = 3;
 
     public Skill2(Character belongTo, boolean awakening, int level) {
-        super(belongTo, 0, 2, 0, 2);
+        super(belongTo, level, 2, 0, 2);
         NaMei naMei = (NaMei) belongTo;
         this.awakening = awakening;
 

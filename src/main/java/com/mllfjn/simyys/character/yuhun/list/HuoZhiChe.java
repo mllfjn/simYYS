@@ -4,7 +4,7 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.battleevent.EventRoundDone;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.Runnable;
+import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.instance.StatusForceChangeCost;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.character.yuhun.YuHun;
@@ -36,7 +36,7 @@ public class HuoZhiChe extends YuHun implements YuHunSealResponse {
         character.removeStatus(statusAfterRound);
     }
 
-    static class StatusAfterRound extends Status implements Runnable, Displayable {
+    static class StatusAfterRound extends Status implements StatusRunnable, Displayable {
         private int stack;
 
         public StatusAfterRound(Character character) {

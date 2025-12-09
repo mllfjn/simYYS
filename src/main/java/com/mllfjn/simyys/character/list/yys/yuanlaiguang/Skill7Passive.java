@@ -8,7 +8,7 @@ import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.Runnable;
+import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackType;
 
@@ -62,7 +62,7 @@ class Skill7Passive extends Skill implements PassiveSkill {
                             .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
                             .getList();
                     belongTo.doInteractive(interactive ->
-                            interactive.attack(Skill7Passive.this, targets, mul, AttackType.QUN_TI));
+                            interactive.attackTypical(Skill7Passive.this, targets, mul, AttackType.QUN_TI));
                     listener = null;
                     belongTo.bp.log.addSkill(sb.toString());
                     return true;
@@ -74,7 +74,7 @@ class Skill7Passive extends Skill implements PassiveSkill {
             listener = event -> {
                 if (event instanceof EventRoundDone) {
                     belongTo.doInteractive(interactive ->
-                            interactive.attack(Skill7Passive.this, target, mul, AttackType.DAN_TI));
+                            interactive.attackTypical(Skill7Passive.this, target, mul, AttackType.DAN_TI));
                     listener = null;
                     belongTo.bp.log.addSkill(sb.toString());
                     return true;
@@ -144,7 +144,7 @@ class Skill7Passive extends Skill implements PassiveSkill {
         }
     }
 
-    static class StatusPZRefresher extends Status implements Runnable {
+    static class StatusPZRefresher extends Status implements StatusRunnable {
         private final Skill7Passive skill;
 
         public StatusPZRefresher(Character character, Skill7Passive skill) {

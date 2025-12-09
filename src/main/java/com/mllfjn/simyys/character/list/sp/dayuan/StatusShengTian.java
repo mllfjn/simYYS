@@ -3,13 +3,13 @@ package com.mllfjn.simyys.character.list.sp.dayuan;
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.Runnable;
+import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.determinant.IgnoreActionDecrease;
 import com.mllfjn.simyys.character.status.Trigger;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
 // 该状态在结缘目标身上,belongTo是结缘目标,from是大缘
-abstract class StatusShengTian extends Status implements IgnoreActionDecrease, Runnable {
+abstract class StatusShengTian extends Status implements IgnoreActionDecrease, StatusRunnable {
     // 在对方下回合开始前至多触发一次(即被拉一次才能拉下一次)
     public boolean increase = true;
     private final StatusCombined combined;
@@ -65,7 +65,7 @@ class StatusSTQing extends StatusShengTian implements Displayable {
 
 
 // 该状态在大缘身上,belongTo是大缘,from是结缘目标
-class StatusCombined extends Status implements Runnable {
+class StatusCombined extends Status implements StatusRunnable {
     // 在对方下回合开始前至多触发一次(即被拉一次才能拉下一次)
     public boolean increase = true;
     private final StatusShengTian shengTian;

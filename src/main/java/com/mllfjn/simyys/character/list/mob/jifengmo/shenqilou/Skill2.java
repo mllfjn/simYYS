@@ -33,9 +33,9 @@ class Skill2 extends Skill {
                 .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
                 .getList();
         for (Character character : target) {
-            interactive.attack(character, AttackType.ZHEN_SHI, AttackInfo.createRealAttack(
-                    shenQiLou, this, character, (from, to) -> to.getHp() * 0.4
-            ));
+            interactive.attack(AttackInfo.createRealAttack(
+                            shenQiLou, this, character, (from, to) -> to.getHp() * 0.4)
+                    , AttackType.ZHEN_SHI);
             character.addStatus(new StatusReduceCritRate(shenQiLou, character, 15));
         }
         return Optional.empty();

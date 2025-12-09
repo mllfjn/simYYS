@@ -4,7 +4,7 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.skill.Skill;
-import com.mllfjn.simyys.character.status.Runnable;
+import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.character.status.StatusForm;
 import com.mllfjn.simyys.character.status.StatusType;
@@ -44,7 +44,7 @@ class SkillPassive2 extends Skill implements PassiveSkill {
         return Optional.empty();
     }
 
-    static class StatusBeAttack extends Status implements Runnable {
+    static class StatusBeAttack extends Status implements StatusRunnable {
         private int count = 0;
 
         public StatusBeAttack(Character character) {

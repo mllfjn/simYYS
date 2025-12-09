@@ -8,7 +8,7 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.Runnable;
+import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
@@ -48,7 +48,7 @@ public class CiTiao1QiaoJin {
         });
     }
 
-    static class StatusQJNewRoundMark extends Status implements Runnable {
+    static class StatusQJNewRoundMark extends Status implements StatusRunnable {
 
         public StatusQJNewRoundMark(Character from, Character belongTo) {
             super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
@@ -67,7 +67,7 @@ public class CiTiao1QiaoJin {
     }
 
     // 巧劲要用状态类生效在BOSS身上，因为只有BOSS本体直接受到伤害才会触发这个效果，打在盾上不生效
-    static class StatusQJListener extends Status implements Runnable {
+    static class StatusQJListener extends Status implements StatusRunnable {
         public StatusQJListener(Character character) {
             super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
         }
@@ -99,10 +99,9 @@ public class CiTiao1QiaoJin {
 
                     attacker.doInteractive(interactive -> {
                         for (Character target : targets) {
-                            interactive.attack(target, AttackType.ZHEN_SHI
-                                    , AttackInfo.createRealAttack(attacker
-                                            , Skill.getInstance(CiTiao1QiaoJin.CiTiaoName)
-                                            , target, (c1, c2) -> number * 0.4));
+                            interactive.attack(AttackInfo.createRealAttack(attacker
+                                    , Skill.getInstance(CiTiao1QiaoJin.CiTiaoName)
+                                    , target, (c1, c2) -> number * 0.4), AttackType.ZHEN_SHI);
                         }
                     });
                 }
@@ -149,7 +148,7 @@ public class CiTiao1QiaoJin {
         }
     }
 
-    static class StatusAddStackAfterRound extends Status implements Runnable {
+    static class StatusAddStackAfterRound extends Status implements StatusRunnable {
 
         public StatusAddStackAfterRound(Character character) {
             super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
