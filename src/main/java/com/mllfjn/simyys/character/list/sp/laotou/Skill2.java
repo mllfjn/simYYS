@@ -26,7 +26,7 @@ class Skill2 extends Skill implements PassiveSkill {
         this.status = new StatusAfterRound(laoTou, level);
         // lv5-战斗开始后,自身首次受到伤害时开始打盹
         if (level >= 5) {
-            laoTou.addStatus(new StatusFirstAttackListener(laoTou));
+            laoTou.addStatus(new StatusFirstAttackListener(laoTou, level));
         }
     }
 
@@ -78,7 +78,7 @@ class Skill2 extends Skill implements PassiveSkill {
 
             // 若回合中释放过委以重任,则开始打盹
             if (belongTo.isHaveStatus(StatusUse3Flag.class)) {
-                belongTo.addStatus(new StatusDaDun((LaoTou) belongTo));
+                belongTo.addStatus(new StatusDaDun(belongTo, level >= 4));
                 // lv4-打盹额外获得1点鬼火
                 if (level >= 4) {
                     belongTo.bp.gainGuiHuo(belongTo, 1);
@@ -95,8 +95,11 @@ class Skill2 extends Skill implements PassiveSkill {
     }
 
     static class StatusFirstAttackListener extends Status implements StatusRunnable {
-        public StatusFirstAttackListener(LaoTou laoTou) {
+        private final boolean levelGZ4;
+
+        public StatusFirstAttackListener(LaoTou laoTou, int level) {
             super(laoTou, laoTou, StatusType.SPECIAL, StatusForm.SPECIAL);
+            levelGZ4 = (level >= 4);
         }
 
         @Override
@@ -108,7 +111,7 @@ class Skill2 extends Skill implements PassiveSkill {
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
             belongTo.bp.addActionListener(belongTo, event -> {
                 if (event instanceof EventRoundDone) {
-                    belongTo.addStatus(new StatusDaDun(belongTo));
+                    belongTo.addStatus(new StatusDaDun(belongTo, levelGZ4));
                     return true;
                 }
                 return false;

@@ -28,8 +28,9 @@ public class Interactive {
     private Character owner;
 
     private final BattlePane bp;
+    private final List<CustomText> guiHuoLog = new ArrayList<>();
     private final Map<Character, List<CustomText>> currentNumberLog = new LinkedHashMap<>();
-    private final Set<String> increaseLog = new LinkedHashSet<>();
+    private final List<String> increaseLog = new ArrayList<>();
     private final Map<Character, Set<String>> yuHunEffect = new LinkedHashMap<>();
 
     public Interactive(BattlePane bp) {
@@ -50,6 +51,7 @@ public class Interactive {
     }
 
     public void display() {
+        guiHuoLog.forEach(bp.log::addText);
         currentNumberLog.values().forEach(list -> {
             list.forEach(bp.log::addText);
             bp.log.addText("\n", type, TextFlowLog.TextColor.NORMAL, size);
@@ -61,6 +63,7 @@ public class Interactive {
 
         increaseLog.forEach(bp.log::addLocationChange);
 
+        guiHuoLog.clear();
         currentNumberLog.clear();
         increaseLog.clear();
         yuHunEffect.clear();
@@ -329,6 +332,12 @@ public class Interactive {
 
         target.setLocation(Math.max(0, location - decrease));
         increaseLog.add(sb.toString());
+    }
+
+    public void guiHuo(Character character, int num) {
+        guiHuoLog.add(new CustomText(
+                "\t" + character.name + (num > 0 ? "获得" : "消耗") + "鬼火" + Math.abs(num) + "\n"
+                , TextFlowLog.TextType.GUI_HUO, TextFlowLog.TextColor.NORMAL, TextFlowLog.FontSize.NORMAL));
     }
 
     public void addYuHunEffectLog(Character character, String yuHunName) {

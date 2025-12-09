@@ -98,7 +98,9 @@ public class TextFlowLog extends ScrollPane {
         SKILL("技能"),
         INCREASE("行动条"),
         NUMBER("伤害数字"),
-        YU_HUN("御魂触发");
+        YU_HUN("御魂触发"),
+        GUI_HUO("鬼火"),
+        ;
         final String description;
         TextType(String description) {
             this.description = description;

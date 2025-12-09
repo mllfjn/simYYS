@@ -55,7 +55,7 @@ public class CharacterIcon extends VBox {
                             if (cooling != 0) {
                                 sb.append("冷:").append(cooling);
                             }
-                            sb.append("火:").append(skill.getRealCost());
+                            sb.append("火:").append(skill.getRealCost(false));
                             Label additionalText = new Label(sb.toString());
                             additionalText.setAlignment(Pos.CENTER_RIGHT);
                             additionalText.setMaxWidth(Double.MAX_VALUE);

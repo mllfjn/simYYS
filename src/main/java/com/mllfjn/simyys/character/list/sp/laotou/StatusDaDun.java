@@ -12,8 +12,12 @@ import java.util.List;
 public class StatusDaDun extends StatusSleep implements Displayable {
     public static final String StatusName = "打盹";
 
-    public StatusDaDun(Character laoTou) {
+    public StatusDaDun(Character laoTou, boolean levelGZ4) {
         super(laoTou, laoTou);
+        // lv4-打盹额外获得1点鬼火
+        if (levelGZ4) {
+            laoTou.bp.gainGuiHuo(laoTou, 1);
+        }
         setDurationType(StatusDurationType.WEI_CHI, 1);
     }
 

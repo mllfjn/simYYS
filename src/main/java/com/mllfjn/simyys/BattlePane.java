@@ -139,6 +139,7 @@ public class BattlePane {
             MobGuiHuo.mobGainGuiHuo(character, num);
         } else {
             situation.teamPane[character.team].gainGuiHuo(num);
+            interactive.guiHuo(character, num);
         }
     }
 
