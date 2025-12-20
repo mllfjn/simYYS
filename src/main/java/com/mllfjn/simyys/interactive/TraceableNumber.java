@@ -26,6 +26,11 @@ public class TraceableNumber {
         append("*", num, desc);
     }
 
+    public void set(double num, String desc) {
+        number = num;
+        append("重设为:", num, desc);
+    }
+
     private void append(String op, double num, String desc) {
         // op .2f (desc)
         trace.append(op).append(DecimalFormatUtil.df_0_3.format(num)).append("(").append(desc).append(")");

@@ -46,7 +46,7 @@ class Skill2 extends PassiveSkill {
 
         public StatusXiaZhou(Character character, int level) {
             super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-            rate = level == 5 ? 40 : level >= 3 ? 30 : 20;
+            rate = level >= 5 ? 40 : level >= 3 ? 30 : 20;
             yiShang = level >= 4 ? 15 : level >= 2 ? 10 : 5;
         }
 

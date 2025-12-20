@@ -12,6 +12,7 @@ import com.mllfjn.simyys.ratecontroller.RateCalc;
 import com.mllfjn.simyys.starter.Initializer;
 import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
 import com.mllfjn.simyys.collections.SerializableObservableList;
+import com.mllfjn.simyys.utils.SerializableConsumer;
 import com.mllfjn.simyys.utils.Utils;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
@@ -448,6 +449,19 @@ public class BattlePane {
 
     public boolean isMobBattle(Character character) {
         return situation.teamPane[1 - character.team].isMobTeam();
+    }
+
+    public BattleActionListener forEveryone(SerializableConsumer<Character> action) {
+        for (Character character : situation.characters) {
+            action.accept(character);
+        }
+
+        return event -> {
+            if (event instanceof EventAddCharacter eac) {
+                action.accept(eac.getCharacter());
+            }
+            return false;
+        };
     }
 
     private enum ActionBarType {

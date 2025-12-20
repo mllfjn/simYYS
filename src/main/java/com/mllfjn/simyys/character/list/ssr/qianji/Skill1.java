@@ -24,7 +24,7 @@ class Skill1 extends Skill1PuGongBase {
         interactive.attackTypical(this, target, multiplier[getLevel()], AttackType.DAN_TI);
 
         // lv5-若海原贝戟存在,增加1层潮声
-        if (getLevel() == 5) {
+        if (getLevel() >= 5) {
             HaiYuanBeiJi haiYuanBeiJi = ((QianJi) getBelongTo()).getHaiYuanBeiJi();
             if (haiYuanBeiJi != null) {
                 haiYuanBeiJi.addChaoSheng(1);

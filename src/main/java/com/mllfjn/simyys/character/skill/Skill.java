@@ -1,10 +1,11 @@
 package com.mllfjn.simyys.character.skill;
 
 import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.battleevent.EventUsePuGong;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.ForceChangeCost;
 import com.mllfjn.simyys.character.status.Status;
+import com.mllfjn.simyys.character.status.Trigger;
+import com.mllfjn.simyys.character.status.triggerParam.ParamUseSkill;
 import com.mllfjn.simyys.character.yuhun.list.HaiYueHuoYu;
 
 import java.io.Serializable;
@@ -98,18 +99,30 @@ public abstract class Skill implements Serializable {
 
         Optional<Character> target = usePrivate(bp);
 
+        // 冷却
         if (coolDown != 0) {
             cooling = coolDown + 1;
         }
-        StringBuilder sb = new StringBuilder(belongTo.name);
-        target.ifPresent(character -> sb.append("对").append(character.name));
-        sb.append("使用了").append(getName());
+
+
         if (realCost != 0) {
             bp.interactive.guiHuo(belongTo, -realCost);
-//            bp.log.addGuiHuo(belongTo, -realCost);
-//            sb.append("\n\t\t消耗鬼火:").append(realCost);
         }
-        bp.log.addSkill(sb.toString());
+
+        // 消息记录
+        log(target.orElse(null));
+
+        // 释放完毕技能
+        belongTo.statusRun(Trigger.USED_SKILL, new ParamUseSkill(this, target));
+    }
+
+    protected void log(Character target) {
+        StringBuilder sb = new StringBuilder(belongTo.name);
+        if (target != null) {
+            sb.append("对").append(target.name);
+        }
+        sb.append("使用了").append(getName());
+        belongTo.bp.log.addSkill(sb.toString());
     }
 
     public int getRealCost(boolean reallyUse) {

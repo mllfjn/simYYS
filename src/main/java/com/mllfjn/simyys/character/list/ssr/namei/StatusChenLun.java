@@ -21,7 +21,7 @@ public class StatusChenLun extends Status implements CrowdControl, InfluenceDama
         Character attacker = attackInfo.getAttacker();
         if ((attacker == from || attacker.isHaveStatus(StatusHuiMie.class)) && attacker.isInRound()) {
             // 提升5%,lv5-提升增至10%
-            attackInfo.getTraceableNumber().mul(level == 5 ? 1.1 : 1.05, text);
+            attackInfo.getTraceableNumber().mul(level >= 5 ? 1.1 : 1.05, text);
         }
     }
 

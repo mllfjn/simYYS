@@ -50,7 +50,7 @@ class Skill5 extends Skill {
             Skill6Passive skill6 = ((Skill6Passive) skill);
             // lv3, lv5-释放后鬼兵部伤害吸收系数提升
             if (level >= 3) {
-                skill6.setAbsorb(level == 5 ? 0.5 : 0.4);
+                skill6.setAbsorb(level >= 5 ? 0.5 : 0.4);
             }
 
             // 鬼兵部同时附身给另一友方目标

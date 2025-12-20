@@ -17,7 +17,7 @@ class Skill2 extends Skill {
         super(belongTo, level, 0, 0, 2);
 
         // lv5-先机：释放神堕之力
-        if (level == 5) {
+        if (level >= 5) {
             Character character = getBelongTo();
             character.bp.addActionListener(character, event -> {
                 if (event instanceof EventBattleStart) {

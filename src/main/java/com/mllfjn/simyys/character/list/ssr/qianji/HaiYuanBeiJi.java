@@ -122,7 +122,7 @@ class StatusChaoSheng extends Status implements Displayable, IgnoreDebuff {
         super(character, character, StatusType.BUFF, StatusForm.YIN_JI);
 
         // lv5-海原贝戟被召唤时,立刻获得3层潮声
-        if (level == 5) {
+        if (level >= 5) {
             stack = 3;
         }
     }

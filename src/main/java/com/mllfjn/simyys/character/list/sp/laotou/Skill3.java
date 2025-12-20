@@ -56,7 +56,7 @@ class Skill3 extends Skill {
         }, () -> {
             // 有50%概率将自身的御魂4件套效果转移给目标,维持一回合(至多转移1种效果,TODO且总御魂造成伤害提升至多为140%)
             getFirstFullYuHun().ifPresent(yuHun -> {
-                if (level == 5) {
+                if (level >= 5) {
                     doTransfer(target, yuHun);
                 } else {
                     RateController.whetherOrNot(SkillName, "向" + target + "转移御魂", List.of("转移")

@@ -28,7 +28,7 @@ class Skill2 extends Skill {
         this.awakening = awakening;
 
         // lv5-先机:对攻击攻击最高的友方式神无消耗释放神赐之吻(2)
-        if (level == 5) {
+        if (level >= 5) {
             naMei.bp.addActionListener(naMei, event -> {
                 if (event instanceof EventBattleStart) {
                     useFront(naMei.bp);

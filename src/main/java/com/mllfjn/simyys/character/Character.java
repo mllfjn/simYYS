@@ -5,6 +5,7 @@ import com.mllfjn.simyys.TeamPane;
 import com.mllfjn.simyys.character.propertygetter.*;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.skill.Skill;
+import com.mllfjn.simyys.character.skill.Skill1PuGongBase;
 import com.mllfjn.simyys.character.skill.SkillAuto;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.StatusRunnable;
@@ -403,7 +404,7 @@ public abstract class Character implements Serializable {
             }
         }
         if (!useSkillAuto()) {
-            getSkill(1).ifPresent(skill -> skill.use(bp));
+            usePuGong();
         }
     }
 
@@ -442,6 +443,28 @@ public abstract class Character implements Serializable {
             }
         }
         return Optional.empty();
+    }
+
+    public Optional<Skill1PuGongBase> getPuGong() {
+        for (Skill skill : skills) {
+            if (skill instanceof Skill1PuGongBase s1) {
+                return Optional.of(s1);
+            }
+        }
+        return Optional.empty();
+    }
+
+    public void usePuGong() {
+        getPuGong().ifPresent(s1 -> s1.use(bp));
+    }
+
+    public boolean canXieZhan(Skill skill, Character target) {
+        Optional<Skill1PuGongBase> puGong = getPuGong();
+        return puGong.map(s1 -> s1.canXieZhan(skill, target)).orElse(false);
+    }
+
+    public void xieZhan(Skill skill, Character target) {
+        getPuGong().ifPresent(s1 -> s1.xieZhan(skill, target));
     }
 
     public void removeSkill(int skillID) {

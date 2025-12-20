@@ -8,6 +8,7 @@ import com.mllfjn.simyys.interactive.AttackInfo;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -99,6 +100,19 @@ public class RateController implements Serializable {
         return infos;
     }
 
+    public static boolean xieZhan(Skill skill, Character owner, Character target, RateCalc calc, double rate) {
+        if (!owner.canXieZhan(skill, target)) {
+            return false;
+        }
+
+        AtomicBoolean result = new AtomicBoolean();
+        whetherOrNot("协战控制：" + owner.name, "协战", List.of("协战")
+                , s -> s, calc, RateCalc::isControlXieZhan, item -> rate
+                , (i, x) -> result.set(x));
+
+        return result.get();
+    }
+
     public static <T> T choose(String title, List<T> list, Function<T, String> stringGetter
             , RateCalc calc) {
         if (list.size() == 1) {
@@ -115,5 +129,6 @@ public class RateController implements Serializable {
         }
         return list.get(random.nextInt(list.size()));
     }
+
 
 }

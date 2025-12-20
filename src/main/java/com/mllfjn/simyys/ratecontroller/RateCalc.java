@@ -12,6 +12,8 @@ public class RateCalc {
     private boolean controlCrit = true;
     // 命中
     private boolean controlEffectHit = true;
+    // 协战
+    private boolean controlXieZhan = true;
     // 其他是否
     private boolean controlWhetherOther = true;
     // 选取
@@ -31,12 +33,14 @@ public class RateCalc {
 
         CheckMenuItem menuItemCrit = new CheckMenuItem("控制暴击");
         CheckMenuItem menuItemEffectHit = new CheckMenuItem("控制命中");
+        CheckMenuItem menuItemXieZhan = new CheckMenuItem("控制协战");
         CheckMenuItem menuItemOther = new CheckMenuItem("控制其他是否");
         CheckMenuItem menuItemChoose = new CheckMenuItem("控制选取");
         CheckMenuItem menuItemYuHun = new CheckMenuItem("控制御魂");
 
         menuItemCrit.setSelected(true);
         menuItemEffectHit.setSelected(true);
+        menuItemXieZhan.setSelected(true);
         menuItemOther.setSelected(true);
         menuItemChoose.setSelected(true);
         menuItemYuHun.setSelected(true);
@@ -45,6 +49,8 @@ public class RateCalc {
                 (obs, old, val) -> controlCrit = val);
         menuItemEffectHit.selectedProperty().addListener(
                 (obs, old, val) -> controlEffectHit = val);
+        menuItemXieZhan.selectedProperty().addListener(
+                (obs, old, val) -> controlXieZhan = val);
         menuItemOther.selectedProperty().addListener(
                 (obs, old, val) -> controlWhetherOther = val);
         menuItemChoose.selectedProperty().addListener(
@@ -53,7 +59,7 @@ public class RateCalc {
                 (obs, old, val) -> controlYuHun = val);
 
         control.setContextMenu(
-                new ContextMenu(menuItemCrit, menuItemEffectHit, menuItemOther, menuItemChoose, menuItemYuHun));
+                new ContextMenu(menuItemCrit, menuItemEffectHit, menuItemXieZhan, menuItemOther, menuItemChoose, menuItemYuHun));
     }
 
 
@@ -105,5 +111,9 @@ public class RateCalc {
 
     public boolean isControlYuHun() {
         return mainSwitch && controlYuHun;
+    }
+
+    public boolean isControlXieZhan() {
+        return mainSwitch && controlXieZhan;
     }
 }

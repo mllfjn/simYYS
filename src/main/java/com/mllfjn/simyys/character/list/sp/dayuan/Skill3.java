@@ -95,7 +95,7 @@ class Skill3 extends Skill {
         }
 
         // lv5 - 若治疗暴击,则额外提升该目标暴击伤害 **必须在治疗目标之后,治疗其他队友之前**
-        if (level == 5 && healAttackInfo.isCrit()) {
+        if (level >= 5 && healAttackInfo.isCrit()) {
             target.addStatus(new StatusCritPower(daYuan, target));
         }
 

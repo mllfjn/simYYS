@@ -8,6 +8,7 @@ import com.mllfjn.simyys.character.status.Trigger;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAddCrowdControl;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
+import com.mllfjn.simyys.character.status.triggerParam.ParamCauseAttack;
 import com.mllfjn.simyys.character.yuhun.YuHunAttack;
 import com.mllfjn.simyys.character.yuhun.list.DiZhenNian;
 import com.mllfjn.simyys.customnode.CustomText;
@@ -117,18 +118,17 @@ public class Interactive {
         // https://bbs.nga.cn/read.php?tid=24250479 伤害结算机制详细分析
 
         Character target = attackInfo.getTarget();
-
         if (!target.alive) {
             return;
         }
 
         TraceableNumber traceableNumber = attackInfo.getTraceableNumber();
 
-        // 基础伤害
-        traceableNumber.add(attackInfo.getBasicNumber().apply(owner, target), "基础伤害");
-
         // 技能系数
-        traceableNumber.mul(0.01 * attackInfo.getMultiplier(), "技能系数");
+        double multiplier = attackInfo.getMultiplier();
+        if (multiplier != 100) {
+            traceableNumber.mul(0.01 * multiplier, "技能系数");
+        }
 
         // 暴击
         if (attackInfo.isCrit()) {
@@ -188,6 +188,12 @@ public class Interactive {
             });
         }
 
+        // 总伤害限制,全游戏通用单段上限一千万,部分技能具有额外限制
+        double limit = attackInfo.getLimit();
+        if (traceableNumber.getNumber() > limit) {
+            traceableNumber.set(limit, "达到上限");
+        }
+
         target.beHurt(attackInfo);
 
         addNumberRecord(target, new CustomText(traceableNumber.getNumberString() + " "
@@ -196,6 +202,9 @@ public class Interactive {
 
         // 触发攻击的目标身上的状态
         target.statusRun(Trigger.AFTER_ATTACK, new ParamAfterAttack(attackInfo));
+
+        // 触发攻击者身上的攻击监听
+        owner.statusRun(Trigger.CAUSE_ATTACK, new ParamCauseAttack(attackInfo));
 
         if (!attackInfo.isCancel()) {
             // 广播攻击信息
@@ -231,9 +240,6 @@ public class Interactive {
 
         TraceableNumber traceableNumber = attackInfo.getTraceableNumber();
 
-        // 基础数值
-        traceableNumber.add(attackInfo.getBasicNumber().apply(owner, target), "生命上限");
-
         // 技能系数
         traceableNumber.mul(0.01 * attackInfo.getMultiplier(), "技能系数");
 
@@ -254,8 +260,6 @@ public class Interactive {
     public void recovery(Skill skill, Character target, double num) {
         AttackInfo attackInfo = AttackInfo.createRecovery(owner, skill, target, (c1, c2) -> num);
         TraceableNumber traceableNumber = attackInfo.getTraceableNumber();
-
-        traceableNumber.add(num, "恢复数值");
 
         target.recovery(num);
 

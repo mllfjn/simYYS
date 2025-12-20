@@ -6,4 +6,7 @@ public enum Trigger {
     AFTER_ROUND, // 回合后
     AFTER_ATTACK, // 遭到攻击
     ADDING_CROWD_CONTROL, // 要被控制时
+    CAUSE_ATTACK, // 造成伤害时
+    USED_SKILL, // 使用了技能（不包括普攻）
+    USE_PU_GONG, // 使用普攻
 }

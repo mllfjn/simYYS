@@ -21,7 +21,7 @@ class Skill1 extends Skill1PuGongBase {
     public void usePrivate(BattlePane bp, Interactive interactive, Character target) {
         // lv5-并有25%基础概率附加凋零,持续1回合
         // 没有测试是先上凋零还是先造成伤害,这里猜测是先凋零
-        if (getLevel() == 5) {
+        if (getLevel() >= 5) {
             interactive.effect(this, StatusDiaoLing.text, target, 25, true
                     , (naMei, character) -> new StatusDiaoLing(naMei, character, 1));
         }

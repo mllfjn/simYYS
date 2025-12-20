@@ -33,6 +33,8 @@ public class AttackInfo {
     // 计算御魂
     private boolean calYuHun = true;
 
+    // 伤害上限
+    private double limit = 10000000;
     // 是否被取消
     private boolean cancel = false;
 
@@ -96,7 +98,7 @@ public class AttackInfo {
     }
 
 
-    private AttackInfo(Character attacker, Skill skill, Character target
+    public AttackInfo(Character attacker, Skill skill, Character target
             , BiFunction<Character, Character, Double> basicNumber) {
         this.attacker = attacker;
         this.skill = skill;
@@ -104,6 +106,7 @@ public class AttackInfo {
         this.basicNumber = basicNumber;
 
         traceableNumber = new TraceableNumber(attacker.name, skill.getName());
+        traceableNumber.add(basicNumber.apply(attacker, target), "基础数值");
     }
 
     public TraceableNumber getTraceableNumber() {
@@ -124,9 +127,9 @@ public class AttackInfo {
         return crit;
     }
 
-    public BiFunction<Character, Character, Double> getBasicNumber() {
+    /*public BiFunction<Character, Character, Double> getBasicNumber() {
         return basicNumber;
-    }
+    }*/
 
     public double getMultiplier() {
         return multiplier;
@@ -170,5 +173,29 @@ public class AttackInfo {
 
     public Skill getSkill() {
         return skill;
+    }
+
+    public void setLimit(double limit) {
+        this.limit = limit;
+    }
+
+    public double getLimit() {
+        return limit;
+    }
+
+    public void setCanCrit(boolean canCrit) {
+        this.canCrit = canCrit;
+    }
+
+    public void setCalDefence(boolean calDefence) {
+        this.calDefence = calDefence;
+    }
+
+    public void setCalZengShang(boolean calZengShang) {
+        this.calZengShang = calZengShang;
+    }
+
+    public void setCalYuHun(boolean calYuHun) {
+        this.calYuHun = calYuHun;
     }
 }

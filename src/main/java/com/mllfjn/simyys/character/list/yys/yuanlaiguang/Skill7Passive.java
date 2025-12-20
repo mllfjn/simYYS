@@ -37,7 +37,7 @@ class Skill7Passive extends PassiveSkill {
         int level = getLevel();
         // 造成130%伤害
         // lv5-劈斩初始伤害提升至150%
-        int multiplier = level == 5 ? 150 : 130;
+        int multiplier = level >= 5 ? 150 : 130;
 
         // 每次劈斩伤害系数增加10%,可进化2次,进化效果持续1回合.
         // lv2-每次劈斩使下次劈斩伤害系数提升20%
