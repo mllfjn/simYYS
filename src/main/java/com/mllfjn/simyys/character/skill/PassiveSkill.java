@@ -1,7 +1,22 @@
 package com.mllfjn.simyys.character.skill;
 
-public interface PassiveSkill {
-    void enable();
+import com.mllfjn.simyys.BattlePane;
+import com.mllfjn.simyys.character.Character;
 
-    void disable();
+import java.util.Optional;
+
+public abstract class PassiveSkill extends Skill {
+
+    public PassiveSkill(Character belongTo, int level, int skillID) {
+        super(belongTo, level, 0, 0, skillID);
+    }
+
+    @Override
+    public final Optional<Character> usePrivate(BattlePane bp) {
+        return Optional.empty();
+    }
+
+    public abstract void enable();
+
+    protected abstract void disable();
 }

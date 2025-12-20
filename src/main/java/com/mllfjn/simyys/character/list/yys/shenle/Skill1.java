@@ -6,6 +6,7 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill1PuGongBase;
 import com.mllfjn.simyys.interactive.AttackType;
+import com.mllfjn.simyys.interactive.Interactive;
 
 import java.util.Optional;
 
@@ -26,13 +27,7 @@ class Skill1 extends Skill1PuGongBase {
     }
 
     @Override
-    public Optional<Character> usePrivate(BattlePane bp) {
-        Character target = new CharacterFinder(getBelongTo())
-                .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
-                .getPriorAuto(Attribute.HP, CharacterFinder.Criteria.MIN);
-
+    public void usePrivate(BattlePane bp, Interactive interactive, Character target) {
         getBelongTo().getInteractive().attackTypical(this, target, multiplier[getLevel()] + 20 * shuYin, AttackType.DAN_TI);
-
-        return Optional.of(target);
     }
 }

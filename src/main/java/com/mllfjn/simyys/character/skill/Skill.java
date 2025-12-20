@@ -98,11 +98,6 @@ public abstract class Skill implements Serializable {
 
         Optional<Character> target = usePrivate(bp);
 
-        // 广播使用普攻
-        if (this instanceof Skill1PuGongBase) {
-            bp.onTrigger(new EventUsePuGong(belongTo, target.orElse(null)));
-        }
-
         if (coolDown != 0) {
             cooling = coolDown + 1;
         }

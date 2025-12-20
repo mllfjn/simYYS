@@ -14,13 +14,13 @@ import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
 import java.util.Optional;
 
-class SkillPassive2 extends Skill implements PassiveSkill {
+class SkillPassive2 extends PassiveSkill {
     public static final String SkillName = "蜃气升腾";
 
     private final StatusBeAttack statusBeAttack;
 
     public SkillPassive2(Character belongTo) {
-        super(belongTo, 0, 0, 0, 6);
+        super(belongTo, 0, 6);
         this.statusBeAttack = new StatusBeAttack(belongTo);
     }
 
@@ -37,11 +37,6 @@ class SkillPassive2 extends Skill implements PassiveSkill {
     @Override
     public String getName() {
         return SkillName;
-    }
-
-    @Override
-    public Optional<Character> usePrivate(BattlePane bp) {
-        return Optional.empty();
     }
 
     static class StatusBeAttack extends Status implements StatusRunnable {

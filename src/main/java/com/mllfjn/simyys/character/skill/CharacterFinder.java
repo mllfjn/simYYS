@@ -140,6 +140,10 @@ public class CharacterFinder {
         return 1 - owner.team;
     }
 
+    public static int getEnemyTeam(int team) {
+        return 1 - team;
+    }
+
     public enum Criteria {
         MAX,
         MIN

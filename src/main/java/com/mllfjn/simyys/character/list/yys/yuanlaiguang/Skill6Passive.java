@@ -14,14 +14,14 @@ import com.mllfjn.simyys.interactive.AttackInfo;
 
 import java.util.Optional;
 
-class Skill6Passive extends Skill implements PassiveSkill {
+class Skill6Passive extends PassiveSkill {
     public static final String SkillName = "鬼胄";
 
     private final StatusShieldGZ status;
     private StatusGZFS statusGZFS;
 
     public Skill6Passive(Character belongTo, int shuYin) {
-        super(belongTo, 0, 0, 0, 6);
+        super(belongTo, 0, 6);
         status = new StatusShieldGZ(belongTo);
     }
 
@@ -51,11 +51,6 @@ class Skill6Passive extends Skill implements PassiveSkill {
     @Override
     public String getName() {
         return SkillName;
-    }
-
-    @Override
-    public Optional<Character> usePrivate(BattlePane bp) {
-        return Optional.empty();
     }
 
     static class StatusShieldGZ extends StatusShield implements StatusRunnable, Displayable {

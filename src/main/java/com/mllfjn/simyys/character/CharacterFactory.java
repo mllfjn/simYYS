@@ -1,6 +1,7 @@
 package com.mllfjn.simyys.character;
 
 import com.mllfjn.simyys.BattlePane;
+import com.mllfjn.simyys.character.list.r.chounv.ChouNv;
 import com.mllfjn.simyys.character.list.sp.laotou.LaoTou;
 import com.mllfjn.simyys.character.list.yys.yuanlaiguang.YuanLaiGuang;
 import com.mllfjn.simyys.utils.PicUtil;
@@ -42,6 +43,10 @@ public class CharacterFactory {
         characterMap.put("SSR", mapSSR);
         mapSSR.put(NaMei.CharacterName, NaMei.class);
         mapSSR.put(QianJi.CharacterName, QianJi.class);
+
+        Map<String, Class<? extends Character>> mapR = new LinkedHashMap<>();
+        characterMap.put("R", mapR);
+        mapR.put(ChouNv.CharacterName, ChouNv.class);
 
         Map<String, Class<? extends Character>> mapMob = new LinkedHashMap<>();
         characterMap.put("怪物", mapMob);

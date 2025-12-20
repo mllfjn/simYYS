@@ -19,17 +19,7 @@ class Skill1 extends Skill1PuGongBase {
     }
 
     @Override
-    public String getName() {
-        return SkillName;
-    }
-
-    @Override
-    public Optional<Character> usePrivate(BattlePane bp) {
-        Character target = new CharacterFinder(getBelongTo())
-                .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
-                .getPriorAuto(Attribute.HP, CharacterFinder.Criteria.MIN);
-        Interactive interactive = getBelongTo().getInteractive();
-
+    public void usePrivate(BattlePane bp, Interactive interactive, Character target) {
         // 对敌方目标造成攻击(系数)伤害
         interactive.attackTypical(this, target, multiplier[getLevel()], AttackType.DAN_TI);
 
@@ -40,6 +30,10 @@ class Skill1 extends Skill1PuGongBase {
                 haiYuanBeiJi.addChaoSheng(1);
             }
         }
-        return Optional.of(target);
+    }
+
+    @Override
+    public String getName() {
+        return SkillName;
     }
 }

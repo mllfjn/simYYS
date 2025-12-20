@@ -15,14 +15,14 @@ import com.mllfjn.simyys.interactive.AttackType;
 import java.util.List;
 import java.util.Optional;
 
-class Skill7Passive extends Skill implements PassiveSkill {
+class Skill7Passive extends PassiveSkill {
     public static final String SkillName = "剑之垒";
 
     private int count;
     private BattleActionListener listener;
 
     public Skill7Passive(Character belongTo, int level, int shuYin) {
-        super(belongTo, level, 0, 0, 7);
+        super(belongTo, level, 7);
 
         belongTo.addStatus(new StatusPZRefresher(belongTo, this));
     }
@@ -107,11 +107,6 @@ class Skill7Passive extends Skill implements PassiveSkill {
     @Override
     public String getName() {
         return SkillName;
-    }
-
-    @Override
-    public Optional<Character> usePrivate(BattlePane bp) {
-        return Optional.empty();
     }
 
     static class StatusEvolution extends Status {

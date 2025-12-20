@@ -7,6 +7,7 @@ import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.Trigger;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAddCrowdControl;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
 import com.mllfjn.simyys.character.yuhun.YuHunAttack;
 import com.mllfjn.simyys.character.yuhun.list.DiZhenNian;
 import com.mllfjn.simyys.customnode.CustomText;
@@ -189,10 +190,12 @@ public class Interactive {
 
         target.beHurt(attackInfo);
 
-
         addNumberRecord(target, new CustomText(traceableNumber.getNumberString() + " "
                 , traceableNumber.getTrace(), type
                 , attackInfo.isCrit() ? TextFlowLog.TextColor.CRITICAL : TextFlowLog.TextColor.ATTACK, size));
+
+        // 触发攻击的目标身上的状态
+        target.statusRun(Trigger.AFTER_ATTACK, new ParamAfterAttack(attackInfo));
 
         if (!attackInfo.isCancel()) {
             // 广播攻击信息

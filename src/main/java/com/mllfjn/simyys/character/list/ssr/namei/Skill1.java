@@ -18,17 +18,7 @@ class Skill1 extends Skill1PuGongBase {
     }
 
     @Override
-    public String getName() {
-        return SkillName;
-    }
-
-    @Override
-    public Optional<Character> usePrivate(BattlePane bp) {
-        Character target = new CharacterFinder(getBelongTo())
-                .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
-                .getPriorAuto(Attribute.HP, CharacterFinder.Criteria.MIN);
-        Interactive interactive = getBelongTo().getInteractive();
-
+    public void usePrivate(BattlePane bp, Interactive interactive, Character target) {
         // lv5-并有25%基础概率附加凋零,持续1回合
         // 没有测试是先上凋零还是先造成伤害,这里猜测是先凋零
         if (getLevel() == 5) {
@@ -38,7 +28,10 @@ class Skill1 extends Skill1PuGongBase {
 
         // 造成攻击(系数)伤害
         interactive.attackTypical(this, target, multiplier[getLevel()], AttackType.DAN_TI);
+    }
 
-        return Optional.of(target);
+    @Override
+    public String getName() {
+        return SkillName;
     }
 }

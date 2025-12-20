@@ -8,7 +8,7 @@ class StatusReduceCritRate extends Status implements AttributeModifier, Displaya
     public static final String StatusName = "降暴";
     private final double num;
 
-    public StatusReduceCritRate(ShenQiLou from, Character belongTo, double num) {
+    public StatusReduceCritRate(Character from, Character belongTo, double num) {
         super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
         this.num = num;
 

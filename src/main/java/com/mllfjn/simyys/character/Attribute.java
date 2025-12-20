@@ -16,7 +16,9 @@ public enum Attribute {
     JIAN_SHANG("减伤", null),
     YI_SHANG("易伤", Character::getYiShang),
     IGNORE_DEFENCE("无视防御", Character::getIgnoreDefense),
-    MaxHP("最大生命值", Character::getMaxHp);
+    MaxHP("最大生命值", Character::getMaxHp),
+    HP_PERCENT("生命值比例", character -> character.getHp() / character.getMaxHp()),
+    ;
     private final String text;
     private final Function<Character, Double> getter;
 

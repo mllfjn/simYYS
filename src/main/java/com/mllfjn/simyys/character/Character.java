@@ -132,7 +132,7 @@ public abstract class Character implements Serializable {
     }
 
     public double getAttack() {
-        return AttributeCounter.getGeneralAttribute(Attribute.ATTACK, baseAttack + additionAttack, getStatuses());
+        return AttributeCounter.getAttribute(Attribute.ATTACK, baseAttack + additionAttack, getStatuses());
     }
 
     public double getHp() {
@@ -144,31 +144,31 @@ public abstract class Character implements Serializable {
     }
 
     public double getSpeed() {
-        return AttributeCounter.getGeneralAttribute(Attribute.SPEED, speed, getStatuses());
+        return AttributeCounter.getAttribute(Attribute.SPEED, speed, getStatuses());
     }
 
     public double getDefence() {
-        return AttributeCounter.getGeneralAttribute(Attribute.DEFENCE, defence, statuses);
+        return AttributeCounter.getAttribute(Attribute.DEFENCE, defence, statuses);
     }
 
     public double getCritRate() {
-        return AttributeCounter.getGeneralAttribute(Attribute.CRIT_RATE, critRate, statuses);
+        return AttributeCounter.getAttribute(Attribute.CRIT_RATE, critRate, statuses);
     }
 
     public double getCritPower() {
-        return AttributeCounter.getGeneralAttribute(Attribute.CRIT_POWER, critPower, statuses);
+        return AttributeCounter.getAttribute(Attribute.CRIT_POWER, critPower, statuses);
     }
 
     public double getEffectHitRate() {
-        return AttributeCounter.getGeneralAttribute(Attribute.EFFECT_HIT_RATE, effectHitRate, statuses);
+        return AttributeCounter.getAttribute(Attribute.EFFECT_HIT_RATE, effectHitRate, statuses);
     }
 
     public double getEffectResistRate() {
-        return AttributeCounter.getGeneralAttribute(Attribute.EFFECT_RESIST_RATE, effectResistRate, statuses);
+        return AttributeCounter.getAttribute(Attribute.EFFECT_RESIST_RATE, effectResistRate, statuses);
     }
 
     public double getZengShang() {
-        return AttributeCounter.getGeneralAttribute(Attribute.ZENG_SHANG, 0, getStatuses());
+        return AttributeCounter.getAttribute(Attribute.ZENG_SHANG, 0, getStatuses());
     }
 
     public double getYiShang() {
@@ -180,8 +180,8 @@ public abstract class Character implements Serializable {
         // 举例：晴明贴了灭易伤30%，敌方有不知火星火结界的18%减伤效果，则x=0.12，b=1.12。
         // 鬼吞的大妖之力也是减伤，所以100%减伤只是将伤害降低到一半。
 
-        double yiShang = AttributeCounter.getGeneralAttribute(Attribute.YI_SHANG, 0, getStatuses());
-        double jianShang = AttributeCounter.getGeneralAttribute(Attribute.JIAN_SHANG, 0, getStatuses());
+        double yiShang = AttributeCounter.getAttribute(Attribute.YI_SHANG, 0, getStatuses());
+        double jianShang = AttributeCounter.getAttribute(Attribute.JIAN_SHANG, 0, getStatuses());
 
         double x = (yiShang - jianShang) / 100;
 
@@ -193,7 +193,7 @@ public abstract class Character implements Serializable {
     }
 
     public double getIgnoreDefense() {
-        return AttributeCounter.getGeneralAttribute(Attribute.IGNORE_DEFENCE, 0, getStatuses());
+        return AttributeCounter.getAttribute(Attribute.IGNORE_DEFENCE, 0, getStatuses());
     }
 
     public boolean isMob() {
@@ -513,9 +513,6 @@ public abstract class Character implements Serializable {
                 setHp(getHp() - damage);
             }
         }
-
-        // 触发攻击的目标身上的状态
-        statusRun(Trigger.AFTER_ATTACK, new ParamAfterAttack(attackInfo));
     }
 
     /**

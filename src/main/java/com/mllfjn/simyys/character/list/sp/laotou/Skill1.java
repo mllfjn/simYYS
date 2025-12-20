@@ -19,20 +19,13 @@ class Skill1 extends Skill1PuGongBase {
     }
 
     @Override
-    public String getName() {
-        return SkillName;
+    public void usePrivate(BattlePane bp, Interactive interactive, Character target) {
+        // 造成攻击（系数）伤害
+        interactive.attackTypical(this, target, multiplier[getLevel()], AttackType.DAN_TI);
     }
 
     @Override
-    public Optional<Character> usePrivate(BattlePane bp) {
-        LaoTou laoTou = (LaoTou) getBelongTo();
-        Interactive interactive = laoTou.getInteractive();
-        Character target = new CharacterFinder(laoTou)
-                .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
-                .getPriorAuto(Attribute.HP, CharacterFinder.Criteria.MIN);
-
-        // 造成攻击（系数）伤害
-        interactive.attackTypical(this, target, multiplier[getLevel()], AttackType.DAN_TI);
-        return Optional.of(target);
+    public String getName() {
+        return SkillName;
     }
 }

@@ -16,13 +16,13 @@ import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import java.util.List;
 import java.util.Optional;
 
-class Skill2 extends Skill implements PassiveSkill {
+class Skill2 extends PassiveSkill {
     public static final String SkillName = "洪福降临";
 
     private final StatusAfterRound status;
 
     public Skill2(LaoTou laoTou, int level) {
-        super(laoTou, level, 0, 0, 2);
+        super(laoTou, level, 2);
         this.status = new StatusAfterRound(laoTou, level);
         // lv5-战斗开始后,自身首次受到伤害时开始打盹
         if (level >= 5) {
@@ -33,11 +33,6 @@ class Skill2 extends Skill implements PassiveSkill {
     @Override
     public String getName() {
         return SkillName;
-    }
-
-    @Override
-    public Optional<Character> usePrivate(BattlePane bp) {
-        return Optional.empty();
     }
 
     @Override

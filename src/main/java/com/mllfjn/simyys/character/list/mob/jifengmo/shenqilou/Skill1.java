@@ -5,6 +5,7 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill1PuGongBase;
 import com.mllfjn.simyys.interactive.AttackType;
+import com.mllfjn.simyys.interactive.Interactive;
 
 import java.util.Optional;
 
@@ -21,15 +22,17 @@ class Skill1 extends Skill1PuGongBase {
     }
 
     @Override
-    public Optional<Character> usePrivate(BattlePane bp) {
-        ShenQiLou belongTo = (ShenQiLou) getBelongTo();
-        // 对单体敌人造成攻击100%的伤害
-        Character target = new CharacterFinder(belongTo)
+    public Character getTarget() {
+        return new CharacterFinder(getBelongTo())
                 .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
                 .getAutoOrElseRandom();
-        belongTo.getInteractive().attackTypical(this, target, 120, AttackType.DAN_TI);
+    }
+
+    @Override
+    public void usePrivate(BattlePane bp, Interactive interactive, Character target) {
+        // 对单体敌人造成攻击100%的伤害
+        interactive.attackTypical(this, target, 120, AttackType.DAN_TI);
         // 并降低敌人30%的暴击
-        target.addStatus(new StatusReduceCritRate(belongTo, target, 30));
-        return Optional.of(target);
+        target.addStatus(new StatusReduceCritRate(getBelongTo(), target, 30));
     }
 }

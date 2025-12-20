@@ -72,6 +72,15 @@ public class AttackInfo {
         return attackInfo;
     }
 
+    // 传导伤害:不会暴击,不触发御魂TODO薙魂
+    public static AttackInfo createChuanDaoAttack(Character attacker, Skill skill, Character target
+            , BiFunction<Character, Character, Double> basicNumber) {
+        AttackInfo attackInfo = new AttackInfo(attacker, skill, target, basicNumber);
+
+        attackInfo.canCrit = false;
+        return attackInfo;
+    }
+
     // 基本治疗
     public static AttackInfo createTypicalHeal(Character attacker, Skill skill, Character target, int multiplier) {
         AttackInfo attackInfo = new AttackInfo(attacker, skill, target, (from, to) -> from.getMaxHp());

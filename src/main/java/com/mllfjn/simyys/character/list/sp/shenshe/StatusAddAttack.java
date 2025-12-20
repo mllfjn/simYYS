@@ -7,7 +7,7 @@ import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.character.status.StatusForm;
 import com.mllfjn.simyys.character.status.StatusType;
 
-public class StatusAddAttack extends Status implements AttributeModifier {
+class StatusAddAttack extends Status implements AttributeModifier {
     private double attack;
 
     public StatusAddAttack(Character character) {
