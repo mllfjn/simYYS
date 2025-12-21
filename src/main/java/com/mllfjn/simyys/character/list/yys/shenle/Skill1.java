@@ -28,6 +28,7 @@ class Skill1 extends Skill1PuGongBase {
 
     @Override
     public void usePrivate(BattlePane bp, Interactive interactive, Character target) {
-        getBelongTo().getInteractive().attackTypical(this, target, multiplier[getLevel()] + 20 * shuYin, AttackType.DAN_TI);
+        getBelongTo().getInteractive().attackTypical(this, target
+                , multiplier[getLevel()] + 20 * shuYin, AttackType.DAN_TI);
     }
 }

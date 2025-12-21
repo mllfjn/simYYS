@@ -24,10 +24,16 @@ public class CharacterFinder {
     public CharacterFinder(Character owner) {
         this.owner = owner;
         this.bp = owner.bp;
-        List<Character> characters = bp.situation.characters;
+
+        stream = bp.situation.characters.stream();
+    }
+
+    /*public CharacterFinder(Character owner, List<Character> characters) {
+        this.owner = owner;
+        this.bp = owner.bp;
 
         stream = characters.stream();
-    }
+    }*/
 
     public CharacterFinder filterYYS(boolean include) {
         stream = include ?
@@ -100,7 +106,7 @@ public class CharacterFinder {
         }
     }
 
-    private Character getAuto() {
+    public Character getAuto() {
         int target;
         FlagChangeInfo.FlagType flagType;
 
