@@ -15,7 +15,7 @@ import java.util.Queue;
 
 public class MultiStageManager implements Serializable {
     private final Queue<SerializableRunnable> stageQueue = new LinkedList<>();
-    private final com.mllfjn.simyys.character.Character character;
+    private final Character character;
 
     private boolean prepareChangeStage = false;
 

@@ -404,10 +404,10 @@ public class BattlePane {
             }
 
             c.setLocation(0);
-            c.timesToAct++;
             c.beforeRound();
             return c;
         }));
+        situation.characterActing.timesToAct++;
     }
 
     public Character getCharacterActing() {

@@ -83,7 +83,9 @@ public class SerializableItems implements Serializable {
 
     public void removeCharacter(Character character) {
         characters.remove(character);
-        teamPane[character.team].removeCharacter(character);
+        for (TeamPane teamPane : teamPane) {
+            teamPane.removeCharacter(character);
+        }
 
         listenerMap.remove(character);
     }

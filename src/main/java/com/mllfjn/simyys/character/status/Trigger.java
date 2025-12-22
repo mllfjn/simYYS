@@ -9,4 +9,5 @@ public enum Trigger {
     CAUSE_ATTACK, // 造成伤害时
     USED_SKILL, // 使用了技能（不包括普攻）
     USE_PU_GONG, // 使用普攻
+    INCREASE_LOCATION, // 被拉条
 }

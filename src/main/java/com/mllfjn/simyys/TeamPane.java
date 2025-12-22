@@ -91,9 +91,11 @@ public class TeamPane implements Serializable {
     }
 
     public void removeCharacter(Character character) {
-        characters.remove(character);
-        if (center != null) {
-            center.getChildren().remove(character.getCharacterIcon());
+        if (characters.contains(character)) {
+            characters.remove(character);
+            if (center != null) {
+                center.getChildren().remove(character.getCharacterIcon());
+            }
         }
 
         for (int i = 0; i < autos.length; i++) {

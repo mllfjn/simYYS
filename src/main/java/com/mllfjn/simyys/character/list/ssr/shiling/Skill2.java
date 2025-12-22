@@ -43,7 +43,10 @@ class Skill2 extends PassiveSkill {
                             .filterSelf()
                             .get(Attribute.CRIT_POWER, CharacterFinder.Criteria.MAX);
 
-                    maxCritPower.addStatus(new StatusShiLingZhuZhan(belongTo, maxCritPower));
+                    if (level >= 5) {
+                        maxCritPower.addStatus(new StatusShiLingZhuZhan(belongTo, maxCritPower));
+                    }
+
                     enable();
 
                     return true;
@@ -159,7 +162,7 @@ class Skill2 extends PassiveSkill {
 
         @Override
         public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.USE_PU_GONG || trigger == Trigger.USED_SKILL;
+            return belongTo.isInRound() && (trigger == Trigger.USE_PU_GONG || trigger == Trigger.USED_SKILL);
         }
 
         @Override

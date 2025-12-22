@@ -12,11 +12,14 @@ import com.mllfjn.simyys.interactive.AttackType;
 public class CaoRen extends Character {
     public static final String CharacterName = "诅咒草人";
 
+    private final Character bind;
+
     public CaoRen(Character chouNv, Character bind, int level) {
         this.isSummon = true;
         this.name = CharacterName;
         this.bp = chouNv.bp;
         this.team = bind.team;
+        this.bind = bind;
         this.setInitSpeed(bind.getSpeed());
 
         double hpPercent = switch (level) {
@@ -31,6 +34,10 @@ public class CaoRen extends Character {
         this.setMaxHp(bind.getHp() * hpPercent, true);
 
         this.addStatus(new StatusAfterAttack(chouNv, this, bind));
+    }
+
+    public Character getBind() {
+        return bind;
     }
 
     @Override

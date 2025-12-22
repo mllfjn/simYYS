@@ -335,6 +335,9 @@ public class Interactive {
 
         target.setLocation(Math.min(100, location + increase));
         increaseLog.add(sb.toString());
+
+        // 拉条事件
+        target.statusRun(Trigger.INCREASE_LOCATION, null);
     }
 
     public void decreaseLocation(Character target, double decrease) {

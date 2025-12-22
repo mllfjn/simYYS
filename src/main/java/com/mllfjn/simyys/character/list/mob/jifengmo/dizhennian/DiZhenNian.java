@@ -1,9 +1,12 @@
 package com.mllfjn.simyys.character.list.mob.jifengmo.dizhennian;
 
 import com.mllfjn.simyys.BattlePane;
+import com.mllfjn.simyys.battleevent.EventActionDone;
 import com.mllfjn.simyys.battleevent.EventBattleStart;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.PropertyKey;
+import com.mllfjn.simyys.character.list.mob.jifengmo.MultiStageManager;
+import com.mllfjn.simyys.character.list.mob.jifengmo.citiao.CiTiao6DouHun;
 import com.mllfjn.simyys.character.list.mob.jifengmo.citiao.CiTiaoManager;
 import com.mllfjn.simyys.character.list.sr.haifangzhu.HaiFangZhu;
 import com.mllfjn.simyys.character.propertygetter.*;
@@ -13,7 +16,10 @@ import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.character.status.StatusForm;
 import com.mllfjn.simyys.character.status.StatusType;
 import com.mllfjn.simyys.character.status.instance.StatusBoss;
+import com.mllfjn.simyys.character.status.instance.StatusCanNotChoose;
 import com.mllfjn.simyys.collections.StringGroup;
+import javafx.event.EventHandler;
+import javafx.scene.input.MouseEvent;
 
 import java.util.List;
 
@@ -36,7 +42,11 @@ import static com.mllfjn.simyys.character.PropertyKey.JI_FENG_MO_CI_TIAO_KEY;
 public class DiZhenNian extends Character {
     public static final String CharacterName = "地震鲶";
 
+    private final MultiStageManager multiStageManager = new MultiStageManager(this);
+
     private StatusBuff.BuffType buffType;
+    private boolean beforeHouZi = true;
+
 
     @Override
     public PropertiesMap getProperties() {
@@ -60,9 +70,17 @@ public class DiZhenNian extends Character {
     public void init(PropertiesHolder propertiesHolder, BattlePane bp) {
         super.init(propertiesHolder, bp);
 
-        CiTiaoManager.installCiTiao(propertiesHolder.propertiesMap.get(JI_FENG_MO_CI_TIAO_KEY).getString(), this);
-
         addStatus(new StatusBoss(this));
+
+        String ciTiao = propertiesHolder.propertiesMap.get(JI_FENG_MO_CI_TIAO_KEY).getString();
+        CiTiaoManager.installCiTiao(ciTiao, this);
+
+        // 添加转阶段事件
+        addStage();
+
+        // 皮糙肉厚
+        // 斗魂15万,其他25万
+        addStatus(new StatusPiCaoRouHou(this, ciTiao.equals(CiTiao6DouHun.CiTiaoName) ? 150000 : 250000));
 
         // 给对面放一个妖琴
         bp.addCharacter(new SpecialYaoQin(bp, 1 - team));
@@ -82,6 +100,38 @@ public class DiZhenNian extends Character {
         });
     }
 
+    private void addStage() {
+        // 第一次转阶段
+        multiStageManager.addStage(() -> {
+            // 召唤一个猴子
+            this.bp.addCharacter(new HouZi(this.bp, team));
+            // 自己进入无法选中状态
+            addStatus(new StatusCanNotChoose(this, this));
+            // 如果在凝视立即吐出光球
+            getStatus(SkillNingShi.StatusNingShiRecordDamage.class)
+                    .ifPresent(SkillNingShi.StatusNingShiRecordDamage::tuGuangQiu);
+        });
+
+        // 第二次转阶段
+        multiStageManager.addStage(() -> {
+            // 删除猴子
+            for (Character character : this.bp.situation.characters) {
+                if (character instanceof HouZi) {
+                    character.die();
+                }
+            }
+            // 自己回到可选中状态
+            removeStatus(StatusCanNotChoose.class);
+            // 凝视变为光球后下一回合立即释放
+            beforeHouZi = false;
+        });
+    }
+
+    @Override
+    protected EventHandler<MouseEvent> getEventHandler() {
+        return multiStageManager.getEventHandler();
+    }
+
     @Override
     protected String getDefaultBaseAttack() {
         return "8000";
@@ -89,20 +139,44 @@ public class DiZhenNian extends Character {
 
     @Override
     protected void addOwnSkills() {
+        addSkill(new Skill1(this));
+        addSkill(new Skill2(this));
+        addSkill(new SkillNingShi(this));
+    }
 
+    @Override
+    protected boolean useSkillAuto() {
+        return tryUseSkill(SkillNingShi.skillID) || tryUseSkill(2) || tryUseSkill(1);
     }
 
     private void setBuffType(StatusBuff.BuffType buffType) {
         if (this.buffType == null) {
             this.buffType = buffType;
-            List<Character> targets = new CharacterFinder(this)
+            List<Character> list = new CharacterFinder(this)
                     .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
-                    .filter(character -> character.name.equals(HaiFangZhu.CharacterName))
+                    .filter(character -> character instanceof SpecialHaiFangZhu)
                     .getList();
-            for (Character target : targets) {
-                bp.removeCharacter(target);
+
+            for (Character character : list) {
+                bp.removeCharacter(character);
             }
+
+            bp.addActionListener(this, event -> {
+                if (event instanceof EventActionDone) {
+                    getSkill(SkillNingShi.skillID).ifPresent(skill -> skill.use(bp));
+                    return true;
+                }
+                return false;
+            });
         }
+    }
+
+    StatusBuff.BuffType getBuffType() {
+        return buffType;
+    }
+
+    public boolean isBeforeHouZi() {
+        return beforeHouZi;
     }
 
     static class StatusBuffSetter extends Status implements ActionWhenDie {

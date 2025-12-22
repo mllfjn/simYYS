@@ -197,6 +197,10 @@ public abstract class Skill implements Serializable {
         this.coolDown = coolDown;
     }
 
+    public void setCooling(int cooling) {
+        this.cooling = cooling;
+    }
+
     public void addSkillListener(Runnable runnable) {
         skillListeners.add(new SkillListener(runnable));
     }
