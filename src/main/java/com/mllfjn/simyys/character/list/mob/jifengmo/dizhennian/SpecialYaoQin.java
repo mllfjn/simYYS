@@ -7,6 +7,7 @@ import com.mllfjn.simyys.character.list.sr.yaoqin.YaoQin;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
+import com.mllfjn.simyys.character.status.instance.StatusCanNotChoose;
 import com.mllfjn.simyys.character.status.instance.StatusRejectAllStatusesInstance;
 
 import java.util.Optional;
@@ -27,6 +28,8 @@ class SpecialYaoQin extends YaoQin {
         removeSkill(3);
 
         addSkill(new SpecialYaoQinSkill2(this));
+        addStatus(new StatusCanNotChoose(this, this));
+
         addStatus(new StatusRejectAllStatusesInstance(this));
     }
 

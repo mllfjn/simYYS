@@ -81,7 +81,7 @@ public class TeamPane implements Serializable {
         if (center != null) {
             center.getChildren().add(character.getCharacterIcon());
         }
-        if (mobTeam && !character.isMob()) {
+        if (mobTeam && !character.isMob() && !character.isSummon()) {
             guiHuo = new GuiHuo(2);
             if (root != null) {
                 root.setBottom(guiHuo.getGuiHuoDisplay());
