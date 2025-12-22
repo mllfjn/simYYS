@@ -22,6 +22,7 @@ import com.mllfjn.simyys.character.status.determinant.InfluenceDamageBeingAttack
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class Interactive {
     private static final TextFlowLog.TextType type = TextFlowLog.TextType.NUMBER;
@@ -103,13 +104,26 @@ public class Interactive {
         return attackInfo;
     }
 
-    public AttackInfo attack(AttackInfo attackInfo, AttackType attackType) {
+    public void attack(Skill skill, List<Character> targets, AttackType attackType
+            , Function<Character, AttackInfo> attackInfoGetter) {
+        AttackInfo[] attackInfos = new AttackInfo[targets.size()];
+        for (int i = 0; i < targets.size(); i++) {
+            attackInfos[i] = attackInfoGetter.apply(targets.get(i));
+        }
+
+        RateController.baoJi(skill.getName(), owner, bp.calc, targets, attackInfos);
+
+        for (int i = 0; i < targets.size(); i++) {
+            attack(attackInfos[i], attackType);
+        }
+    }
+
+    public void attack(AttackInfo attackInfo, AttackType attackType) {
         if (attackInfo.canCrit() && !attackInfo.isCrit()) {
             RateController.baoJi(attackInfo.getSkill().getName(), owner, bp.calc
                     , List.of(attackInfo.getTarget()), attackInfo);
         }
         attackBase(attackInfo, attackType);
-        return attackInfo;
     }
 
     private void attackBase(AttackInfo attackInfo, AttackType attackType) {

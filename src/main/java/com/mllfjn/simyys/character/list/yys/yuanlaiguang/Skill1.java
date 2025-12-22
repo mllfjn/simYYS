@@ -11,7 +11,6 @@ import java.util.Optional;
 
 class Skill1 extends Skill1PuGongBase {
     public static final String SkillName = "天剑";
-    private static final int[] multiplier = new int[]{0, 100, 105, 110, 115, 125};
 
     private final int shuYin;
 
@@ -27,7 +26,8 @@ class Skill1 extends Skill1PuGongBase {
 
     @Override
     public void usePrivate(BattlePane bp, Interactive interactive, Character target) {
-        interactive.attackTypical(this, target, multiplier[getLevel()] + shuYin * 20, AttackType.DAN_TI);
+        interactive.attackTypical(this, target
+                , multiplierGeneral[getLevel()] + shuYin * 20, AttackType.DAN_TI);
     }
 
 }

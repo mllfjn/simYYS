@@ -1,4 +1,4 @@
-package com.mllfjn.simyys.character.list.r.chounv;
+package com.mllfjn.simyys.character.list.ssr.beimihu;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
@@ -7,7 +7,7 @@ import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
 
 class Skill1 extends Skill1PuGongBase {
-    public static final String SkillName = "咒锥";
+    public static final String SkillName = "时汐之晷";
 
     public Skill1(Character belongTo, int level) {
         super(belongTo, level);

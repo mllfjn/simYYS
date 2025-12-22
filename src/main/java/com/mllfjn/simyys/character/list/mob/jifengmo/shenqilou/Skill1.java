@@ -30,7 +30,7 @@ class Skill1 extends Skill1PuGongBase {
 
     @Override
     public void usePrivate(BattlePane bp, Interactive interactive, Character target) {
-        // 对单体敌人造成攻击100%的伤害
+        // 对单体敌人造成攻击100%的伤害（这里好像实际是120的数值）
         interactive.attackTypical(this, target, 120, AttackType.DAN_TI);
         // 并降低敌人30%的暴击
         target.addStatus(new StatusReduceCritRate(getBelongTo(), target, 30));

@@ -2,6 +2,8 @@ package com.mllfjn.simyys.character;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.TeamPane;
+import com.mllfjn.simyys.character.list.ssr.beimihu.StatusShiZhiHui;
+import com.mllfjn.simyys.character.list.ssr.beimihu.StatusShiZhiXi;
 import com.mllfjn.simyys.character.propertygetter.*;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.skill.Skill;
@@ -352,6 +354,14 @@ public abstract class Character implements Serializable {
     }
 
     public void beforeRound() {
+        // 时之隙需要在"行动前生效"的状态和维持类过回合之前判定
+        Optional<StatusShiZhiHui> oStatus = getStatus(StatusShiZhiHui.class);
+        if (oStatus.isPresent()) {
+            StatusShiZhiHui status = oStatus.get();
+            addStatus(new StatusShiZhiXi(status.from, status.belongTo));
+            return;
+        }
+
         statusRun(Trigger.BEFORE_ROUND, null);
 
         // 维持类状态过回合
@@ -433,6 +443,9 @@ public abstract class Character implements Serializable {
     }
 
     public boolean isInRound() {
+        if (isHaveStatus(StatusShiZhiXi.class)) {
+            return false;
+        }
         return bp.situation.characterActing == this;
     }
 

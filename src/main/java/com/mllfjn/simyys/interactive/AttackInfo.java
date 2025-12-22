@@ -127,10 +127,6 @@ public class AttackInfo {
         return crit;
     }
 
-    /*public BiFunction<Character, Character, Double> getBasicNumber() {
-        return basicNumber;
-    }*/
-
     public double getMultiplier() {
         return multiplier;
     }
@@ -176,7 +172,7 @@ public class AttackInfo {
     }
 
     public void setLimit(double limit) {
-        this.limit = limit;
+        this.limit = Math.min(limit, this.limit);
     }
 
     public double getLimit() {

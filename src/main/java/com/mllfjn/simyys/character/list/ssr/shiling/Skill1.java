@@ -11,7 +11,6 @@ import com.mllfjn.simyys.interactive.Interactive;
 // √     lv5-若在回合外释放,灼伤敌方,为其附加20%易伤,持续2回合
 class Skill1 extends Skill1PuGongBase {
     public static final String SkillName = "开锅";
-    private static final int[] multiplier = new int[]{0, 100, 105, 110, 115, 125};
 
     public Skill1(Character belongTo, int level) {
         super(belongTo, level);
@@ -23,7 +22,7 @@ class Skill1 extends Skill1PuGongBase {
         if (level >= 5 && !getBelongTo().isInRound()) {
             target.addStatus(new StatusZhuoShang(getBelongTo(), target));
         }
-        interactive.attackTypical(this, target, multiplier[level], AttackType.DAN_TI);
+        interactive.attackTypical(this, target, multiplierGeneral[level], AttackType.DAN_TI);
     }
 
     @Override

@@ -8,7 +8,6 @@ import com.mllfjn.simyys.interactive.Interactive;
 
 class Skill1 extends Skill1PuGongBase {
     public static final String SkillName = "雷霆式";
-    private static final int[] multiplier = new int[]{0, 100, 105, 110, 115, 125};
 
     public Skill1(Character belongTo, int level) {
         super(belongTo, level);
@@ -16,7 +15,7 @@ class Skill1 extends Skill1PuGongBase {
 
     @Override
     public void usePrivate(BattlePane bp, Interactive interactive, Character target) {
-        interactive.attackTypical(this, target, multiplier[getLevel()], AttackType.DAN_TI);
+        interactive.attackTypical(this, target, multiplierGeneral[getLevel()], AttackType.DAN_TI);
     }
 
     @Override

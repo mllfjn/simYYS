@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.Optional;
 
 public abstract class Skill1PuGongBase extends Skill {
+    public static final int[] multiplierGeneral = new int[]{0, 100, 105, 110, 115, 125};
+
+
     private final List<Skill1PuGongBase> xieZhanSkills = new ArrayList<>();
 
     public Skill1PuGongBase(Character belongTo, int level) {

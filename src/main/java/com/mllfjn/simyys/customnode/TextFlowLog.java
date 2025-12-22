@@ -1,6 +1,7 @@
 package com.mllfjn.simyys.customnode;
 
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.list.ssr.beimihu.StatusShiZhiXi;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ScrollPane;
@@ -79,7 +80,15 @@ public class TextFlowLog extends ScrollPane {
 
     public void characterAct(Character characterActing) {
         this.addText(DIVIDER, TextType.ROUND, TextColor.NORMAL, FontSize.NORMAL);
-        this.addText(characterActing.name + "行动" + characterActing.timesToAct + "\n", TextType.ROUND, TextColor.NORMAL, FontSize.BIG);
+
+        StringBuilder sb = new StringBuilder(characterActing.name);
+        sb.append("行动").append(characterActing.timesToAct);
+
+        if (characterActing.isHaveStatus(StatusShiZhiXi.class)) {
+            sb.append("(").append(StatusShiZhiXi.StatusName).append(")");
+        }
+
+        this.addText(sb + "\n", TextType.ROUND, TextColor.NORMAL, FontSize.BIG);
     }
 
     public void next() {
