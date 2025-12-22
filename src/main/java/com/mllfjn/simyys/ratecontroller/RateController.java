@@ -4,7 +4,7 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.interactive.EffectInfo;
-import com.mllfjn.simyys.interactive.AttackInfo;
+import com.mllfjn.simyys.interactive.InteractiveInfo;
 
 import java.io.Serializable;
 import java.util.*;
@@ -12,7 +12,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class RateController implements Serializable {
     public static final Random random = new Random();
@@ -67,17 +66,17 @@ public class RateController implements Serializable {
     }
 
     public static void baoJi(String skillName, Character owner, RateCalc calc
-            , List<Character> targets, AttackInfo... attackInfos) {
+            , List<Character> targets, InteractiveInfo... interactiveInfos) {
         List<Character> list = new ArrayList<>();
         for (int i = 0; i < targets.size(); i++) {
-            if (attackInfos[i].canCrit() && attackInfos[i].getCrit() == null) {
+            if (interactiveInfos[i].canCrit() && interactiveInfos[i].getCrit() == null) {
                 list.add(targets.get(i));
             }
         }
 
         whetherOrNot("暴击控制：" + owner.name + "-" + skillName, "暴击", list, Character::getName
                 , calc, RateCalc::isControlCrit, character -> owner.getCritRate()
-                , (i, crit) -> attackInfos[i].setCrit(crit));
+                , (i, crit) -> interactiveInfos[i].setCrit(crit));
     }
 
     public static EffectInfo[] mingZhong(Skill skill, String statusName, Character owner, List<Character> targets

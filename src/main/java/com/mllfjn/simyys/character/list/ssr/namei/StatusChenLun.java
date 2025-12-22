@@ -3,7 +3,7 @@ package com.mllfjn.simyys.character.list.ssr.namei;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.interactive.AttackType;
-import com.mllfjn.simyys.interactive.AttackInfo;
+import com.mllfjn.simyys.interactive.InteractiveInfo;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamageBeingAttack;
 
 public class StatusChenLun extends Status implements CrowdControl, InfluenceDamageBeingAttack, Displayable {
@@ -16,12 +16,12 @@ public class StatusChenLun extends Status implements CrowdControl, InfluenceDama
     }
 
     @Override
-    public void doInfluenceBeingAttack(AttackType attackType, AttackInfo attackInfo) {
+    public void doInfluenceBeingAttack(AttackType attackType, InteractiveInfo interactiveInfo) {
         // 受到来自伊邪那美与处于毁灭的目标在其自身回合内的攻击时,攻击者伤害提升
-        Character attacker = attackInfo.getAttacker();
+        Character attacker = interactiveInfo.getAttacker();
         if ((attacker == from || attacker.isHaveStatus(StatusHuiMie.class)) && attacker.isInRound()) {
             // 提升5%,lv5-提升增至10%
-            attackInfo.getTraceableNumber().mul(level >= 5 ? 1.1 : 1.05, text);
+            interactiveInfo.getTraceableNumber().mul(level >= 5 ? 1.1 : 1.05, text);
         }
     }
 

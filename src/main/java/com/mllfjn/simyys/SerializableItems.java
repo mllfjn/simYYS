@@ -15,6 +15,8 @@ public class SerializableItems implements Serializable {
     // 记录获得新回合的单位
     // 这里的逻辑按照nga的帖子很乱,还要分是不是和怪物战斗,先简化随便取以后再改 https://bbs.nga.cn/read.php?tid=32486237
     private final Stack<Character> newRound = new Stack<>();
+    // 获得时之隙新回合的单位
+    private final Stack<Character> sZXNewRound = new Stack<>();
     public boolean disablePush = false;
     // 队伍面板，负责显示头像和管理鬼火条
     public final TeamPane[] teamPane = new TeamPane[2];
@@ -40,13 +42,27 @@ public class SerializableItems implements Serializable {
         this.currentRate = currentRate;
     }
 
-    public Optional<Character> newRoundCharacter() {
-        if (newRound.isEmpty()) {
-            return Optional.empty();
+    public Optional<Character> sZXNewRoundCharacter() {
+        // 获得时之隙的单位
+        if (!sZXNewRound.isEmpty()) {
+            return Optional.of(sZXNewRound.pop());
         }
 
-        disablePush = true;
-        return Optional.of(newRound.pop());
+        return Optional.empty();
+    }
+
+    public Optional<Character> newRoundCharacter() {
+        // 获得新回合的单位
+        if (!newRound.isEmpty()) {
+            disablePush = true;
+            return Optional.of(newRound.pop());
+        }
+
+        return Optional.empty();
+    }
+
+    public void getSZXNewRound(Character character) {
+        sZXNewRound.push(character);
     }
 
     public void getNewRound(Character character) {

@@ -3,7 +3,7 @@ package com.mllfjn.simyys.character.list.sp.shenshe;
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
-import com.mllfjn.simyys.character.status.instance.RejectAllStatusesInstance;
+import com.mllfjn.simyys.character.status.instance.StatusRejectAllStatusesInstance;
 import com.mllfjn.simyys.interactive.Interactive;
 
 import java.util.Optional;
@@ -31,7 +31,7 @@ public class DuoLuoZhiJian extends Character {
         this.setInitEffectResistRate(character.getInitEffectResistRate());
 
         // 拒绝所有状态
-        this.addStatus(new RejectAllStatusesInstance(this));
+        this.addStatus(new StatusRejectAllStatusesInstance(this));
 
         if (xianJi) {
             character.getStatus(StatusDuoHua.class).ifPresent(StatusDuoHua::disable);

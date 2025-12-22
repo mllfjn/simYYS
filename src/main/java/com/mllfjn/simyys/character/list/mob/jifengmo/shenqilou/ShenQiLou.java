@@ -3,7 +3,7 @@ package com.mllfjn.simyys.character.list.mob.jifengmo.shenqilou;
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.PropertyKey;
-import com.mllfjn.simyys.character.list.mob.jifengmo.CiTiaoManager;
+import com.mllfjn.simyys.character.list.mob.jifengmo.citiao.CiTiaoManager;
 import com.mllfjn.simyys.character.propertygetter.*;
 import com.mllfjn.simyys.character.status.instance.StatusBoss;
 import com.mllfjn.simyys.collections.StringGroup;

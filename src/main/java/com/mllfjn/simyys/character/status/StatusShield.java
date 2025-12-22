@@ -1,7 +1,7 @@
 package com.mllfjn.simyys.character.status;
 
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.interactive.AttackInfo;
+import com.mllfjn.simyys.interactive.InteractiveInfo;
 import com.mllfjn.simyys.interactive.TraceableNumber;
 
 public class StatusShield extends Status implements Displayable {
@@ -20,11 +20,11 @@ public class StatusShield extends Status implements Displayable {
 
     /**
      *
-     * @param attackInfo 伤害信息
+     * @param interactiveInfo 伤害信息
      * @return return true if shield run out or somehow should be removed
      */
-    public boolean handle(AttackInfo attackInfo) {
-        TraceableNumber traceableNumber = attackInfo.getTraceableNumber();
+    public boolean handle(InteractiveInfo interactiveInfo) {
+        TraceableNumber traceableNumber = interactiveInfo.getTraceableNumber();
         double number = traceableNumber.getNumber();
         if (number > shield) {
             traceableNumber.sub(shield, StatusName);

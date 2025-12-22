@@ -3,21 +3,23 @@ package com.mllfjn.simyys.character.list.ssr.beimihu;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.CharacterShiShenBase;
 
+import java.util.Optional;
+
 public class BeiMiHu extends CharacterShiShenBase {
     public static final String CharacterName = "卑弥呼";
 
-    private Character shiZhiHuiCarrier;
+    private StatusShiZhiHui shiZhiHuiCarrier;
 
-    public void setShiZhiHuiCarrier(Character shiZhiHuiCarrier) {
+    public void setShiZhiHuiCarrier(StatusShiZhiHui status) {
         if (shiZhiHuiCarrier != null) {
-            shiZhiHuiCarrier.removeStatus(StatusShiZhiHui.class);
+            shiZhiHuiCarrier.belongTo.removeStatus(shiZhiHuiCarrier);
         }
 
-        this.shiZhiHuiCarrier = shiZhiHuiCarrier;
+        this.shiZhiHuiCarrier = status;
     }
 
-    public Character getShiZhiHuiCarrier() {
-        return shiZhiHuiCarrier;
+    public Optional<StatusShiZhiHui> getShiZhiHuiCarrier() {
+        return Optional.ofNullable(shiZhiHuiCarrier);
     }
 
     @Override

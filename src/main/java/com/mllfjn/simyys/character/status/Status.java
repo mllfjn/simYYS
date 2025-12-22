@@ -11,7 +11,7 @@ public abstract class Status implements Serializable {
     public final StatusType statusType;
     public final StatusForm statusForm;
     private StatusDurationType durationType = StatusDurationType.NONE;
-    private int duration = 1;
+    private int duration = 0;
 
     public Status(Character from, Character belongTo, StatusType statusType, StatusForm statusForm) {
         this.from = from;

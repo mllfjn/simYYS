@@ -9,7 +9,6 @@ import com.mllfjn.simyys.customnode.TextFlowLog;
 import com.mllfjn.simyys.guihuo.MobGuiHuo;
 import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.ratecontroller.RateCalc;
-import com.mllfjn.simyys.starter.Initializer;
 import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
 import com.mllfjn.simyys.collections.SerializableObservableList;
 import com.mllfjn.simyys.utils.SerializableConsumer;
@@ -388,7 +387,9 @@ public class BattlePane {
     }
 
     private void getNextActor() {
-        Character next = situation.newRoundCharacter().orElseGet(() -> {
+        // 如果有时之隙新回合,先时之隙,否则看一般获得新回合,最后跑条
+        Optional<Character> oCharacter = situation.sZXNewRoundCharacter();
+        situation.characterActing = oCharacter.orElseGet(() -> situation.newRoundCharacter().orElseGet(() -> {
             List<Character> characters = situation.characters;
             Character c = characters.get(0);
             for (Character character : characters) {
@@ -401,14 +402,12 @@ public class BattlePane {
                     character.setLocation(character.getLocation() + character.getSpeed() * c.getTTA());
                 }
             }
+
+            c.setLocation(0);
+            c.timesToAct++;
+            c.beforeRound();
             return c;
-        });
-
-        situation.characterActing = next;
-
-        next.setLocation(0);
-        next.timesToAct++;
-        next.beforeRound();
+        }));
     }
 
     public Character getCharacterActing() {

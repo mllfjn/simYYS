@@ -5,15 +5,13 @@ import com.mllfjn.simyys.character.skill.Skill;
 
 import java.util.function.BiFunction;
 
-public class AttackInfo {
+public class InteractiveInfo {
     // 伤害发起者
     private final Character attacker;
     // 伤害来源技能
     private final Skill skill;
     // 伤害目标
     private final Character target;
-    // 基础数值
-    private final BiFunction<Character, Character, Double> basicNumber;
     // 伤害溯源
     private final TraceableNumber traceableNumber;
 
@@ -32,6 +30,8 @@ public class AttackInfo {
     private boolean calYiShang = true;
     // 计算御魂
     private boolean calYuHun = true;
+    // 是否穿盾
+    private boolean canThroughShield = false;
 
     // 伤害上限
     private double limit = 10000000;
@@ -39,71 +39,70 @@ public class AttackInfo {
     private boolean cancel = false;
 
     // 基本伤害类型
-    public static AttackInfo createTypicalAttack(Character attacker, Skill skill, Character target, int multiplier) {
-        AttackInfo attackInfo = new AttackInfo(attacker, skill, target,
+    public static InteractiveInfo createTypicalAttack(Character attacker, Skill skill, Character target, int multiplier) {
+        InteractiveInfo interactiveInfo = new InteractiveInfo(attacker, skill, target,
                 (from, to) -> from.getAttack());
-        attackInfo.multiplier = multiplier;
-        return attackInfo;
+        interactiveInfo.multiplier = multiplier;
+        return interactiveInfo;
     }
 
     // 真实伤害:无视防御,不会暴击(没写,但是无视增伤,减伤和御魂)
-    public static AttackInfo createRealAttack(Character attacker, Skill skill, Character target
+    public static InteractiveInfo createRealAttack(Character attacker, Skill skill, Character target
             , BiFunction<Character, Character, Double> basicNumber) {
-        AttackInfo attackInfo = new AttackInfo(attacker, skill, target, basicNumber);
+        InteractiveInfo interactiveInfo = new InteractiveInfo(attacker, skill, target, basicNumber);
 
-        attackInfo.calDefence = false;
-        attackInfo.canCrit = false;
-        attackInfo.calZengShang = false;
-        attackInfo.calYiShang = false;
-        attackInfo.calYuHun = false;
+        interactiveInfo.calDefence = false;
+        interactiveInfo.canCrit = false;
+        interactiveInfo.calZengShang = false;
+        interactiveInfo.calYiShang = false;
+        interactiveInfo.calYuHun = false;
 
-        return attackInfo;
+        return interactiveInfo;
     }
 
     // 间接伤害:不会触发御魂效果,TODO 无法被分担
     // 对防御为0的敌人必定暴击
-    public static AttackInfo createJianJieAttack(Character attacker, Skill skill, Character target
+    public static InteractiveInfo createJianJieAttack(Character attacker, Skill skill, Character target
             , BiFunction<Character, Character, Double> basicNumber) {
-        AttackInfo attackInfo = new AttackInfo(attacker, skill, target, basicNumber);
+        InteractiveInfo interactiveInfo = new InteractiveInfo(attacker, skill, target, basicNumber);
 
-        attackInfo.calYuHun = false;
+        interactiveInfo.calYuHun = false;
         if (target.getDefence() - target.getIgnoreDefense() == 0) {
-            attackInfo.setCrit(true);
+            interactiveInfo.setCrit(true);
         }
 
-        return attackInfo;
+        return interactiveInfo;
     }
 
     // 传导伤害:不会暴击,不触发御魂TODO薙魂
-    public static AttackInfo createChuanDaoAttack(Character attacker, Skill skill, Character target
+    public static InteractiveInfo createChuanDaoAttack(Character attacker, Skill skill, Character target
             , BiFunction<Character, Character, Double> basicNumber) {
-        AttackInfo attackInfo = new AttackInfo(attacker, skill, target, basicNumber);
+        InteractiveInfo interactiveInfo = new InteractiveInfo(attacker, skill, target, basicNumber);
 
-        attackInfo.canCrit = false;
-        return attackInfo;
+        interactiveInfo.canCrit = false;
+        return interactiveInfo;
     }
 
     // 基本治疗
-    public static AttackInfo createTypicalHeal(Character attacker, Skill skill, Character target, int multiplier) {
-        AttackInfo attackInfo = new AttackInfo(attacker, skill, target, (from, to) -> from.getMaxHp());
-        attackInfo.multiplier = multiplier;
-        return attackInfo;
+    public static InteractiveInfo createTypicalHeal(Character attacker, Skill skill, Character target, int multiplier) {
+        InteractiveInfo interactiveInfo = new InteractiveInfo(attacker, skill, target, (from, to) -> from.getMaxHp());
+        interactiveInfo.multiplier = multiplier;
+        return interactiveInfo;
     }
     // 恢复,不会暴击
-    public static AttackInfo createRecovery(Character attacker, Skill skill, Character target
+    public static InteractiveInfo createRecovery(Character attacker, Skill skill, Character target
             , BiFunction<Character, Character, Double> basicNumber) {
-        AttackInfo attackInfo = new AttackInfo(attacker, skill, target, basicNumber);
-        attackInfo.canCrit = false;
-        return attackInfo;
+        InteractiveInfo interactiveInfo = new InteractiveInfo(attacker, skill, target, basicNumber);
+        interactiveInfo.canCrit = false;
+        return interactiveInfo;
     }
 
 
-    public AttackInfo(Character attacker, Skill skill, Character target
+    public InteractiveInfo(Character attacker, Skill skill, Character target
             , BiFunction<Character, Character, Double> basicNumber) {
         this.attacker = attacker;
         this.skill = skill;
         this.target = target;
-        this.basicNumber = basicNumber;
 
         traceableNumber = new TraceableNumber(attacker.name, skill.getName());
         traceableNumber.add(basicNumber.apply(attacker, target), "基础数值");
@@ -193,5 +192,13 @@ public class AttackInfo {
 
     public void setCalYuHun(boolean calYuHun) {
         this.calYuHun = calYuHun;
+    }
+
+    public boolean isCanThroughShield() {
+        return canThroughShield;
+    }
+
+    public void setCanThroughShield(boolean canThroughShield) {
+        this.canThroughShield = canThroughShield;
     }
 }

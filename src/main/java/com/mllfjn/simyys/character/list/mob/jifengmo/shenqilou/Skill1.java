@@ -1,13 +1,10 @@
 package com.mllfjn.simyys.character.list.mob.jifengmo.shenqilou;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill1PuGongBase;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
-
-import java.util.Optional;
 
 class Skill1 extends Skill1PuGongBase {
     private static final String SkillName = "极-钳击";
@@ -29,7 +26,7 @@ class Skill1 extends Skill1PuGongBase {
     }
 
     @Override
-    public void usePrivate(BattlePane bp, Interactive interactive, Character target) {
+    public void usePrivate(Interactive interactive, Character target) {
         // 对单体敌人造成攻击100%的伤害（这里好像实际是120的数值）
         interactive.attackTypical(this, target, 120, AttackType.DAN_TI);
         // 并降低敌人30%的暴击

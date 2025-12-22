@@ -1,6 +1,5 @@
 package com.mllfjn.simyys.character.list.ssr.beimihu;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill1PuGongBase;
 import com.mllfjn.simyys.interactive.AttackType;
@@ -14,7 +13,7 @@ class Skill1 extends Skill1PuGongBase {
     }
 
     @Override
-    public void usePrivate(BattlePane bp, Interactive interactive, Character target) {
+    public void usePrivate(Interactive interactive, Character target) {
         interactive.attackTypical(this, target, multiplierGeneral[getLevel()], AttackType.DAN_TI);
     }
 

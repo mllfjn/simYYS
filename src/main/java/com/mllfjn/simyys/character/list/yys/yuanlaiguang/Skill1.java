@@ -1,13 +1,9 @@
 package com.mllfjn.simyys.character.list.yys.yuanlaiguang;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill1PuGongBase;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
-
-import java.util.Optional;
 
 class Skill1 extends Skill1PuGongBase {
     public static final String SkillName = "天剑";
@@ -25,7 +21,7 @@ class Skill1 extends Skill1PuGongBase {
     }
 
     @Override
-    public void usePrivate(BattlePane bp, Interactive interactive, Character target) {
+    public void usePrivate(Interactive interactive, Character target) {
         interactive.attackTypical(this, target
                 , multiplierGeneral[getLevel()] + shuYin * 20, AttackType.DAN_TI);
     }

@@ -15,14 +15,13 @@ import com.mllfjn.simyys.character.status.determinant.IgnoreChangeMaxHp;
 import com.mllfjn.simyys.character.status.determinant.IgnoreDebuff;
 import com.mllfjn.simyys.character.status.determinant.PreventDie;
 import com.mllfjn.simyys.character.status.determinant.RejectAllStatuses;
-import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunFactory;
 import com.mllfjn.simyys.character.yuhun.YuHunSealResponse;
 import com.mllfjn.simyys.character.list.yys.QiLingFactory;
 import com.mllfjn.simyys.interactive.TraceableNumber;
-import com.mllfjn.simyys.interactive.AttackInfo;
+import com.mllfjn.simyys.interactive.InteractiveInfo;
 import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.guihuo.MobGuiHuo;
 import com.mllfjn.simyys.collections.SerializableObservableList;
@@ -111,8 +110,7 @@ public abstract class Character implements Serializable {
         this.effectResistRate = properties.get(PropertyKey.GENERAL_EFFECT_RESIST_RATE_KEY).getDouble();
 
         if (properties.get(PropertyKey.GENERAL_MOB_KEY).getBoolean()) {
-            this.isMob = true;
-            addStatus(new MobGuiHuo(this));
+            setMob(1, 3);
         }
 
         this.isYYS = properties.get(PropertyKey.GENERAL_YYS_KEY).getBoolean();
@@ -201,6 +199,11 @@ public abstract class Character implements Serializable {
 
     public boolean isMob() {
         return isMob;
+    }
+
+    public void setMob(int initGuiHuo, int max) {
+        isMob = true;
+        addStatus(new MobGuiHuo(this, initGuiHuo, max));
     }
 
     public boolean isYYS() {
@@ -354,11 +357,12 @@ public abstract class Character implements Serializable {
     }
 
     public void beforeRound() {
-        // 时之隙需要在"行动前生效"的状态和维持类过回合之前判定
+        // 如果没有时之隙但是时之辉,转化成时之隙
+        // 需要在"行动前生效"的状态和维持类过回合之前判定
         Optional<StatusShiZhiHui> oStatus = getStatus(StatusShiZhiHui.class);
         if (oStatus.isPresent()) {
             StatusShiZhiHui status = oStatus.get();
-            addStatus(new StatusShiZhiXi(status.from, status.belongTo));
+            status.transform();
             return;
         }
 
@@ -419,10 +423,18 @@ public abstract class Character implements Serializable {
     }
 
     public void afterRound() {
+        // 时之隙跳过回合后结算
+        Optional<StatusShiZhiXi> oStatus = getStatus(StatusShiZhiXi.class);
+        if (oStatus.isPresent()) {
+            removeStatus(oStatus.get());
+            return;
+        }
+
         // 非怪物或者召唤物推进鬼火条
         if (!isMob() && !isSummon) {
             bp.addProgress(this.team);
         }
+
         // 行动后触发状态
         statusRun(Trigger.AFTER_ROUND_FIRST, null);
         statusRun(Trigger.AFTER_ROUND, null);
@@ -522,13 +534,13 @@ public abstract class Character implements Serializable {
         return false;
     }
 
-    public void checkShield(AttackInfo attackInfo) {
-        TraceableNumber traceableNumber = attackInfo.getTraceableNumber();
+    public void checkShield(InteractiveInfo interactiveInfo) {
+        TraceableNumber traceableNumber = interactiveInfo.getTraceableNumber();
         // 遍历状态找护盾
         Iterator<Status> iterator = getStatuses().iterator();
         while (traceableNumber.getNumber() > 0 && iterator.hasNext()) {
             if (iterator.next() instanceof StatusShield ss) {
-                if (ss.handle(attackInfo)) {
+                if (ss.handle(interactiveInfo)) {
                     iterator.remove();
                 } else {
                     break;
@@ -537,13 +549,13 @@ public abstract class Character implements Serializable {
         }
     }
 
-    public void beHurt(AttackInfo attackInfo) {
-        double damage = attackInfo.getTraceableNumber().getNumber();
+    public void beHurt(InteractiveInfo interactiveInfo) {
+        double damage = interactiveInfo.getTraceableNumber().getNumber();
         if (damage > 0) {
             // 如果剩余血量比伤害小,进入死亡判定
             if (getHp() <= damage) {
-                attackInfo.getTraceableNumber().addTrace("\t(击杀)");
-                beforeDie(attackInfo);
+                interactiveInfo.getTraceableNumber().addTrace("\t(击杀)");
+                beforeDie(interactiveInfo);
             } else {
                 // 受到攻击
                 setHp(getHp() - damage);
@@ -562,8 +574,8 @@ public abstract class Character implements Serializable {
         }
     }
 
-    public void beHeal(AttackInfo attackInfo) {
-        setHp(getHp() + attackInfo.getTraceableNumber().getNumber());
+    public void beHeal(InteractiveInfo interactiveInfo) {
+        setHp(getHp() + interactiveInfo.getTraceableNumber().getNumber());
     }
 
     /**
@@ -731,12 +743,12 @@ public abstract class Character implements Serializable {
         return yuHunList;
     }
 
-    public void beforeDie(AttackInfo attackInfo) {
+    public void beforeDie(InteractiveInfo interactiveInfo) {
         for (Status status : getStatuses()) {
             if (status instanceof PreventDie pd && pd.effective()) {
                 pd.preventDie();
-                attackInfo.getTraceableNumber().addTrace("(" + pd.getName() + "免死生效)");
-                attackInfo.setCancel(true);
+                interactiveInfo.getTraceableNumber().addTrace("(" + pd.getName() + "免死生效)");
+                interactiveInfo.setCancel(true);
                 return;
             }
         }

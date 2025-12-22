@@ -8,7 +8,7 @@ import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.instance.StatusBiHu;
-import com.mllfjn.simyys.interactive.AttackInfo;
+import com.mllfjn.simyys.interactive.InteractiveInfo;
 import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.ratecontroller.RateController;
 
@@ -50,7 +50,7 @@ class Skill3 extends Skill {
         // 获取神力层数
         int shenLiStack = daYuan.getStatus(StatusShenLi.class).map(StatusShenLi::getStack).orElse(0);
         // 并治疗友方目标生命上限8%的生命
-        AttackInfo healAttackInfo = heal(interactive, target);
+        InteractiveInfo healInteractiveInfo = heal(interactive, target);
         // 使其有50%概率获得尘缘·赤，有50%概率获得尘缘·青
         // 测试了一下5层以前这里是“非此即彼”的
         boolean chi = false;
@@ -95,7 +95,7 @@ class Skill3 extends Skill {
         }
 
         // lv5 - 若治疗暴击,则额外提升该目标暴击伤害 **必须在治疗目标之后,治疗其他队友之前**
-        if (level >= 5 && healAttackInfo.isCrit()) {
+        if (level >= 5 && healInteractiveInfo.isCrit()) {
             target.addStatus(new StatusCritPower(daYuan, target));
         }
 
@@ -112,7 +112,7 @@ class Skill3 extends Skill {
     }
 
 
-    private AttackInfo heal(Interactive interactive, Character target) {
+    private InteractiveInfo heal(Interactive interactive, Character target) {
         // lv4-若治疗时目标生命为100%，则治疗时额外施加生命上限8%的护盾，判断是否满血的逻辑在install方法内部
         if (getLevel() >= 4) {
             StatusDaYuanShield.install(getBelongTo(), target);

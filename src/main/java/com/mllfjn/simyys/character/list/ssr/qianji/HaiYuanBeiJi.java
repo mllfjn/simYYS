@@ -10,7 +10,7 @@ import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.determinant.IgnoreDebuff;
 import com.mllfjn.simyys.battleevent.EventUseGuiHuo;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamageBeingAttack;
-import com.mllfjn.simyys.interactive.AttackInfo;
+import com.mllfjn.simyys.interactive.InteractiveInfo;
 import com.mllfjn.simyys.interactive.AttackType;
 
 import java.util.List;
@@ -48,10 +48,10 @@ public class HaiYuanBeiJi extends Character {
         // lv3-概率增至100%
         bp.addActionListener(this, event -> {
             if (event instanceof EventAttack ea) {
-                AttackInfo attackInfo = ea.getAttackInfo();
-                double number = attackInfo.getTraceableNumber().getNumber();
+                InteractiveInfo interactiveInfo = ea.getAttackInfo();
+                double number = interactiveInfo.getTraceableNumber().getNumber();
                 if (number > 0) {
-                    Character target = attackInfo.getTarget();
+                    Character target = interactiveInfo.getTarget();
                     if (target.team == this.team && target.alive) {
                         this.doInteractive(interactive
                                 -> interactive.recovery(Skill.getInstance(HaiYuanBeiJi.CharacterName), target
@@ -108,8 +108,8 @@ public class HaiYuanBeiJi extends Character {
         }
 
         @Override
-        public void doInfluenceBeingAttack(AttackType attackType, AttackInfo attackInfo) {
-            attackInfo.getTraceableNumber().mul(0.7, "千姬减伤");
+        public void doInfluenceBeingAttack(AttackType attackType, InteractiveInfo interactiveInfo) {
+            interactiveInfo.getTraceableNumber().mul(0.7, "千姬减伤");
         }
     }
 }

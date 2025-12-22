@@ -1,4 +1,4 @@
-package com.mllfjn.simyys.character.list.mob.jifengmo;
+package com.mllfjn.simyys.character.list.mob.jifengmo.citiao;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
@@ -7,7 +7,7 @@ import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
-import com.mllfjn.simyys.interactive.AttackInfo;
+import com.mllfjn.simyys.interactive.InteractiveInfo;
 import com.mllfjn.simyys.interactive.AttackType;
 
 import java.util.Optional;
@@ -34,13 +34,13 @@ public class CiTiao5KuangFeng {
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
             if (param instanceof ParamAfterAttack pa) {
-                AttackInfo attackInfo = pa.attackInfo;
-                Character attacker = attackInfo.getAttacker();
+                InteractiveInfo interactiveInfo = pa.interactiveInfo;
+                Character attacker = interactiveInfo.getAttacker();
                 // 自身（指玩家，这里是对面的队伍）回合内造成伤害时，额外对其造成真实伤害，伤害量等同于该次伤害的20%
-                if (attacker.isInRound() && !(attackInfo.getSkill() instanceof SkillKF)) {
+                if (attacker.isInRound() && !(interactiveInfo.getSkill() instanceof SkillKF)) {
                     belongTo.doInteractive(interactive -> interactive
-                            .attack(AttackInfo.createRealAttack(attacker, SkillKFInstance, belongTo
-                                            , (c1, c2) -> attackInfo.getTraceableNumber().getNumber() * 0.2)
+                            .attack(InteractiveInfo.createRealAttack(attacker, SkillKFInstance, belongTo
+                                            , (c1, c2) -> interactiveInfo.getTraceableNumber().getNumber() * 0.2)
                                     , AttackType.ZHEN_SHI));
                 }
             }

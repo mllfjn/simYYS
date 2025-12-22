@@ -1,4 +1,4 @@
-package com.mllfjn.simyys.character.list.mob.jifengmo;
+package com.mllfjn.simyys.character.list.mob.jifengmo.citiao;
 
 import com.mllfjn.simyys.character.Character;
 

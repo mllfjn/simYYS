@@ -10,18 +10,14 @@ import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.character.status.StatusForm;
 import com.mllfjn.simyys.character.status.StatusType;
 import com.mllfjn.simyys.character.yuhun.YuHun;
+import com.mllfjn.simyys.character.yuhun.YuHunHitFeedBack;
 import com.mllfjn.simyys.character.yuhun.YuHunSealResponse;
 import com.mllfjn.simyys.character.yuhun.YuHunUnfullMark;
 
-public class DiZhenNian extends YuHun implements YuHunUnfullMark, YuHunSealResponse {
+public class DiZhenNian extends YuHun implements YuHunUnfullMark, YuHunSealResponse, YuHunHitFeedBack {
     public static final String YuHunName = "地震鲶";
 
     private StatusDiZhenNian status;
-
-    public void takeEffect() {
-        status.tackEffect();
-        yuHunEffect();
-    }
 
     @Override
     public String getName() {
@@ -39,6 +35,12 @@ public class DiZhenNian extends YuHun implements YuHunUnfullMark, YuHunSealRespo
     @Override
     public void disable() {
         character.removeStatus(status);
+    }
+
+    @Override
+    public void hitFeedBack() {
+        status.tackEffect();
+        yuHunEffect();
     }
 
     static class StatusDiZhenNian extends Status implements AttributeModifier {

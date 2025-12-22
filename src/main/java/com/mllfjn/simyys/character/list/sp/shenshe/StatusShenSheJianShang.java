@@ -2,7 +2,7 @@ package com.mllfjn.simyys.character.list.sp.shenshe;
 
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.interactive.AttackType;
-import com.mllfjn.simyys.interactive.AttackInfo;
+import com.mllfjn.simyys.interactive.InteractiveInfo;
 import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.character.status.StatusForm;
 import com.mllfjn.simyys.character.status.StatusType;
@@ -37,8 +37,8 @@ public class StatusShenSheJianShang extends Status implements InfluenceDamageBei
     }
 
     @Override
-    public void doInfluenceBeingAttack(AttackType attackType, AttackInfo attackInfo) {
+    public void doInfluenceBeingAttack(AttackType attackType, InteractiveInfo interactiveInfo) {
         // 每存在1把(count),神堕八岐大蛇受到的伤害减少20%
-        attackInfo.getTraceableNumber().mul(Math.max(0, 1 - count * 0.2), "神蛇堕落之剑减伤");
+        interactiveInfo.getTraceableNumber().mul(Math.max(0, 1 - count * 0.2), "神蛇堕落之剑减伤");
     }
 }

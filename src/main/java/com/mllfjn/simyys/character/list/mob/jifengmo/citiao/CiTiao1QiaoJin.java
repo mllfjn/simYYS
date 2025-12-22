@@ -1,4 +1,4 @@
-package com.mllfjn.simyys.character.list.mob.jifengmo;
+package com.mllfjn.simyys.character.list.mob.jifengmo.citiao;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.battleevent.EventBattleStart;
@@ -11,7 +11,7 @@ import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
-import com.mllfjn.simyys.interactive.AttackInfo;
+import com.mllfjn.simyys.interactive.InteractiveInfo;
 import com.mllfjn.simyys.interactive.AttackType;
 
 import java.util.List;
@@ -81,13 +81,13 @@ public class CiTiao1QiaoJin {
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
             // 己方（指玩家，在这里是对面的人）普攻时，会造成40%溅射伤害
             if (param instanceof ParamAfterAttack pa) {
-                AttackInfo attackInfo = pa.attackInfo;
-                Character attacker = attackInfo.getAttacker();
-                Skill skill = attackInfo.getSkill();
+                InteractiveInfo interactiveInfo = pa.interactiveInfo;
+                Character attacker = interactiveInfo.getAttacker();
+                Skill skill = interactiveInfo.getSkill();
                 if (skill.getSkillID() == 1
                         && attacker.team != belongTo.team
-                        && attackInfo.getTraceableNumber().getNumber() > 0) {
-                    double number = attackInfo.getTraceableNumber().getNumber();
+                        && interactiveInfo.getTraceableNumber().getNumber() > 0) {
+                    double number = interactiveInfo.getTraceableNumber().getNumber();
                     List<Character> targets = new CharacterFinder(belongTo)
                             .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
                             .filterSelf()
@@ -99,7 +99,7 @@ public class CiTiao1QiaoJin {
 
                     attacker.doInteractive(interactive -> {
                         for (Character target : targets) {
-                            interactive.attack(AttackInfo.createRealAttack(attacker
+                            interactive.attack(InteractiveInfo.createRealAttack(attacker
                                     , Skill.getInstance(CiTiao1QiaoJin.CiTiaoName)
                                     , target, (c1, c2) -> number * 0.4), AttackType.ZHEN_SHI);
                         }

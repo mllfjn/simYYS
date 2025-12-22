@@ -10,6 +10,7 @@ import com.mllfjn.simyys.character.status.triggerParam.ParamAddCrowdControl;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
 import com.mllfjn.simyys.character.status.triggerParam.ParamCauseAttack;
 import com.mllfjn.simyys.character.yuhun.YuHunAttack;
+import com.mllfjn.simyys.character.yuhun.YuHunHitFeedBack;
 import com.mllfjn.simyys.character.yuhun.list.DiZhenNian;
 import com.mllfjn.simyys.customnode.CustomText;
 import com.mllfjn.simyys.customnode.TextFlowLog;
@@ -82,198 +83,198 @@ public class Interactive {
         currentNumberLog.get(character).add(text);
     }
 
-    public AttackInfo[] attackTypical(Skill skill, List<Character> targets, int multiplier, AttackType attackType) {
-        AttackInfo[] attackInfos = new AttackInfo[targets.size()];
+    public InteractiveInfo[] attackTypical(Skill skill, List<Character> targets, int multiplier, AttackType attackType) {
+        InteractiveInfo[] interactiveInfos = new InteractiveInfo[targets.size()];
         for (int i = 0; i < targets.size(); i++) {
-            AttackInfo attackInfo = AttackInfo.createTypicalAttack(owner, skill, targets.get(i), multiplier);
-            attackInfos[i] = attackInfo;
+            InteractiveInfo interactiveInfo = InteractiveInfo.createTypicalAttack(owner, skill, targets.get(i), multiplier);
+            interactiveInfos[i] = interactiveInfo;
         }
 
-        RateController.baoJi(skill.getName(), owner, bp.calc, targets, attackInfos);
+        RateController.baoJi(skill.getName(), owner, bp.calc, targets, interactiveInfos);
 
         for (int i = 0; i < targets.size(); i++) {
-            attack(attackInfos[i], attackType);
+            attack(interactiveInfos[i], attackType);
         }
 
-        return attackInfos;
+        return interactiveInfos;
     }
 
-    public AttackInfo attackTypical(Skill skill, Character target, int multiplier, AttackType attackType) {
-        AttackInfo attackInfo = AttackInfo.createTypicalAttack(owner, skill, target, multiplier);
-        attack(attackInfo, attackType);
-        return attackInfo;
+    public InteractiveInfo attackTypical(Skill skill, Character target, int multiplier, AttackType attackType) {
+        InteractiveInfo interactiveInfo = InteractiveInfo.createTypicalAttack(owner, skill, target, multiplier);
+        attack(interactiveInfo, attackType);
+        return interactiveInfo;
     }
 
     public void attack(Skill skill, List<Character> targets, AttackType attackType
-            , Function<Character, AttackInfo> attackInfoGetter) {
-        AttackInfo[] attackInfos = new AttackInfo[targets.size()];
+            , Function<Character, InteractiveInfo> attackInfoGetter) {
+        InteractiveInfo[] interactiveInfos = new InteractiveInfo[targets.size()];
         for (int i = 0; i < targets.size(); i++) {
-            attackInfos[i] = attackInfoGetter.apply(targets.get(i));
+            interactiveInfos[i] = attackInfoGetter.apply(targets.get(i));
         }
 
-        RateController.baoJi(skill.getName(), owner, bp.calc, targets, attackInfos);
+        RateController.baoJi(skill.getName(), owner, bp.calc, targets, interactiveInfos);
 
         for (int i = 0; i < targets.size(); i++) {
-            attack(attackInfos[i], attackType);
+            attack(interactiveInfos[i], attackType);
         }
     }
 
-    public void attack(AttackInfo attackInfo, AttackType attackType) {
-        if (attackInfo.canCrit() && !attackInfo.isCrit()) {
-            RateController.baoJi(attackInfo.getSkill().getName(), owner, bp.calc
-                    , List.of(attackInfo.getTarget()), attackInfo);
+    public void attack(InteractiveInfo interactiveInfo, AttackType attackType) {
+        if (interactiveInfo.canCrit() && !interactiveInfo.isCrit()) {
+            RateController.baoJi(interactiveInfo.getSkill().getName(), owner, bp.calc
+                    , List.of(interactiveInfo.getTarget()), interactiveInfo);
         }
-        attackBase(attackInfo, attackType);
+        attackBase(interactiveInfo, attackType);
     }
 
-    private void attackBase(AttackInfo attackInfo, AttackType attackType) {
+    private void attackBase(InteractiveInfo interactiveInfo, AttackType attackType) {
         // https://bbs.nga.cn/read.php?tid=26176854 阴阳师底层机制——单次伤害型技能中的结算顺序总结
         // https://bbs.nga.cn/read.php?tid=35530141 关于减伤的分类
         // https://bbs.nga.cn/read.php?tid=24250479 伤害结算机制详细分析
 
-        Character target = attackInfo.getTarget();
+        Character target = interactiveInfo.getTarget();
         if (!target.alive) {
             return;
         }
 
-        TraceableNumber traceableNumber = attackInfo.getTraceableNumber();
+        TraceableNumber traceableNumber = interactiveInfo.getTraceableNumber();
 
         // 技能系数
-        double multiplier = attackInfo.getMultiplier();
+        double multiplier = interactiveInfo.getMultiplier();
         if (multiplier != 100) {
             traceableNumber.mul(0.01 * multiplier, "技能系数");
         }
 
         // 暴击
-        if (attackInfo.isCrit()) {
+        if (interactiveInfo.isCrit()) {
             traceableNumber.mul(owner.getCritPower() * 0.01, "爆伤");
         }
 
         // 防御
-        if (attackInfo.isCalDefence()) {
+        if (interactiveInfo.isCalDefence()) {
             double realDefense = target.getDefence() - owner.getIgnoreDefense();
             traceableNumber.mul(300.0 / (300 + realDefense), "防御");
         }
 
         // 一般增伤乘区
-        if (attackInfo.isCalZengShang()) {
+        if (interactiveInfo.isCalZengShang()) {
             traceableNumber.mul(1 + owner.getZengShang() / 100, "增伤");
         }
 
         // 易伤
-        if (attackInfo.isCalYiShang()) {
+        if (interactiveInfo.isCalYiShang()) {
             traceableNumber.mul(target.getYiShang(), "易伤");
         }
 
-        // 地震鲶
-        // 挺奇怪的,好像只有地震鲶才在这里触发,其他御魂都是要在护盾之后
-        // 发现雪幽魂被攻击减速也是在这里
-        if (attackInfo.isCalYuHun()) {
+        // 地震鲶,荒骷髅,雪幽魂等被攻击触发
+        if (interactiveInfo.isCalYuHun()) {
             target.forEachYuHun(yuHun -> {
-                if (yuHun instanceof DiZhenNian d) {
-                    d.takeEffect();
+                if (yuHun instanceof YuHunHitFeedBack f) {
+                    f.hitFeedBack();
                 }
             });
         }
 
         // 护盾
-        target.checkShield(attackInfo);
+        if (!interactiveInfo.isCanThroughShield()) {
+            target.checkShield(interactiveInfo);
+        }
 
         // 攻击者身上状态类影响
         for (Status status : owner.getStatuses()) {
             if (status instanceof InfluenceDamageWhenAttack iwa) {
-                iwa.doInfluenceWhenAttack(attackType, attackInfo);
+                iwa.doInfluenceWhenAttack(attackType, interactiveInfo);
             }
         }
 
         // 被攻击者身上状态类影响
         for (Status status : target.getStatuses()) {
             if (status instanceof InfluenceDamageBeingAttack sid) {
-                sid.doInfluenceBeingAttack(attackType, attackInfo);
+                sid.doInfluenceBeingAttack(attackType, interactiveInfo);
             }
         }
 
         // 御魂 TODO 被攻击的人的御魂
-        if (traceableNumber.getNumber() > 0 && attackInfo.isCalYuHun()) {
+        if (traceableNumber.getNumber() > 0 && interactiveInfo.isCalYuHun()) {
             owner.forEachYuHun(yuHun -> {
                 if (yuHun instanceof YuHunAttack yei) {
-                    yei.effectInfo(attackInfo);
+                    yei.effectInfo(interactiveInfo);
                 }
             });
         }
 
         // 总伤害限制,全游戏通用单段上限一千万,部分技能具有额外限制
-        double limit = attackInfo.getLimit();
+        double limit = interactiveInfo.getLimit();
         if (traceableNumber.getNumber() > limit) {
             traceableNumber.set(limit, "达到上限");
         }
 
-        target.beHurt(attackInfo);
+        target.beHurt(interactiveInfo);
 
         addNumberRecord(target, new CustomText(traceableNumber.getNumberString() + " "
                 , traceableNumber.getTrace(), type
-                , attackInfo.isCrit() ? TextFlowLog.TextColor.CRITICAL : TextFlowLog.TextColor.ATTACK, size));
+                , interactiveInfo.isCrit() ? TextFlowLog.TextColor.CRITICAL : TextFlowLog.TextColor.ATTACK, size));
 
         // 触发攻击的目标身上的状态
-        target.statusRun(Trigger.AFTER_ATTACK, new ParamAfterAttack(attackInfo));
+        target.statusRun(Trigger.AFTER_ATTACK, new ParamAfterAttack(interactiveInfo));
 
         // 触发攻击者身上的攻击监听
-        owner.statusRun(Trigger.CAUSE_ATTACK, new ParamCauseAttack(attackInfo));
+        owner.statusRun(Trigger.CAUSE_ATTACK, new ParamCauseAttack(interactiveInfo));
 
-        if (!attackInfo.isCancel()) {
+        if (!interactiveInfo.isCancel()) {
             // 广播攻击信息
-            bp.onTrigger(new EventAttack(attackInfo));
+            bp.onTrigger(new EventAttack(interactiveInfo));
         }
     }
 
-    public AttackInfo heal(Skill skill, Character target, int multiplier) {
-        AttackInfo attackInfo = AttackInfo.createTypicalHeal(owner, skill, target, multiplier);
-        RateController.baoJi(skill.getName(), owner, bp.calc, List.of(target), attackInfo);
+    public InteractiveInfo heal(Skill skill, Character target, int multiplier) {
+        InteractiveInfo interactiveInfo = InteractiveInfo.createTypicalHeal(owner, skill, target, multiplier);
+        RateController.baoJi(skill.getName(), owner, bp.calc, List.of(target), interactiveInfo);
 
-        return heal(target, attackInfo);
+        return heal(target, interactiveInfo);
     }
 
     public void heal(Skill skill, List<Character> targets, int multiplier) {
-        AttackInfo[] attackInfos = new AttackInfo[targets.size()];
+        InteractiveInfo[] interactiveInfos = new InteractiveInfo[targets.size()];
         for (int i = 0; i < targets.size(); i++) {
-            attackInfos[i] = AttackInfo.createTypicalHeal(owner, skill, targets.get(i), multiplier);
+            interactiveInfos[i] = InteractiveInfo.createTypicalHeal(owner, skill, targets.get(i), multiplier);
         }
 
-        RateController.baoJi(skill.getName(), owner, bp.calc, targets, attackInfos);
+        RateController.baoJi(skill.getName(), owner, bp.calc, targets, interactiveInfos);
 
         for (int i = 0; i < targets.size(); i++) {
-            heal(targets.get(i), attackInfos[i]);
+            heal(targets.get(i), interactiveInfos[i]);
         }
 
     }
 
-    private AttackInfo heal(Character target, AttackInfo attackInfo) {
+    private InteractiveInfo heal(Character target, InteractiveInfo interactiveInfo) {
         if (!target.alive) {
             return null;
         }
 
-        TraceableNumber traceableNumber = attackInfo.getTraceableNumber();
+        TraceableNumber traceableNumber = interactiveInfo.getTraceableNumber();
 
         // 技能系数
-        traceableNumber.mul(0.01 * attackInfo.getMultiplier(), "技能系数");
+        traceableNumber.mul(0.01 * interactiveInfo.getMultiplier(), "技能系数");
 
         // 暴击
-        if (attackInfo.isCrit()) {
+        if (interactiveInfo.isCrit()) {
             traceableNumber.mul(owner.getCritPower() * 0.01, "爆伤");
         }
 
-        target.beHeal(attackInfo);
+        target.beHeal(interactiveInfo);
 
         addNumberRecord(target, new CustomText(traceableNumber.getNumberString() + " "
                 , traceableNumber.getTrace()
                 , type, TextFlowLog.TextColor.HEAL, size));
 
-        return attackInfo;
+        return interactiveInfo;
     }
 
     public void recovery(Skill skill, Character target, double num) {
-        AttackInfo attackInfo = AttackInfo.createRecovery(owner, skill, target, (c1, c2) -> num);
-        TraceableNumber traceableNumber = attackInfo.getTraceableNumber();
+        InteractiveInfo interactiveInfo = InteractiveInfo.createRecovery(owner, skill, target, (c1, c2) -> num);
+        TraceableNumber traceableNumber = interactiveInfo.getTraceableNumber();
 
         target.recovery(num);
 

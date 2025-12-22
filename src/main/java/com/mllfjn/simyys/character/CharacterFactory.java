@@ -1,8 +1,10 @@
 package com.mllfjn.simyys.character;
 
 import com.mllfjn.simyys.BattlePane;
+import com.mllfjn.simyys.character.list.mob.jifengmo.dizhennian.DiZhenNian;
 import com.mllfjn.simyys.character.list.r.chounv.ChouNv;
 import com.mllfjn.simyys.character.list.sp.laotou.LaoTou;
+import com.mllfjn.simyys.character.list.sr.yaoqin.YaoQin;
 import com.mllfjn.simyys.character.list.ssr.beimihu.BeiMiHu;
 import com.mllfjn.simyys.character.list.ssr.shiling.ShiLing;
 import com.mllfjn.simyys.character.list.ssr.xuzuo.XuZuo;
@@ -50,6 +52,10 @@ public class CharacterFactory {
         mapSSR.put(XuZuo.CharacterName, XuZuo.class);
         mapSSR.put(BeiMiHu.CharacterName, BeiMiHu.class);
 
+        Map<String, Class<? extends Character>> mapSR = new LinkedHashMap<>();
+        characterMap.put("SR", mapSR);
+        mapSR.put(YaoQin.CharacterName, YaoQin.class);
+
         Map<String, Class<? extends Character>> mapR = new LinkedHashMap<>();
         characterMap.put("R", mapR);
         mapR.put(ChouNv.CharacterName, ChouNv.class);
@@ -57,6 +63,7 @@ public class CharacterFactory {
         Map<String, Class<? extends Character>> mapMob = new LinkedHashMap<>();
         characterMap.put("怪物", mapMob);
         mapMob.put(ShenQiLou.CharacterName, ShenQiLou.class);
+        mapMob.put(DiZhenNian.CharacterName, DiZhenNian.class);
     }
 
     public static Optional<Character> getCharacter(String name) {

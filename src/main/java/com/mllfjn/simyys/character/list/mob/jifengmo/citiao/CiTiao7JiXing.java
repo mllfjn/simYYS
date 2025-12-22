@@ -1,4 +1,4 @@
-package com.mllfjn.simyys.character.list.mob.jifengmo;
+package com.mllfjn.simyys.character.list.mob.jifengmo.citiao;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.battleevent.EventBattleStart;
@@ -8,7 +8,7 @@ import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
-import com.mllfjn.simyys.interactive.AttackInfo;
+import com.mllfjn.simyys.interactive.InteractiveInfo;
 import com.mllfjn.simyys.interactive.AttackType;
 
 import java.util.List;
@@ -40,7 +40,7 @@ public class CiTiao7JiXing {
         }
 
         @Override
-        public void doInfluenceWhenAttack(AttackType attackType, AttackInfo attackInfo) {
+        public void doInfluenceWhenAttack(AttackType attackType, InteractiveInfo interactiveInfo) {
             // 造成伤害时，每有1个增益状态
             int count = 0;
             for (Status status : belongTo.getStatuses()) {
@@ -55,7 +55,7 @@ public class CiTiao7JiXing {
 
             if (count > 0) {
                 // 提升4%
-                attackInfo.getTraceableNumber().mul(1 + 0.04 * count, CiTiaoName);
+                interactiveInfo.getTraceableNumber().mul(1 + 0.04 * count, CiTiaoName);
                 // 回合结束后增加自身20%行动条
                 increase = true;
             }

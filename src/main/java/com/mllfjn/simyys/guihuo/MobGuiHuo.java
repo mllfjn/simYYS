@@ -8,11 +8,13 @@ import com.mllfjn.simyys.character.status.Trigger;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
 public class MobGuiHuo extends Status implements StatusRunnable, Displayable {
-    private static final int max = 3;
+    private final int max;
     private int now;
 
-    public MobGuiHuo(Character belongTo) {
+    public MobGuiHuo(Character belongTo, int initGuiHuo, int max) {
         super(belongTo, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
+        this.now = initGuiHuo;
+        this.max = max;
     }
 
     public static boolean mobCanUseGuiHuo(Character character, int num) {

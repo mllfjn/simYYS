@@ -1,6 +1,5 @@
 package com.mllfjn.simyys.character.list.ssr.shiling;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill1PuGongBase;
@@ -17,7 +16,7 @@ class Skill1 extends Skill1PuGongBase {
     }
 
     @Override
-    public void usePrivate(BattlePane bp, Interactive interactive, Character target) {
+    public void usePrivate(Interactive interactive, Character target) {
         int level = getLevel();
         if (level >= 5 && !getBelongTo().isInRound()) {
             target.addStatus(new StatusZhuoShang(getBelongTo(), target));

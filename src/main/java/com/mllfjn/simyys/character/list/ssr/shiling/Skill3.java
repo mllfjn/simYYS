@@ -13,7 +13,7 @@ import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
 import com.mllfjn.simyys.character.status.instance.StatusBiHu;
 import com.mllfjn.simyys.character.status.triggerParam.ParamCauseAttack;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
-import com.mllfjn.simyys.interactive.AttackInfo;
+import com.mllfjn.simyys.interactive.InteractiveInfo;
 import com.mllfjn.simyys.interactive.AttackType;
 
 import java.util.List;
@@ -127,21 +127,21 @@ class Skill3 extends Skill {
                 return true;
             }
             if (trigger == Trigger.CAUSE_ATTACK && param instanceof ParamCauseAttack pca) {
-                xiangShiCount += pca.attackInfo.getTraceableNumber().getNumber();
+                xiangShiCount += pca.interactiveInfo.getTraceableNumber().getNumber();
             }
             return false;
         }
 
         @Override
-        public void doInfluenceWhenAttack(AttackType attackType, AttackInfo attackInfo) {
+        public void doInfluenceWhenAttack(AttackType attackType, InteractiveInfo interactiveInfo) {
             if (belongTo.isInRound()) {
-                attackInfo.getTraceableNumber().mul(0.7, StatusName);
+                interactiveInfo.getTraceableNumber().mul(0.7, StatusName);
             }
         }
 
         @Override
-        public void doInfluenceBeingAttack(AttackType attackType, AttackInfo attackInfo) {
-            attackInfo.getTraceableNumber().mul(0.6, StatusName);
+        public void doInfluenceBeingAttack(AttackType attackType, InteractiveInfo interactiveInfo) {
+            interactiveInfo.getTraceableNumber().mul(0.6, StatusName);
         }
 
         static class StatusBaoShiBiHu extends StatusBiHu {
@@ -216,21 +216,21 @@ class Skill3 extends Skill {
 
             belongTo.doInteractive(interactive -> {
                 for (Character target : targets) {
-                    AttackInfo attackInfo = new AttackInfo(belongTo, skill, target
+                    InteractiveInfo interactiveInfo = new InteractiveInfo(belongTo, skill, target
                             , (c1, c2) -> numForeach);
-                    attackInfo.setCalDefence(false);
-                    attackInfo.setCanCrit(false);
-                    attackInfo.setCalYuHun(false);
-                    attackInfo.setCalZengShang(false);
-                    attackInfo.setLimit(limit);
+                    interactiveInfo.setCalDefence(false);
+                    interactiveInfo.setCanCrit(false);
+                    interactiveInfo.setCalYuHun(false);
+                    interactiveInfo.setCalZengShang(false);
+                    interactiveInfo.setLimit(limit);
 
                     oStatus.ifPresent(status ->
-                            status.doInfluenceWhenAttack(AttackType.ZHEN_SHI, attackInfo));
+                            status.doInfluenceWhenAttack(AttackType.ZHEN_SHI, interactiveInfo));
 
-                    interactive.attack(attackInfo, AttackType.ZHEN_SHI);
+                    interactive.attack(interactiveInfo, AttackType.ZHEN_SHI);
 
                     if (extraDamage) {
-                        AttackInfo extraInfo = AttackInfo.createRealAttack(belongTo, skill, target
+                        InteractiveInfo extraInfo = InteractiveInfo.createRealAttack(belongTo, skill, target
                                 , (c1, c2) -> extra);
                         interactive.attack(extraInfo, AttackType.ZHEN_SHI);
                     }

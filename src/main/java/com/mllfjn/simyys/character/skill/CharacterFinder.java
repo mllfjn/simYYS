@@ -4,6 +4,7 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.propertygetter.FlagChangeInfo;
+import com.mllfjn.simyys.character.status.instance.StatusCanNotChoose;
 import com.mllfjn.simyys.ratecontroller.RateController;
 
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ public class CharacterFinder {
         this.bp = owner.bp;
 
         stream = bp.situation.characters.stream();
+        stream = stream.filter(character -> !character.isHaveStatus(StatusCanNotChoose.class));
     }
 
     /*public CharacterFinder(Character owner, List<Character> characters) {
@@ -107,18 +109,15 @@ public class CharacterFinder {
     }
 
     public Character getAuto() {
-        int target;
         FlagChangeInfo.FlagType flagType;
 
         if (targetTeam == TargetTeam.TEAMMATE) {
-            target = owner.team;
             flagType = FlagChangeInfo.FlagType.GREEN;
         } else {
-            target = getEnemyTeam();
             flagType = FlagChangeInfo.FlagType.RED;
         }
 
-        return bp.situation.getAutoTo(target, flagType).orElse(null);
+        return bp.situation.getAutoTo(owner.team, flagType).orElse(null);
     }
 
     public Character get(Attribute attribute, Criteria criteria) {

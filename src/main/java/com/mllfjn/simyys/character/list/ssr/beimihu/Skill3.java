@@ -4,7 +4,7 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
-import com.mllfjn.simyys.interactive.AttackInfo;
+import com.mllfjn.simyys.interactive.InteractiveInfo;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
 
@@ -35,7 +35,7 @@ class Skill3 extends Skill {
 
     @Override
     public Optional<Character> usePrivate(BattlePane bp) {
-        Character belongTo = getBelongTo();
+        BeiMiHu belongTo = (BeiMiHu) getBelongTo();
         Interactive interactive = belongTo.getInteractive();
         List<Character> targets = new CharacterFinder(belongTo)
                 .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
@@ -43,7 +43,7 @@ class Skill3 extends Skill {
 
         for (int i = 0; i < 2; i++) {
             interactive.attack(this, targets, AttackType.QUN_TI, character -> {
-                AttackInfo info = AttackInfo.createTypicalAttack(belongTo, this, character, multiplier);
+                InteractiveInfo info = InteractiveInfo.createTypicalAttack(belongTo, this, character, multiplier);
                 if (getLevel() >= 5) {
                     info.setCalYuHun(false);
                 }
@@ -51,6 +51,7 @@ class Skill3 extends Skill {
             });
         }
 
+        belongTo.getShiZhiHuiCarrier().ifPresent(StatusShiZhiHui::useSkill3);
 
         return Optional.empty();
     }

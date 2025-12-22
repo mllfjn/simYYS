@@ -1,15 +1,15 @@
 package com.mllfjn.simyys.battleevent;
 
-import com.mllfjn.simyys.interactive.AttackInfo;
+import com.mllfjn.simyys.interactive.InteractiveInfo;
 
 public class EventAttack extends BattleEvent {
-    private final AttackInfo attackInfo;
+    private final InteractiveInfo interactiveInfo;
 
-    public EventAttack(AttackInfo attackInfo) {
-        this.attackInfo = attackInfo;
+    public EventAttack(InteractiveInfo interactiveInfo) {
+        this.interactiveInfo = interactiveInfo;
     }
 
-    public AttackInfo getAttackInfo() {
-        return attackInfo;
+    public InteractiveInfo getAttackInfo() {
+        return interactiveInfo;
     }
 }

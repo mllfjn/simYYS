@@ -12,7 +12,7 @@ import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
 import com.mllfjn.simyys.character.status.instance.StatusXieZhan;
 import com.mllfjn.simyys.character.status.triggerParam.ParamUseSkill;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
-import com.mllfjn.simyys.interactive.AttackInfo;
+import com.mllfjn.simyys.interactive.InteractiveInfo;
 import com.mllfjn.simyys.interactive.AttackType;
 
 import java.util.List;
@@ -132,9 +132,9 @@ class Skill2 extends PassiveSkill {
         }
 
         @Override
-        public void doInfluenceWhenAttack(AttackType attackType, AttackInfo attackInfo) {
+        public void doInfluenceWhenAttack(AttackType attackType, InteractiveInfo interactiveInfo) {
             if (!belongTo.isInRound()) {
-                attackInfo.getTraceableNumber().mul(multiplier, "食灵回合外增伤");
+                interactiveInfo.getTraceableNumber().mul(multiplier, "食灵回合外增伤");
             }
         }
     }

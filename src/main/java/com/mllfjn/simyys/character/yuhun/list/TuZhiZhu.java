@@ -1,27 +1,24 @@
 package com.mllfjn.simyys.character.yuhun.list;
 
 import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.battleevent.EventActionDone;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.StatusRunnable;
+import com.mllfjn.simyys.character.status.triggerParam.ParamCauseAttack;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.character.yuhun.YuHun;
-import com.mllfjn.simyys.character.yuhun.YuHunAttack;
 import com.mllfjn.simyys.character.yuhun.YuHunUnfullMark;
 import com.mllfjn.simyys.interactive.AttackType;
-import com.mllfjn.simyys.interactive.AttackInfo;
+import com.mllfjn.simyys.interactive.InteractiveInfo;
 import com.mllfjn.simyys.character.status.Trigger;
 
 import java.io.Serializable;
 import java.util.*;
 
-public class TuZhiZhu extends YuHun implements YuHunUnfullMark, YuHunAttack {
+public class TuZhiZhu extends YuHun implements YuHunUnfullMark {
     public static final String YuHunName = "土蜘蛛";
-
-    private double num = 0;
 
     @Override
     public String getName() {
@@ -29,26 +26,44 @@ public class TuZhiZhu extends YuHun implements YuHunUnfullMark, YuHunAttack {
     }
 
     @Override
-    public void effectInfo(AttackInfo attackInfo) {
-        Character target = attackInfo.getTarget();
-        // 对怪物造成伤害时
-        if (!target.isMob()) {
-            return;
+    public void init(Character character) {
+        super.init(character);
+        character.addStatus(new StatusTZZListener(character));
+    }
+
+    static class StatusTZZListener extends Status implements StatusRunnable {
+        private final Map<Character, Double> map = new LinkedHashMap<>();
+
+        public StatusTZZListener(Character character) {
+            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
         }
 
-        if (num == 0) {
-            getBelongTo().bp.addActionListener(getBelongTo(),
-                    event -> {
-                        if (event instanceof EventActionDone) {
-                            StatusTuZhiZhu.enable(getBelongTo(), target, this.num);
-                            this.num = 0;
-                            return true;
-                        }
-                        return false;
-                    });
+        @Override
+        public boolean runnable(Trigger trigger) {
+            return trigger == Trigger.CAUSE_ATTACK
+                    || (!map.isEmpty() && (trigger == Trigger.USED_SKILL || trigger == Trigger.USE_PU_GONG));
         }
 
-        num += 0.1 * attackInfo.getTraceableNumber().getNumber();
+        @Override
+        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
+            if (trigger == Trigger.AFTER_ATTACK && param instanceof ParamCauseAttack pca) {
+                InteractiveInfo interactiveInfo = pca.interactiveInfo;
+                Character target = interactiveInfo.getTarget();
+                // 对怪物造成伤害时
+                if (!target.isMob()) {
+                    return false;
+                }
+
+                map.put(target
+                        , map.getOrDefault(target, 0.0) + interactiveInfo.getTraceableNumber().getNumber());
+            } else if (trigger == Trigger.USED_SKILL || trigger == Trigger.USE_PU_GONG) {
+                for (Map.Entry<Character, Double> entry : map.entrySet()) {
+                    StatusTuZhiZhu.enable(belongTo, entry.getKey(), 0.1 * entry.getValue());
+                }
+                map.clear();
+            }
+            return false;
+        }
     }
 
     static class StatusTuZhiZhu extends Status implements Displayable, StatusRunnable, AttributeModifier {
@@ -101,7 +116,7 @@ public class TuZhiZhu extends YuHun implements YuHunUnfullMark, YuHunAttack {
                     break;
                 }
                 record.from.doInteractive(interactive ->
-                        interactive.attack(AttackInfo.createJianJieAttack(
+                        interactive.attack(InteractiveInfo.createJianJieAttack(
                                 record.from, Skill.getInstance(TuZhiZhu.YuHunName), belongTo
                                 , (owner, target) -> record.num), AttackType.JIAN_JIE));
             }

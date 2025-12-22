@@ -3,7 +3,6 @@ package com.mllfjn.simyys.character.list.mob.jifengmo.shenqilou;
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
-import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.character.status.StatusForm;
@@ -11,8 +10,6 @@ import com.mllfjn.simyys.character.status.StatusType;
 import com.mllfjn.simyys.character.status.Trigger;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
-
-import java.util.Optional;
 
 class SkillPassive2 extends PassiveSkill {
     public static final String SkillName = "蜃气升腾";
@@ -54,8 +51,8 @@ class SkillPassive2 extends PassiveSkill {
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
             if (param instanceof ParamAfterAttack pa) {
-                double number = pa.attackInfo.getTraceableNumber().getNumber();
-                if (!pa.attackInfo.isCrit() && number > 0) {
+                double number = pa.interactiveInfo.getTraceableNumber().getNumber();
+                if (!pa.interactiveInfo.isCrit() && number > 0) {
                     // 蜃气楼每受到3次非暴击伤害，获得[蜃雾笼罩]
                     count++;
                     if (count == 3) {

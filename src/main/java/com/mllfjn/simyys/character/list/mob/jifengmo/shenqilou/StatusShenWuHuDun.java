@@ -1,7 +1,7 @@
 package com.mllfjn.simyys.character.list.mob.jifengmo.shenqilou;
 
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.interactive.AttackInfo;
+import com.mllfjn.simyys.interactive.InteractiveInfo;
 import com.mllfjn.simyys.character.status.StatusShield;
 
 class StatusShenWuHuDun extends StatusShield {
@@ -24,12 +24,12 @@ class StatusShenWuHuDun extends StatusShield {
     }
 
     @Override
-    public boolean handle(AttackInfo attackInfo) {
-        if (super.handle(attackInfo)) {
+    public boolean handle(InteractiveInfo interactiveInfo) {
+        if (super.handle(interactiveInfo)) {
             return true;
         }
         // 使用暴击伤害攻击蜃气楼可击破护盾,抵挡3次暴击伤害后，护盾消失。
-        if (attackInfo.isCrit()) {
+        if (interactiveInfo.isCrit()) {
             count--;
         }
         return count == 0;

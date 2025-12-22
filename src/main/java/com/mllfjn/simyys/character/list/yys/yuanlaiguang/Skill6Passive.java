@@ -3,16 +3,13 @@ package com.mllfjn.simyys.character.list.yys.yuanlaiguang;
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
-import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.Displayable;
 import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.StatusShield;
 import com.mllfjn.simyys.character.status.Trigger;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
-import com.mllfjn.simyys.interactive.AttackInfo;
-
-import java.util.Optional;
+import com.mllfjn.simyys.interactive.InteractiveInfo;
 
 class Skill6Passive extends PassiveSkill {
     public static final String SkillName = "鬼胄";
@@ -73,15 +70,15 @@ class Skill6Passive extends PassiveSkill {
         }
 
         @Override
-        public boolean handle(AttackInfo attackInfo) {
+        public boolean handle(InteractiveInfo interactiveInfo) {
             if (maxShield > 0) {
                 // 每次受到攻击时，为其吸收源赖光初始攻击30%的伤害
                 double maxUse = Math.min(belongTo.getInitAttack() * absorb, maxShield);
-                double number = attackInfo.getTraceableNumber().getNumber();
+                double number = interactiveInfo.getTraceableNumber().getNumber();
 
                 double realUsed = Math.min(number, maxUse);
 
-                attackInfo.getTraceableNumber().sub(realUsed, Skill6Passive.SkillName);
+                interactiveInfo.getTraceableNumber().sub(realUsed, Skill6Passive.SkillName);
                 maxShield -= realUsed;
             }
             return false;
@@ -99,10 +96,10 @@ class Skill6Passive extends PassiveSkill {
                 reset();
             } else if (trigger == Trigger.AFTER_ATTACK) {
                 belongTo.getSkill(7).ifPresent(skill -> {
-                    AttackInfo attackInfo = ((ParamAfterAttack) param).attackInfo;
+                    InteractiveInfo interactiveInfo = ((ParamAfterAttack) param).interactiveInfo;
                     // 鬼兵部附身的目标受到攻击但未受到伤害时，鬼兵部劈斩目标来源
-                    if (attackInfo.getTraceableNumber().getNumber() == 0) {
-                        ((Skill7Passive) skill).piZhan(attackInfo.getAttacker());
+                    if (interactiveInfo.getTraceableNumber().getNumber() == 0) {
+                        ((Skill7Passive) skill).piZhan(interactiveInfo.getAttacker());
                     }
                 });
             }
@@ -130,8 +127,8 @@ class Skill6Passive extends PassiveSkill {
         }
 
         @Override
-        public boolean handle(AttackInfo attackInfo) {
-            return status.handle(attackInfo);
+        public boolean handle(InteractiveInfo interactiveInfo) {
+            return status.handle(interactiveInfo);
         }
     }
 }

@@ -28,7 +28,7 @@ public abstract class Skill1PuGongBase extends Skill {
                 .getPriorAuto(Attribute.HP, CharacterFinder.Criteria.MIN);
     }
 
-    public abstract void usePrivate(BattlePane bp, Interactive interactive, Character target);
+    public abstract void usePrivate(Interactive interactive, Character target);
 
     public boolean canXieZhan(Skill skill, Character target) {
         if (skill instanceof Skill1PuGongBase s1) {
@@ -50,7 +50,7 @@ public abstract class Skill1PuGongBase extends Skill {
             s1.xieZhanSkills.add(this);
         }
 
-        getBelongTo().doInteractive(interactive -> usePrivate(getBelongTo().bp, interactive, target));
+        getBelongTo().doInteractive(interactive -> usePrivate(interactive, target));
         useDone();
     }
 
@@ -65,7 +65,7 @@ public abstract class Skill1PuGongBase extends Skill {
         // 广播使用普攻
         bp.onTrigger(new EventUsePuGong(getBelongTo(), target));
 
-        usePrivate(bp, getBelongTo().getInteractive(), target);
+        usePrivate(getBelongTo().getInteractive(), target);
 
         // 消息记录
         log(target);
