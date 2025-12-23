@@ -9,6 +9,7 @@ import com.mllfjn.simyys.character.yuhun.YuHunFactory;
 import com.mllfjn.simyys.character.status.Displayable;
 import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.character.status.StatusShield;
+import com.mllfjn.simyys.utils.DecimalFormatUtil;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -81,7 +82,7 @@ public class CharacterIcon extends VBox {
     // 状态显示
     // TODO UI决定是否显示，难点在于头像对齐，上下贴在头像旁 可以让所有角色同时不显示
     // TODO 发生改变时标出来
-    private final MemoryLabel[] info = new MemoryLabel[8];
+    private final MemoryLabel[] info = new MemoryLabel[9];
     // 红绿标的那个标
     private final HBox autoTo;
     // 左键点击时的红绿标菜单
@@ -161,17 +162,7 @@ public class CharacterIcon extends VBox {
                 imagePane,
                 skillBox
         );
-        MemoryLabel hpML = new MemoryLabel(character, Attribute.HP) {
-            @Override
-            public void setLabelText() {
-                label.setText("生命:" + String.format("%.2f(%.2f%%)", num, num / character.getMaxHp() * 100));
-                healthBar.setProgress(num / character.getMaxHp());
-            }
-        };
-        info[0] = hpML;
-        hpML.label.setMaxWidth(MAX_WIDTH);
-        this.getChildren().add(hpML.label);
-        for (int i = 1; i < info.length; i++) {
+        for (int i = 0; i < info.length; i++) {
             MemoryLabel memoryLabel = new MemoryLabel(character, Attribute.values()[i]);
             info[i] = memoryLabel;
             Label label = memoryLabel.label;
@@ -223,10 +214,11 @@ public class CharacterIcon extends VBox {
     public void update() {
         refreshProperties();
         refreshStatusLabel();
-//        refreshHealthBar();
         updateYuHunIcon();
         refreshShieldBar();
         refreshSkillBox();
+
+        healthBar.setProgress(character.getHp() / character.getMaxHp());
     }
 
     private void refreshSkillBox() {
@@ -235,6 +227,11 @@ public class CharacterIcon extends VBox {
     }
 
     private void refreshStatusLabel() {
+        /*TextArea textArea = new TextArea();
+        textArea.setWrapText(true);
+        textArea.setPrefRowCount(3);
+        textArea.setEditable(false);*/
+
         StringJoiner sj = new StringJoiner(Displayable.DELIMITER);
         for (Status status : character.getStatuses()) {
             if (status instanceof Displayable d) {
@@ -252,21 +249,6 @@ public class CharacterIcon extends VBox {
             memoryLabel.refresh();
         }
     }
-
-    /*private void refreshProperties() {
-        info[0].setText("攻击:" + String.format("%.2f", character.getAttack()));
-        info[2].setText("防御:" + String.format("%.2f", character.getDefence()));
-        info[3].setText("速度:" + String.format("%.2f", character.getSpeed()));
-        info[4].setText("暴击:" + String.format("%.2f", character.getCritRate()));
-        info[5].setText("爆伤:" + String.format("%.2f", character.getCritPower()));
-        info[6].setText("命中:" + String.format("%.2f", character.getEffectHitRate()));
-        info[7].setText("抵抗:" + String.format("%.2f", character.getEffectResistRate()));
-    }
-
-    private void refreshHealthBar() {
-        info[1].setText("生命:" + String.format("%.2f(%.2f%%)", character.getHp(), character.getHp() / character.getMaxHp() * 100));
-        this.healthBar.setProgress(character.getHp() / character.getMaxHp());
-    }*/
 
     private void refreshShieldBar() {
         double shield = 0;
@@ -339,40 +321,54 @@ public class CharacterIcon extends VBox {
     }
 
     static class MemoryLabel {
-        protected final Label label = new Label();
-        protected final Character character;
-        protected final Attribute attribute;
+        private final Label label = new Label();
+        private final Character character;
+        private final Attribute attribute;
 
-        protected double num;
+        private double num;
+        private boolean showingChanged = false;
 
-        public MemoryLabel(Character character, Attribute attribute) {
+        private MemoryLabel(Character character, Attribute attribute) {
             this.attribute = attribute;
             this.character = character;
             num = attribute.getGetter().apply(character);
+
             setLabelText();
         }
 
         public void refresh() {
             double newNumber = attribute.getGetter().apply(character);
             if (newNumber != num) {
+                setLabelText(newNumber);
                 num = newNumber;
-                setLabelText();
                 setChanged(true);
             } else {
                 setChanged(false);
             }
         }
 
-        protected void setLabelText() {
-            label.setText(attribute.getText() + ":" + String.format("%.2f", num));
+        private void setLabelText() {
+            label.setText(attribute.getText() + ":" + DecimalFormatUtil.df_0_2.format(num));
+        }
+
+        private void setLabelText(double newNumber) {
+            label.setText(attribute.getText() + ":" + DecimalFormatUtil.df_0_2.format(newNumber)
+                    + "(" + DecimalFormatUtil.df_0_2.format(newNumber - num) + ")");
         }
 
         private void setChanged(boolean changed) {
             if (changed) {
-                // 如果变更就换成红色
-                label.setStyle("-fx-text-fill: red");
+                if (!showingChanged) {
+                    showingChanged = true;
+                    // 如果变更就换成红色
+                    label.setStyle("-fx-text-fill: red");
+                }
             } else {
-                label.setStyle("-fx-text-fill: black");
+                if (showingChanged) {
+                    label.setStyle("-fx-text-fill: black");
+                    setLabelText();
+                    showingChanged = false;
+                }
             }
         }
     }

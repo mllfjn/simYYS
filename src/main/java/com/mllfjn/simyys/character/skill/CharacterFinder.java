@@ -30,13 +30,6 @@ public class CharacterFinder {
         stream = stream.filter(character -> !character.isHaveStatus(StatusCanNotChoose.class));
     }
 
-    /*public CharacterFinder(Character owner, List<Character> characters) {
-        this.owner = owner;
-        this.bp = owner.bp;
-
-        stream = characters.stream();
-    }*/
-
     public CharacterFinder filterYYS(boolean include) {
         stream = include ?
                 stream.filter(Character::isYYS) :
@@ -48,13 +41,6 @@ public class CharacterFinder {
         stream = include ?
                 stream.filter(Character::isSummon) :
                 stream.filter(character -> !character.isSummon());
-        return this;
-    }
-
-    public CharacterFinder filterMob(boolean include) {
-        stream = include ?
-                stream.filter(Character::isMob) :
-                stream.filter(character -> !character.isMob());
         return this;
     }
 
@@ -139,10 +125,6 @@ public class CharacterFinder {
 
     public List<Character> getList() {
         return stream.collect(Collectors.toCollection(ArrayList::new));
-    }
-
-    public int getEnemyTeam() {
-        return 1 - owner.team;
     }
 
     public static int getEnemyTeam(int team) {
