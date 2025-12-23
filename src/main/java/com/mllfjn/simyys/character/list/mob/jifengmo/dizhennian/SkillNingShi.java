@@ -6,6 +6,7 @@ import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
+import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.InteractiveInfo;
 
 import java.util.HashMap;
@@ -81,6 +82,7 @@ class SkillNingShi extends Skill {
         public void tuGuangQiu() {
             DiZhenNian diZhenNian = (DiZhenNian) belongTo;
             Optional<Character> oC = map.entrySet().stream()
+                    .filter(entry -> entry.getKey() != diZhenNian.getHongNing())
                     .max(Map.Entry.comparingByValue())
                     .map(Map.Entry::getKey);
 
@@ -88,13 +90,39 @@ class SkillNingShi extends Skill {
                 diZhenNian.getSkill(SkillNingShi.skillID).ifPresent(skill -> skill.setCooling(2));
             }
 
-            oC.ifPresent(character ->
-                    character.addStatus(new StatusBuff(diZhenNian, character, diZhenNian.getBuffType(), 7)));
+            oC.ifPresent(character -> {
+                character.getStatus(StatusBuff.class).ifPresent(statusExist -> {
+                    // 已经有了BUFF
+                    int duration = statusExist.getDuration();
+                    // 剩余buff回合数*30%最大生命的穿盾伤害
+                    InteractiveInfo info = InteractiveInfo
+                            .createRealAttack(character, Skill.getInstance("光球"), character
+                                    , (c1, c2) -> duration * 0.3 * character.getMaxHp());
+                    info.setCanThroughShield(true);
+                    character.doInteractive(interactive -> interactive.attack(info, AttackType.ZHEN_SHI));
+                    // 红凝
+                    character.addStatus(new StatusHongNing(belongTo, character));
+                });
+                character.addStatus(new StatusBuff(belongTo, character, diZhenNian.getBuffType(), 7));
+            });
         }
 
         @Override
         public String getText() {
             return SkillName + selfDuration;
+        }
+
+        static class StatusHongNing extends Status implements Displayable {
+
+            public StatusHongNing(Character from, Character belongTo) {
+                super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
+                ((DiZhenNian) from).setHongNing(belongTo);
+            }
+
+            @Override
+            public String getText() {
+                return "红凝";
+            }
         }
     }
 }

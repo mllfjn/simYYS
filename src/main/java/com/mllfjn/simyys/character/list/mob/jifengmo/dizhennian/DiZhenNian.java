@@ -8,7 +8,6 @@ import com.mllfjn.simyys.character.PropertyKey;
 import com.mllfjn.simyys.character.list.mob.jifengmo.MultiStageManager;
 import com.mllfjn.simyys.character.list.mob.jifengmo.citiao.CiTiao6DouHun;
 import com.mllfjn.simyys.character.list.mob.jifengmo.citiao.CiTiaoManager;
-import com.mllfjn.simyys.character.list.sr.haifangzhu.HaiFangZhu;
 import com.mllfjn.simyys.character.propertygetter.*;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.status.ActionWhenDie;
@@ -46,6 +45,7 @@ public class DiZhenNian extends Character {
 
     private StatusBuff.BuffType buffType;
     private boolean beforeHouZi = true;
+    private Character hongNing;
 
 
     @Override
@@ -177,6 +177,14 @@ public class DiZhenNian extends Character {
 
     public boolean isBeforeHouZi() {
         return beforeHouZi;
+    }
+
+    public Character getHongNing() {
+        return hongNing;
+    }
+
+    public void setHongNing(Character hongNing) {
+        this.hongNing = hongNing;
     }
 
     static class StatusBuffSetter extends Status implements ActionWhenDie {

@@ -201,4 +201,8 @@ public class InteractiveInfo {
     public void setCanThroughShield(boolean canThroughShield) {
         this.canThroughShield = canThroughShield;
     }
+
+    public void setMultiplier(int multiplier) {
+        this.multiplier = multiplier;
+    }
 }
