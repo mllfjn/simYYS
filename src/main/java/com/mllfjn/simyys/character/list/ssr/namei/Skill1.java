@@ -2,7 +2,6 @@ package com.mllfjn.simyys.character.list.ssr.namei;
 
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill1PuGongBase;
-import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
 
 class Skill1 extends Skill1PuGongBase {
@@ -21,7 +20,7 @@ class Skill1 extends Skill1PuGongBase {
         }
 
         // 造成攻击(系数)伤害
-        interactive.attackTypical(this, target, multiplierGeneral[getLevel()], AttackType.DAN_TI);
+        super.usePrivate(interactive, target);
     }
 
     @Override

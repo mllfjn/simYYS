@@ -6,6 +6,7 @@ import com.mllfjn.simyys.character.list.mob.jifengmo.huangkulou.HuangKuLou;
 import com.mllfjn.simyys.character.list.r.chounv.ChouNv;
 import com.mllfjn.simyys.character.list.sp.kongmian.KongMian;
 import com.mllfjn.simyys.character.list.sp.laotou.LaoTou;
+import com.mllfjn.simyys.character.list.sp.spjin.SpJin;
 import com.mllfjn.simyys.character.list.sr.yaoqin.YaoQin;
 import com.mllfjn.simyys.character.list.ssr.beimihu.BeiMiHu;
 import com.mllfjn.simyys.character.list.ssr.shiling.ShiLing;
@@ -48,6 +49,7 @@ public class CharacterFactory {
         mapSP.put(ShenShe.CharacterName, ShenShe.class);
         mapSP.put(LaoTou.CharacterName, LaoTou.class);
         mapSP.put(KongMian.CharacterName, KongMian.class);
+        mapSP.put(SpJin.CharacterName, SpJin.class);
 
         Map<String, Class<? extends Character>> mapSSR = new LinkedHashMap<>();
         characterMap.put("SSR", mapSSR);

@@ -13,12 +13,6 @@ class Skill1 extends Skill1PuGongBase {
     }
 
     @Override
-    public void usePrivate(Interactive interactive, Character target) {
-        // 造成攻击（系数）伤害
-        interactive.attackTypical(this, target, multiplierGeneral[getLevel()], AttackType.DAN_TI);
-    }
-
-    @Override
     public String getName() {
         return SkillName;
     }

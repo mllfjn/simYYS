@@ -13,12 +13,15 @@ public enum Attribute {
     EFFECT_HIT_RATE("命中", Character::getEffectHitRate),
     EFFECT_RESIST_RATE("抵抗", Character::getEffectResistRate),
 
+    INIT_ATTACK("初始攻击", Character::getInitAttack),
     ZENG_SHANG("增伤", Character::getZengShang), // 增伤
     JIAN_SHANG("减伤", null),
     YI_SHANG("易伤", Character::getYiShang),
-    IGNORE_DEFENCE("无视防御", Character::getIgnoreDefense),
     MaxHP("最大生命值", Character::getMaxHp),
+    IGNORE_DEFENCE("无视防御", Character::getIgnoreDefense),
+    CRIT_RESIST("暴击抵抗", Character::getCritResist)
     ;
+
     private final String text;
     private final Function<Character, Double> getter;
 

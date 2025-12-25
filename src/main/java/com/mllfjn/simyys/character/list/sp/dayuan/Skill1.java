@@ -2,7 +2,6 @@ package com.mllfjn.simyys.character.list.sp.dayuan;
 
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill1PuGongBase;
-import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
 
 class Skill1 extends Skill1PuGongBase {
@@ -13,8 +12,7 @@ class Skill1 extends Skill1PuGongBase {
 
     @Override
     public void usePrivate(Interactive interactive, Character target) {
-        // 用久违的神力攻击敌方目标,造成攻击(系数)的伤害
-        interactive.attackTypical(this, target, multiplierGeneral[getLevel()], AttackType.DAN_TI);
+        super.usePrivate(interactive, target);
         // lv5-获得1层神力
         if (getLevel() >= 5) {
             StatusShenLi.addStack(getBelongTo(), 1);

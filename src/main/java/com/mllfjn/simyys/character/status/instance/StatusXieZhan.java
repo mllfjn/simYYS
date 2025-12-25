@@ -29,7 +29,7 @@ public abstract class StatusXieZhan extends Status implements StatusRunnable {
         if (param instanceof ParamUseSkill pus) {
             Skill skill = pus.getSkill();
             Character target = pus.getTarget().orElseThrow();
-            if (RateController.xieZhan(skill, from, target, bp.calc, getRate())) {
+            if (RateController.xieZhan(skill, from, bp.calc, getRate())) {
                 from.xieZhan(skill, target);
             }
         }

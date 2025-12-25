@@ -4,7 +4,6 @@ import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill1PuGongBase;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
 
 // √     lv5-若在回合外释放,灼伤敌方,为其附加20%易伤,持续2回合
@@ -21,7 +20,7 @@ class Skill1 extends Skill1PuGongBase {
         if (level >= 5 && !getBelongTo().isInRound()) {
             target.addStatus(new StatusZhuoShang(getBelongTo(), target));
         }
-        interactive.attackTypical(this, target, multiplierGeneral[level], AttackType.DAN_TI);
+        super.usePrivate(interactive, target);
     }
 
     @Override

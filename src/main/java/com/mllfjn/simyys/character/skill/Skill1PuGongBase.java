@@ -6,6 +6,7 @@ import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.Trigger;
 import com.mllfjn.simyys.character.status.triggerParam.ParamUseSkill;
+import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
 
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 public abstract class Skill1PuGongBase extends Skill {
-    public static final int[] multiplierGeneral = new int[]{0, 100, 105, 110, 115, 125};
+    protected static final int[] multiplierGeneral = new int[]{0, 100, 105, 110, 115, 125};
 
 
     private final List<Skill1PuGongBase> xieZhanSkills = new ArrayList<>();
@@ -28,14 +29,15 @@ public abstract class Skill1PuGongBase extends Skill {
                 .getPriorAuto(Attribute.HP, CharacterFinder.Criteria.MIN);
     }
 
-    public abstract void usePrivate(Interactive interactive, Character target);
+    public void usePrivate(Interactive interactive, Character target) {
+        // 造成攻击（系数）伤害
+        interactive.attackTypical(this, target, multiplierGeneral[getLevel()], AttackType.DAN_TI);
+    }
 
-    public boolean canXieZhan(Skill skill, Character target) {
+    public boolean canXieZhan(Skill skill) {
         if (skill instanceof Skill1PuGongBase s1) {
             // 如果该技能已经协战过了，返回false
-            if (s1.xieZhanSkills.contains(this)) {
-                return false;
-            }
+            return !s1.xieZhanSkills.contains(this);
         }
         return true;
     }
@@ -70,7 +72,7 @@ public abstract class Skill1PuGongBase extends Skill {
         // 消息记录
         log(target);
 
-        getBelongTo().statusRun(Trigger.USE_PU_GONG, new ParamUseSkill(this, Optional.of(target)));
+        getBelongTo().statusRun(Trigger.USE_PU_GONG, new ParamUseSkill(this, target));
 
         useDone();
     }

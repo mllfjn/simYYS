@@ -197,6 +197,12 @@ public abstract class Character implements Serializable {
         return AttributeCounter.getAttribute(Attribute.IGNORE_DEFENCE, 0, getStatuses());
     }
 
+    public double getCritResist() {
+        return AttributeCounter.getAttribute(Attribute.CRIT_RESIST, 0, getStatuses());
+    }
+
+
+
     public boolean isMob() {
         return isMob;
     }
@@ -483,9 +489,9 @@ public abstract class Character implements Serializable {
         getPuGong().ifPresent(s1 -> s1.use(bp));
     }
 
-    public boolean canXieZhan(Skill skill, Character target) {
+    public boolean canXieZhan(Skill skill) {
         Optional<Skill1PuGongBase> puGong = getPuGong();
-        return puGong.map(s1 -> s1.canXieZhan(skill, target)).orElse(false);
+        return puGong.map(s1 -> s1.canXieZhan(skill)).orElse(false);
     }
 
     public void xieZhan(Skill skill, Character target) {

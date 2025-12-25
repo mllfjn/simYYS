@@ -99,8 +99,8 @@ public class RateController implements Serializable {
         return infos;
     }
 
-    public static boolean xieZhan(Skill skill, Character owner, Character target, RateCalc calc, double rate) {
-        if (!owner.canXieZhan(skill, target)) {
+    public static boolean xieZhan(Skill skill, Character owner, RateCalc calc, double rate) {
+        if (!owner.canXieZhan(skill)) {
             return false;
         }
 

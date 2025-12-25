@@ -97,7 +97,7 @@ public abstract class Skill implements Serializable {
             bp.useGuiHuo(getBelongTo(), realCost);
         }
 
-        Optional<Character> target = usePrivate(bp);
+        Character target = usePrivate(bp).orElse(null);
 
         // 冷却
         if (coolDown != 0) {
@@ -110,7 +110,7 @@ public abstract class Skill implements Serializable {
         }
 
         // 消息记录
-        log(target.orElse(null));
+        log(target);
 
         // 释放完毕技能
         belongTo.statusRun(Trigger.USED_SKILL, new ParamUseSkill(this, target));
@@ -130,10 +130,6 @@ public abstract class Skill implements Serializable {
         for (Status status : belongTo.getStatuses()) {
             if (status instanceof ForceChangeCost rc) {
                 realCost += rc.getChange();
-                // 因为后续可能会消耗更多，所以不能在小于0时就返回
-                /*if (realCost <= 0) {
-                    return 0;
-                }*/
             }
         }
 

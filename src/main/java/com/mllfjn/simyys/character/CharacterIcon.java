@@ -22,6 +22,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
 
@@ -72,7 +73,7 @@ public class CharacterIcon extends VBox {
 
     protected final Character character;
     // 状态栏
-    private final Label statusLabel = new Label();
+    private final Label status = new Label();
     // 生命条
     private final ProgressBar healthBar = new ProgressBar();
     // 护盾条
@@ -125,8 +126,11 @@ public class CharacterIcon extends VBox {
         shieldBar.setStyle("-fx-accent: lightblue");
         shieldBar.setMaxWidth(MAX_WIDTH);
         // 状态栏
-        statusLabel.setMaxWidth(MAX_WIDTH);
-        statusLabel.setWrapText(true);
+        status.setMaxWidth(MAX_WIDTH);
+        status.setFont(Font.font(10));
+        status.setWrapText(true);
+        status.setMaxHeight(30);
+        status.setPrefHeight(30);
 
         // 红绿标
         autoTo = new HBox();
@@ -156,7 +160,7 @@ public class CharacterIcon extends VBox {
 
         this.getChildren().addAll(
                 autoTo,
-                statusLabel,
+                status,
                 healthBar,
                 shieldBar,
                 imagePane,
@@ -227,11 +231,6 @@ public class CharacterIcon extends VBox {
     }
 
     private void refreshStatusLabel() {
-        /*TextArea textArea = new TextArea();
-        textArea.setWrapText(true);
-        textArea.setPrefRowCount(3);
-        textArea.setEditable(false);*/
-
         StringJoiner sj = new StringJoiner(Displayable.DELIMITER);
         for (Status status : character.getStatuses()) {
             if (status instanceof Displayable d) {
@@ -241,7 +240,7 @@ public class CharacterIcon extends VBox {
                 }
             }
         }
-        this.statusLabel.setText(sj.toString());
+        this.status.setText(sj.toString());
     }
 
     private void refreshProperties() {
@@ -331,8 +330,10 @@ public class CharacterIcon extends VBox {
         private MemoryLabel(Character character, Attribute attribute) {
             this.attribute = attribute;
             this.character = character;
-            num = attribute.getGetter().apply(character);
 
+            label.setFont(Font.font(10));
+
+            num = attribute.getGetter().apply(character);
             setLabelText();
         }
 
