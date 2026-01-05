@@ -13,20 +13,15 @@ import java.util.Optional;
 class Skill8 extends Skill {
     public static final String SkillName = "言灵·星";
 
+    private static final int[] baseBonus = new int[]{0, 15, 20, 25, 30, 30};
+
     private final int duration;
     private final int bonus;
 
     public Skill8(Character belongTo, int level, int shuYin) {
         super(belongTo, level, 0, 0, 8);
         duration = level >= 5 ? 3 : 2;
-        int baseBonus = switch (level) {
-            case 4 -> 30;
-            case 3 -> 25;
-            case 2 -> 20;
-            default -> 15;
-        };
-        baseBonus += shuYin * 3;
-        bonus = baseBonus;
+        bonus = baseBonus[level] + shuYin * 3;
     }
 
     @Override

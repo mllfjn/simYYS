@@ -5,10 +5,10 @@ import com.mllfjn.simyys.character.propertygetter.*;
 import com.mllfjn.simyys.collections.StringGroup;
 
 public abstract class CharacterShiShenBase extends Character {
-    protected int skill1Level;
-    protected int skill2Level;
-    protected int skill3Level;
-    protected boolean awakening;
+    public int skill1Level;
+    public int skill2Level;
+    public int skill3Level;
+    public boolean awakening;
     @Override
     public PropertiesMap getProperties() {
         PropertiesMap map = super.getProperties();

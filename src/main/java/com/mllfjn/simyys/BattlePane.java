@@ -7,6 +7,7 @@ import com.mllfjn.simyys.character.PropertyKey;
 import com.mllfjn.simyys.customnode.CustomTextField;
 import com.mllfjn.simyys.customnode.TextFlowLog;
 import com.mllfjn.simyys.guihuo.MobGuiHuo;
+import com.mllfjn.simyys.guihuo.SubstituteProvider;
 import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.ratecontroller.RateCalc;
 import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
@@ -116,6 +117,10 @@ public class BattlePane {
         }
     }
 
+    public void setSubstituteProvider(int team, SubstituteProvider substituteProvider) {
+        situation.teamPane[team].setSubstituteProvider(substituteProvider);
+    }
+
     public boolean canUseGuiHuo(Character character, int num) {
         if (character.isMob()) {
             return MobGuiHuo.mobCanUseGuiHuo(character, num);
@@ -129,8 +134,8 @@ public class BattlePane {
             MobGuiHuo.mobUseGuiHuo(character, num);
         } else {
             int team = character.team;
-            situation.teamPane[team].useGuiHuo(num);
-            onTrigger(new EventUseGuiHuo(team, num));
+            int realUsed = situation.teamPane[team].useGuiHuo(num);
+            onTrigger(new EventUseGuiHuo(team, realUsed));
         }
     }
 
@@ -234,8 +239,8 @@ public class BattlePane {
         // 战斗开始
         onTrigger(new EventBattleStart());
         // 火灵
-        situation.teamPane[0].init();
-        situation.teamPane[1].init();
+        situation.teamPane[0].calHuoLing();
+        situation.teamPane[1].calHuoLing();
 
         log.characterAct(situation.characterActing);
         log.next();

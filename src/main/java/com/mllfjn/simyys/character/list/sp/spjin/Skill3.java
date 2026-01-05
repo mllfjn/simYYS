@@ -19,18 +19,15 @@ import java.util.Optional;
 class Skill3 extends Skill {
     public static final String SkillName = "世间之曲";
 
+    private static final int[] multipliers = new int[]{0, 70, 80, 90, 100, 100};
+
     private int increaseTimes = 0;
     private int multiplier;
 
     public Skill3(Character belongTo, int level) {
         super(belongTo, level, 3, 0, 3);
 
-        multiplier = switch (level) {
-            case 4 -> 100;
-            case 3 -> 90;
-            case 2 -> 80;
-            default -> 70;
-        };
+        multiplier = multipliers[level];
     }
 
     public void increaseMultiplier() {

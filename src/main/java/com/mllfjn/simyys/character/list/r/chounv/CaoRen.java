@@ -12,6 +12,8 @@ import com.mllfjn.simyys.interactive.AttackType;
 public class CaoRen extends Character {
     public static final String CharacterName = "诅咒草人";
 
+    private static final double[] hpPercent = new double[]{0, 0.1, 0.15, 0.2, 0.25, 0.3};
+
     private final Character bind;
 
     public CaoRen(Character chouNv, Character bind, int level) {
@@ -22,16 +24,8 @@ public class CaoRen extends Character {
         this.bind = bind;
         this.setInitSpeed(bind.getSpeed());
 
-        double hpPercent = switch (level) {
-            case 1 -> 0.1;
-            case 2 -> 0.15;
-            case 3 -> 0.2;
-            case 4 -> 0.25;
-            case 5 -> 0.3;
-            default -> 0;
-        };
         this.setInitDefense(bind.getDefence() * 0.5);
-        this.setMaxHp(bind.getHp() * hpPercent, true);
+        this.setMaxHp(bind.getHp() * hpPercent[level], true);
 
         this.addStatus(new StatusAfterAttack(chouNv, this, bind));
     }

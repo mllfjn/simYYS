@@ -13,8 +13,14 @@ import java.util.Optional;
 class Skill2 extends Skill {
     public static final String SkillName = "余音";
 
+    private static final int[] bonus = new int[]{0, 8, 11, 14, 17, 20};
+
+    private final int currentBonus;
+
+
     public Skill2(Character belongTo, int level) {
         super(belongTo, level, 2, 0, 2);
+        currentBonus = bonus[getLevel()];
     }
 
     @Override
@@ -45,17 +51,8 @@ class Skill2 extends Skill {
                 .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
                 .getList();
 
-        int num = switch (getLevel()) {
-            case 1 -> 8;
-            case 2 -> 11;
-            case 3 -> 14;
-            case 4 -> 17;
-            case 5 -> 20;
-            default -> throw new IllegalArgumentException("妖琴技能等级错误: " + getLevel());
-        };
-
         for (Character target : targets) {
-            target.addStatus(new StatusYuYin(getBelongTo(), target, num));
+            target.addStatus(new StatusYuYin(getBelongTo(), target, currentBonus));
         }
     }
 

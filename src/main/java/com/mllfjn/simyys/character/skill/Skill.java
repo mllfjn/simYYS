@@ -64,10 +64,7 @@ public abstract class Skill implements Serializable {
 
     public void use(BattlePane bp) {
 //        bp.onTrigger(new EventWillUseSkill(belongTo, this));
-
         useBase(bp, true);
-
-        useDone();
     }
 
     protected void useDone() {
@@ -91,6 +88,8 @@ public abstract class Skill implements Serializable {
     }
 
     protected void useBase(BattlePane bp, boolean isCost) {
+        belongTo.statusRun(Trigger.WILL_USE_SKILL, null);
+
         int realCost = 0;
         if (isCost) {
             realCost = getRealCost(true);
@@ -114,6 +113,8 @@ public abstract class Skill implements Serializable {
 
         // 释放完毕技能
         belongTo.statusRun(Trigger.USED_SKILL, new ParamUseSkill(this, target));
+
+        useDone();
     }
 
     protected void log(Character target) {

@@ -5,6 +5,7 @@ import com.mllfjn.simyys.character.propertygetter.FlagChangeInfo;
 import com.mllfjn.simyys.character.yuhun.list.HuoLing;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.guihuo.GuiHuo;
+import com.mllfjn.simyys.guihuo.SubstituteProvider;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
@@ -115,16 +116,24 @@ public class TeamPane implements Serializable {
         }
     }
 
+    public void setSubstituteProvider(SubstituteProvider substituteProvider) {
+        guiHuo.setSubstituteProvider(substituteProvider);
+    }
+
     public boolean canUseGuiHuo(int num) {
         return guiHuo.canUseGuiHuo(num);
     }
 
-    public void useGuiHuo(int num) {
-        guiHuo.useGuiHuo(num);
+    public int useGuiHuo(int num) {
+        return guiHuo.useGuiHuo(num);
     }
 
     public void gainGuiHuo(int num) {
-        guiHuo.gainGuiHuo(num);
+        guiHuo.gainGuiHuo(num, false);
+    }
+
+    public void gainGuiHuoFromYuHun(int num) {
+        guiHuo.gainGuiHuo(num, true);
     }
 
     public int getGuiHuoCount() {
@@ -144,12 +153,12 @@ public class TeamPane implements Serializable {
         return true;
     }
 
-    public void init() {
+    public void calHuoLing() {
         if (!mobTeam) {
             for (Character character : characters) {
                 for (YuHun yuHun : character.getYuHunSet()) {
                     if (yuHun instanceof HuoLing) {
-                        gainGuiHuo(3);
+                        gainGuiHuoFromYuHun(3);
                         return;
                     }
                 }
