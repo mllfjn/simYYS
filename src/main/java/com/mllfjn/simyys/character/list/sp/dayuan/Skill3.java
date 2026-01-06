@@ -117,11 +117,11 @@ class Skill3 extends Skill {
 
 
     private InteractiveInfo heal(Interactive interactive, Character target) {
-        // lv4-若治疗时目标生命为100%，则治疗时额外施加生命上限8%的护盾，判断是否满血的逻辑在install方法内部
+        // lv4-若治疗时目标生命为100%，则治疗时额外施加生命上限8%的护盾
         if (getLevel() >= 4 && target.getHp() == target.getMaxHp()) {
             Character belongTo = getBelongTo();
             StatusDaYuanShield.install(belongTo, target
-                    , RateController.baoJi(SkillName, belongTo, belongTo.bp.calc
+                    , RateController.baoJi(SkillName + "护盾", belongTo, belongTo.bp.calc
                             , (c) -> belongTo.getCritRate(), List.of(target))[0]);
         }
         return interactive.healTypical(this, target, 8);
@@ -138,7 +138,7 @@ class Skill3 extends Skill {
 
             if (!fullHealth.isEmpty()) {
                 Character belongTo = getBelongTo();
-                boolean[] results = RateController.baoJi(SkillName, belongTo, belongTo.bp.calc
+                boolean[] results = RateController.baoJi(SkillName + "护盾", belongTo, belongTo.bp.calc
                         , (c) -> belongTo.getCritRate(), fullHealth);
                 for (int i = 0; i < fullHealth.size(); i++) {
                     StatusDaYuanShield.install(belongTo, fullHealth.get(i), results[i]);

@@ -84,10 +84,15 @@ public class InteractiveInfo {
     }
 
     // 基本治疗
-    public static InteractiveInfo createTypicalHeal(Character attacker, Skill skill, Character target, int multiplier) {
-        InteractiveInfo interactiveInfo = new InteractiveInfo(attacker, skill, target, (from, to) -> from.getMaxHp());
+    public static InteractiveInfo createTypicalHeal(Character owner, Skill skill, Character target, int multiplier) {
+        InteractiveInfo interactiveInfo = new InteractiveInfo(owner, skill, target, (from, to) -> from.getMaxHp());
         interactiveInfo.multiplier = multiplier;
         return interactiveInfo;
+    }
+
+    public static InteractiveInfo createHeal(Character owner, Skill skill, Character target
+            , BiFunction<Character, Character, Double> basicNumber) {
+        return new InteractiveInfo(owner, skill, target, basicNumber);
     }
     // 恢复,不会暴击
     public static InteractiveInfo createRecovery(Character attacker, Skill skill, Character target

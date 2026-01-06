@@ -164,12 +164,18 @@ public class Interactive {
 
         // 一般增伤乘区
         if (interactiveInfo.isCalZengShang()) {
-            traceableNumber.mul(1 + owner.getZengShang() / 100, "增伤");
+            double zengShang = owner.getZengShang();
+            if (zengShang != 0) {
+                traceableNumber.mul(1 + zengShang / 100, "增伤");
+            }
         }
 
         // 易伤
         if (interactiveInfo.isCalYiShang()) {
-            traceableNumber.mul(target.getYiShang(), "易伤");
+            double yiShang = target.getYiShang();
+            if (yiShang != 1) {
+                traceableNumber.mul(yiShang, "易伤");
+            }
         }
 
         // 地震鲶,荒骷髅,雪幽魂等被攻击触发
@@ -247,7 +253,7 @@ public class Interactive {
                 , (c) -> owner.getCritRate(), targets, interactiveInfos);
 
         for (int i = 0; i < targets.size(); i++) {
-            heal(targets.get(i), interactiveInfos[i]);
+            healBase(targets.get(i), interactiveInfos[i]);
         }
 
         return interactiveInfos;
@@ -255,10 +261,20 @@ public class Interactive {
 
     public void heal(Skill skill, List<Character> targets
             , Function<Character, InteractiveInfo> interactiveInfoSupplier) {
+        InteractiveInfo[] interactiveInfos = new InteractiveInfo[targets.size()];
+        for (int i = 0; i < targets.size(); i++) {
+            interactiveInfos[i] = interactiveInfoSupplier.apply(targets.get(i));
+        }
 
+        RateController.baoJi(skill.getName(), owner, bp.calc
+                , (c) -> owner.getCritRate(), targets, interactiveInfos);
+
+        for (int i = 0; i < targets.size(); i++) {
+            healBase(targets.get(i), interactiveInfos[i]);
+        }
     }
 
-    private void heal(Character target, InteractiveInfo interactiveInfo) {
+    private void healBase(Character target, InteractiveInfo interactiveInfo) {
         if (!target.alive) {
             return;
         }
@@ -266,7 +282,10 @@ public class Interactive {
         TraceableNumber traceableNumber = interactiveInfo.getTraceableNumber();
 
         // 技能系数
-        traceableNumber.mul(0.01 * interactiveInfo.getMultiplier(), "技能系数");
+        double multiplier = interactiveInfo.getMultiplier();
+        if (multiplier != 100) {
+            traceableNumber.mul(0.01 * multiplier, "技能系数");
+        }
 
         // 暴击
         if (interactiveInfo.isCrit()) {

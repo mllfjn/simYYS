@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public class YuHunFactory {
-    public static final double ICON_SIZE = 30;
+    public static final double ICON_SIZE = 25;
     public static final double ICON_RADIUS = ICON_SIZE / 2;
     private static final Map<String, Image> iconMap = new HashMap<>();
     private static final Map<String, Class<? extends YuHun>> yuHunMap = new HashMap<>();
@@ -27,6 +27,7 @@ public class YuHunFactory {
         yuHunMap.put(ShenQiLou.YuHunName, ShenQiLou.class);
         yuHunMap.put(HaiYueHuoYu.YuHunName, HaiYueHuoYu.class);
         yuHunMap.put(HuangKuLou.YuHunName, HuangKuLou.class);
+        yuHunMap.put(DiaoPingHuo.YuHunName, DiaoPingHuo.class);
     }
 
     public static Image getImage(String name) {

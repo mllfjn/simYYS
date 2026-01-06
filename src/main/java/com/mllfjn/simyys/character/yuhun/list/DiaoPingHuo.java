@@ -9,9 +9,21 @@ import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunSealResponse;
+import com.mllfjn.simyys.interactive.InteractiveInfo;
+
+import java.util.List;
 
 public class DiaoPingHuo extends YuHun implements YuHunSealResponse {
     public static final String YuHunName = "钓瓶火";
+
+    private StatusDPHAfterRound status;
+
+    @Override
+    public void init(Character character) {
+        super.init(character);
+
+        status = new StatusDPHAfterRound(character);
+    }
 
     @Override
     public String getName() {
@@ -20,12 +32,12 @@ public class DiaoPingHuo extends YuHun implements YuHunSealResponse {
 
     @Override
     public void enable() {
-
+        character.addStatus(status);
     }
 
     @Override
     public void disable() {
-
+        character.removeStatus(status);
     }
 
     static class StatusDPHAfterRound extends Status implements StatusRunnable {
@@ -48,7 +60,9 @@ public class DiaoPingHuo extends YuHun implements YuHunSealResponse {
                     .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
                     .filterSummon(false)
                     .get(Attribute.HP_PERCENT, CharacterFinder.Criteria.MIN);
-            belongTo.doInteractive(interactive -> interactive.healTypical(skill, target, ));
+            belongTo.doInteractive(interactive -> interactive.heal(skill, List.of(target)
+                    , (c) -> InteractiveInfo.createHeal(belongTo, skill, c
+                            , (c1, c2) -> belongTo.getDefence() * 7)));
             return false;
         }
     }

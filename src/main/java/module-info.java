@@ -3,7 +3,6 @@ module com.mllfjn.simyys {
     requires javafx.base;
     requires javafx.graphics;
     requires static org.jetbrains.annotations;
-    requires com.mllfjn.simyys;
 
     opens com.mllfjn.simyys to javafx.fxml;
 
