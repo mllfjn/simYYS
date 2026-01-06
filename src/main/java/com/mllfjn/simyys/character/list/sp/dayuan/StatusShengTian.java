@@ -46,7 +46,7 @@ class StatusSTChi extends StatusShengTian implements Displayable {
     }
 
     @Override
-    public String getText() {
+    public String getDisplayText() {
         return "缘·赤";
     }
 }
@@ -57,7 +57,7 @@ class StatusSTQing extends StatusShengTian implements Displayable {
     }
 
     @Override
-    public String getText() {
+    public String getDisplayText() {
         return "缘·青";
     }
 }

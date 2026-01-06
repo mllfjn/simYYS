@@ -26,7 +26,7 @@ class StatusReduceCritRate extends Status implements AttributeModifier, Displaya
     }
 
     @Override
-    public String getText() {
+    public String getDisplayText() {
         return StatusName + getDuration();
     }
 }

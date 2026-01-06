@@ -56,7 +56,7 @@ public class StatusShiZhiHui extends Status implements Displayable {
     }
 
     @Override
-    public String getText() {
+    public String getDisplayText() {
         return StatusName + stack;
     }
 }

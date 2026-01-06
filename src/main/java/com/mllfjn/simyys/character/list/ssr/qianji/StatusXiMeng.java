@@ -13,7 +13,7 @@ class StatusXiMeng extends Status implements StatusRunnable, Displayable {
     }
 
     @Override
-    public String getText() {
+    public String getDisplayText() {
         return "汐梦";
     }
 

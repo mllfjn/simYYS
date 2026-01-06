@@ -106,7 +106,7 @@ class Skill2 extends PassiveSkill {
         }
 
         @Override
-        public String getText() {
+        public String getDisplayText() {
             return StatusName;
         }
 

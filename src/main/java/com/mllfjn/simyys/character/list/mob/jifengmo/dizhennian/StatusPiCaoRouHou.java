@@ -35,7 +35,7 @@ class StatusPiCaoRouHou extends Status implements StatusRunnable, Displayable {
     }
 
     @Override
-    public String getText() {
+    public String getDisplayText() {
         return StatusName + stack;
     }
 

@@ -1,10 +1,11 @@
 package com.mllfjn.simyys.character.list.mob.jifengmo.shenqilou;
 
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.status.Displayable;
 import com.mllfjn.simyys.interactive.InteractiveInfo;
 import com.mllfjn.simyys.character.status.StatusShield;
 
-class StatusShenWuHuDun extends StatusShield {
+class StatusShenWuHuDun extends StatusShield implements Displayable {
     public static final String StatusName = "蜃气护盾";
 
     private int count = 3;
@@ -36,7 +37,7 @@ class StatusShenWuHuDun extends StatusShield {
     }
 
     @Override
-    public String getText() {
+    public String getDisplayText() {
         return StatusName + count;
     }
 }

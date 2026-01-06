@@ -77,7 +77,7 @@ class SpecialYaoQin extends YaoQin {
             }
 
             @Override
-            public String getText() {
+            public String getDisplayText() {
                 return "妖琴攻击" + getDuration();
             }
         }

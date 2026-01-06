@@ -56,7 +56,7 @@ class StatusChi extends Status implements StatusRunnable, Displayable {
     }
 
     @Override
-    public String getText() {
+    public String getDisplayText() {
         // 同时附加赤和青会变成虹
         if (belongTo.isHaveStatus(StatusQing.class)) {
             return "尘缘·虹";
@@ -115,7 +115,7 @@ class StatusQing extends Status implements StatusRunnable, Displayable {
     }
 
     @Override
-    public String getText() {
+    public String getDisplayText() {
         // 同时附加赤和青会变成虹，由赤来显示
         if (belongTo.isHaveStatus(StatusChi.class)) {
             return null;

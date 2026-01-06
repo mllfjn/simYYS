@@ -44,7 +44,7 @@ public class HuoZhiChe extends YuHun implements YuHunSealResponse {
         }
 
         @Override
-        public String getText() {
+        public String getDisplayText() {
             if (stack == 0) {
                 return null;
             }

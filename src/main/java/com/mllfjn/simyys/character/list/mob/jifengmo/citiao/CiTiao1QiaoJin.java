@@ -143,7 +143,7 @@ public class CiTiao1QiaoJin {
         }
 
         @Override
-        public String getText() {
+        public String getDisplayText() {
             return CiTiao1QiaoJin.CiTiaoName + stack;
         }
     }

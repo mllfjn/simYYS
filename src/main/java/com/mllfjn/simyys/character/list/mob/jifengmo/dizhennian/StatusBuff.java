@@ -17,7 +17,7 @@ class StatusBuff extends Status implements Displayable, AttributeModifier {
     }
 
     @Override
-    public String getText() {
+    public String getDisplayText() {
         StringBuilder sb = new StringBuilder(buffType.desc);
         int duration = getDuration();
         if (duration != 0) {
@@ -33,11 +33,11 @@ class StatusBuff extends Status implements Displayable, AttributeModifier {
 
     @Override
     public double getInfluence(Attribute attribute) {
-        if (buffType.attribute == Attribute.ATTACK) {
-            return belongTo.getInitBaseAttack() * 0.5;
-        } else {
-            return 50;
+        double rtValue = buffType.attribute == Attribute.ATTACK ? belongTo.getInitBaseAttack() : 100;
+        if (getDuration() == 0) {
+            rtValue /= 2;
         }
+        return rtValue;
     }
 
     enum BuffType {

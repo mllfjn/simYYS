@@ -26,7 +26,7 @@ public class StatusChenLun extends Status implements CrowdControl, InfluenceDama
     }
 
     @Override
-    public String getText() {
+    public String getDisplayText() {
         return text;
     }
 }

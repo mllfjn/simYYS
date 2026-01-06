@@ -70,7 +70,7 @@ class StatusBeiGe extends Status implements StatusRunnable, Displayable {
     }
 
     @Override
-    public String getText() {
+    public String getDisplayText() {
         if (stack == 0) {
             return null;
         } else {

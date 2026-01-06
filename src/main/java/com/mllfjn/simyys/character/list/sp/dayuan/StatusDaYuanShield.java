@@ -13,7 +13,7 @@ public class StatusDaYuanShield extends StatusShield {
     private void refresh(boolean isCrit) {
         double base = from.getMaxHp() * 0.08;
         if (isCrit) {
-            base *= from.getCritPower();
+            base *= from.getCritPower() / 100;
         }
         setShield(base);
         setDuration(2);

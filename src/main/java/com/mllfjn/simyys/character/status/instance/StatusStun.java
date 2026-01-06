@@ -12,7 +12,7 @@ public class StatusStun extends Status implements CrowdControl, Displayable {
     }
 
     @Override
-    public String getText() {
+    public String getDisplayText() {
         return StatusName + getDuration();
     }
 }

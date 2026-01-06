@@ -33,7 +33,7 @@ public class StatusCanNotChoose extends Status implements Displayable {
     }
 
     @Override
-    public String getText() {
+    public String getDisplayText() {
         return "无法选中";
     }
 }

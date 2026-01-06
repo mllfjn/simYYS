@@ -108,7 +108,7 @@ class Skill6Passive extends PassiveSkill {
         }
 
         @Override
-        public String getText() {
+        public String getDisplayText() {
             return StatusName;
         }
     }
@@ -122,8 +122,8 @@ class Skill6Passive extends PassiveSkill {
         }
 
         @Override
-        public String getText() {
-            return status.getText();
+        public String getDisplayText() {
+            return status.getDisplayText();
         }
 
         @Override

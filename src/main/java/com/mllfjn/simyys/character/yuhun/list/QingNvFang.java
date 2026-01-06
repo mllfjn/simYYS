@@ -101,7 +101,7 @@ public class QingNvFang extends YuHun {
         }
 
         @Override
-        public String getText() {
+        public String getDisplayText() {
             return "青女房冰封";
         }
     }

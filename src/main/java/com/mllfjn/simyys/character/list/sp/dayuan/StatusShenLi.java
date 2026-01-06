@@ -36,7 +36,7 @@ class StatusShenLi extends Status implements AttributeModifier, Displayable {
     }
 
     @Override
-    public String getText() {
+    public String getDisplayText() {
         return "神力" + stack;
     }
 }

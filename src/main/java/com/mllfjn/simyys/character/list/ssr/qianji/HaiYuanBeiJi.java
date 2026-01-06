@@ -142,7 +142,7 @@ class StatusChaoSheng extends Status implements Displayable, IgnoreDebuff {
 
 
     @Override
-    public String getText() {
+    public String getDisplayText() {
         return StatusName + stack;
     }
 }
@@ -178,7 +178,7 @@ class StatusQianJiZengShang extends Status implements AttributeModifier, Display
     }
 
     @Override
-    public String getText() {
+    public String getDisplayText() {
         return "金剑" + stack;
     }
 }

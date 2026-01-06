@@ -100,7 +100,7 @@ public class TuZhiZhu extends YuHun implements YuHunUnfullMark {
         }
 
         @Override
-        public String getText() {
+        public String getDisplayText() {
             return "土" + getCount();
         }
 

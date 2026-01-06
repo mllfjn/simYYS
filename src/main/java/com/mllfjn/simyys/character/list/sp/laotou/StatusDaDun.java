@@ -22,7 +22,7 @@ public class StatusDaDun extends StatusSleep implements Displayable {
     }
 
     @Override
-    public String getText() {
+    public String getDisplayText() {
         return StatusName;
     }
 

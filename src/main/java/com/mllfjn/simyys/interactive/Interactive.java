@@ -11,6 +11,7 @@ import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
 import com.mllfjn.simyys.character.status.triggerParam.ParamCauseAttack;
 import com.mllfjn.simyys.character.yuhun.YuHunAttack;
 import com.mllfjn.simyys.character.yuhun.YuHunHitFeedBack;
+import com.mllfjn.simyys.character.yuhun.list.ZhenZhu;
 import com.mllfjn.simyys.customnode.CustomText;
 import com.mllfjn.simyys.customnode.TextFlowLog;
 import com.mllfjn.simyys.ratecontroller.RateController;
@@ -158,7 +159,7 @@ public class Interactive {
 
         // 防御
         if (interactiveInfo.isCalDefence()) {
-            double realDefense = target.getDefence() - owner.getIgnoreDefense();
+            double realDefense = Math.max(0, target.getDefence() - owner.getIgnoreDefense());
             traceableNumber.mul(300.0 / (300 + realDefense), "防御");
         }
 
@@ -291,6 +292,12 @@ public class Interactive {
         if (interactiveInfo.isCrit()) {
             traceableNumber.mul(owner.getCritPower() * 0.01, "爆伤");
         }
+
+        owner.forEachYuHun(yuHun -> {
+            if (yuHun instanceof ZhenZhu zz) {
+                zz.doInteractive(target, traceableNumber);
+            }
+        });
 
         target.beHeal(interactiveInfo);
 

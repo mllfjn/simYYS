@@ -19,7 +19,7 @@ public class StatusDiaoLing extends Status implements Displayable, AttributeModi
     }
 
     @Override
-    public String getText() {
+    public String getDisplayText() {
         return text + getDuration();
     }
 

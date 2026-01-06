@@ -39,7 +39,7 @@ public class StatusYuHunTransfer extends Status implements Displayable {
     }
 
     @Override
-    public String getText() {
+    public String getDisplayText() {
         return "转移御魂";
     }
 }

@@ -67,7 +67,7 @@ class Skill2 extends Skill {
         }
 
         @Override
-        public String getText() {
+        public String getDisplayText() {
             return StatusName + getDuration();
         }
 
@@ -94,7 +94,7 @@ class Skill2 extends Skill {
         }
 
         @Override
-        public String getText() {
+        public String getDisplayText() {
             return StatusName + getDuration();
         }
 
@@ -113,7 +113,7 @@ class Skill2 extends Skill {
         }
 
         @Override
-        public String getText() {
+        public String getDisplayText() {
             return StatusName + getDuration();
         }
 
@@ -149,7 +149,7 @@ class Skill2 extends Skill {
         }
 
         @Override
-        public String getText() {
+        public String getDisplayText() {
             return StatusName;
         }
     }
@@ -174,7 +174,7 @@ class Skill2 extends Skill {
         }
 
         @Override
-        public String getText() {
+        public String getDisplayText() {
             return StatusName;
         }
     }

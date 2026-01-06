@@ -108,7 +108,7 @@ class SkillNingShi extends Skill {
         }
 
         @Override
-        public String getText() {
+        public String getDisplayText() {
             return SkillName + selfDuration;
         }
 
@@ -120,7 +120,7 @@ class SkillNingShi extends Skill {
             }
 
             @Override
-            public String getText() {
+            public String getDisplayText() {
                 return "红凝";
             }
         }

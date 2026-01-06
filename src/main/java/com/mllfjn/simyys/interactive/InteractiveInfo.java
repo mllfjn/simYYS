@@ -75,11 +75,15 @@ public class InteractiveInfo {
     }
 
     // 传导伤害:不会暴击,不触发御魂TODO薙魂
+    // 没写，但是不吃防御、增伤、易伤
     public static InteractiveInfo createChuanDaoAttack(Character attacker, Skill skill, Character target
             , BiFunction<Character, Character, Double> basicNumber) {
         InteractiveInfo interactiveInfo = new InteractiveInfo(attacker, skill, target, basicNumber);
 
         interactiveInfo.canCrit = false;
+        interactiveInfo.calDefence = false;
+        interactiveInfo.calZengShang = false;
+        interactiveInfo.calYiShang = false;
         return interactiveInfo;
     }
 

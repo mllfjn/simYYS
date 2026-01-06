@@ -4,18 +4,13 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.interactive.InteractiveInfo;
 import com.mllfjn.simyys.interactive.TraceableNumber;
 
-public class StatusShield extends Status implements Displayable {
+public class StatusShield extends Status {
     public static final String StatusName = "护盾";
     private double shield;
 
     public StatusShield(Character from, Character belongTo, double shield) {
         super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
         this.shield = shield;
-    }
-
-    @Override
-    public String getText() {
-        return StatusName;
     }
 
     /**

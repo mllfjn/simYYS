@@ -47,7 +47,7 @@ class Skill1 extends Skill1PuGongBase {
         }
 
         @Override
-        public String getText() {
+        public String getDisplayText() {
             return StatusName + getDuration();
         }
     }

@@ -81,8 +81,7 @@ public class CharacterIcon extends VBox {
     // 技能选择栏
     private final ComboBox<Skill> skillBox;
     // 状态显示
-    // TODO UI决定是否显示，难点在于头像对齐，上下贴在头像旁 可以让所有角色同时不显示
-    // TODO 发生改变时标出来
+    // TODO UI决定是否显示
     private final MemoryLabel[] info = new MemoryLabel[9];
     // 红绿标的那个标
     private final HBox autoTo;
@@ -129,8 +128,8 @@ public class CharacterIcon extends VBox {
         status.setMaxWidth(MAX_WIDTH);
         status.setFont(Font.font(10));
         status.setWrapText(true);
-        status.setMaxHeight(30);
-        status.setPrefHeight(30);
+        status.setMaxHeight(50);
+        status.setPrefHeight(50);
 
         // 红绿标
         autoTo = new HBox();
@@ -234,7 +233,7 @@ public class CharacterIcon extends VBox {
         StringJoiner sj = new StringJoiner(Displayable.DELIMITER);
         for (Status status : character.getStatuses()) {
             if (status instanceof Displayable d) {
-                String text = d.getText();
+                String text = d.getDisplayText();
                 if (text != null) {
                     sj.add(text);
                 }
@@ -251,17 +250,14 @@ public class CharacterIcon extends VBox {
 
     private void refreshShieldBar() {
         double shield = 0;
-        double maxHp = character.getMaxHp();
         for (Status status : character.getStatuses()) {
             if (status instanceof StatusShield ss) {
                 shield += ss.getShield();
-                if (shield >= maxHp) {
-                    break;
-                }
             }
         }
         if (shield > 0) {
-            shieldBar.setProgress(shield / maxHp);
+            shieldBar.setTooltip(new Tooltip(DecimalFormatUtil.df_0_2.format(shield)));
+            shieldBar.setProgress(shield / character.getMaxHp());
             shieldBar.setVisible(true);
         } else {
             shieldBar.setVisible(false);

@@ -27,7 +27,7 @@ public class StatusDuoHua extends Status implements Displayable, StatusRunnable,
     }
 
     @Override
-    public String getText() {
+    public String getDisplayText() {
         return "堕化";
     }
 

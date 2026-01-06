@@ -79,7 +79,7 @@ public class StatusSheShen extends Status implements IgnoreChangeMaxHp, IgnoreDe
     }
 
     @Override
-    public String getText() {
+    public String getDisplayText() {
         return text;
     }
 

@@ -42,7 +42,7 @@ public class HuangKuLou extends YuHun implements YuHunUnfullMark, YuHunAttack, Y
         }
 
         @Override
-        public String getText() {
+        public String getDisplayText() {
             return HuangKuLou.YuHunName;
         }
     }

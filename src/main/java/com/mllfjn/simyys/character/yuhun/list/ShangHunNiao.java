@@ -73,7 +73,7 @@ public class ShangHunNiao extends YuHun implements YuHunSealResponse {
         }
 
         @Override
-        public String getText() {
+        public String getDisplayText() {
             return "伤" + stack;
         }
     }

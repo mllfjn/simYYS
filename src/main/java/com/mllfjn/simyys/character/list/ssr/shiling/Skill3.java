@@ -90,7 +90,7 @@ class Skill3 extends Skill {
         }
 
         @Override
-        public String getText() {
+        public String getDisplayText() {
             return StatusName;
         }
 
@@ -239,7 +239,7 @@ class Skill3 extends Skill {
         }
 
         @Override
-        public String getText() {
+        public String getDisplayText() {
             return StatusName + round;
         }
     }

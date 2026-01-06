@@ -75,7 +75,7 @@ public class CaoRen extends Character {
         private static final Skill skill = Skill.getInstance(CharacterName);
 
         @Override
-        public String getText() {
+        public String getDisplayText() {
             return "剩余回合" + getDuration();
         }
 

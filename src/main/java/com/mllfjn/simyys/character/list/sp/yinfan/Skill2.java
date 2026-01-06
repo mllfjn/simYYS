@@ -170,7 +170,7 @@ class Skill2 extends Skill {
         }
 
         @Override
-        public String getText() {
+        public String getDisplayText() {
             return StatusName + stack;
         }
 
@@ -253,11 +253,6 @@ class Skill2 extends Skill {
                 }
 
                 character.addStatus(new StatusYuanLiShield(character, character.getMaxHp() * 0.12));
-            }
-
-            @Override
-            public String getText() {
-                return null;
             }
         }
     }

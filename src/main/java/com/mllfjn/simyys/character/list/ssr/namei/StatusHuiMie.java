@@ -34,7 +34,7 @@ public class StatusHuiMie extends Status implements Displayable, StatusRunnable,
     }
 
     @Override
-    public String getText() {
+    public String getDisplayText() {
         StringBuilder sb = new StringBuilder();
         // 毁灭6
         sb.append(text).append(stack);

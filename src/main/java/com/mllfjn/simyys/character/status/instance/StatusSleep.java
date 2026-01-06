@@ -19,7 +19,7 @@ public class StatusSleep extends Status implements Displayable, CrowdControl, St
     }
 
     @Override
-    public String getText() {
+    public String getDisplayText() {
         return "沉睡" + getDuration();
     }
 
