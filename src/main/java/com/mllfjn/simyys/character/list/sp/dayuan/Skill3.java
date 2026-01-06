@@ -3,6 +3,7 @@ package com.mllfjn.simyys.character.list.sp.dayuan;
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.list.ssr.beimihu.StatusShiZhiXi;
 import com.mllfjn.simyys.character.propertygetter.FlagChangeInfo;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
@@ -95,7 +96,9 @@ class Skill3 extends Skill {
         }
 
         // lv5 - 若治疗暴击,则额外提升该目标暴击伤害 **必须在治疗目标之后,治疗其他队友之前**
-        if (daYuan.isInRound() && level >= 5 && healInteractiveInfo.isCrit()) {
+        // 特例：大缘三技能在时之隙使用时不会转移爆伤效果
+        //      猜测是检测已经存在加爆伤状态了,但这里简化一下直接检测时之隙
+        if (level >= 5 && healInteractiveInfo.isCrit() && !daYuan.isHaveStatus(StatusShiZhiXi.class)) {
             target.addStatus(new StatusCritPower(daYuan, target));
         }
 

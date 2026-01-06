@@ -18,7 +18,8 @@ class RateControlDialog extends Stage {
     private final RateCalc calc;
     private final Label rateLabel = new Label("当前概率：100.00%");
 
-    public <T> RateControlDialog(String title, String event, List<T> list, Function<T, String> stringGetter, double[] rates, Boolean[] result, int count, RateCalc calc) {
+    public <T> RateControlDialog(String title, String event, List<T> list, Function<T, String> stringGetter
+            , double[] rates, Boolean[] result, int count, RateCalc calc) {
         super();
         this.result = result;
         this.calc = calc;
@@ -32,7 +33,8 @@ class RateControlDialog extends Stage {
         int j = 0;
         for (int i = 0; i < result.length; i++) {
             if (result[i] == null) {
-                selectors[j] = new ReturnSelector(root, j, stringGetter.apply(list.get(i)), rates[i], event, this::countCurrentRate);
+                selectors[j] = new ReturnSelector(root, j, stringGetter.apply(list.get(i)), rates[i]
+                        , event, this::countCurrentRate);
                 j++;
             }
         }

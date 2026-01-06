@@ -90,7 +90,8 @@ public class Interactive {
             interactiveInfos[i] = interactiveInfo;
         }
 
-        RateController.baoJi(skill.getName(), owner, bp.calc, targets, interactiveInfos);
+        RateController.baoJi(skill.getName(), owner, bp.calc
+                , (target) -> owner.getCritRate() / target.getCritResist(), targets, interactiveInfos);
 
         for (int i = 0; i < targets.size(); i++) {
             attack(interactiveInfos[i], attackType);
@@ -114,7 +115,8 @@ public class Interactive {
             interactiveInfos[i] = attackInfoGetter.apply(targets.get(i));
         }
 
-        RateController.baoJi(skill.getName(), owner, bp.calc, targets, interactiveInfos);
+        RateController.baoJi(skill.getName(), owner, bp.calc
+                , (target) -> owner.getCritRate() / target.getCritResist(), targets, interactiveInfos);
 
         for (int i = 0; i < targets.size(); i++) {
             attack(interactiveInfos[i], attackType);
@@ -125,6 +127,7 @@ public class Interactive {
     public void attack(InteractiveInfo interactiveInfo, AttackType attackType) {
         if (interactiveInfo.canCrit() && !interactiveInfo.isCrit()) {
             RateController.baoJi(interactiveInfo.getSkill().getName(), owner, bp.calc
+                    , (target) -> owner.getCritRate() / target.getCritResist()
                     , List.of(interactiveInfo.getTarget()), interactiveInfo);
         }
         attackBase(interactiveInfo, attackType);
@@ -240,7 +243,8 @@ public class Interactive {
             interactiveInfos[i] = InteractiveInfo.createTypicalHeal(owner, skill, targets.get(i), multiplier);
         }
 
-        RateController.baoJi(skill.getName(), owner, bp.calc, targets, interactiveInfos);
+        RateController.baoJi(skill.getName(), owner, bp.calc
+                , (c) -> owner.getCritRate(), targets, interactiveInfos);
 
         for (int i = 0; i < targets.size(); i++) {
             heal(targets.get(i), interactiveInfos[i]);

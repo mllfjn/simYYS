@@ -12,6 +12,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class RateController implements Serializable {
     public static final Random random = new Random();
@@ -23,12 +24,12 @@ public class RateController implements Serializable {
      * @param targets       目标
      * @param stringGetter  获取目标文本
      * @param calc          总概率计算器
-     * @param controlGetter 概率控制获取
+     * @param controlSupplier 概率控制获取
      * @param rateGetter    获取概率
      * @param resultHandler 结果处理
      */
     public static <T> void whetherOrNot(String title, String event, List<T> targets
-            , Function<T, String> stringGetter, RateCalc calc, Function<RateCalc, Boolean> controlGetter
+            , Function<T, String> stringGetter, RateCalc calc, Supplier<Boolean> controlSupplier
             , Function<T, Double> rateGetter, BiConsumer<Integer, Boolean> resultHandler) {
         // 首先根据传入的getter算法计算出每个的概率
         // 其中<=0的,直接算false, >=100的直接算true
@@ -47,7 +48,7 @@ public class RateController implements Serializable {
             } else if (rates[i] >= 100) {
                 returns[i] = true;
             } else {
-                if (controlGetter.apply(calc)) {
+                if (controlSupplier.get()) {
                     count++;
                 }
             }
@@ -65,7 +66,7 @@ public class RateController implements Serializable {
         }
     }
 
-    public static void baoJi(String skillName, Character owner, RateCalc calc
+    public static void baoJi(String skillName, Character owner, RateCalc calc, Function<Character, Double> rateGetter
             , List<Character> targets, InteractiveInfo... interactiveInfos) {
         List<Character> list = new ArrayList<>();
         for (int i = 0; i < targets.size(); i++) {
@@ -75,7 +76,7 @@ public class RateController implements Serializable {
         }
 
         whetherOrNot("暴击控制：" + owner.name + "-" + skillName, "暴击", list, Character::getName
-                , calc, RateCalc::isControlCrit, target -> owner.getCritRate() / target.getCritResist()
+                , calc, calc::isControlCrit, rateGetter
                 , (i, crit) -> interactiveInfos[i].setCrit(crit));
     }
 
@@ -83,7 +84,7 @@ public class RateController implements Serializable {
             , BiFunction<Character, Character, Status> statusSupplier, int baseRate, boolean calHit, RateCalc calc) {
         EffectInfo[] infos = new EffectInfo[targets.size()];
         whetherOrNot("命中控制：" + owner.name + "-" + statusName, "命中"
-                , targets, Character::getName, calc, RateCalc::isControlEffectHit
+                , targets, Character::getName, calc, calc::isControlEffectHit
                 , character -> {
                     if (calHit) {
                         return baseRate * (100 + owner.getEffectHitRate()) / (100 + character.getEffectResistRate());
@@ -106,7 +107,7 @@ public class RateController implements Serializable {
 
         AtomicBoolean result = new AtomicBoolean();
         whetherOrNot("协战控制：" + owner.name, "协战", List.of("协战")
-                , s -> s, calc, RateCalc::isControlXieZhan, item -> rate
+                , s -> s, calc, calc::isControlXieZhan, item -> rate
                 , (i, x) -> result.set(x));
 
         return result.get();
