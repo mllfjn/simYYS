@@ -10,16 +10,19 @@ public class StatusDaYuanShield extends StatusShield {
         setDurationType(StatusDurationType.CHI_XU, 2);
     }
 
-    private void refresh() {
-        setShield(from.getMaxHp() * 0.08);
+    private void refresh(boolean isCrit) {
+        double base = from.getMaxHp() * 0.08;
+        if (isCrit) {
+            base *= from.getCritPower();
+        }
+        setShield(base);
         setDuration(2);
     }
 
-    public static void install(Character daYuan, Character target) {
-        if (target.getHp() == target.getMaxHp()) {
-            target.getStatus(StatusDaYuanShield.class)
-                    .ifPresentOrElse(StatusDaYuanShield::refresh
-                            , () -> target.addStatus(new StatusDaYuanShield(daYuan, target)));
-        }
+    public static void install(Character daYuan, Character target, boolean isCrit) {
+        target.getStatus(StatusDaYuanShield.class)
+                .ifPresentOrElse((status) -> status.refresh(isCrit)
+                        , () -> target.addStatus(new StatusDaYuanShield(daYuan, target)));
+
     }
 }

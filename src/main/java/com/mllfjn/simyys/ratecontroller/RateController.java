@@ -67,17 +67,30 @@ public class RateController implements Serializable {
     }
 
     public static void baoJi(String skillName, Character owner, RateCalc calc, Function<Character, Double> rateGetter
-            , List<Character> targets, InteractiveInfo... interactiveInfos) {
-        List<Character> list = new ArrayList<>();
+            , List<Character> targets, InteractiveInfo[] interactiveInfos) {
+        List<Character> tbdTargetList = new ArrayList<>();
+        List<InteractiveInfo> tbdInteractiveInfoList = new ArrayList<>();
+
         for (int i = 0; i < targets.size(); i++) {
             if (interactiveInfos[i].canCrit() && interactiveInfos[i].getCrit() == null) {
-                list.add(targets.get(i));
+                tbdTargetList.add(targets.get(i));
+                tbdInteractiveInfoList.add(interactiveInfos[i]);
             }
         }
 
-        whetherOrNot("暴击控制：" + owner.name + "-" + skillName, "暴击", list, Character::getName
+        whetherOrNot("暴击控制：" + owner.name + "-" + skillName, "暴击", tbdTargetList, Character::getName
                 , calc, calc::isControlCrit, rateGetter
-                , (i, crit) -> interactiveInfos[i].setCrit(crit));
+                , (i, crit) -> tbdInteractiveInfoList.get(i).setCrit(crit));
+    }
+
+    public static boolean[] baoJi(String skillName, Character owner, RateCalc calc
+            , Function<Character, Double> rateGetter, List<Character> targets) {
+        boolean[] results = new boolean[targets.size()];
+
+        whetherOrNot("暴击控制：" + owner.name + "-" + skillName, "暴击", targets, Character::getName
+                , calc, calc::isControlCrit, rateGetter, (i, crit) -> results[i] = crit);
+
+        return results;
     }
 
     public static EffectInfo[] mingZhong(Skill skill, String statusName, Character owner, List<Character> targets

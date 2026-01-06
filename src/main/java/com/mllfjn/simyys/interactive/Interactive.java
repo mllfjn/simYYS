@@ -128,7 +128,7 @@ public class Interactive {
         if (interactiveInfo.canCrit() && !interactiveInfo.isCrit()) {
             RateController.baoJi(interactiveInfo.getSkill().getName(), owner, bp.calc
                     , (target) -> owner.getCritRate() / target.getCritResist()
-                    , List.of(interactiveInfo.getTarget()), interactiveInfo);
+                    , List.of(interactiveInfo.getTarget()), new InteractiveInfo[]{interactiveInfo});
         }
         attackBase(interactiveInfo, attackType);
     }

@@ -13,6 +13,7 @@ import com.mllfjn.simyys.interactive.InteractiveInfo;
 import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.ratecontroller.RateController;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -117,16 +118,31 @@ class Skill3 extends Skill {
 
     private InteractiveInfo heal(Interactive interactive, Character target) {
         // lv4-若治疗时目标生命为100%，则治疗时额外施加生命上限8%的护盾，判断是否满血的逻辑在install方法内部
-        if (getLevel() >= 4) {
-            StatusDaYuanShield.install(getBelongTo(), target);
+        if (getLevel() >= 4 && target.getHp() == target.getMaxHp()) {
+            Character belongTo = getBelongTo();
+            StatusDaYuanShield.install(belongTo, target
+                    , RateController.baoJi(SkillName, belongTo, belongTo.bp.calc
+                            , (c) -> belongTo.getCritRate(), List.of(target))[0]);
         }
         return interactive.healTypical(this, target, 8);
     }
 
     private void heal(Interactive interactive, List<Character> targets) {
         if (getLevel() >= 4) {
+            List<Character> fullHealth = new ArrayList<>();
             for (Character target : targets) {
-                StatusDaYuanShield.install(getBelongTo(), target);
+                if (target.getHp() == target.getMaxHp()) {
+                    fullHealth.add(target);
+                }
+            }
+
+            if (!fullHealth.isEmpty()) {
+                Character belongTo = getBelongTo();
+                boolean[] results = RateController.baoJi(SkillName, belongTo, belongTo.bp.calc
+                        , (c) -> belongTo.getCritRate(), fullHealth);
+                for (int i = 0; i < fullHealth.size(); i++) {
+                    StatusDaYuanShield.install(belongTo, fullHealth.get(i), results[i]);
+                }
             }
         }
         interactive.healTypical(this, targets, 8);
