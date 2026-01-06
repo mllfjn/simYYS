@@ -61,7 +61,11 @@ class Skill3 extends Skill {
                 } else {
                     RateController.whetherOrNot(SkillName, "向" + target + "转移御魂", List.of("转移")
                             , item -> item, bp.calc, RateCalc::isControlWhetherOther, item -> 50.0
-                            , (s, aBoolean) -> {if (aBoolean) doTransfer(target, yuHun);});
+                            , (s, aBoolean) -> {
+                                if (aBoolean) {
+                                    doTransfer(target, yuHun);
+                                }
+                            });
                 }
             });
         });

@@ -95,7 +95,7 @@ class Skill3 extends Skill {
         }
 
         // lv5 - 若治疗暴击,则额外提升该目标暴击伤害 **必须在治疗目标之后,治疗其他队友之前**
-        if (level >= 5 && healInteractiveInfo.isCrit()) {
+        if (daYuan.isInRound() && level >= 5 && healInteractiveInfo.isCrit()) {
             target.addStatus(new StatusCritPower(daYuan, target));
         }
 
@@ -117,7 +117,7 @@ class Skill3 extends Skill {
         if (getLevel() >= 4) {
             StatusDaYuanShield.install(getBelongTo(), target);
         }
-        return interactive.heal(this, target, 8);
+        return interactive.healTypical(this, target, 8);
     }
 
     private void heal(Interactive interactive, List<Character> targets) {
@@ -126,7 +126,7 @@ class Skill3 extends Skill {
                 StatusDaYuanShield.install(getBelongTo(), target);
             }
         }
-        interactive.heal(this, targets, 8);
+        interactive.healTypical(this, targets, 8);
     }
 
     static class StatusCritPower extends Status implements AttributeModifier {

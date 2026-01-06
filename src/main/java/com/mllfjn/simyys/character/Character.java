@@ -363,7 +363,7 @@ public abstract class Character implements Serializable {
     }
 
     public void beforeRound() {
-        // 如果没有时之隙但是时之辉,转化成时之隙
+        // 如果没有时之隙但是有时之辉,转化成时之隙
         // 需要在"行动前生效"的状态和维持类过回合之前判定
         Optional<StatusShiZhiHui> oStatus = getStatus(StatusShiZhiHui.class);
         if (oStatus.isPresent()) {
@@ -438,7 +438,7 @@ public abstract class Character implements Serializable {
 
         // 非怪物或者召唤物推进鬼火条
         if (!isMob() && !isSummon) {
-            bp.addProgress(this.team);
+            bp.addGuiHuoProgress(this.team);
         }
 
         // 行动后触发状态

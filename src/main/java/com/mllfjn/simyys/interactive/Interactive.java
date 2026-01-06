@@ -11,7 +11,6 @@ import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
 import com.mllfjn.simyys.character.status.triggerParam.ParamCauseAttack;
 import com.mllfjn.simyys.character.yuhun.YuHunAttack;
 import com.mllfjn.simyys.character.yuhun.YuHunHitFeedBack;
-import com.mllfjn.simyys.character.yuhun.list.DiZhenNian;
 import com.mllfjn.simyys.customnode.CustomText;
 import com.mllfjn.simyys.customnode.TextFlowLog;
 import com.mllfjn.simyys.ratecontroller.RateController;
@@ -83,6 +82,7 @@ public class Interactive {
         currentNumberLog.get(character).add(text);
     }
 
+    // 普攻的对群体伤害
     public InteractiveInfo[] attackTypical(Skill skill, List<Character> targets, int multiplier, AttackType attackType) {
         InteractiveInfo[] interactiveInfos = new InteractiveInfo[targets.size()];
         for (int i = 0; i < targets.size(); i++) {
@@ -99,12 +99,14 @@ public class Interactive {
         return interactiveInfos;
     }
 
+    // 普通的对单体伤害
     public InteractiveInfo attackTypical(Skill skill, Character target, int multiplier, AttackType attackType) {
         InteractiveInfo interactiveInfo = InteractiveInfo.createTypicalAttack(owner, skill, target, multiplier);
         attack(interactiveInfo, attackType);
         return interactiveInfo;
     }
 
+    // 对群体伤害,需要指定InteractiveInfo
     public void attack(Skill skill, List<Character> targets, AttackType attackType
             , Function<Character, InteractiveInfo> attackInfoGetter) {
         InteractiveInfo[] interactiveInfos = new InteractiveInfo[targets.size()];
@@ -119,6 +121,7 @@ public class Interactive {
         }
     }
 
+    // 对单体伤害,需要指定InteractiveInfo
     public void attack(InteractiveInfo interactiveInfo, AttackType attackType) {
         if (interactiveInfo.canCrit() && !interactiveInfo.isCrit()) {
             RateController.baoJi(interactiveInfo.getSkill().getName(), owner, bp.calc
@@ -227,14 +230,11 @@ public class Interactive {
         }
     }
 
-    public InteractiveInfo heal(Skill skill, Character target, int multiplier) {
-        InteractiveInfo interactiveInfo = InteractiveInfo.createTypicalHeal(owner, skill, target, multiplier);
-        RateController.baoJi(skill.getName(), owner, bp.calc, List.of(target), interactiveInfo);
-
-        return heal(target, interactiveInfo);
+    public InteractiveInfo healTypical(Skill skill, Character target, int multiplier) {
+        return healTypical(skill, List.of(target), multiplier)[0];
     }
 
-    public void heal(Skill skill, List<Character> targets, int multiplier) {
+    public InteractiveInfo[] healTypical(Skill skill, List<Character> targets, int multiplier) {
         InteractiveInfo[] interactiveInfos = new InteractiveInfo[targets.size()];
         for (int i = 0; i < targets.size(); i++) {
             interactiveInfos[i] = InteractiveInfo.createTypicalHeal(owner, skill, targets.get(i), multiplier);
@@ -246,11 +246,17 @@ public class Interactive {
             heal(targets.get(i), interactiveInfos[i]);
         }
 
+        return interactiveInfos;
     }
 
-    private InteractiveInfo heal(Character target, InteractiveInfo interactiveInfo) {
+    public void heal(Skill skill, List<Character> targets
+            , Function<Character, InteractiveInfo> interactiveInfoSupplier) {
+
+    }
+
+    private void heal(Character target, InteractiveInfo interactiveInfo) {
         if (!target.alive) {
-            return null;
+            return;
         }
 
         TraceableNumber traceableNumber = interactiveInfo.getTraceableNumber();
@@ -269,7 +275,6 @@ public class Interactive {
                 , traceableNumber.getTrace()
                 , type, TextFlowLog.TextColor.HEAL, size));
 
-        return interactiveInfo;
     }
 
     public void recovery(Skill skill, Character target, double num) {

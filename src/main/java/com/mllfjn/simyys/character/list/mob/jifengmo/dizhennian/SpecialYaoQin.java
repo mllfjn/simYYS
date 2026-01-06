@@ -18,7 +18,7 @@ class SpecialYaoQin extends YaoQin {
         this.bp = bp;
         this.team = team;
 
-        this.setMaxHp(1, true);
+        this.setMaxHp(100, true);
         this.setInitBaseAttack(3483);
         this.setInitSpeed(100);
 

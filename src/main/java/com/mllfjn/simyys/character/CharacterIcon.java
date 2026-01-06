@@ -31,7 +31,7 @@ import java.util.Optional;
 import java.util.StringJoiner;
 
 public class CharacterIcon extends VBox {
-    public static final double MAX_WIDTH = CharacterFactory.ImageSize.LARGE.size * 1.1;
+    public static final double MAX_WIDTH = CharacterFactory.ImageSize.CHARACTER_ICON_IMAGE.size * 1.1;
     private static final Callback<ListView<Skill>, ListCell<Skill>> skillCellFactory = new Callback<>() {
         @Override
         public ListCell<Skill> call(ListView<Skill> skillListView) {
@@ -104,7 +104,7 @@ public class CharacterIcon extends VBox {
         this.setAlignment(Pos.BOTTOM_CENTER);
 
         // 头像
-        Node image = CharacterFactory.getImageWithStroke(character.name, CharacterFactory.ImageSize.LARGE, Color.ORANGE, 5);
+        Node image = CharacterFactory.getImageWithStroke(character.name, CharacterFactory.ImageSize.CHARACTER_ICON_IMAGE, Color.ORANGE, 5);
         image.setOnMouseClicked(this::onMouseClicked);
         StackPane icon = new StackPane(image);
         icon.setAlignment(Pos.CENTER);

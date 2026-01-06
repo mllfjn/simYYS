@@ -19,7 +19,7 @@ public class ShangHunNiao extends YuHun implements YuHunSealResponse {
             if (event instanceof EventCharacterDie ed && !ed.getCharacter().isMob()) {
                 Character belongTo = getBelongTo();
                 belongTo.doInteractive(
-                        interactive -> interactive.heal(Skill.getInstance(YuHunName), belongTo, 20));
+                        interactive -> interactive.healTypical(Skill.getInstance(YuHunName), belongTo, 20));
                 // 并提升20%伤害
                 StatusShangHunNiao.addStack(belongTo);
 

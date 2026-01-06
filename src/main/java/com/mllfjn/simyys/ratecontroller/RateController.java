@@ -75,7 +75,7 @@ public class RateController implements Serializable {
         }
 
         whetherOrNot("暴击控制：" + owner.name + "-" + skillName, "暴击", list, Character::getName
-                , calc, RateCalc::isControlCrit, character -> owner.getCritRate()
+                , calc, RateCalc::isControlCrit, target -> owner.getCritRate() / target.getCritResist()
                 , (i, crit) -> interactiveInfos[i].setCrit(crit));
     }
 

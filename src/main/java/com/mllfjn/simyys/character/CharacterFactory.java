@@ -118,7 +118,7 @@ public class CharacterFactory {
     }
 
     public enum ImageSize {
-        LARGE(130),
+        CHARACTER_ICON_IMAGE(110),
         BIG(110),
         SMALL(70),
         LABEL(35);

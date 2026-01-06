@@ -152,7 +152,7 @@ public class BattlePane {
         return situation.teamPane[character.team].getGuiHuoCount();
     }
 
-    public void addProgress(int team) {
+    public void addGuiHuoProgress(int team) {
         situation.addProgress(team);
     }
 
@@ -394,24 +394,27 @@ public class BattlePane {
     private void getNextActor() {
         // 如果有时之隙新回合,先时之隙,否则看一般获得新回合,最后跑条
         Optional<Character> oCharacter = situation.sZXNewRoundCharacter();
-        situation.characterActing = oCharacter.orElseGet(() -> situation.newRoundCharacter().orElseGet(() -> {
-            List<Character> characters = situation.characters;
-            Character c = characters.get(0);
-            for (Character character : characters) {
-                if (character.before(c)) {
-                    c = character;
+        situation.characterActing = oCharacter.orElseGet(() -> {
+            Character newRoundCharacter = situation.newRoundCharacter().orElseGet(() -> {
+                List<Character> characters = situation.characters;
+                Character c = characters.get(0);
+                for (Character character : characters) {
+                    if (character.before(c)) {
+                        c = character;
+                    }
                 }
-            }
-            for (Character character : characters) {
-                if (character != c) {
-                    character.setLocation(character.getLocation() + character.getSpeed() * c.getTTA());
+                for (Character character : characters) {
+                    if (character != c) {
+                        character.setLocation(character.getLocation() + character.getSpeed() * c.getTTA());
+                    }
                 }
-            }
 
-            c.setLocation(0);
-            c.beforeRound();
-            return c;
-        }));
+                return c;
+            });
+            newRoundCharacter.setLocation(0);
+            newRoundCharacter.beforeRound();
+            return newRoundCharacter;
+        });
         situation.characterActing.timesToAct++;
     }
 
