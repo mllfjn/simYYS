@@ -348,13 +348,12 @@ public class BattlePane {
                 Utils.throwException("恢复时出错", e);
                 return;
             }
+            info.getChildren().remove(0, info.getChildren().size() - 1);
             calc.setCurrentRate(situation.getCurrentRate());
-            reloadTeamPane();
             situation.reset(this);
+            reloadTeamPane();
             repaint();
             log.prev();
-
-            info.getChildren().remove(0, info.getChildren().size() - 1);
         }
 
     }

@@ -39,6 +39,8 @@ public class HouZi extends Character {
                 character.addStatus(new StatusIncreaseActionListener(this, character));
             }
         });
+
+        addStatus(new StatusDamageRecord(this));
     }
 
     public Character getOwner() {
@@ -152,7 +154,7 @@ public class HouZi extends Character {
             if (param instanceof ParamAfterAttack paa) {
                 double number = paa.interactiveInfo.getTraceableNumber().getNumber();
                 damage += number;
-                ((DiZhenNian) ((HouZi) belongTo).owner).display.addDamage(damage);
+                ((DiZhenNian) ((HouZi) belongTo).owner).display.addDamage(number);
             }
             return false;
         }
