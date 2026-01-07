@@ -175,6 +175,10 @@ public abstract class Character implements Serializable {
         return AttributeCounter.getAttribute(Attribute.ZENG_SHANG, 0, getStatuses());
     }
 
+    public double getJianShang() {
+        return AttributeCounter.getAttribute(Attribute.JIAN_SHANG, 0, getStatuses());
+    }
+
     public double getYiShang() {
         // 易伤系数b=1+x(当x>0)
         // b=1/(1-x)(当x<0)

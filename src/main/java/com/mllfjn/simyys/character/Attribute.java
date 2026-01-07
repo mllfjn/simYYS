@@ -12,10 +12,9 @@ public enum Attribute {
     CRIT_POWER("爆伤", Character::getCritPower),
     EFFECT_HIT_RATE("命中", Character::getEffectHitRate),
     EFFECT_RESIST_RATE("抵抗", Character::getEffectResistRate),
-
     INIT_ATTACK("初始攻击", Character::getInitAttack),
-    ZENG_SHANG("增伤", Character::getZengShang), // 增伤
-    JIAN_SHANG("减伤", null),
+    ZENG_SHANG("增伤", Character::getZengShang),
+    JIAN_SHANG("减伤", Character::getJianShang),
     YI_SHANG("易伤", Character::getYiShang),
     MaxHP("最大生命值", Character::getMaxHp),
     IGNORE_DEFENCE("无视防御", Character::getIgnoreDefense),
