@@ -33,7 +33,7 @@ class Skill2Special extends Skill {
         shenShe.addStatus(new StatusZhongYan(shenShe));
         // 夺取阴阳师位进行接下来的战斗
         Character yys = new CharacterFinder(shenShe)
-                .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                .filterTeammate()
                 .filterYYS(true)
                 .getFirst();
         if (yys != null) {
@@ -49,7 +49,7 @@ class Skill2Special extends Skill {
         // 将剩余非召唤物的友方目标献祭为堕落之剑,并夺取其6%的初始攻击
         // 既然献祭之后立马就死而且不能复活,那就没必要减了直接加上就行
         List<Character> teammateShiShen = new CharacterFinder(shenShe)
-                .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                .filterTeammate()
                 .filterShiShen()
                 .filterSelf()
                 // 这里不知道为什么会青女房会例外,免疫减益的不止这一个啊

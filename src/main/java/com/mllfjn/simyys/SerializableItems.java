@@ -66,7 +66,9 @@ public class SerializableItems implements Serializable {
     }
 
     public void getNewRound(Character character) {
-        newRound.push(character);
+        if (!newRound.contains(character)) {
+            newRound.push(character);
+        }
     }
 
     public void addProgress(int team) {

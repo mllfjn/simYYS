@@ -1,5 +1,6 @@
 package com.mllfjn.simyys.character;
 
+import com.mllfjn.simyys.character.list.mob.multiplayer.InfoDisplay;
 import com.mllfjn.simyys.character.propertygetter.FlagChangeInfo;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.skill.Skill;
@@ -95,6 +96,9 @@ public class CharacterIcon extends VBox {
     private boolean isModifyingItems = false;
     // 可选,右键时触发其他事件,比如极逢魔的转阶段,须佐的天威
     private EventHandler<MouseEvent> eventHandler;
+    // 其他信息显示，比如极逢魔的伤害显示
+    private Label infoDisplayLabel;
+    private InfoDisplay infoDisplay;
 
     public CharacterIcon(Character character) {
         super();
@@ -222,6 +226,19 @@ public class CharacterIcon extends VBox {
         refreshSkillBox();
 
         healthBar.setProgress(character.getHp() / character.getMaxHp());
+
+        if (infoDisplay != null) {
+            infoDisplayLabel.setText(infoDisplay.getInfo());
+        }
+    }
+
+    public void setInfoDisplay(InfoDisplay infoDisplay) {
+        if (infoDisplay == null) {
+            return;
+        }
+        this.infoDisplay = infoDisplay;
+        infoDisplayLabel = character.bp.requestInfoDisplayLabel();
+        infoDisplayLabel.setText(infoDisplay.getInfo());
     }
 
     private void refreshSkillBox() {
@@ -349,8 +366,17 @@ public class CharacterIcon extends VBox {
         }
 
         private void setLabelText(double newNumber) {
-            label.setText(attribute.getText() + ":" + DecimalFormatUtil.df_0_2.format(newNumber)
-                    + "(" + DecimalFormatUtil.df_0_2.format(newNumber - num) + ")");
+            // 生命:1234(+234)
+
+            StringBuilder sb = new StringBuilder();
+            sb.append(attribute.getText()).append(":").append(DecimalFormatUtil.df_0_2.format(newNumber));
+            sb.append("(");
+            double difference = newNumber - num;
+            if (difference > 0) {
+                sb.append("+");
+            }
+            sb.append(DecimalFormatUtil.df_0_2.format(difference)).append(")");
+            label.setText(sb.toString());
         }
 
         private void setChanged(boolean changed) {

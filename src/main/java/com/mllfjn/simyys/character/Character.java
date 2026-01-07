@@ -2,6 +2,7 @@ package com.mllfjn.simyys.character;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.TeamPane;
+import com.mllfjn.simyys.character.list.mob.multiplayer.InfoDisplay;
 import com.mllfjn.simyys.character.list.sp.dayuan.StatusCombined;
 import com.mllfjn.simyys.character.list.sp.dayuan.StatusShengTian;
 import com.mllfjn.simyys.character.list.ssr.beimihu.StatusShiZhiHui;
@@ -624,6 +625,7 @@ public abstract class Character implements Serializable {
         if (characterIcon == null) {
             characterIcon = new CharacterIcon(this);
             characterIcon.setEventHandler(getEventHandler());
+            characterIcon.setInfoDisplay(getInfoDisplay());
         }
         return characterIcon;
     }
@@ -635,6 +637,10 @@ public abstract class Character implements Serializable {
     }
 
     protected EventHandler<MouseEvent> getEventHandler() {
+        return null;
+    }
+
+    protected InfoDisplay getInfoDisplay() {
         return null;
     }
 
@@ -798,7 +804,7 @@ public abstract class Character implements Serializable {
                 return false;
             }
         }
-        // 如果技能全都用不了,无法行动
+        /*// 如果技能全都用不了,无法行动
         boolean canUse = false;
         for (Skill skill : skills) {
             if (skill instanceof SkillAuto) {
@@ -809,7 +815,8 @@ public abstract class Character implements Serializable {
                 break;
             }
         }
-        return canUse;
+        return canUse;*/
+        return true;
     }
 
     public void statusRun(Trigger trigger, TriggerParam param) {

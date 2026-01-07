@@ -49,13 +49,15 @@ public class CharacterFinder {
         return this;
     }
 
-    public CharacterFinder setTargetTeam(TargetTeam targetTeam) {
-        this.targetTeam = targetTeam;
-        if (targetTeam == TargetTeam.TEAMMATE) {
-            stream = stream.filter(character -> character.team == owner.team);
-        } else {
-            stream = stream.filter(character -> character.team != owner.team);
-        }
+    public CharacterFinder filterTeammate() {
+        this.targetTeam = TargetTeam.TEAMMATE;
+        stream = stream.filter(character -> character.team == owner.team);
+        return this;
+    }
+
+    public CharacterFinder filterEnemy() {
+        this.targetTeam = TargetTeam.ENEMY;
+        stream = stream.filter(character -> character.team != owner.team);
         return this;
     }
 

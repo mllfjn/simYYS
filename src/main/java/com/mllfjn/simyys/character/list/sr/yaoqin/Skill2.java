@@ -38,7 +38,7 @@ class Skill2 extends Skill {
 
     protected Character newRound() {
         Character target = new CharacterFinder(getBelongTo())
-                .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                .filterTeammate()
                 .getAutoOrElseRandom();
 
         getBelongTo().getInteractive().getNewRound(target);
@@ -48,7 +48,7 @@ class Skill2 extends Skill {
 
     private void addYuYin() {
         List<Character> targets = new CharacterFinder(getBelongTo())
-                .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                .filterTeammate()
                 .getList();
 
         for (Character target : targets) {

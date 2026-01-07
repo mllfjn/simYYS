@@ -30,11 +30,11 @@ class Skill3 extends Skill {
         Interactive interactive = getBelongTo().getInteractive();
         // 目标首先为红标,其次是生命最高单位
         Character target = new CharacterFinder(getBelongTo())
-                .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
+                .filterEnemy()
                 .getPriorAuto(Attribute.HP, CharacterFinder.Criteria.MAX);
 
         List<Character> enemy = new CharacterFinder(getBelongTo())
-                .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
+                .filterEnemy()
                 .getList();
         // 没有测试是先上凋零还是先造成伤害,这里猜测是先凋零
 
@@ -71,17 +71,11 @@ class Skill3 extends Skill {
     }
 
     private void addDiaoLing(NaMei naMei, Interactive interactive, List<Character> list, boolean isMob) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(StatusDiaoLing.text);
-        if (isMob) {
-            sb.append("-对怪物释放");
-        }
-
         // 并有25%基础概率施加凋零,持续1回合
         // lv4-对怪物释放时,施加凋零的基础概率提升至80%
         // lv3-释放时,施加的凋零持续事件增至2回合
-        EffectInfo[] infos = interactive.effect(this, sb.toString(), list, isMob ? 80 : 25, true
-                , (from, to) -> new StatusDiaoLing(from, to, getLevel() >= 3 ? 2 : 1));
+        EffectInfo[] infos = interactive.effect(this, list, isMob ? 80 : 25, true,
+                StatusDiaoLing.getSupplier(getLevel() >= 3 ? 2 : 1));
 
         // lv2-凋零命中时施加沉沦,持续1回合
         if (getLevel() >= 2) {

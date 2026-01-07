@@ -38,18 +38,18 @@ class Skill3 extends Skill {
         Interactive interactive = belongTo.getInteractive();
 
         Character target = new CharacterFinder(belongTo)
-                .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
+                .filterEnemy()
                 .getPriorAuto(Attribute.HP, CharacterFinder.Criteria.MIN);
 
         List<Character> enemy = new CharacterFinder(belongTo)
-                .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
+                .filterEnemy()
                 .getList();
 
         // 对敌方全体造成攻击138%伤害
         interactive.attackTypical(this, enemy, 138, AttackType.QUN_TI);
 
         List<Character> carriers = new CharacterFinder(belongTo)
-                .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                .filterTeammate()
                 .filter(character -> character.isHaveStatus(StatusYuanYou.class))
                 .getList();
 

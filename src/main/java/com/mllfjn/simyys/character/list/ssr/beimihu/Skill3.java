@@ -38,7 +38,7 @@ class Skill3 extends Skill {
         BeiMiHu belongTo = (BeiMiHu) getBelongTo();
         Interactive interactive = belongTo.getInteractive();
         List<Character> targets = new CharacterFinder(belongTo)
-                .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
+                .filterEnemy()
                 .getList();
 
         for (int i = 0; i < 2; i++) {

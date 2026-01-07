@@ -20,12 +20,14 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.io.*;
@@ -43,6 +45,8 @@ public class BattlePane {
     public final Interactive interactive = new Interactive(this);
     // 日志
     public final TextFlowLog log = new TextFlowLog();
+    // 左边显示信息用的容器，包括log
+    private final VBox info = new VBox(log);
     // 战斗记录,用于撤销
     private final Stack<byte[]> recorder = new Stack<>();
     // 主界面
@@ -98,9 +102,9 @@ public class BattlePane {
         reloadTeamPane();
 
         // 日志区
-        log.setPrefWidth(400);
-        root.setLeft(log);
-
+        VBox.setVgrow(log, Priority.ALWAYS);
+        info.setPrefWidth(400);
+        root.setLeft(info);
     }
 
     private void reloadTeamPane() {
@@ -119,6 +123,13 @@ public class BattlePane {
 
     public void setSubstituteProvider(int team, SubstituteProvider substituteProvider) {
         situation.teamPane[team].setSubstituteProvider(substituteProvider);
+    }
+
+    public Label requestInfoDisplayLabel() {
+        Label label = new Label();
+        label.setFont(new Font(30));
+        info.getChildren().add(0, label);
+        return label;
     }
 
     public boolean canUseGuiHuo(Character character, int num) {
@@ -338,11 +349,12 @@ public class BattlePane {
                 return;
             }
             calc.setCurrentRate(situation.getCurrentRate());
-            situation.reset(this);
-
             reloadTeamPane();
+            situation.reset(this);
             repaint();
             log.prev();
+
+            info.getChildren().remove(0, info.getChildren().size() - 1);
         }
 
     }

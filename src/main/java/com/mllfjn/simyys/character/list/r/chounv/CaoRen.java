@@ -28,10 +28,17 @@ public class CaoRen extends Character {
         this.setMaxHp(bind.getHp() * hpPercent[level], true);
 
         this.addStatus(new StatusAfterAttack(chouNv, this, bind));
+
+        addSkills();
     }
 
     public Character getBind() {
         return bind;
+    }
+
+    @Override
+    public boolean controllable() {
+        return false;
     }
 
     @Override

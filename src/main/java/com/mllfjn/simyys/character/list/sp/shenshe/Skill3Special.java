@@ -27,13 +27,13 @@ class Skill3Special extends Skill {
         Interactive interactive = getBelongTo().getInteractive();
         // 对全体敌方造成攻击313%伤害
         List<Character> targets = new CharacterFinder(getBelongTo())
-                .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
+                .filterEnemy()
                 .getList();
         interactive.attackTypical(this, targets, 313, AttackType.QUN_TI);
         // 之后追击4次,每次对随机敌方目标造成攻击128%伤害
         for (int i = 0; i < 4; i++) {
             Character target = new CharacterFinder(getBelongTo())
-                    .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
+                    .filterEnemy()
                     .getRandom();
             if (target == null) {
                 break;

@@ -39,7 +39,7 @@ class Skill2 extends PassiveSkill {
             belongTo.bp.addActionListener(belongTo, event -> {
                 if (event instanceof EventBattleStart) {
                     maxCritPower = new CharacterFinder(belongTo)
-                            .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                            .filterTeammate()
                             .filterSelf()
                             .get(Attribute.CRIT_POWER, CharacterFinder.Criteria.MAX);
 
@@ -79,7 +79,7 @@ class Skill2 extends PassiveSkill {
     protected void disable() {
         if (listener != null) {
             List<Character> targets = new CharacterFinder(getBelongTo())
-                    .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                    .filterTeammate()
                     .getList();
 
             for (Character target : targets) {

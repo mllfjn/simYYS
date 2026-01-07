@@ -132,7 +132,7 @@ class StatusChaoSheng extends Status implements Displayable, IgnoreDebuff {
         while (stack >= 7) {
             stack -= 7;
             List<Character> teammate = new CharacterFinder(belongTo)
-                    .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                    .filterTeammate()
                     .getList();
             for (Character character : teammate) {
                 StatusQianJiZengShang.addStack(character);

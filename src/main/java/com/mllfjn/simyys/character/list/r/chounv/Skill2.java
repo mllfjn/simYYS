@@ -7,6 +7,7 @@ import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
+import com.mllfjn.simyys.interactive.StatusSupplier;
 
 // √    行动结束时，有20%基础概率对随机(此处有错误,应该是最高生命百分比)敌人附加咒火，持续2回合
 // √    lv2-咒火易伤效果增至10%
@@ -59,11 +60,10 @@ class Skill2 extends PassiveSkill {
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
             // 行动结束时，有(概率)对随机敌人附加咒火，持续2回合
             Character target = new CharacterFinder(belongTo)
-                    .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
+                    .filterEnemy()
                     .get(Attribute.HP_PERCENT, CharacterFinder.Criteria.MAX);
             belongTo.doInteractive(interactive ->
-                    interactive.effect(Skill2.this, SkillName, target, rate, true
-                            , (f, t) -> new StatusZhouHuo(f, t, yiShang)));
+                    interactive.effect(Skill2.this, target, rate, true, StatusZhouHuo.getSupplier(yiShang)));
 
             return false;
         }
@@ -76,6 +76,19 @@ class Skill2 extends PassiveSkill {
             super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
             this.yiShang = yiShang;
             setDurationType(StatusDurationType.CHI_XU, 2);
+        }
+
+        public static StatusSupplier getSupplier(double yiShang) {
+            return new StatusSupplier(SkillName, StatusZhouHuo.class, (from, to) ->
+                    to.getStatus(StatusZhouHuo.class).ifPresentOrElse(
+                            status -> {
+                                if (status.getDuration() < 2) {
+                                    status.setDuration(2);
+                                }
+                            },
+                            () -> to.addStatus(new StatusZhouHuo(from, to, yiShang))
+                    )
+            );
         }
 
         @Override

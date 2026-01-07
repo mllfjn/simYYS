@@ -7,7 +7,6 @@ import com.mllfjn.simyys.character.status.Status;
 import java.util.function.BiFunction;
 
 public class EffectInfo {
-    private final BiFunction<Character, Character, Status> statusSupplier;
     private final Character from;
     private final Character target;
     private final Skill skill;
@@ -16,9 +15,7 @@ public class EffectInfo {
 //    private boolean isResist;
 private boolean isCancel;
 
-    public EffectInfo(BiFunction<Character, Character, Status> statusSupplier
-            , Character from, Character target, Skill skill) {
-        this.statusSupplier = statusSupplier;
+    public EffectInfo(Character from, Character target, Skill skill) {
         this.from = from;
         this.target = target;
         this.skill = skill;

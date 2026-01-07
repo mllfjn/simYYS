@@ -42,7 +42,7 @@ class Skill3 extends Skill {
         belongTo.bp.addActionListener(belongTo, event -> {
             if (event instanceof EventBattleStart) {
                 List<Character> targets = new CharacterFinder(belongTo)
-                        .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                        .filterTeammate()
                         .filterShiShen()
                         .getList();
                 double limit = 0;
@@ -64,7 +64,7 @@ class Skill3 extends Skill {
     @Override
     public Optional<Character> usePrivate(BattlePane bp) {
         Character target = new CharacterFinder(getBelongTo())
-                .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                .filterTeammate()
                 .filterSelf()
                 .filter(character -> !character.isHaveStatus(StatusYongCan.class))
                 .getPriorAuto(Attribute.ATTACK, CharacterFinder.Criteria.MAX);
@@ -105,7 +105,7 @@ class Skill3 extends Skill {
                 double num = from.getAttack() * 0.78;
                 from.doInteractive(interactive -> {
                     List<Character> targets = new CharacterFinder(belongTo)
-                            .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                            .filterTeammate()
                             .getList();
                     for (Character target : targets) {
                         interactive.recovery(skill, target, num);
@@ -200,7 +200,7 @@ class Skill3 extends Skill {
 
         private void xiangShi() {
             List<Character> targets = new CharacterFinder(belongTo)
-                    .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
+                    .filterEnemy()
                     .getList();
 
             int size = targets.size();

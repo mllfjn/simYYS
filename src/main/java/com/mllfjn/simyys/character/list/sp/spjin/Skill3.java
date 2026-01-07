@@ -51,7 +51,7 @@ class Skill3 extends Skill {
         Character belongTo = getBelongTo();
         Interactive interactive = belongTo.getInteractive();
         Character target = new CharacterFinder(belongTo)
-                .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
+                .filterEnemy()
                 .getPriorAuto(Attribute.HP, CharacterFinder.Criteria.MAX);
 
         int currentMultiplier = multiplier;

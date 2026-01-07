@@ -57,7 +57,7 @@ public class DiaoPingHuo extends YuHun implements YuHunSealResponse {
             bp.addGuiHuoProgress(belongTo.team);
             // 为当前（生命比例最低）的（非召唤物）（友方）目标治疗自身防御700%的生命
             Character target = new CharacterFinder(belongTo)
-                    .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                    .filterTeammate()
                     .filterSummon(false)
                     .get(Attribute.HP_PERCENT, CharacterFinder.Criteria.MIN);
             belongTo.doInteractive(interactive -> interactive.heal(skill, List.of(target)

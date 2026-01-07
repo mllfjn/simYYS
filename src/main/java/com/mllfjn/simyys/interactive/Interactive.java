@@ -318,31 +318,32 @@ public class Interactive {
                 , type, TextFlowLog.TextColor.HEAL, size));
     }
 
-    public EffectInfo[] effect(Skill skill, String statusName, List<Character> targets, int baseRate, boolean calHit
-            , BiFunction<Character, Character, Status> statusSupplier) {
+    public EffectInfo[] effect(Skill skill, List<Character> targets, int baseRate, boolean calHit
+            , StatusSupplier statusSupplier) {
         EffectInfo[] infos = RateController
-                .mingZhong(skill, statusName, owner, targets, statusSupplier, baseRate, calHit, bp.calc);
+                .mingZhong(skill, statusSupplier.getStatusName(), owner, targets, baseRate, calHit, bp.calc);
         for (int i = 0; i < targets.size(); i++) {
             effect(infos[i], targets.get(i), statusSupplier);
         }
         return infos;
     }
 
-    public void effect(Skill skill, String statusName, Character target, int baseRate, boolean calHit
-            , BiFunction<Character, Character, Status> statusSupplier) {
+    public void effect(Skill skill, Character target, int baseRate, boolean calHit
+            , StatusSupplier statusSupplier) {
 
         EffectInfo info = RateController
-                .mingZhong(skill, statusName, owner, List.of(target), statusSupplier, baseRate, calHit, bp.calc)[0];
+                .mingZhong(skill, statusSupplier.getStatusName(), owner, List.of(target), baseRate, calHit, bp.calc)[0];
 
         effect(info, target, statusSupplier);
     }
 
-    private void effect(EffectInfo effectInfo, Character target
-            , BiFunction<Character, Character, Status> statusSupplier) {
+    private void effect(EffectInfo effectInfo, Character target, StatusSupplier statusSupplier) {
         if (effectInfo.isHit()) {
-            target.statusRun(Trigger.ADDING_CROWD_CONTROL, new ParamAddCrowdControl(effectInfo));
+            if (statusSupplier.isCrowdControl()) {
+                target.statusRun(Trigger.ADDING_CROWD_CONTROL, new ParamAddCrowdControl(effectInfo));
+            }
             if (!effectInfo.isCancel()) {
-                target.addStatus(statusSupplier.apply(owner, target));
+                statusSupplier.supply(owner, target);
             }
         }
     }

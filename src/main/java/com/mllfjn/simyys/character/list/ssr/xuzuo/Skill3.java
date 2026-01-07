@@ -61,7 +61,7 @@ class Skill3 extends Skill {
         // 这个逻辑似乎只有须佐有,就不写通用逻辑了
         Character target = null;
 
-        CharacterFinder allEnemyFinder = new CharacterFinder(belongTo).setTargetTeam(CharacterFinder.TargetTeam.ENEMY);
+        CharacterFinder allEnemyFinder = new CharacterFinder(belongTo).filterEnemy();
         Character auto = allEnemyFinder.getAuto();
         if (auto != null) {
             // 优先红标
@@ -79,7 +79,7 @@ class Skill3 extends Skill {
             // 再没有就找生命最高的
             if (target == null) {
                 target = new CharacterFinder(belongTo)
-                        .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
+                        .filterEnemy()
                         .get(Attribute.HP, CharacterFinder.Criteria.MAX);
             }
         }

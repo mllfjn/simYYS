@@ -32,7 +32,7 @@ class Skill8 extends Skill {
     @Override
     public Optional<Character> usePrivate(BattlePane bp) {
         List<Character> list = new CharacterFinder(getBelongTo())
-                .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                .filterTeammate()
                 .getList();
 
         for (Character character : list) {

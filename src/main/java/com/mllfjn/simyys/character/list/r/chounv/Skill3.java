@@ -36,7 +36,7 @@ class Skill3 extends Skill {
     public Optional<Character> usePrivate(BattlePane bp) {
         Character belongTo = getBelongTo();
         Character target = new CharacterFinder(belongTo)
-                .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
+                .filterEnemy()
                 .getPriorAuto(Attribute.HP, CharacterFinder.Criteria.MAX);
 
         bp.addCharacter(new CaoRen(belongTo, target, getLevel()));

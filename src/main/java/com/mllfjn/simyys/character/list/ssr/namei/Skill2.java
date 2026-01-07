@@ -79,7 +79,7 @@ class Skill2 extends Skill {
 
     private Character getTarget() {
         CharacterFinder characterFinder = new CharacterFinder(getBelongTo())
-                .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                .filterTeammate()
                 .filterSelf();
         // 先机时只能给攻击最高的友方式神,其他时候可以给除自身以外的任意友方包括阴阳师
         if (useFront) {

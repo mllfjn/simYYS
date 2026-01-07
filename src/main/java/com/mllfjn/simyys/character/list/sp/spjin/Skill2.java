@@ -60,7 +60,7 @@ class Skill2 extends PassiveSkill {
     public void wakeUp() {
         Character belongTo = getBelongTo();
         Character target = new CharacterFinder(belongTo)
-                .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                .filterTeammate()
                 .filterSummon(false)
                 .get(Attribute.INIT_ATTACK, CharacterFinder.Criteria.MAX);
 
@@ -120,7 +120,7 @@ class Skill2 extends PassiveSkill {
             if (param instanceof ParamUseSkill pus) {
                 Character target = pus.getTarget().orElseGet(
                         () -> new CharacterFinder(belongTo)
-                                .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
+                                .filterEnemy()
                                 .get(Attribute.HP_PERCENT, CharacterFinder.Criteria.MIN));
 
                 // lv5-玄象每次攻击后,提升[skill3]12%伤害系数(至多24%)
@@ -206,7 +206,7 @@ class Skill2 extends PassiveSkill {
 
         public static void install(Character from) {
             List<Character> list = new CharacterFinder(from)
-                    .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                    .filterTeammate()
                     .getList();
 
             for (Character to : list) {

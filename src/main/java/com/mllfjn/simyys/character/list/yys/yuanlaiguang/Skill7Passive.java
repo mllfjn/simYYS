@@ -59,7 +59,7 @@ class Skill7Passive extends PassiveSkill {
             listener = event -> {
                 if (event instanceof EventRoundDone) {
                     List<Character> targets = new CharacterFinder(belongTo)
-                            .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
+                            .filterEnemy()
                             .getList();
                     belongTo.doInteractive(interactive ->
                             interactive.attackTypical(Skill7Passive.this, targets, mul, AttackType.QUN_TI));

@@ -52,7 +52,7 @@ class Skill2 extends Skill {
 
 
         List<Character> teammates = new CharacterFinder(getBelongTo())
-                .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                .filterTeammate()
                 .filterShiShen()
                 .filterSelf()
                 .getList();

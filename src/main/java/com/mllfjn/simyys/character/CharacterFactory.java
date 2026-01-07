@@ -1,8 +1,8 @@
 package com.mllfjn.simyys.character;
 
 import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.character.list.mob.jifengmo.dizhennian.DiZhenNian;
-import com.mllfjn.simyys.character.list.mob.jifengmo.huangkulou.HuangKuLou;
+import com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.dizhennian.DiZhenNian;
+import com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.huangkulou.HuangKuLou;
 import com.mllfjn.simyys.character.list.r.chounv.ChouNv;
 import com.mllfjn.simyys.character.list.sp.laotou.LaoTou;
 import com.mllfjn.simyys.character.list.sp.spjin.SpJin;
@@ -15,7 +15,7 @@ import com.mllfjn.simyys.character.list.yys.qingming.QingMing;
 import com.mllfjn.simyys.character.list.yys.yuanlaiguang.YuanLaiGuang;
 import com.mllfjn.simyys.utils.PicUtil;
 import com.mllfjn.simyys.utils.Utils;
-import com.mllfjn.simyys.character.list.mob.jifengmo.shenqilou.ShenQiLou;
+import com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.shenqilou.ShenQiLou;
 import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
 import com.mllfjn.simyys.character.propertygetter.PropertiesMap;
 import com.mllfjn.simyys.character.list.sp.dayuan.DaYuan;

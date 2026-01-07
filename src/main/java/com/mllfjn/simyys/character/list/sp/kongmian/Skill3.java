@@ -43,7 +43,7 @@ class Skill3 extends Skill {
         Interactive interactive = belongTo.getInteractive();
 
         Character target = new CharacterFinder(belongTo)
-                .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
+                .filterEnemy()
                 .getPriorAuto(Attribute.HP, CharacterFinder.Criteria.MAX);
 
         // 一线目附身敌方目标,若敌方被一线目附身，先引燃再重新附身
@@ -55,7 +55,7 @@ class Skill3 extends Skill {
 
         // 并为全体友方增加25%行动条
         List<Character> targets = new CharacterFinder(belongTo)
-                .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                .filterTeammate()
                 .getList();
         for (Character character : targets) {
             interactive.increaseLocation(character, 25);

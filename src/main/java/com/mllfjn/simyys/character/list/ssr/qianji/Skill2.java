@@ -39,7 +39,7 @@ class Skill2 extends Skill {
     public Optional<Character> usePrivate(BattlePane bp) {
         Interactive interactive = getBelongTo().getInteractive();
         Character target = new CharacterFinder(getBelongTo())
-                .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
+                .filterEnemy()
                 .getPriorAuto(Attribute.HP, CharacterFinder.Criteria.MAX);
         // 对敌方目标造成攻击(系数)伤害
         interactive.attackTypical(this, target, multiplier[getLevel()], AttackType.DAN_TI);

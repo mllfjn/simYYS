@@ -64,7 +64,7 @@ class Skill2 extends PassiveSkill {
             // lv2-击退行动条效果提升至15%
             belongTo.doInteractive(interactive -> {
                 List<Character> enemy = new CharacterFinder(belongTo)
-                        .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
+                        .filterEnemy()
                         .getList();
                 for (Character character : enemy) {
                     interactive.decreaseLocation(character, level >= 2 ? 15 : 10);

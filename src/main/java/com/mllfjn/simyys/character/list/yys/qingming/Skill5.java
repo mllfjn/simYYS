@@ -35,7 +35,7 @@ class Skill5 extends Skill {
     public Optional<Character> usePrivate(BattlePane bp) {
 
         List<Character> list = new CharacterFinder(getBelongTo())
-                .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
+                .filterEnemy()
                 .getList();
 
         for (Character character : list) {

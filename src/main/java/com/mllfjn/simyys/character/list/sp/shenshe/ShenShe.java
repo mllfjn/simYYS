@@ -32,7 +32,7 @@ public class ShenShe extends CharacterShiShenBase {
     public void dieHandle() {
         // 阵亡时将封存的攻击全部归还
         List<Character> list = new CharacterFinder(this)
-                .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                .filterTeammate()
                 .filterShiShen()
                 .getList();
         for (Character teammate : list) {

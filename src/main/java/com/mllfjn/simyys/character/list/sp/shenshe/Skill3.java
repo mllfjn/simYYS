@@ -40,7 +40,7 @@ class Skill3 extends Skill {
 
         // 指定1位除自身外友方式神附加堕化
         Character target = new CharacterFinder(shenShe)
-                .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                .filterTeammate()
                 .filterShiShen()
                 .filterSelf()
                 // 去除已经有堕化的
@@ -78,7 +78,7 @@ class Skill3 extends Skill {
         }
         // 对敌方全体造成攻击188%伤害
         List<Character> targets = new CharacterFinder(shenShe)
-                .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
+                .filterEnemy()
                 .getList();
         interactive.attackTypical(this, targets, multiplier, AttackType.QUN_TI);
 

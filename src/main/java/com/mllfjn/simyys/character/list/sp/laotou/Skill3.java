@@ -38,7 +38,7 @@ class Skill3 extends Skill {
         belongTo.addStatus(new StatusUse3Flag(belongTo));
         // 恢复非召唤物友方目标生命上限(系数)的生命
         Character target = new CharacterFinder(belongTo)
-                .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                .filterTeammate()
                 .filterSummon(false)
                 .filterSelf()
                 .getPriorAuto(Attribute.ATTACK, CharacterFinder.Criteria.MAX);

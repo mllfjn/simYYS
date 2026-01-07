@@ -20,7 +20,7 @@ abstract class SkillJieYuan extends Skill {
 
     public Character getTarget(BattlePane bp) {
         return new CharacterFinder(getBelongTo())
-                .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                .filterTeammate()
                 .filterSelf()
                 .getPriorAuto(Attribute.ATTACK, CharacterFinder.Criteria.MAX);
     }

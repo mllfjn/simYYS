@@ -1,6 +1,6 @@
 package com.mllfjn.simyys.collections;
 
-import com.mllfjn.simyys.character.list.mob.jifengmo.citiao.*;
+import com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.citiao.*;
 import com.mllfjn.simyys.character.list.yys.QiLingFactory;
 import com.mllfjn.simyys.character.yuhun.list.*;
 

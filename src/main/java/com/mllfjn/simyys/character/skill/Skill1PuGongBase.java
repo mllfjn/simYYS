@@ -25,7 +25,7 @@ public abstract class Skill1PuGongBase extends Skill {
 
     public Character getTarget() {
         return new CharacterFinder(getBelongTo())
-                .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
+                .filterEnemy()
                 .getPriorAuto(Attribute.HP, CharacterFinder.Criteria.MIN);
     }
 

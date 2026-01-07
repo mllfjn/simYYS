@@ -31,7 +31,7 @@ class Skill5 extends Skill {
     public Optional<Character> usePrivate(BattlePane bp) {
         Character yuan = getBelongTo();
         Character target = new CharacterFinder(yuan)
-                .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                .filterTeammate()
                 .filterSelf()
                 .getPriorAuto(Attribute.ATTACK, CharacterFinder.Criteria.MAX);
 

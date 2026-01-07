@@ -30,7 +30,9 @@ class Skill3_2 extends Skill {
     public Optional<Character> usePrivate(BattlePane bp) {
         Interactive interactive = getBelongTo().getInteractive();
         // 对敌方全体造成攻击(120 + 悲歌层数*100)%的伤害
-        List<Character> targets = new CharacterFinder(getBelongTo()).setTargetTeam(CharacterFinder.TargetTeam.ENEMY).getList();
+        List<Character> targets = new CharacterFinder(getBelongTo())
+                .filterEnemy()
+                .getList();
         interactive.attackTypical(this, targets
                 , 120 + getBelongTo().getStatus(StatusBeiGe.class).orElseThrow().getStack() * 100
                 , AttackType.QUN_TI);

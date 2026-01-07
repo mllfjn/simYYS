@@ -37,7 +37,7 @@ class Skill3 extends Skill {
         XieNv belongTo = ((XieNv) getBelongTo());
 
         Character target = new CharacterFinder(belongTo)
-                .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
+                .filterEnemy()
                 .getPriorAuto(Attribute.HP, CharacterFinder.Criteria.MAX);
 
         Character xieDuCarrier = belongTo.getXieDuCarrier();

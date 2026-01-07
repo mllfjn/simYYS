@@ -7,6 +7,7 @@ import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.interactive.InteractiveInfo;
+import com.mllfjn.simyys.interactive.StatusSupplier;
 
 class Skill1 extends Skill1PuGongBase {
     public static final String SkillName = "基础术式";
@@ -34,8 +35,7 @@ class Skill1 extends Skill1PuGongBase {
         interactive.attackTypical(this, target, multiplier, AttackType.DAN_TI);
 
         if (rate > 0) {
-            interactive.effect(this, StatusLuan.StatusName, target, rate, true
-                    , (from, to) -> new StatusLuan(from, to, num));
+            interactive.effect(this, target, rate, true, StatusLuan.getSupplier(num));
         }
     }
 
@@ -54,6 +54,19 @@ class Skill1 extends Skill1PuGongBase {
             this.bonus = (100 - num) / 100;
 
             setDurationType(StatusDurationType.CHI_XU, 2);
+        }
+
+        public static StatusSupplier getSupplier(double num) {
+            return new StatusSupplier(StatusName, StatusLuan.class, (from, to) ->
+                    to.getStatus(StatusLuan.class).ifPresentOrElse(
+                            status -> {
+                                if (status.getDuration() < 2) {
+                                    status.setDuration(2);
+                                }
+                            },
+                            () -> to.addStatus(new StatusLuan(from, to, num))
+                    )
+            );
         }
 
         @Override

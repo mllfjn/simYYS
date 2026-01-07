@@ -34,7 +34,7 @@ class Skill2 extends Skill {
         belongTo.bp.addActionListener(belongTo, event -> {
             if (event instanceof EventBattleStart) {
                 Character target = new CharacterFinder(belongTo)
-                        .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                        .filterTeammate()
                         .get(Attribute.ATTACK, CharacterFinder.Criteria.MAX);
 
                 StatusShiZhiHui.get(belongTo, target, 1, level);
@@ -55,7 +55,7 @@ class Skill2 extends Skill {
         // 优先绿标,其次是包括自身和阴阳师在内的所有友方中攻击最高的单位
         Character belongTo = getBelongTo();
         Character target = new CharacterFinder(belongTo)
-                .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                .filterTeammate()
                 .getPriorAuto(Attribute.ATTACK, CharacterFinder.Criteria.MAX);
 
         StatusShiZhiXi.enter(belongTo, target, getLevel());

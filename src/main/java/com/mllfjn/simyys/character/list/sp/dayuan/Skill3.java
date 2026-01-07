@@ -41,7 +41,7 @@ class Skill3 extends Skill {
                 .or(() -> daYuan.getStatus(StatusCombined.class).map(status -> status.from))
                 // 最后是攻击最高的
                 .orElseGet(() -> new CharacterFinder(daYuan)
-                        .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
+                        .filterEnemy()
                         .filterSelf()
                         .get(Attribute.ATTACK, CharacterFinder.Criteria.MAX));
 
@@ -106,7 +106,7 @@ class Skill3 extends Skill {
         // 自身神力3层及以上时,额外治疗所选目标以外的友方生命上限8%的生命
         if (shenLiStack >= 3) {
             List<Character> targets = new CharacterFinder(daYuan)
-                    .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                    .filterTeammate()
                     .getList();
             targets.remove(target);
             heal(interactive, targets);

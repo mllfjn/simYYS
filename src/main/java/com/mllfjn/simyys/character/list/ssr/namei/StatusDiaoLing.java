@@ -9,18 +9,32 @@ import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.character.status.Trigger;
+import com.mllfjn.simyys.interactive.StatusSupplier;
 
 public class StatusDiaoLing extends Status implements Displayable, AttributeModifier, StatusRunnable {
-    public static final String text = "凋零";
+    public static final String StatusName = "凋零";
 
-    public StatusDiaoLing(Character from, Character belongTo, int duration) {
+    private StatusDiaoLing(Character from, Character belongTo, int duration) {
         super(from, belongTo, StatusType.GENERAL, StatusForm.YIN_JI);
         setDurationType(StatusDurationType.CHI_XU, duration);
     }
 
+    public static StatusSupplier getSupplier(int duration) {
+        return new StatusSupplier(StatusName, StatusDiaoLing.class, (from, to) ->
+                to.getStatus(StatusDiaoLing.class).ifPresentOrElse(
+                        status -> {
+                            if (status.getDuration() < duration) {
+                                status.setDuration(duration);
+                            }
+                        },
+                        () -> to.addStatus(new StatusDiaoLing(from, to, duration))
+                )
+        );
+    }
+
     @Override
     public String getDisplayText() {
-        return text + getDuration();
+        return StatusName + getDuration();
     }
 
     @Override
@@ -42,7 +56,7 @@ public class StatusDiaoLing extends Status implements Displayable, AttributeModi
     public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
         // 回合结束时受到施加者攻击120%间接伤害
         from.doInteractive(
-                interactive -> interactive.attackTypical(Skill.getInstance(text), belongTo, 120, AttackType.JIAN_JIE));
+                interactive -> interactive.attackTypical(Skill.getInstance(StatusName), belongTo, 120, AttackType.JIAN_JIE));
 
         return false;
     }

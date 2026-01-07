@@ -94,7 +94,7 @@ class Skill2 extends Skill {
         @Override
         public void beforeDelete() {
             List<Character> list = new CharacterFinder(belongTo)
-                    .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                    .filterTeammate()
                     .filterShiShen()
                     .filterSelf()
                     .getList();

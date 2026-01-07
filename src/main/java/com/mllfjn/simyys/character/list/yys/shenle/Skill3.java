@@ -42,7 +42,7 @@ class Skill3 extends Skill {
     public Optional<Character> usePrivate(BattlePane bp) {
         Character belongTo = getBelongTo();
         Character target = new CharacterFinder(belongTo)
-                .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                .filterTeammate()
                 .getPriorAuto(Attribute.ATTACK, CharacterFinder.Criteria.MAX);
 
         // 增加其(系数)攻击

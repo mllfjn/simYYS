@@ -3,6 +3,7 @@ package com.mllfjn.simyys.character.status.instance;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.status.*;
+import com.mllfjn.simyys.interactive.StatusSupplier;
 
 public class StatusConfusion extends Status implements CrowdControl, Displayable {
     public static final String StatusName = "混乱";
@@ -10,6 +11,19 @@ public class StatusConfusion extends Status implements CrowdControl, Displayable
     public StatusConfusion(Character from, Character belongTo, int duration) {
         super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
         setDurationType(StatusDurationType.CHI_XU, duration);
+    }
+
+    public static StatusSupplier getSupplier(int duration) {
+        return new StatusSupplier(StatusName, StatusConfusion.class, (from, to) ->
+                to.getStatus(StatusConfusion.class).ifPresentOrElse(
+                        status -> {
+                            if (status.getDuration() < duration) {
+                                status.setDuration(duration);
+                            }
+                        },
+                        () -> to.addStatus(new StatusConfusion(from, to, duration))
+                )
+        );
     }
 
     public void doConfusion() {

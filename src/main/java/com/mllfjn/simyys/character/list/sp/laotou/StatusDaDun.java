@@ -32,7 +32,7 @@ public class StatusDaDun extends StatusSleep implements Displayable {
             belongTo.doInteractive(interactive -> {
                 // 沉睡维持期间被移除时，恢复全体非召唤物友方目标生命上限14%的生命
                 List<Character> teammate = new CharacterFinder(belongTo)
-                        .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                        .filterTeammate()
                         .filterSummon(false)
                         .getList();
                 for (Character character : teammate) {

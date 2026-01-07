@@ -62,7 +62,7 @@ public class QingMing extends CharacterYYSBase {
         if (oSkill5.isPresent()) {
             boolean have = false;
             List<Character> list = new CharacterFinder(this)
-                    .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
+                    .filterEnemy()
                     .getList();
             for (Character character : list) {
                 if (character.isHaveStatus(Skill5.StatusMie.class)) {

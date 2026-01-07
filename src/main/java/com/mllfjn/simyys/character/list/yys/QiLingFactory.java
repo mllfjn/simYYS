@@ -33,7 +33,7 @@ public class QiLingFactory {
                         && hc.getCharacter() == character
                         && character.getHp() < character.getMaxHp() * 0.7) {
                     List<Character> list = new CharacterFinder(character)
-                            .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                            .filterTeammate()
                             .getList();
                     for (Character target : list) {
                         target.addStatus(new StatusQiCritPower(character, target));
@@ -90,7 +90,7 @@ class StatusQiHuoLing extends Status implements StatusRunnable {
     public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
         Interactive interactive = belongTo.getInteractive();
         List<Character> targets = new CharacterFinder(belongTo)
-                .setTargetTeam(CharacterFinder.TargetTeam.ENEMY)
+                .filterEnemy()
                 .getList();
         for (int i = 0; i < 3; i++) {
             interactive.attackTypical(Skill.getInstance("火灵之力"), targets, 100, AttackType.QUN_TI);

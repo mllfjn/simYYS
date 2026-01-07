@@ -19,7 +19,7 @@ public class StatusCanNotChoose extends Status implements Displayable {
         super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
 
         List<Character> teammates = new CharacterFinder(belongTo)
-                .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                .filterTeammate()
                 .getList();
 
         for (Character teammate : teammates) {

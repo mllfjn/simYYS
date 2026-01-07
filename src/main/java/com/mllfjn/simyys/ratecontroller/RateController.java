@@ -5,6 +5,7 @@ import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.interactive.EffectInfo;
 import com.mllfjn.simyys.interactive.InteractiveInfo;
+import com.mllfjn.simyys.interactive.StatusSupplier;
 
 import java.io.Serializable;
 import java.util.*;
@@ -94,7 +95,7 @@ public class RateController implements Serializable {
     }
 
     public static EffectInfo[] mingZhong(Skill skill, String statusName, Character owner, List<Character> targets
-            , BiFunction<Character, Character, Status> statusSupplier, int baseRate, boolean calHit, RateCalc calc) {
+            , int baseRate, boolean calHit, RateCalc calc) {
         EffectInfo[] infos = new EffectInfo[targets.size()];
         whetherOrNot("命中控制：" + owner.name + "-" + statusName, "命中"
                 , targets, Character::getName, calc, calc::isControlEffectHit
@@ -106,7 +107,7 @@ public class RateController implements Serializable {
                     }
                 }
                 , (i, hit) -> {
-                    EffectInfo info = new EffectInfo(statusSupplier, owner, targets.get(i), skill);
+                    EffectInfo info = new EffectInfo(owner, targets.get(i), skill);
                     info.setHit(hit);
                     infos[i] = info;
                 });

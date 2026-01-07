@@ -35,7 +35,7 @@ class Skill2 extends Skill {
         belongTo.bp.addActionListener(belongTo, event -> {
             if (event instanceof EventBattleStart) {
                 List<Character> targets = new CharacterFinder(belongTo)
-                        .setTargetTeam(CharacterFinder.TargetTeam.TEAMMATE)
+                        .filterTeammate()
                         .filterShiShen()
                         .getList();
                 double sum = 0;
