@@ -22,7 +22,7 @@ public class TextFlowLog extends ScrollPane {
         super();
         this.setContent(textFlow);
         this.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        this.widthProperty().addListener((obs, old, val) -> textFlow.setMaxWidth(val.doubleValue()));
+        this.setFitToWidth(true);
         textFlow.heightProperty().addListener((obs, old, val) -> setVvalue(1));
 
         totalList.add(currentList);

@@ -1,5 +1,7 @@
 package com.mllfjn.simyys.character.list.mob.multiplayer;
 
-public interface InfoDisplay {
+import java.io.Serializable;
+
+public interface InfoDisplay extends Serializable {
     String getInfo();
 }

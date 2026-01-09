@@ -1,16 +1,14 @@
 package com.mllfjn.simyys;
 
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.CharacterIcon;
 import com.mllfjn.simyys.character.propertygetter.FlagChangeInfo;
 import com.mllfjn.simyys.character.yuhun.list.HuoLing;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.guihuo.GuiHuo;
 import com.mllfjn.simyys.guihuo.SubstituteProvider;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -18,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class TeamPane implements Serializable {
-    private transient HBox center;
+    private transient GridPane center;
     private transient BorderPane root;
 
     public final List<Character> characters = new ArrayList<>();
@@ -28,16 +26,23 @@ public class TeamPane implements Serializable {
 
     public Pane getPane() {
         if (root == null) {
-            center = new HBox();
-            center.setSpacing(5);
-            center.setPadding(new Insets(5));
+            center = new GridPane();
             center.setAlignment(Pos.CENTER);
             for (Character character : characters) {
-                center.getChildren().add(character.getCharacterIcon());
+                CharacterIcon characterIcon = character.getCharacterIcon();
+                int index = center.getColumnCount();
+
+                VBox top = characterIcon.getTop();
+                GridPane.setVgrow(top, Priority.ALWAYS);
+
+                center.add(top, index, 0);
+                center.add(characterIcon.getCenter(), index, 1);
+                center.add(characterIcon.getBottom(), index, 2);
+
                 if (character == autos[0]) {
-                    character.getCharacterIcon().setIsAuto(FlagChangeInfo.FlagType.GREEN, true);
+                    characterIcon.setIsAuto(FlagChangeInfo.FlagType.GREEN, true);
                 } else if (character == autos[1]) {
-                    character.getCharacterIcon().setIsAuto(FlagChangeInfo.FlagType.RED, true);
+                    characterIcon.setIsAuto(FlagChangeInfo.FlagType.RED, true);
                 }
             }
 
@@ -80,7 +85,11 @@ public class TeamPane implements Serializable {
     public void addCharacter(Character character) {
         characters.add(character);
         if (center != null) {
-            center.getChildren().add(character.getCharacterIcon());
+            CharacterIcon characterIcon = character.getCharacterIcon();
+            int index = center.getColumnCount();
+            center.add(characterIcon.getTop(), index, 0);
+            center.add(characterIcon.getCenter(), index, 1);
+            center.add(characterIcon.getBottom(), index, 2);
         }
         if (mobTeam && !character.isMob() && !character.isSummon()) {
             guiHuo = new GuiHuo(2);
@@ -95,7 +104,8 @@ public class TeamPane implements Serializable {
         if (characters.contains(character)) {
             characters.remove(character);
             if (center != null) {
-                center.getChildren().remove(character.getCharacterIcon());
+                CharacterIcon icon = character.getCharacterIcon();
+                center.getChildren().removeAll(icon.getTop(), icon.getCenter(), icon.getBottom());
             }
         }
 
@@ -112,7 +122,7 @@ public class TeamPane implements Serializable {
 
     public void reset(BattlePane bp) {
         for (Character character : characters) {
-            character.setBattlePane(bp);
+            character.reset(bp);
         }
     }
 

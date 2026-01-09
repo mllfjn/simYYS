@@ -56,7 +56,7 @@ public class DiZhenNian extends Character {
         PropertiesMap map = super.getProperties();
         ((PropertyInput) map.get(PropertyKey.GENERAL_SPEED_KEY)).setValue("175");
         ((PropertyInput) map.get(PropertyKey.GENERAL_YU_HUN_ATTACK_KEY)).setValue("0");
-        ((PropertyInput) map.get(PropertyKey.GENERAL_HP_KEY)).setValue("99999999");
+        ((PropertyInput) map.get(PropertyKey.GENERAL_HP_KEY)).setValue("999999999");
         ((PropertyInput) map.get(PropertyKey.GENERAL_DEFENSE_KEY)).setValue("704");
         ((PropertyInput) map.get(PropertyKey.GENERAL_CRIT_RATE_KEY)).setValue("10");
         ((PropertyInput) map.get(PropertyKey.GENERAL_CRIT_POWER_KEY)).setValue("150");
@@ -83,7 +83,7 @@ public class DiZhenNian extends Character {
 
         // 皮糙肉厚
         // 斗魂15万,其他25万
-        addStatus(new StatusPiCaoRouHou(this, ciTiao.equals(CiTiao6DouHun.CiTiaoName) ? 150000 : 250000));
+        addStatus(new StatusPiCaoRouHou(this, (ciTiao != null && ciTiao.equals(CiTiao6DouHun.CiTiaoName)) ? 150000 : 250000));
 
         // 给对面放一个妖琴
         bp.addCharacter(new SpecialYaoQin(bp, 1 - team));

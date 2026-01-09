@@ -30,4 +30,9 @@ public abstract class CharacterYYSBase extends Character {
     protected String getDefaultBaseAttack() {
         return "3256";
     }
+
+    @Override
+    protected void addOwnSkills() {
+
+    }
 }

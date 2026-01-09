@@ -14,7 +14,7 @@ import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
 import com.mllfjn.simyys.collections.SerializableObservableList;
 import com.mllfjn.simyys.utils.SerializableConsumer;
 import com.mllfjn.simyys.utils.Utils;
-import javafx.collections.ObservableList;
+import javafx.beans.binding.DoubleBinding;
 import javafx.collections.ObservableMap;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -55,7 +55,8 @@ public class BattlePane {
     private ActionBarType actionBarType = ActionBarType.SHUN_WEI;
     private final AnchorPane actionBar = new AnchorPane();
     // teamPane容器
-    private final VBox container = new VBox();
+    private final StackPane teamPaneContainer1 = new StackPane();
+    private final StackPane teamPaneContainer0 = new StackPane();
 
 
     public BattlePane(Stage stage, Runnable back, SerializableObservableList<PropertiesHolder> list) {
@@ -88,11 +89,19 @@ public class BattlePane {
         // 右下角是控制区
 
         // 队伍区
-        container.setPadding(new Insets(3));
-        ScrollPane scrollPane = new ScrollPane(container);
-        scrollPane.setFitToHeight(true);
-        scrollPane.setFitToWidth(true);
-        root.setCenter(scrollPane);
+        ScrollPane scrollPane1 = new ScrollPane(teamPaneContainer1);
+        ScrollPane scrollPane0 = new ScrollPane(teamPaneContainer0);
+
+        scrollPane1.setFitToWidth(true);
+        scrollPane0.setFitToWidth(true);
+
+        VBox pane = new VBox(scrollPane1, scrollPane0);
+
+        DoubleBinding childHeight = pane.heightProperty().divide(2);
+        scrollPane1.prefHeightProperty().bind(childHeight);
+        scrollPane0.prefHeightProperty().bind(childHeight);
+
+        root.setCenter(pane);
         // 控制区
         BorderPane right = new BorderPane();
         right.setTop(actionBar);
@@ -108,9 +117,19 @@ public class BattlePane {
     }
 
     private void reloadTeamPane() {
-        ObservableList<Node> children = container.getChildren();
-        children.clear();
-        children.addAll(situation.teamPane[1].getPane(), situation.teamPane[0].getPane());
+        Pane pane1 = situation.teamPane[1].getPane();
+        Pane pane0 = situation.teamPane[0].getPane();
+
+        if (!teamPaneContainer1.getChildren().isEmpty()) {
+            teamPaneContainer1.getChildren().clear();
+        }
+
+        if (!teamPaneContainer0.getChildren().isEmpty()) {
+            teamPaneContainer0.getChildren().clear();
+        }
+
+        teamPaneContainer1.getChildren().add(pane1);
+        teamPaneContainer0.getChildren().add(pane0);
     }
 
     public void repaint() {

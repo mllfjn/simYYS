@@ -127,8 +127,7 @@ public class RateController implements Serializable {
         return result.get();
     }
 
-    public static <T> T choose(String title, List<T> list, Function<T, String> stringGetter
-            , RateCalc calc) {
+    public static <T> T choose(String title, List<T> list, Function<T, String> stringGetter, RateCalc calc) {
         if (list.size() == 1) {
             return list.get(0);
         }
@@ -144,5 +143,10 @@ public class RateController implements Serializable {
         return list.get(random.nextInt(list.size()));
     }
 
-
+    public static boolean otherWhether(String title, String event, RateCalc calc, double rate) {
+        AtomicBoolean result = new AtomicBoolean();
+        whetherOrNot(title, event, List.of(event), item -> item, calc, calc::isControlWhetherOther
+                , s -> rate, (i, b) -> result.set(b));
+        return result.get();
+    }
 }

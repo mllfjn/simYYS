@@ -70,8 +70,9 @@ public abstract class Character implements Serializable {
     private final List<Status> maintainedStatuses = new ArrayList<>();
     // 御魂列表
     private final LinkedHashSet<YuHun> yuHunList = new LinkedHashSet<>();
+    // 头像
+    private CharacterIcon characterIcon;
 
-    private transient CharacterIcon characterIcon;
     public transient BattlePane bp;
 
     public PropertiesMap getProperties() {
@@ -95,7 +96,7 @@ public abstract class Character implements Serializable {
     }
 
     public void init(PropertiesHolder propertiesHolder, BattlePane bp) {
-        setBattlePane(bp);
+        reset(bp);
         this.lockSKillMap = propertiesHolder.lockSkillMap;
         this.flagChangeMap = propertiesHolder.flagChangeMap;
         PropertiesMap properties = propertiesHolder.propertiesMap;
@@ -104,7 +105,7 @@ public abstract class Character implements Serializable {
         this.baseAttack = properties.get(PropertyKey.GENERAL_BASE_ATTACK_KEY).getDouble();
         this.additionAttack = properties.get(PropertyKey.GENERAL_YU_HUN_ATTACK_KEY).getDouble();
         this.team = properties.get(PropertyKey.GENERAL_TEAM_KEY).getBoolean() ? 1 : 0;
-        this.hp = properties.get(PropertyKey.GENERAL_HP_KEY).getDouble();
+        this.hp = Math.max(properties.get(PropertyKey.GENERAL_HP_KEY).getDouble(), 1);
         this.maxHp = hp;
         this.defence = properties.get(PropertyKey.GENERAL_DEFENSE_KEY).getDouble();
         this.critRate = properties.get(PropertyKey.GENERAL_CRIT_RATE_KEY).getDouble();
@@ -131,8 +132,11 @@ public abstract class Character implements Serializable {
         }
     }
 
-    public void setBattlePane(BattlePane bp) {
+    public void reset(BattlePane bp) {
         this.bp = bp;
+        if (characterIcon != null) {
+            characterIcon.reset();
+        }
     }
 
     public double getAttack() {
@@ -628,8 +632,6 @@ public abstract class Character implements Serializable {
     public CharacterIcon getCharacterIcon() {
         if (characterIcon == null) {
             characterIcon = new CharacterIcon(this);
-            characterIcon.setEventHandler(getEventHandler());
-            characterIcon.setInfoDisplay(getInfoDisplay());
         }
         return characterIcon;
     }

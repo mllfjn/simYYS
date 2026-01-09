@@ -77,9 +77,4 @@ public class QingMing extends CharacterYYSBase {
 
         return false;
     }
-
-    @Override
-    protected void addOwnSkills() {
-
-    }
 }

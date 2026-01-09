@@ -16,7 +16,7 @@ public class DuoLuoZhiJian extends Character {
         this.isSummon = true;
         this.shenShe = shenShe;
         name = CharacterName;
-        setBattlePane(bp);
+        reset(bp);
         // 生命为神堕八岐大蛇攻击的310%
         double hp = shenShe.getAttack() * 3.1;
         setMaxHp(hp, true);

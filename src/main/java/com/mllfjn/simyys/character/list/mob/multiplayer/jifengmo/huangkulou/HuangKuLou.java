@@ -28,7 +28,7 @@ public class HuangKuLou extends Character {
 
         ((PropertyInput) map.get(PropertyKey.GENERAL_SPEED_KEY)).setValue("190");
         ((PropertyInput) map.get(PropertyKey.GENERAL_YU_HUN_ATTACK_KEY)).setValue("0");
-        ((PropertyInput) map.get(PropertyKey.GENERAL_HP_KEY)).setValue("99999999");
+        ((PropertyInput) map.get(PropertyKey.GENERAL_HP_KEY)).setValue("999999999");
         ((PropertyInput) map.get(PropertyKey.GENERAL_DEFENSE_KEY)).setValue("704");
         ((PropertyInput) map.get(PropertyKey.GENERAL_CRIT_RATE_KEY)).setValue("10");
         ((PropertyInput) map.get(PropertyKey.GENERAL_CRIT_POWER_KEY)).setValue("150");

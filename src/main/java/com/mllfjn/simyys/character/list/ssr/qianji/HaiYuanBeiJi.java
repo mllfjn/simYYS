@@ -29,7 +29,7 @@ public class HaiYuanBeiJi extends Character {
         qianJi.setHaiYuanBeiJi(this);
         qianJi.removeStatus(QianJi.StatusQianJiIgnoreDebuff.class);
         // 在bp中添加角色和鬼火监听器
-        setBattlePane(bp);
+        reset(bp);
         bp.addCharacter(this);
 
         // 该状态同时完成免疫debuff和无法行动
@@ -53,9 +53,9 @@ public class HaiYuanBeiJi extends Character {
                 if (number > 0) {
                     Character target = interactiveInfo.getTarget();
                     if (target.team == this.team && target.alive) {
-                        this.doInteractive(interactive
-                                -> interactive.recovery(Skill.getInstance(HaiYuanBeiJi.CharacterName), target
-                                , number * 0.3));
+                        this.doInteractive(interactive ->
+                                interactive.recovery(Skill.getInstance(HaiYuanBeiJi.CharacterName), target
+                                        , number * 0.3));
                     }
                 }
 

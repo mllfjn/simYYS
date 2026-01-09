@@ -40,9 +40,4 @@ public class ShenLe extends CharacterYYSBase {
             addSkill(new Skill3(this, skill[0], skill[1]));
         }
     }
-
-    @Override
-    public void addOwnSkills() {
-
-    }
 }
