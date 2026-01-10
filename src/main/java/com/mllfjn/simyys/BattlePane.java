@@ -59,10 +59,9 @@ public class BattlePane {
     private final StackPane teamPaneContainer0 = new StackPane();
 
 
-    public BattlePane(Stage stage, Runnable back, SerializableObservableList<PropertiesHolder> list) {
+    public BattlePane(Scene scene, Pane stageRoot, Runnable back, SerializableObservableList<PropertiesHolder> list) {
         this.list = list;
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
+        stageRoot.getChildren().set(0, root);
 
         setupUI(back, scene);
         init();

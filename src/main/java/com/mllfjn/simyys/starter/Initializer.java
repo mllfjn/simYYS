@@ -16,6 +16,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -38,8 +39,12 @@ public class Initializer extends Application {
         NodeWithController borderPane = new NodeWithController();
         borderPane.setNode(customTableView);
 
-        Scene scene = new Scene(borderPane);
-        getController(stage, scene, borderPane);
+        StackPane stageRoot = new StackPane(borderPane);
+        stageRoot.setMinSize(1784, 861);
+        stageRoot.setMaxSize(1784, 861);
+
+        Scene scene = new Scene(new StackPane(stageRoot));
+        getController(stage, scene, stageRoot, borderPane);
 
         borderPane.addControlButton("添加角色", e -> addCharacter(stage), scene, KeyCode.A);
         borderPane.addControlButton("删除角色", e -> {
@@ -97,20 +102,28 @@ public class Initializer extends Application {
                 , stage, () -> stage.setScene(scene)), scene, KeyCode.C);
 
         stage.setScene(scene);
-        /*stage.setWidth(1800);
-        stage.setHeight(900);*/
         stage.setTitle("配置式神");
         stage.show();
+
+        stage.widthProperty().addListener((obs, old, val) -> {
+            double height = val.doubleValue() / 2;
+            if (stage.getHeight() != height) {
+                stage.setHeight(height);
+                setScale(stage, stageRoot);
+            }
+        });
+        stage.heightProperty().addListener((obs, old, val) -> {
+            double width = val.doubleValue() * 2;
+            if (stage.getWidth() != width) {
+                stage.setWidth(width);
+                setScale(stage, stageRoot);
+            }
+        });
     }
 
     private void setScale(Stage stage, Pane root) {
-        double width = stage.getWidth();
-        double height = stage.getHeight();
-
-        double scale = Math.min(width / 1800, height / 900);
-
-        root.setScaleX(scale);
-        root.setScaleY(scale);
+        root.setScaleX((stage.getWidth() - 16) / 1784);
+        root.setScaleY((stage.getHeight() - 39) / 861);
     }
 
     private void addCharacter(Stage owner) {
@@ -147,7 +160,7 @@ public class Initializer extends Application {
         stageSelect.showAndWait();
     }
 
-    private void getController(Stage stage, Scene scene, BorderPane borderPane) {
+    private void getController(Stage stage, Scene scene, Pane stageRoot, BorderPane borderPane) {
         HBox controlPane = new HBox(50);
         controlPane.setPadding(new Insets(20, 0, 20, 0));
         controlPane.setAlignment(Pos.CENTER);
@@ -158,7 +171,8 @@ public class Initializer extends Application {
 
         saveButton.setOnAction(event -> saveDate(stage));
         loadButton.setOnAction(event -> loadData(stage));
-        startButton.setOnAction(event -> new BattlePane(stage, () -> stage.setScene(scene), items));
+        startButton.setOnAction(event -> new BattlePane(scene, stageRoot,
+                () -> stageRoot.getChildren().set(0, borderPane), items));
 
         controlPane.getChildren().addAll(saveButton, loadButton, startButton);
 
