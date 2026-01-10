@@ -1,6 +1,8 @@
 package com.mllfjn.simyys.character.propertygetter;
 
 import com.mllfjn.simyys.collections.StringGroup;
+import com.mllfjn.simyys.starter.Initializer;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -94,6 +96,7 @@ public class PropertySelectMulti  extends PropertyRequire implements Serializabl
             TilePane tp = new TilePane();
             for (int j = 0; j < values.length; j++) {
                 CheckBox cb = new CheckBox(values[j]);
+                cb.setPrefWidth(75);
                 cbs[i][j] = cb;
 
                 if (currentValues != null && currentValues.contains(values[j])) {
@@ -122,8 +125,11 @@ public class PropertySelectMulti  extends PropertyRequire implements Serializabl
         });
 
         gp.add(confirmBtn, 1, options.length);
+        gp.setPadding(new Insets(20));
+        gp.setVgap(20);
 
-        stage.setScene(new Scene(gp));
+        Initializer.installScale(stage, gp, 600, 500);
+
         stage.initModality(Modality.WINDOW_MODAL);
         stage.initOwner(owner);
         stage.showAndWait();

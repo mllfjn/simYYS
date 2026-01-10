@@ -12,14 +12,14 @@ import com.mllfjn.simyys.character.propertygetter.PropertyRequire;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.stage.FileChooser;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
+import javafx.stage.*;
 
 import java.io.*;
 import java.util.*;
@@ -30,6 +30,12 @@ public class Initializer extends Application {
 
     private SerializableObservableList<ExtraFlag> extraFlags = new SerializableObservableList<>();
     private SerializableObservableList<ExtraLockSkill> extraLockSkills = new SerializableObservableList<>();
+
+    private final static double BORDER_WIDTH = 16;
+    private final static double BORDER_HEIGHT = 39;
+
+    private static double scaleX = 1;
+    private static double scaleY = 1;
 
     @Override
     public void start(Stage stage) {
@@ -119,17 +125,26 @@ public class Initializer extends Application {
                 setScale(stage, stageRoot);
             }
         });
+
+        Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
+        if (bounds.getWidth() < 1800 || bounds.getHeight() < 900) {
+            stage.setWidth(bounds.getWidth() * 0.9);
+            stage.setX(bounds.getWidth() * 0.05);
+            stage.setY((bounds.getHeight() - stage.getHeight()) / 2);
+//            stage.setMaximized(true);
+        }
     }
 
     private void setScale(Stage stage, Pane root) {
-        root.setScaleX((stage.getWidth() - 16) / 1784);
-        root.setScaleY((stage.getHeight() - 39) / 861);
+        scaleX = (stage.getWidth() - BORDER_WIDTH) / 1784;
+        scaleY = (stage.getHeight() - BORDER_HEIGHT) / 861;
+        root.setScaleX(scaleX);
+        root.setScaleY(scaleY);
     }
 
     private void addCharacter(Stage owner) {
         Stage stageSelect = new Stage();
         GridPane gp = new GridPane();
-        Scene scene = new Scene(gp);
         gp.setPadding(new Insets(20));
         gp.setHgap(10);
         gp.setVgap(10);
@@ -143,7 +158,7 @@ public class Initializer extends Application {
                 btn.setPrefWidth(100);
                 btn.setOnAction(event -> {
                     PropertiesHolder propertiesHolder = new PropertiesHolder(name, CharacterFactory.getProperties(name).orElseThrow(), new LinkedHashMap<>(), new LinkedHashMap<>());
-                    propertiesHolder.show(scene);
+                    propertiesHolder.show(stageSelect.getScene());
                     items.add(propertiesHolder);
                 });
                 tp.getChildren().add(btn);
@@ -156,7 +171,7 @@ public class Initializer extends Application {
         stageSelect.setTitle("添加角色");
         stageSelect.initOwner(owner);
         stageSelect.initModality(Modality.WINDOW_MODAL);
-        stageSelect.setScene(scene);
+        Initializer.installScale(stageSelect, gp, 500, 500);
         stageSelect.showAndWait();
     }
 
@@ -276,6 +291,50 @@ public class Initializer extends Application {
 
         }
     }
+
+    public static void installScale(Stage stage, Region root, double expectedWidth, double expectedHeight) {
+        root.setMaxSize(expectedWidth, expectedHeight);
+        root.setMinSize(expectedWidth, expectedHeight);
+
+        root.setScaleX(Initializer.scaleX);
+        root.setScaleY(Initializer.scaleY);
+
+        stage.setScene(new Scene(new StackPane(root)));
+        stage.setWidth(expectedWidth * Initializer.scaleX + Initializer.BORDER_WIDTH);
+        stage.setHeight(expectedHeight * Initializer.scaleY + Initializer.BORDER_HEIGHT);
+    }
+
+
+    /*public static void installScale(Stage stage, Region root) {
+        stage.setScene(new Scene(new Group(root)));
+
+        root.applyCss();
+        root.layout();
+
+        double expectedWidth = root.getBoundsInLocal().getWidth();
+        double expectedHeight = root.getBoundsInLocal().getHeight();
+
+        System.out.println("expectedWidth: " + expectedWidth);
+        System.out.println("expectedHeight: " + expectedHeight);
+
+        root.setMaxSize(expectedWidth, expectedHeight);
+        root.setMinSize(expectedWidth, expectedHeight);
+
+        root.setScaleX(Initializer.scaleX);
+        root.setScaleY(Initializer.scaleY);
+
+        stage.setWidth(expectedWidth * Initializer.scaleX + Initializer.BORDER_WIDTH);
+        stage.setHeight(expectedHeight * Initializer.scaleY + Initializer.BORDER_HEIGHT);
+
+        stage.show();
+
+        System.out.println("realWidth:" + root.getWidth());
+        System.out.println("realHeight:" + root.getHeight());
+
+        stage.close();
+
+//        installScale(stage, root, root.getBoundsInLocal().getWidth(), root.getBoundsInLocal().getHeight());
+    }*/
 
     record ExtraFlag(String name, int team, int timesToAct, FlagChangeInfo flagChangeInfo) implements Serializable {
     }

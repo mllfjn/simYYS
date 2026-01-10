@@ -56,7 +56,7 @@ public class Prediction implements Serializable {
 
         ownerScene.getRoot().setMouseTransparent(true);
         stage.setOnCloseRequest(event -> ownerScene.getRoot().setMouseTransparent(false));
-        stage.setScene(new Scene(customListView));
+        Initializer.installScale(stage, customListView, 900, 600);
         stage.showAndWait();
     }
 
@@ -78,7 +78,7 @@ public class Prediction implements Serializable {
                 customListView.getListView().scrollTo(startIndex.get());
                 customListView.getListView().getSelectionModel().select(startIndex.get());
             });
-            button.setPrefWidth(100);
+            button.setPrefWidth(75);
 
             if (team == 0) {
                 fp0.getChildren().add(button);
@@ -94,7 +94,7 @@ public class Prediction implements Serializable {
             customListView.getListView().scrollTo(startIndex.get());
             customListView.getListView().getSelectionModel().select(startIndex.get());
         });
-        btnNot.setPrefWidth(100);
+        btnNot.setPrefWidth(75);
 
         GridPane gp = new GridPane();
         gp.add(new Text("特殊"), 0, 0);
@@ -111,9 +111,10 @@ public class Prediction implements Serializable {
         gp.setPadding(new Insets(20));
 
         Stage addStage = new Stage();
-        addStage.setScene(new Scene(gp));
         addStage.initModality(Modality.APPLICATION_MODAL);
         addStage.initOwner(stage);
+
+        Initializer.installScale(addStage, gp, 500, 600);
 
         addStage.showAndWait();
     }

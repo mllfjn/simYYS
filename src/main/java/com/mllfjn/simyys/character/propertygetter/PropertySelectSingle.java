@@ -1,6 +1,8 @@
 package com.mllfjn.simyys.character.propertygetter;
 
 import com.mllfjn.simyys.collections.StringGroup;
+import com.mllfjn.simyys.starter.Initializer;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -96,6 +98,9 @@ public class PropertySelectSingle  extends PropertyRequire implements Serializab
         confirmBtn.setOnAction(e -> {
             Stage stage = new Stage();
             GridPane gp = new GridPane();
+            gp.setVgap(20);
+            gp.setHgap(20);
+            gp.setPadding(new Insets(20));
             for (int i = 0; i < options.length; i++) {
                 TilePane tp = new TilePane();
                 for (String s : options[i].values()) {
@@ -111,9 +116,10 @@ public class PropertySelectSingle  extends PropertyRequire implements Serializab
                 gp.add(new Label(options[i].label()), 0, i);
                 gp.add(tp, 1, i);
             }
-            stage.setScene(new Scene(gp));
+            Initializer.installScale(stage, gp, 300, 500);
             stage.initOwner(owner);
             stage.initModality(Modality.WINDOW_MODAL);
+
             stage.showAndWait();
         });
 

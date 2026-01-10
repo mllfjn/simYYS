@@ -1,5 +1,6 @@
 package com.mllfjn.simyys.character.propertygetter;
 
+import com.mllfjn.simyys.starter.Initializer;
 import com.mllfjn.simyys.utils.DecimalFormatUtil;
 import com.mllfjn.simyys.utils.Utils;
 import com.mllfjn.simyys.character.PropertyKey;
@@ -11,11 +12,13 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -62,10 +65,8 @@ public class PropertiesHolder implements Serializable {
         stage.setOnCloseRequest(event -> OwnerScent.getRoot().setMouseTransparent(false));
         /*stage.initOwner(OwnerScent);
         stage.initModality(Modality.WINDOW_MODAL);*/
+        Initializer.installScale(stage, tabPane, 600, 800);
 
-        stage.setWidth(600);
-        stage.setHeight(800);
-        stage.setScene(new Scene(tabPane));
         stage.showAndWait();
     }
 
@@ -162,11 +163,22 @@ public class PropertiesHolder implements Serializable {
                 }
             });
 
-            HBox hBox = new HBox(tfKey, tfValue, btnConfirm);
+//            HBox hBox = new HBox(tfKey, tfValue, btnConfirm);
+            GridPane gp = new GridPane();
+            // 行动回合 锁定技能
+            // tfKey    tfValue
+            // 确定
+            gp.add(new Text("行动回合"), 0, 0);
+            gp.add(new Text("锁定技能"), 1, 0);
+            gp.add(tfKey, 0, 1);
+            gp.add(tfValue, 1, 1);
+            gp.add(btnConfirm, 0, 2);
+            gp.setAlignment(Pos.CENTER);
             Stage stage = new Stage();
             stage.initOwner(owner);
             stage.initModality(Modality.WINDOW_MODAL);
-            stage.setScene(new Scene(hBox));
+            stage.setTitle("添加锁定技能");
+            Initializer.installScale(stage, gp, 400, 80);
             stage.showAndWait();
         });
         btnDelete.setOnAction(e -> {
@@ -250,24 +262,35 @@ public class PropertiesHolder implements Serializable {
 
                 tfKey.requestFocus();
             });
-            // 行动回合输入框回车跳到锁定技能输入框
+            // 行动回合输入框回车跳到锁定目标输入框
             tfKey.setOnKeyPressed(e1 -> {
                 if (e1.getCode() == KeyCode.ENTER) {
                     tfTarget.requestFocus();
                 }
             });
-            // 技能输入框回车确定
+            // 目标输入框回车确定
             tfTarget.setOnKeyPressed(e1 -> {
                 if (e1.getCode() == KeyCode.ENTER) {
                     btnConfirm.fire();
                 }
             });
 
-            HBox hBox = new HBox(tfKey, cbFlagType, tfTarget, btnConfirm);
+            GridPane gp = new GridPane();
+            gp.addRow(0, new Text("行动回合"), new Text("标记类型"), new Text("标记目标"));
+            gp.addRow(1, tfKey, cbFlagType, tfTarget);
+            gp.add(btnConfirm, 0, 2);
+
+            gp.setPadding(new Insets(20));
+            /*gp.setHgap(10);
+            gp.setVgap(10);*/
+            gp.setAlignment(Pos.CENTER);
+
+
             Stage stage = new Stage();
+            stage.setTitle("添加红绿标");
             stage.initOwner(owner);
             stage.initModality(Modality.WINDOW_MODAL);
-            stage.setScene(new Scene(hBox));
+            Initializer.installScale(stage, gp, 500, 100);
             stage.showAndWait();
         });
 
@@ -303,8 +326,14 @@ public class PropertiesHolder implements Serializable {
                 stage.close();
             });
 
-            HBox hBox = new HBox(tfTargetOld, cbFlagType, tfTargetNew, btnConfirm);
-            stage.setScene(new Scene(hBox));
+            GridPane gp = new GridPane();
+            gp.addRow(0, new Text("原目标"), new Text("标记类型"), new Text("新目标"));
+            gp.addRow(1, tfTargetOld, cbFlagType, tfTargetNew);
+            gp.add(btnConfirm, 0, 2);
+
+            gp.setPadding(new Insets(20));
+            Initializer.installScale(stage, gp, 450, 100);
+
             stage.initOwner(owner);
             stage.initModality(Modality.WINDOW_MODAL);
             stage.show();
