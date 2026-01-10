@@ -77,30 +77,40 @@ public class Initializer extends Application {
             prediction.predictionOrder.clear();
             // TODO 还要清空红绿标和锁技能
         });
-        borderPane.addControlButton("额外红绿标", e -> {
+        /*borderPane.addControlButton("额外红绿标", e -> {
             // TODO
 //            ListViewWithBasicController<ExtraFlag> listViewPane = new ListViewWithBasicController<>(extraFlags);
-            /*listViewPane.setDefaultControlButtons(e -> {
+            *//*listViewPane.setDefaultControlButtons(e -> {
                 // String int int combobox int
                 TextField tfName = new TextField();
                 TextField tfTeam = new TextField();
                 TextField tfRound = new TextField();
-            });*/
+            });*//*
         });
         borderPane.addControlButton("额外锁技能", e -> {
 
 
-        });
+        });*/
 
         borderPane.addControlButton("设置行动顺序", e -> prediction.showPrediction(scene, items));
         borderPane.addControlButton("检查是否符合", e -> prediction.check(items
                 , stage, () -> stage.setScene(scene)), scene, KeyCode.C);
 
         stage.setScene(scene);
-        stage.setWidth(1800);
-        stage.setHeight(900);
+        /*stage.setWidth(1800);
+        stage.setHeight(900);*/
         stage.setTitle("配置式神");
         stage.show();
+    }
+
+    private void setScale(Stage stage, Pane root) {
+        double width = stage.getWidth();
+        double height = stage.getHeight();
+
+        double scale = Math.min(width / 1800, height / 900);
+
+        root.setScaleX(scale);
+        root.setScaleY(scale);
     }
 
     private void addCharacter(Stage owner) {
