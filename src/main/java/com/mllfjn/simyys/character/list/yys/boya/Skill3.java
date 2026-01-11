@@ -74,7 +74,7 @@ class Skill3 extends Skill {
                 .filterTeammate()
                 .getList();
 
-        boolean increase = getLevel() >= 5 && boYa.getYinFenShen() != null;
+        boolean increase = getLevel() >= 5 && boYa.getYinFenShen().isPresent();
 
         for (Character character : list) {
             StatusBaoYan.install(boYa, character, this);

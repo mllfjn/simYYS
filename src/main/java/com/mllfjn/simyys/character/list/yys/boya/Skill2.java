@@ -17,7 +17,7 @@ import java.util.Optional;
 // √     lv5-对额外1个目标造成伤害
 // √     术印:系数额外提升40,攻击目标增加1(至多增至3)
 
-class Skill2 extends Skill {
+class Skill2 extends Skill implements YingFenShenCopy {
     public static final String SkillName = "多重箭";
     private static final int[] baseMultiplier = new int[]{0, 100, 110, 120, 130, 130};
 
@@ -39,32 +39,53 @@ class Skill2 extends Skill {
 
     @Override
     public Optional<Character> usePrivate(BattlePane bp) {
-        Character belongTo = getBelongTo();
-        Interactive interactive = belongTo.getInteractive();
-        Character target = new CharacterFinder(belongTo)
+        BoYa boYa = (BoYa) getBelongTo();
+        Character target = new CharacterFinder(boYa)
                 .filterEnemy()
                 .getAutoOrElseRandom();
+
+        use(boYa, target, boYa.getInteractive(), realMultiplier, false);
+        boYa.getYinFenShen().ifPresent(yfs -> yfs.usedSkill(this, target));
+
+        return Optional.of(target);
+    }
+
+    private void use(Character skillUser, Character target, Interactive interactive, int multiplier, boolean doLog) {
 
         if (extraTarget == 0) {
             interactive.attackTypical(this, target, realMultiplier, AttackType.DAN_TI);
         } else {
-            List<Character> candidate = new CharacterFinder(belongTo)
+            List<Character> candidate = new CharacterFinder(skillUser)
                     .filterEnemy()
-                    .filter(character -> character != target)
                     .getList();
 
-            List<Character> targets = new ArrayList<>();
+            candidate.remove(target);
 
-            for (int i = 0; i < extraTarget; i++) {
-                Character extraTarget = RateController
-                        .choose(SkillName + "的额外目标", candidate, Character::getName, belongTo.bp.calc);
+            List<Character> targets = new ArrayList<>();
+            targets.add(target);
+
+            for (int i = 0; i < extraTarget && !candidate.isEmpty(); i++) {
+                Character extraTarget;
+                if (candidate.size() > 1) {
+                    extraTarget = RateController
+                            .choose(SkillName + "的额外目标", candidate, Character::getName, skillUser.bp.calc);
+                } else {
+                    extraTarget = candidate.get(0);
+                }
                 candidate.remove(extraTarget);
                 targets.add(extraTarget);
             }
 
-            interactive.attackTypical(this, targets, realMultiplier, AttackType.DAN_TI);
-        }
+            interactive.attackTypical(this, targets, multiplier, AttackType.DAN_TI);
 
-        return Optional.of(target);
+            if (doLog) {
+                log(skillUser, target);
+            }
+        }
+    }
+
+    @Override
+    public void copy(Character skillUser, Character target, Interactive interactive, int extraMultiplier) {
+        use(skillUser, target, interactive, realMultiplier + extraMultiplier, true);
     }
 }

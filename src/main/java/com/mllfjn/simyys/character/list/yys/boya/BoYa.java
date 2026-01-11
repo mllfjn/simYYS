@@ -17,18 +17,18 @@ public class BoYa extends CharacterYYSBase {
     public static final String[] DefaultSkillLevels = new String[]{"5", "0", "5", "5", "5", "5", "5", "1"};
     public static final String[] DefaultShuYin = new String[]{"0", "0", "3", "0", "0", "0", "0", "0"};
 
-    private Character yinFenShen;
+    private Skill4.YinFenShen yinFenShen;
     private Skill8 skill8;
 
     Optional<Skill8> getSkill8() {
         return Optional.of(skill8);
     }
 
-    Character getYinFenShen() {
-        return yinFenShen;
+    Optional<Skill4.YinFenShen> getYinFenShen() {
+        return Optional.of(yinFenShen);
     }
 
-    void setYinFenShen(Character yinFenShen) {
+    void setYinFenShen(Skill4.YinFenShen yinFenShen) {
         this.yinFenShen = yinFenShen;
     }
 
@@ -84,6 +84,14 @@ public class BoYa extends CharacterYYSBase {
         if (skill[0] > 0) {
             skill8 = new Skill8(this, skill[0], skill[1]);
             addSkill(skill8);
+        }
+    }
+
+    @Override
+    public void reset(BattlePane bp) {
+        super.reset(bp);
+        if (yinFenShen != null) {
+            yinFenShen.bp = bp;
         }
     }
 }

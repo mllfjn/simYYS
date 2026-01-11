@@ -12,20 +12,25 @@ import com.mllfjn.simyys.character.status.StatusType;
 import java.util.Optional;
 
 // √     创造除一个继承自身90%的属性且不可被攻击的影分身
-//      源博雅每攻击3次,影分身将对同一目标释放源博雅上次攻击相同的技能 (skill1、2、5可以触发)
+// √     源博雅每攻击3次,影分身将对同一目标释放源博雅上次攻击相同的技能 (skill1、2、5可以触发)
 // √     lv2-释放后提升自身30%暴击
 // √     lv3-继承的属性提升至100%
 // √     lv4-释放后提升自身30点速度
 // √     lv5-释放后提升自身70%行动条
-//      术印:影分身造成的伤害额外提升阴阳师攻击的20%
+// √     术印:影分身造成的伤害额外提升阴阳师攻击的20%
 class Skill4 extends Skill {
     public static final String SkillName = "秘术·影分身";
+
+    private final int extraMultiplier;
 
     private boolean exist;
 
     public Skill4(Character belongTo, int level, int shuYin) {
         super(belongTo, level, 0, 0, 4);
+
+        extraMultiplier = 20 * shuYin;
     }
+
 
     @Override
     public boolean canUse(BattlePane bp) {
@@ -54,7 +59,7 @@ class Skill4 extends Skill {
         }
 
         exist = true;
-        belongTo.setYinFenShen(new YinFenShen(belongTo, level >= 3 ? 1 : 0.9));
+        belongTo.setYinFenShen(new YinFenShen(belongTo, level >= 3 ? 1 : 0.9, extraMultiplier));
 
         return Optional.empty();
     }
@@ -96,13 +101,28 @@ class Skill4 extends Skill {
     static class YinFenShen extends Character {
         public static final String CharacterName = "影分身";
 
-        public YinFenShen(Character character, double coefficient) {
+        private final int extraMultiplier;
+
+        private int times = 0;
+
+        public YinFenShen(Character owner, double coefficient, int extraMultiplier) {
+            this.extraMultiplier = extraMultiplier;
             this.name = CharacterName;
 
-            this.setInitBaseAttack(character.getInitBaseAttack() * coefficient);
-            this.setInitAdditionAttack(character.getInitAdditionAttack() * coefficient);
-            this.setInitCritRate(character.getInitCritRate() * coefficient);
-            this.setInitCritPower(character.getInitCritPower() * coefficient);
+            this.setInitBaseAttack(owner.getInitBaseAttack() * coefficient);
+            this.setInitAdditionAttack(owner.getInitAdditionAttack() * coefficient);
+            this.setInitCritRate(owner.getInitCritRate() * coefficient);
+            this.setInitCritPower(owner.getInitCritPower() * coefficient);
+        }
+
+        public void usedSkill(YingFenShenCopy skill, Character target) {
+            if (times == 2) {
+                doInteractive(interactive ->
+                        skill.copy(this, target, interactive, extraMultiplier)
+                );
+                times = 0;
+            }
+            times++;
         }
 
         @Override

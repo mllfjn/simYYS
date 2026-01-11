@@ -118,7 +118,11 @@ public abstract class Skill implements Serializable {
     }
 
     protected void log(Character target) {
-        StringBuilder sb = new StringBuilder(belongTo.name);
+        log(belongTo, target);
+    }
+
+    protected void log(Character skillUser, Character target) {
+        StringBuilder sb = new StringBuilder(skillUser.name);
         if (target != null) {
             sb.append("对").append(target.name);
         }
