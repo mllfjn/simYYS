@@ -17,6 +17,7 @@ import javafx.stage.Window;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 import java.util.StringJoiner;
 
 public class PropertySelectMulti  extends PropertyRequire implements Serializable {

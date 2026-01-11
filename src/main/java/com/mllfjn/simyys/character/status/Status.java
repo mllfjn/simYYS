@@ -21,9 +21,9 @@ public abstract class Status implements Serializable {
     }
 
     public void setDurationType(StatusDurationType settleType, int duration) {
-        if (settleType == StatusDurationType.WEI_CHI) {
+        /*if (settleType == StatusDurationType.WEI_CHI) {
             from.removeMaintainedStatus(this);
-        }
+        }*/
 
         this.durationType = settleType;
         this.duration = duration;
