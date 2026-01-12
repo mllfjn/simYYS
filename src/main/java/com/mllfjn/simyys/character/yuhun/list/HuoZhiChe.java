@@ -16,8 +16,8 @@ public class HuoZhiChe extends YuHun implements YuHunSealResponse {
     private StatusAfterRound statusAfterRound;
 
     @Override
-    public void init(Character character) {
-        super.init(character);
+    public void init(Character character, boolean isInit) {
+        super.init(character, isInit);
         statusAfterRound = new StatusAfterRound(character);
     }
 

@@ -15,10 +15,10 @@ class StatusYuanYou extends Status implements AttributeModifier, Displayable {
     }
 
     public static void install(Character from, Character belongTo) {
-        Optional<StatusYuanYou> oStatus = belongTo.getStatus(StatusYuanYou.class);
-        if (oStatus.isEmpty()) {
-            belongTo.addStatus(new StatusYuanYou(from, belongTo));
-        }
+        belongTo.getStatus(StatusYuanYou.class)
+                .ifPresentOrElse(
+                        status -> status.setDuration(belongTo.isInRound() ? 2 : 1),
+                        () -> belongTo.addStatus(new StatusYuanYou(from, belongTo)));
     }
 
     @Override

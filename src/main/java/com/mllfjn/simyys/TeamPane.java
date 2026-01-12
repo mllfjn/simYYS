@@ -167,8 +167,8 @@ public class TeamPane implements Serializable {
         if (!mobTeam) {
             for (Character character : characters) {
                 for (YuHun yuHun : character.getYuHunSet()) {
-                    if (yuHun instanceof HuoLing) {
-                        gainGuiHuoFromYuHun(3);
+                    if (yuHun instanceof HuoLing hl) {
+                        hl.action(this);
                         return;
                     }
                 }

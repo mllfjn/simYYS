@@ -24,8 +24,8 @@ public class QingNvFang extends YuHun {
     }
 
     @Override
-    public void init(Character character) {
-        super.init(character);
+    public void init(Character character, boolean isInit) {
+        super.init(character, isInit);
         character.addStatus(new StatusQNFListener(character));
     }
 

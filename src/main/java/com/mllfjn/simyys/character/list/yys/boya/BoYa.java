@@ -25,7 +25,7 @@ public class BoYa extends CharacterYYSBase {
     }
 
     Optional<Skill4.YinFenShen> getYinFenShen() {
-        return Optional.of(yinFenShen);
+        return Optional.ofNullable(yinFenShen);
     }
 
     void setYinFenShen(Skill4.YinFenShen yinFenShen) {

@@ -1,6 +1,5 @@
 package com.mllfjn.simyys.character.yuhun.list;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.battleevent.EventBattleStart;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
@@ -16,8 +15,8 @@ public class ShenQiLou extends YuHun {
     }
 
     @Override
-    public void init(Character character) {
-        super.init(character);
+    public void init(Character character, boolean isInit) {
+        super.init(character, isInit);
 
         // 与怪物的战斗开始时，获得庇护
         character.bp.addActionListener(character, event -> {

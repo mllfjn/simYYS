@@ -7,7 +7,6 @@ import com.mllfjn.simyys.utils.Utils;
 import javafx.scene.image.Image;
 
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -63,6 +62,7 @@ public class YuHunFactory {
         yuHunMap.put(DiaoPingHuo.YuHunName, DiaoPingHuo.class);
         yuHunMap.put(ZhenZhu.YuHunName, ZhenZhu.class);
         yuHunMap.put(TuFo.YuHunName, TuFo.class);
+        yuHunMap.put(ZhenMuShou.YuHunName, ZhenMuShou.class);
     }
 
     public static Image getImage(String name) {
@@ -76,24 +76,24 @@ public class YuHunFactory {
         return image;
     }
 
-    public static <T extends YuHun> Optional<T> getYuHun(String name, Character character) {
+    public static <T extends YuHun> Optional<T> getYuHun(String name, Character character, boolean isInit) {
         /*for (Map<String, Class<? extends YuHun>> map : yuHunMap.values()) {
             if (map.containsKey(name)) {
                 return getYuHun(map.get(name), character)
             }
         }*/
         if (yuHunMap.containsKey(name)) {
-            return getYuHun(yuHunMap.get(name), character);
+            return getYuHun(yuHunMap.get(name), character, isInit);
         }
 
         return Optional.empty();
     }
 
-    public static <T extends YuHun> Optional<T> getYuHun(Class<? extends YuHun> yClass, Character character) {
+    public static <T extends YuHun> Optional<T> getYuHun(Class<? extends YuHun> yClass, Character character, boolean isInit) {
         try {
             @SuppressWarnings("unchecked")
             T yuHun = (T) yClass.getDeclaredConstructor().newInstance();
-            yuHun.init(character);
+            yuHun.init(character, isInit);
             yClass.cast(yuHun);
             return Optional.of(yuHun);
         } catch (Exception e) {

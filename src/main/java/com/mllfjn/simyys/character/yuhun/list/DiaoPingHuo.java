@@ -19,8 +19,8 @@ public class DiaoPingHuo extends YuHun implements YuHunSealResponse {
     private StatusDPHAfterRound status;
 
     @Override
-    public void init(Character character) {
-        super.init(character);
+    public void init(Character character, boolean isInit) {
+        super.init(character, isInit);
 
         status = new StatusDPHAfterRound(character);
     }

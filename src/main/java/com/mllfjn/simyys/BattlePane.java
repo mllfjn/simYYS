@@ -271,6 +271,7 @@ public class BattlePane {
         situation.teamPane[0].calHuoLing();
         situation.teamPane[1].calHuoLing();
 
+        interactive.display();
         log.characterAct(situation.characterActing);
         log.next();
     }

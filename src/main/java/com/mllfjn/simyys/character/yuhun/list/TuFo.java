@@ -17,8 +17,8 @@ public class TuFo extends YuHun implements YuHunSealResponse {
     private StatusTFListener status;
 
     @Override
-    public void init(Character character) {
-        super.init(character);
+    public void init(Character character, boolean isInit) {
+        super.init(character, isInit);
         status = new StatusTFListener(character);
     }
 

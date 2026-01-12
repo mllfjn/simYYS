@@ -11,5 +11,6 @@ public enum Trigger {
     USED_SKILL, // 使用了技能（不包括普攻）
     USE_PU_GONG, // 使用普攻
     INCREASE_LOCATION, // 被拉条
-    AFTER_HEAL, // 被治疗后
+    //    AFTER_HEAL, // 被治疗后
+    HP_CHANGE, // 生命值改变，发生在受到伤害且打破护盾，失去生命，受到治疗和恢复并且不是满血
 }

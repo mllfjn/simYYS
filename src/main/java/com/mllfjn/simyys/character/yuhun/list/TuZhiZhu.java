@@ -26,12 +26,12 @@ public class TuZhiZhu extends YuHun implements YuHunUnfullMark {
     }
 
     @Override
-    public void init(Character character) {
-        super.init(character);
+    public void init(Character character, boolean isInit) {
+        super.init(character, isInit);
         character.addStatus(new StatusTZZListener(character));
     }
 
-    static class StatusTZZListener extends Status implements StatusRunnable {
+    class StatusTZZListener extends Status implements StatusRunnable {
         private final Map<Character, Double> map = new LinkedHashMap<>();
 
         public StatusTZZListener(Character character) {
@@ -46,7 +46,7 @@ public class TuZhiZhu extends YuHun implements YuHunUnfullMark {
 
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            if (trigger == Trigger.AFTER_ATTACK && param instanceof ParamCauseAttack pca) {
+            if (trigger == Trigger.CAUSE_ATTACK && param instanceof ParamCauseAttack pca) {
                 InteractiveInfo interactiveInfo = pca.interactiveInfo;
                 Character target = interactiveInfo.getTarget();
                 // 对怪物造成伤害时
@@ -60,6 +60,7 @@ public class TuZhiZhu extends YuHun implements YuHunUnfullMark {
                 for (Map.Entry<Character, Double> entry : map.entrySet()) {
                     StatusTuZhiZhu.enable(belongTo, entry.getKey(), 0.1 * entry.getValue());
                 }
+                TuZhiZhu.this.yuHunEffect();
                 map.clear();
             }
             return false;

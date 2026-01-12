@@ -314,6 +314,7 @@ public abstract class Character implements Serializable {
 
     public void setHp(double num) {
         this.hp = Math.min(maxHp, num);
+        statusRun(Trigger.HP_CHANGE, null);
         bp.onTrigger(new EventHpChange(this));
     }
 
@@ -596,7 +597,7 @@ public abstract class Character implements Serializable {
      */
     public void lostHP(double num) {
         // 如果后来给失去生命默认解除睡眠状态,修改神蛇的堕化
-        hp -= num;
+        setHp(getHp() - num);
         if (hp <= 0) {
             die();
         }
@@ -740,9 +741,19 @@ public abstract class Character implements Serializable {
         }
     }
 
+    public void removeYuHun(YuHun yuHun) {
+        if (!yuHunList.contains(yuHun)) {
+            return;
+        }
+        if (yuHun instanceof YuHunSealResponse sr) {
+            sr.disable();
+        }
+        yuHunList.remove(yuHun);
+    }
+
     public void addAllYuHun(String[] names) {
         for (String s : names) {
-            YuHunFactory.getYuHun(s, this).ifPresent(this::addYuHun);
+            YuHunFactory.getYuHun(s, this, true).ifPresent(this::addYuHun);
         }
     }
 
@@ -757,17 +768,18 @@ public abstract class Character implements Serializable {
         return false;
     }
 
-    public <T extends YuHun> void removeYuHun(Class<T> tClass) {
+    public <T extends YuHun> YuHun removeYuHun(Class<T> tClass) {
         Set<YuHun> yuHunSet = getYuHunSet();
         for (YuHun yuHun : yuHunSet) {
             if (tClass.isInstance(yuHun)) {
-                yuHunSet.remove(yuHun);
                 if (yuHun instanceof YuHunSealResponse sr) {
                     sr.disable();
                 }
-                return;
+                yuHunSet.remove(yuHun);
+                return yuHun;
             }
         }
+        return null;
     }
 
     public LinkedHashSet<YuHun> getYuHunSet() {

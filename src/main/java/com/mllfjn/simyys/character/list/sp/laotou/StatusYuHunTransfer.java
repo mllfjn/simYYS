@@ -6,14 +6,14 @@ import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunFactory;
 
 public class StatusYuHunTransfer extends Status implements Displayable {
-    private final Class<? extends YuHun> yClass;
+    private final YuHun addedYuHun;
+
     private boolean transfer = true;
 
     private StatusYuHunBeingTransfer beingTransfer;
 
     public StatusYuHunTransfer(Character from, Character belongTo, Class<? extends YuHun> yClass) {
         super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-        this.yClass = yClass;
         setDurationType(StatusDurationType.WEI_CHI, 1);
 
         for (YuHun yuHun : belongTo.getYuHunSet()) {
@@ -24,16 +24,19 @@ public class StatusYuHunTransfer extends Status implements Displayable {
         }
 
         if (transfer) {
-            belongTo.addYuHun(YuHunFactory.getYuHun(yClass, belongTo).orElseThrow());
+            addedYuHun = YuHunFactory.getYuHun(yClass, belongTo, false).orElseThrow();
+            belongTo.addYuHun(addedYuHun);
             beingTransfer = new StatusYuHunBeingTransfer(belongTo, ((LaoTou) from), yClass, this);
             from.addStatus(beingTransfer);
+        } else {
+            addedYuHun = null;
         }
     }
 
     @Override
     public void beforeDelete() {
-        if (transfer) {
-            belongTo.removeYuHun(yClass);
+        if (transfer && addedYuHun != null) {
+            belongTo.removeYuHun(addedYuHun);
             beingTransfer.delete();
         }
     }
