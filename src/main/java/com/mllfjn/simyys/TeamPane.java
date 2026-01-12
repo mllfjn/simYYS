@@ -86,10 +86,11 @@ public class TeamPane implements Serializable {
         characters.add(character);
         if (center != null) {
             CharacterIcon characterIcon = character.getCharacterIcon();
-            int index = center.getColumnCount();
-            center.add(characterIcon.getTop(), index, 0);
-            center.add(characterIcon.getCenter(), index, 1);
-            center.add(characterIcon.getBottom(), index, 2);
+//            int index = ;
+            center.addColumn(center.getColumnCount(), characterIcon.getTop(), characterIcon.getCenter(), characterIcon.getBottom());
+//            center.add(characterIcon.getTop(), index, 0);
+//            center.add(characterIcon.getCenter(), index, 1);
+//            center.add(characterIcon.getBottom(), index, 2);
         }
         if (mobTeam && !character.isMob() && !character.isSummon()) {
             guiHuo = new GuiHuo(2);
@@ -134,8 +135,8 @@ public class TeamPane implements Serializable {
         return guiHuo.canUseGuiHuo(num);
     }
 
-    public int useGuiHuo(int num) {
-        return guiHuo.useGuiHuo(num);
+    public void useGuiHuo(BattlePane bp, Character character, int num) {
+        guiHuo.useGuiHuo(bp, character, num);
     }
 
     public void gainGuiHuo(int num) {

@@ -50,27 +50,27 @@ class Skill3 extends Skill {
                 }
             }
             if (!mob.isEmpty()) {
-                addDiaoLing((NaMei) getBelongTo(), interactive, mob, true);
+                addDiaoLing(interactive, mob, true);
             }
             if (!notMob.isEmpty()) {
-                addDiaoLing((NaMei) getBelongTo(), interactive, notMob, false);
+                addDiaoLing(interactive, notMob, false);
             }
         } else {
-            addDiaoLing((NaMei) getBelongTo(), interactive, enemy, false);
+            addDiaoLing(interactive, enemy, false);
         }
 
         // 攻击敌方全体造成攻击120%伤害
         interactive.attackTypical(this, enemy, 120, AttackType.QUN_TI);
         // 攻击指定敌方目标造成攻击120%伤害
         interactive.attackTypical(this, target, 120, AttackType.DAN_TI);
-        // TODO 并额外使其获得恍惚
+        // TODO 并额外使其获得恍惚 不写恍惚了直接过一遍回合前后状态完事
         target.beforeRound();
         target.afterRound();
 
         return Optional.of(target);
     }
 
-    private void addDiaoLing(NaMei naMei, Interactive interactive, List<Character> list, boolean isMob) {
+    private void addDiaoLing(Interactive interactive, List<Character> list, boolean isMob) {
         // 并有25%基础概率施加凋零,持续1回合
         // lv4-对怪物释放时,施加凋零的基础概率提升至80%
         // lv3-释放时,施加的凋零持续事件增至2回合
@@ -81,7 +81,8 @@ class Skill3 extends Skill {
         if (getLevel() >= 2) {
             for (int i = 0; i < infos.length; i++) {
                 if (infos[i].isHit()) {
-                    list.get(i).addStatus(new StatusChenLun(naMei, list.get(i), getLevel()));
+                    interactive.effect(this, list.get(i), 100, false, StatusChenLun.getSupplier(getLevel()));
+//                    list.get(i).addStatus(new StatusChenLun(naMei, list.get(i), getLevel()));
                 }
             }
         }

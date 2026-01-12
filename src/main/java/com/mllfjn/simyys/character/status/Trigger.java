@@ -5,6 +5,7 @@ public enum Trigger {
     AFTER_ROUND_FIRST, // 回合后,最早执行,适用于伤害
     AFTER_ROUND, // 回合后
     AFTER_ATTACK, // 遭到攻击
+    MAKING_CROWD_CONTROL, // 要对其他角色造成控制时
     ADDING_CROWD_CONTROL, // 要被控制时
     CAUSE_ATTACK, // 造成伤害时
     WILL_USE_SKILL, // 将要使用技能

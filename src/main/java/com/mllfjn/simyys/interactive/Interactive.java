@@ -323,7 +323,7 @@ public class Interactive {
         EffectInfo[] infos = RateController
                 .mingZhong(skill, statusSupplier.getStatusName(), owner, targets, baseRate, calHit, bp.calc);
         for (int i = 0; i < targets.size(); i++) {
-            effect(infos[i], targets.get(i), statusSupplier);
+            effectBase(infos[i], targets.get(i), statusSupplier);
         }
         return infos;
     }
@@ -334,16 +334,19 @@ public class Interactive {
         EffectInfo info = RateController
                 .mingZhong(skill, statusSupplier.getStatusName(), owner, List.of(target), baseRate, calHit, bp.calc)[0];
 
-        effect(info, target, statusSupplier);
+        effectBase(info, target, statusSupplier);
     }
 
-    private void effect(EffectInfo effectInfo, Character target, StatusSupplier statusSupplier) {
+    private void effectBase(EffectInfo effectInfo, Character target, StatusSupplier statusSupplier) {
         if (effectInfo.isHit()) {
             if (statusSupplier.isCrowdControl()) {
                 target.statusRun(Trigger.ADDING_CROWD_CONTROL, new ParamAddCrowdControl(effectInfo));
             }
             if (!effectInfo.isCancel()) {
                 statusSupplier.supply(owner, target);
+                if (statusSupplier.isCrowdControl()) {
+                    owner.statusRun(Trigger.MAKING_CROWD_CONTROL, new ParamAddCrowdControl(effectInfo));
+                }
             }
         }
     }
@@ -395,9 +398,9 @@ public class Interactive {
         increaseLog.add(sb.toString());
     }
 
-    public void guiHuo(Character character, int num) {
+    public void guiHuo(Character character, int num, String name) {
         guiHuoLog.add(new CustomText(
-                "\t" + character.name + (num > 0 ? "获得" : "消耗") + "鬼火" + Math.abs(num) + "\n"
+                "\t" + character.name + (num > 0 ? "获得" : "消耗") + name + Math.abs(num) + "\n"
                 , TextFlowLog.TextType.GUI_HUO, TextFlowLog.TextColor.NORMAL, TextFlowLog.FontSize.NORMAL));
     }
 

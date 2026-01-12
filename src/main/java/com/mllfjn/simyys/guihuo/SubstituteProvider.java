@@ -6,4 +6,6 @@ public interface SubstituteProvider {
     boolean canUse(int num);
 
     void use(int num);
+
+    String getSubstituteProviderName();
 }

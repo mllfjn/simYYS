@@ -21,6 +21,10 @@ private boolean isCancel;
         this.skill = skill;
     }
 
+    public Character getTarget() {
+        return target;
+    }
+
     public boolean isHit() {
         return isHit;
     }

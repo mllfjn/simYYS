@@ -1,5 +1,8 @@
 package com.mllfjn.simyys.guihuo;
 
+import com.mllfjn.simyys.BattlePane;
+import com.mllfjn.simyys.battleevent.EventUseGuiHuo;
+import com.mllfjn.simyys.character.Character;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -44,9 +47,25 @@ public class GuiHuo implements Serializable {
         return substituteProvider.canUse(num - now);
     }
 
-    public int useGuiHuo(int num) {
-        now -= num;
+    public void useGuiHuo(BattlePane bp, Character character, int num) {
+        if (num <= now) {
+            now -= num;
+            bp.interactive.guiHuo(character, num, "鬼火");
+            bp.onTrigger(new EventUseGuiHuo(character.team, num));
+        } else {
+            int useGuiHuo = now;
+            int rest = num - now;
+            now = 0;
 
+            if (useGuiHuo > 0) {
+                bp.interactive.guiHuo(character, -useGuiHuo, "鬼火");
+                bp.onTrigger(new EventUseGuiHuo(character.team, useGuiHuo));
+            }
+
+            substituteProvider.use(rest);
+            bp.interactive.guiHuo(character, -rest, substituteProvider.getSubstituteProviderName());
+        }
+        /*now -= num;
         int realUsed;
         if (now < 0) {
             int rest = -now;
@@ -55,9 +74,8 @@ public class GuiHuo implements Serializable {
             realUsed = rest;
         } else {
             realUsed = num;
-        }
+        }*/
         repaint();
-        return realUsed;
     }
 
     public void addProgress() {

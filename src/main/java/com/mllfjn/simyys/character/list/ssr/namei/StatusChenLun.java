@@ -5,14 +5,24 @@ import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.InteractiveInfo;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamageBeingAttack;
+import com.mllfjn.simyys.interactive.StatusSupplier;
 
 public class StatusChenLun extends Status implements CrowdControl, InfluenceDamageBeingAttack, Displayable {
     private static final String text = "沉沦";
     private final int level;
-    public StatusChenLun(NaMei from, Character belongTo, int level) {
+
+    private StatusChenLun(Character from, Character belongTo, int level) {
         super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
         this.level = level;
         setDurationType(StatusDurationType.CHI_XU, 1);
+    }
+
+    public static StatusSupplier getSupplier(int level) {
+        return new StatusSupplier(text, StatusChenLun.class, (from, to) -> {
+            if (!to.isHaveStatus(StatusDiaoLing.class)) {
+                to.addStatus(new StatusChenLun(from, to, level));
+            }
+        });
     }
 
     @Override

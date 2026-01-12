@@ -103,11 +103,6 @@ public abstract class Skill implements Serializable {
             cooling = coolDown + 1;
         }
 
-
-        if (realCost != 0) {
-            bp.interactive.guiHuo(belongTo, -realCost);
-        }
-
         // 消息记录
         log(target);
 

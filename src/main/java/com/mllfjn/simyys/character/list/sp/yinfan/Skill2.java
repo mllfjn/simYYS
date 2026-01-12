@@ -206,6 +206,11 @@ class Skill2 extends Skill {
             }
         }
 
+        @Override
+        public String getSubstituteProviderName() {
+            return StatusName;
+        }
+
         static class StatusYuanLiCritPower extends Status implements AttributeModifier {
             private int stack = 0;
 

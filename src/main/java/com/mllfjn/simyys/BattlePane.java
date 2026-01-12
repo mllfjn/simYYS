@@ -162,9 +162,7 @@ public class BattlePane {
         if (character.isMob()) {
             MobGuiHuo.mobUseGuiHuo(character, num);
         } else {
-            int team = character.team;
-            int realUsed = situation.teamPane[team].useGuiHuo(num);
-            onTrigger(new EventUseGuiHuo(team, realUsed));
+            situation.teamPane[character.team].useGuiHuo(this, character, num);
         }
     }
 
@@ -173,7 +171,7 @@ public class BattlePane {
             MobGuiHuo.mobGainGuiHuo(character, num);
         } else {
             situation.teamPane[character.team].gainGuiHuo(num);
-            interactive.guiHuo(character, num);
+            interactive.guiHuo(character, num, "鬼火");
         }
     }
 

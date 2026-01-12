@@ -63,6 +63,7 @@ public class YuHunFactory {
         yuHunMap.put(ZhenZhu.YuHunName, ZhenZhu.class);
         yuHunMap.put(TuFo.YuHunName, TuFo.class);
         yuHunMap.put(ZhenMuShou.YuHunName, ZhenMuShou.class);
+        yuHunMap.put(YuanXingSi.YuHunName, YuanXingSi.class);
     }
 
     public static Image getImage(String name) {
