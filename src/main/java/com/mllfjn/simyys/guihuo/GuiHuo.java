@@ -50,7 +50,7 @@ public class GuiHuo implements Serializable {
     public void useGuiHuo(BattlePane bp, Character character, int num) {
         if (num <= now) {
             now -= num;
-            bp.interactive.guiHuo(character, num, "鬼火");
+            bp.interactive.guiHuo(character, -num, "鬼火");
             bp.onTrigger(new EventUseGuiHuo(character.team, num));
         } else {
             int useGuiHuo = now;

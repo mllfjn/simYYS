@@ -105,16 +105,22 @@ public class YuanXingSi extends YuHun implements YuHunSealResponse {
                             statusD2 = y;
                             break;
                         } else {
-                            statusD1 = y;
                             if (y.stack == 8) {
                                 return;
                             }
+                            statusD1 = y;
                         }
                     }
                 }
 
                 // 剩余回合2可以有的层数:8-剩余1的层数
-                int duration2CanAdd = statusD1 == null ? 8 : 8 - statusD1.getDuration();
+                int duration2CanAdd;
+                if (from == belongTo) {
+                    duration2CanAdd = statusD2 == null ? 8 : 8 - statusD2.stack;
+                    statusD2 = null;
+                } else {
+                    duration2CanAdd = statusD1 == null ? 8 : 8 - statusD1.stack;
+                }
 
                 if (duration2CanAdd > 0) {
                     if (statusD2 != null) {

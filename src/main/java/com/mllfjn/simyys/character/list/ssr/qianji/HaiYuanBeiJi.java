@@ -15,7 +15,7 @@ import com.mllfjn.simyys.interactive.AttackType;
 
 import java.util.List;
 
-public class HaiYuanBeiJi extends Character {
+class HaiYuanBeiJi extends Character {
     public static final String CharacterName = "海原贝戟";
     private final QianJi qianJi;
     private final StatusChaoSheng chaoSheng;

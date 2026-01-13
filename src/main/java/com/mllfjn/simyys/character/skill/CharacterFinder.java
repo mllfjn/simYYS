@@ -23,11 +23,18 @@ public class CharacterFinder {
     private TargetTeam targetTeam;
 
     public CharacterFinder(Character owner) {
+        this(owner, false);
+    }
+
+    public CharacterFinder(Character owner, boolean forceGetList) {
         this.owner = owner;
         this.bp = owner.bp;
 
         stream = bp.situation.characters.stream();
-        stream = stream.filter(character -> !character.isHaveStatus(StatusCanNotChoose.class));
+
+        if (!forceGetList) {
+            stream = stream.filter(character -> !character.isHaveStatus(StatusCanNotChoose.class));
+        }
     }
 
     public CharacterFinder filterYYS(boolean include) {

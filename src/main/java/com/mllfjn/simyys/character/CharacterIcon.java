@@ -59,7 +59,7 @@ public class CharacterIcon implements Serializable {
                             if (cooling != 0) {
                                 sb.append("冷:").append(cooling);
                             }
-                            sb.append("火:").append(skill.getRealCost(false));
+                            sb.append("火:").append(skill.getRealCost());
                             Label additionalText = new Label(sb.toString());
                             additionalText.setAlignment(Pos.CENTER_RIGHT);
                             additionalText.setMaxWidth(Double.MAX_VALUE);

@@ -47,11 +47,11 @@ public class QianJi extends CharacterShiShenBase {
         getSkill3_1();
     }
 
-    public HaiYuanBeiJi getHaiYuanBeiJi() {
+    HaiYuanBeiJi getHaiYuanBeiJi() {
         return haiYuanBeiJi;
     }
 
-    public void setHaiYuanBeiJi(HaiYuanBeiJi haiYuanBeiJi) {
+    void setHaiYuanBeiJi(HaiYuanBeiJi haiYuanBeiJi) {
         this.haiYuanBeiJi = haiYuanBeiJi;
     }
 

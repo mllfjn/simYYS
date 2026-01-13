@@ -2,30 +2,29 @@ package com.mllfjn.simyys.character.skill;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.character.status.ForceChangeCost;
-import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.character.status.Trigger;
 import com.mllfjn.simyys.character.status.triggerParam.ParamUseSkill;
-import com.mllfjn.simyys.character.yuhun.list.HaiYueHuoYu;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class Skill implements Serializable {
     public static final String[] SKILL_LABEL = new String[]{"普攻", "贰", "叁", "肆", "伍", "陆", "柒", "捌", "玖", "拾"};
 
     private final Character belongTo;
     private final int level;
-    // 技能冷却时间
-    private int coolDown;
     private final int skillID;
     // 技能本身的消耗
     private int cost;
+    // 技能冷却时间
+    private int coolDown;
     // 技能当前的冷却回合数，因为回合结束后判定一次技能冷却，所以设定时要+1
     private int cooling;
+
+    // 技能消耗计算结果:技能是否可以使用计算一次,技能确定使用计算一次,UI的技能选择框又计算一次,所以保存结果省计算次数
+    private transient SkillCostResult costResult;
 
     // 当技能结束时，遍历通知
     private final List<SkillListener> skillListeners = new ArrayList<>();
@@ -74,7 +73,6 @@ public abstract class Skill implements Serializable {
         }
     }
 
-    // 技能本身的消耗，妒火之类的状态不要改这个
     protected void setCost(int num) {
         cost = num;
     }
@@ -90,10 +88,12 @@ public abstract class Skill implements Serializable {
     protected void useBase(BattlePane bp, boolean isCost) {
         belongTo.statusRun(Trigger.WILL_USE_SKILL, null);
 
-        int realCost = 0;
         if (isCost) {
-            realCost = getRealCost(true);
-            bp.useGuiHuo(getBelongTo(), realCost);
+            int finalCost = costResult.getFinalCost();
+            if (finalCost > 0) {
+                bp.useGuiHuo(getBelongTo(), finalCost);
+                costResult.reallyUse();
+            }
         }
 
         Character target = usePrivate(bp).orElse(null);
@@ -125,15 +125,20 @@ public abstract class Skill implements Serializable {
         belongTo.bp.log.addSkill(sb.toString());
     }
 
-    public int getRealCost(boolean reallyUse) {
-        int realCost = cost;
+    public int getRealCost() {
+        return getCostResult().getFinalCost();
+    }
+
+    /*public int getRealCost(boolean reallyUse) {
+        int mustUse = cost;
+        // 强制增加或减少消耗 比如猛火、SP千
         for (Status status : belongTo.getStatuses()) {
             if (status instanceof ForceChangeCost rc) {
-                realCost += rc.getChange();
+                mustUse += rc.getChange();
             }
         }
 
-        // 海月火玉 可选消耗更多
+        // 可选消耗更多 比如海月火玉
         AtomicInteger optionalUse = new AtomicInteger(0);
         belongTo.forEachYuHun(yuHun -> {
             if (yuHun instanceof HaiYueHuoYu) {
@@ -141,7 +146,10 @@ public abstract class Skill implements Serializable {
             }
         });
 
-        if (belongTo.bp.canUseGuiHuo(belongTo, realCost + optionalUse.get())) {
+        int optionalUseInt = optionalUse.get();
+
+        // 如果加上可选消耗都还小于等于0,直接返回0
+        if (mustUse + optionalUseInt <= 0) {
             if (reallyUse) {
                 belongTo.forEachYuHun(yuHun -> {
                     if (yuHun instanceof HaiYueHuoYu) {
@@ -149,16 +157,68 @@ public abstract class Skill implements Serializable {
                     }
                 });
             }
-            return Math.max(0, realCost + optionalUse.get());
-        } else {
-            return Math.max(0, realCost);
+            return 0;
         }
-    }
+
+        // 有代价的减少，并且优先级较高，比如遗念火，入梦
+        int mustUseForCounting = mustUse;
+        int optionalUseForCounting = mustUse + optionalUseInt;
+        List<ConditionalReduceCost> mustUseReduceCostList = null;
+        List<ConditionalReduceCost> optionalUseReduceCostList = null;
+
+        if (mustUseForCounting > 0) {
+            mustUseReduceCostList = new ArrayList<>();
+        }
+
+        if (optionalUseInt > 0) {
+            optionalUseReduceCostList = new ArrayList<>();
+        }
+
+        for (Status status : belongTo.getStatuses()) {
+            if (status instanceof ConditionalReduceCost crc) {
+                int reduce = crc.getReduce();
+                if (mustUseForCounting > 0) {
+                    mustUseReduceCostList.add(crc);
+                    mustUseForCounting -= reduce;
+                }
+
+                if (optionalUseForCounting > 0 && optionalUseReduceCostList != null) {
+                    optionalUseReduceCostList.add(crc);
+                    optionalUseForCounting -= reduce;
+                }
+
+                if (mustUseForCounting <= 0 && optionalUseForCounting <= 0) {
+                    break;
+                }
+            }
+        }
+
+        if (optionalUseReduceCostList != null && belongTo.bp.canUseGuiHuo(belongTo, optionalUseForCounting)) {
+            if (reallyUse) {
+                for (ConditionalReduceCost conditionalReduceCost : optionalUseReduceCostList) {
+                    conditionalReduceCost.enable();
+                }
+                belongTo.forEachYuHun(yuHun -> {
+                    if (yuHun instanceof HaiYueHuoYu) {
+                        ((HaiYueHuoYu) yuHun).enable();
+                    }
+                });
+            }
+            return optionalUseForCounting;
+        } else {
+            if (reallyUse) {
+                for (ConditionalReduceCost conditionalReduceCost : mustUseReduceCostList) {
+                    conditionalReduceCost.enable();
+                }
+            }
+            return mustUseForCounting;
+        }
+    }*/
 
     public abstract Optional<Character> usePrivate(BattlePane bp);
 
     public boolean canUse(BattlePane bp) {
-        return cooling == 0 && bp.canUseGuiHuo(belongTo, getRealCost(false));
+        return cooling == 0 && bp.canUseGuiHuo(belongTo, getRealCost());
     }
 
     public Character getBelongTo() {
@@ -199,6 +259,13 @@ public abstract class Skill implements Serializable {
 
     public void addSkillListener(Runnable runnable) {
         skillListeners.add(new SkillListener(runnable));
+    }
+
+    private SkillCostResult getCostResult() {
+        if (costResult == null) {
+            costResult = new SkillCostResult(this);
+        }
+        return costResult;
     }
 
     static class SkillListener {

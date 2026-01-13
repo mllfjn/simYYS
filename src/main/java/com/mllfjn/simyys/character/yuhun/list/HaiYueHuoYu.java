@@ -12,6 +12,7 @@ import com.mllfjn.simyys.interactive.AttackType;
 
 public class HaiYueHuoYu extends YuHun {
     public static final String YuHunName = "海月火玉";
+    public static final int EXTRA_USE = 1;
 
     public void enable() {
         character.addStatus(new StatusHaiYue(character));

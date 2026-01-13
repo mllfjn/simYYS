@@ -69,7 +69,7 @@ public abstract class Character implements Serializable {
     // 维持的状态
     private final List<Status> maintainedStatuses = new ArrayList<>();
     // 御魂列表
-    private final LinkedHashSet<YuHun> yuHunList = new LinkedHashSet<>();
+    private final LinkedHashSet<YuHun> yuHunSet = new LinkedHashSet<>();
     // 头像
     private CharacterIcon characterIcon;
 
@@ -735,20 +735,20 @@ public abstract class Character implements Serializable {
     }
 
     public void addYuHun(YuHun yuHun) {
-        yuHunList.add(yuHun);
+        yuHunSet.add(yuHun);
         if (yuHun instanceof YuHunSealResponse sr) {
             sr.enable();
         }
     }
 
     public void removeYuHun(YuHun yuHun) {
-        if (!yuHunList.contains(yuHun)) {
+        if (!yuHunSet.contains(yuHun)) {
             return;
         }
         if (yuHun instanceof YuHunSealResponse sr) {
             sr.disable();
         }
-        yuHunList.remove(yuHun);
+        yuHunSet.remove(yuHun);
     }
 
     public void addAllYuHun(String[] names) {
@@ -761,7 +761,14 @@ public abstract class Character implements Serializable {
         if (isYuHunSeal()) {
             return;
         }
-        yuHunList.forEach(action);
+        yuHunSet.forEach(action);
+    }
+
+    public <T> Optional<T> getYuHun(Class<T> tClass) {
+        if (isYuHunSeal()) {
+            return Optional.empty();
+        }
+        return yuHunSet.stream().filter(tClass::isInstance).map(tClass::cast).findFirst();
     }
 
     public boolean isYuHunSeal() {
@@ -783,7 +790,7 @@ public abstract class Character implements Serializable {
     }
 
     public LinkedHashSet<YuHun> getYuHunSet() {
-        return yuHunList;
+        return yuHunSet;
     }
 
     public void beforeDie(InteractiveInfo interactiveInfo) {
