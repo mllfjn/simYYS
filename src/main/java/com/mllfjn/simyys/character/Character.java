@@ -471,10 +471,11 @@ public abstract class Character implements Serializable {
         // 持续类状态过回合
         statuses.removeIf(status -> {
             if (status.getDurationType() == StatusDurationType.CHI_XU) {
-                status.setDuration(status.getDuration() - 1);
-                if (status.getDuration() == 0) {
+                if (status.getDuration() == 1) {
                     status.beforeDelete();
                     return true;
+                } else {
+                    status.setDuration(status.getDuration() - 1);
                 }
             }
             return false;
@@ -853,6 +854,12 @@ public abstract class Character implements Serializable {
                     status.delete();
                 }
             }
+        }
+    }
+
+    public void refreshSkills() {
+        for (Skill skill : skills) {
+            skill.refresh();
         }
     }
 }

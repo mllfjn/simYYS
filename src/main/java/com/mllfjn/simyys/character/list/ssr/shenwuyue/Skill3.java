@@ -14,7 +14,6 @@ import java.util.Optional;
 
 // √     创造存在1回合的幻境(好像是"持续")
 // √     使非召唤物友方目标获得2层入梦,维持2回合
-// √     幻境中自身和入梦携带者获得40%减伤,其他友方获得20%减伤
 // √     lv2-幻境中自身和入梦携带者回合前,获得1点鬼火
 // √     lv3-幻境效果增加为2回合
 // √     lv4-消耗鬼火减少2点
@@ -59,18 +58,11 @@ class Skill3 extends Skill {
     }
 
     static class StatusHuanJingListener extends Status {
-        private final BattleActionListener listener;
+        private BattleActionListener listener;
 
-        private StatusHuanJingListener(Character character, int duration, boolean gainGuiHuo
-                , Skill2.StatusMengShen statusMengShen) {
+        private StatusHuanJingListener(Character character, int duration) {
             super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
             setDurationType(StatusDurationType.CHI_XU, duration);
-
-            listener = character.bp.forEveryone(c -> {
-                if (c.team == character.team) {
-                    c.addStatus(new StatusHuanJing(character, c, gainGuiHuo, statusMengShen));
-                }
-            });
         }
 
         public static void add(Character character, int duration, boolean gainGuiHuo
@@ -80,10 +72,19 @@ class Skill3 extends Skill {
                     status -> status.setDuration(realDuration),
                     () -> {
                         StatusHuanJingListener status =
-                                new StatusHuanJingListener(character, realDuration, gainGuiHuo, statusMengShen);
+                                new StatusHuanJingListener(character, realDuration);
                         character.addStatus(status);
+                        status.addListener(gainGuiHuo, statusMengShen);
                     }
             );
+        }
+
+        private void addListener(boolean gainGuiHuo, Skill2.StatusMengShen statusMengShen) {
+            listener = belongTo.bp.forEveryone(c -> {
+                if (c.team == belongTo.team) {
+                    c.addStatus(new StatusHuanJing(belongTo, c, gainGuiHuo, statusMengShen));
+                }
+            });
         }
 
         @Override
@@ -93,7 +94,14 @@ class Skill3 extends Skill {
                     .getList();
 
             for (Character character : list) {
-                character.removeStatus(StatusHuanJing.class);
+                if (character == belongTo) {
+                    character.getStatus(StatusHuanJing.class)
+                            .ifPresent(status ->
+                                    status.setDurationType(StatusDurationType.CHI_XU, 1)
+                            );
+                } else {
+                    character.removeStatus(StatusHuanJing.class);
+                }
             }
 
             belongTo.bp.removeActionTrigger(belongTo, listener);
@@ -114,20 +122,12 @@ class Skill3 extends Skill {
 
         @Override
         public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.JIAN_SHANG || attribute == Attribute.ZENG_SHANG;
+            return attribute == Attribute.ZENG_SHANG;
         }
 
         @Override
         public double getInfluence(Attribute attribute) {
-            if (attribute == Attribute.JIAN_SHANG) {
-                if (belongTo == from || belongTo == ((ShenWuYue) from).getRuMengCarrier()) {
-                    return 40;
-                } else {
-                    return 20;
-                }
-            } else {
-                return statusMengShen.getIncrease();
-            }
+            return statusMengShen.getIncrease();
         }
 
         @Override
@@ -144,7 +144,7 @@ class Skill3 extends Skill {
         }
     }
 
-    static class StatusRuMeng extends Status implements Displayable, ConditionalReduceCost {
+    static class StatusRuMeng extends Status implements Displayable, ConditionalReduceCost, AttributeModifier {
         public static final String StatusName = "入梦";
 
         private int stack = 2;
@@ -172,12 +172,22 @@ class Skill3 extends Skill {
 
         @Override
         public String getDisplayText() {
-            return StatusName + stack;
+            return StatusName + stack + "-" + getDuration();
         }
 
         @Override
         public void beforeDelete() {
             ((ShenWuYue) from).setRuMeng(null, false);
+        }
+
+        @Override
+        public boolean isAffectAttribute(Attribute attribute) {
+            return attribute == Attribute.JIAN_SHANG;
+        }
+
+        @Override
+        public double getInfluence(Attribute attribute) {
+            return 20;
         }
     }
 

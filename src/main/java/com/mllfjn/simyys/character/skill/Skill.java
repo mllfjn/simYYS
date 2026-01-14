@@ -51,6 +51,10 @@ public abstract class Skill implements Serializable {
         };
     }
 
+    public void refresh() {
+        costResult = null;
+    }
+
     public abstract String getName();
 
     public boolean tryUse(BattlePane bp) {
@@ -90,9 +94,9 @@ public abstract class Skill implements Serializable {
 
         if (isCost) {
             int finalCost = costResult.getFinalCost();
+            costResult.reallyUse();
             if (finalCost > 0) {
                 bp.useGuiHuo(getBelongTo(), finalCost);
-                costResult.reallyUse();
             }
         }
 

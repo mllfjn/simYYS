@@ -444,6 +444,7 @@ public class BattlePane {
             return newRoundCharacter;
         });
         situation.characterActing.timesToAct++;
+        situation.characterActing.refreshSkills();
     }
 
     public Character getCharacterActing() {
