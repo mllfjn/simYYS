@@ -140,7 +140,7 @@ public abstract class Character implements Serializable {
     }
 
     public double getAttack() {
-        return AttributeCounter.getAttribute(Attribute.ATTACK, baseAttack + additionAttack, getStatuses());
+        return TraversalOrderManager.getAttribute(Attribute.ATTACK, baseAttack + additionAttack, getStatuses());
     }
 
     public double getHp() {
@@ -152,35 +152,35 @@ public abstract class Character implements Serializable {
     }
 
     public double getSpeed() {
-        return AttributeCounter.getAttribute(Attribute.SPEED, speed, getStatuses());
+        return TraversalOrderManager.getAttribute(Attribute.SPEED, speed, getStatuses());
     }
 
     public double getDefence() {
-        return AttributeCounter.getAttribute(Attribute.DEFENCE, defence, statuses);
+        return TraversalOrderManager.getAttribute(Attribute.DEFENCE, defence, statuses);
     }
 
     public double getCritRate() {
-        return AttributeCounter.getAttribute(Attribute.CRIT_RATE, critRate, statuses);
+        return TraversalOrderManager.getAttribute(Attribute.CRIT_RATE, critRate, statuses);
     }
 
     public double getCritPower() {
-        return AttributeCounter.getAttribute(Attribute.CRIT_POWER, critPower, statuses);
+        return TraversalOrderManager.getAttribute(Attribute.CRIT_POWER, critPower, statuses);
     }
 
     public double getEffectHitRate() {
-        return AttributeCounter.getAttribute(Attribute.EFFECT_HIT_RATE, effectHitRate, statuses);
+        return TraversalOrderManager.getAttribute(Attribute.EFFECT_HIT_RATE, effectHitRate, statuses);
     }
 
     public double getEffectResistRate() {
-        return AttributeCounter.getAttribute(Attribute.EFFECT_RESIST_RATE, effectResistRate, statuses);
+        return TraversalOrderManager.getAttribute(Attribute.EFFECT_RESIST_RATE, effectResistRate, statuses);
     }
 
     public double getZengShang() {
-        return AttributeCounter.getAttribute(Attribute.ZENG_SHANG, 0, getStatuses());
+        return TraversalOrderManager.getAttribute(Attribute.ZENG_SHANG, 0, getStatuses());
     }
 
     public double getJianShang() {
-        return AttributeCounter.getAttribute(Attribute.JIAN_SHANG, 0, getStatuses());
+        return TraversalOrderManager.getAttribute(Attribute.JIAN_SHANG, 0, getStatuses());
     }
 
     public double getYiShang() {
@@ -192,8 +192,8 @@ public abstract class Character implements Serializable {
         // 举例：晴明贴了灭易伤30%，敌方有不知火星火结界的18%减伤效果，则x=0.12，b=1.12。
         // 鬼吞的大妖之力也是减伤，所以100%减伤只是将伤害降低到一半。
 
-        double yiShang = AttributeCounter.getAttribute(Attribute.YI_SHANG, 0, getStatuses());
-        double jianShang = AttributeCounter.getAttribute(Attribute.JIAN_SHANG, 0, getStatuses());
+        double yiShang = TraversalOrderManager.getAttribute(Attribute.YI_SHANG, 0, getStatuses());
+        double jianShang = TraversalOrderManager.getAttribute(Attribute.JIAN_SHANG, 0, getStatuses());
 
         double x = (yiShang - jianShang) / 100;
 
@@ -205,11 +205,11 @@ public abstract class Character implements Serializable {
     }
 
     public double getIgnoreDefense() {
-        return AttributeCounter.getAttribute(Attribute.IGNORE_DEFENCE, 0, getStatuses());
+        return TraversalOrderManager.getAttribute(Attribute.IGNORE_DEFENCE, 0, getStatuses());
     }
 
     public double getCritResist() {
-        return AttributeCounter.getAttribute(Attribute.CRIT_RESIST, 0, getStatuses());
+        return TraversalOrderManager.getAttribute(Attribute.CRIT_RESIST, 0, getStatuses());
     }
 
 

@@ -1,7 +1,7 @@
 package com.mllfjn.simyys.character.status;
 
 public interface ConditionalReduceCost {
-    int getReduce();
+    int getMaxReduce();
 
-    void enable();
+    void enable(int usedCount);
 }

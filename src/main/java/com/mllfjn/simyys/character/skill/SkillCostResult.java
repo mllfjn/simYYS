@@ -1,16 +1,18 @@
 package com.mllfjn.simyys.character.skill;
 
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.TraversalOrderManager;
 import com.mllfjn.simyys.character.status.ConditionalReduceCost;
 import com.mllfjn.simyys.character.status.ForceChangeCost;
 import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.character.yuhun.list.HaiYueHuoYu;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SkillCostResult {
-    private List<ConditionalReduceCost> conditionalReduceCostList;
+    private Map<ConditionalReduceCost, Integer> conditionalReduceCostIntegerMap;
     private HaiYueHuoYu haiYueHuoYu;
 
     private final int finalCost;
@@ -39,15 +41,29 @@ public class SkillCostResult {
             return;
         }
 
-        conditionalReduceCostList = new ArrayList<>();
-        for (Status status : belongTo.getStatuses()) {
-            if (status instanceof ConditionalReduceCost crc) {
-                conditionalReduceCostList.add(crc);
-                maxUse -= crc.getReduce();
-                if (maxUse <= 0) {
-                    finalCost = 0;
-                    return;
-                }
+        List<ConditionalReduceCost> conditionalReduceCosts = TraversalOrderManager
+                .getConditionalReduceCosts(belongTo.getStatuses());
+        if (conditionalReduceCosts.isEmpty()) {
+            if (belongTo.bp.canUseGuiHuo(belongTo, maxUse)) {
+                finalCost = maxUse;
+            } else {
+                finalCost = mustUse;
+            }
+            return;
+        }
+        conditionalReduceCostIntegerMap = new HashMap<>();
+        for (ConditionalReduceCost crc : conditionalReduceCosts) {
+            int maxReduce = crc.getMaxReduce();
+            if (maxReduce <= 0) {
+                continue;
+            }
+            if (maxReduce >= maxUse) {
+                conditionalReduceCostIntegerMap.put(crc, maxUse);
+                finalCost = 0;
+                return;
+            } else {
+                conditionalReduceCostIntegerMap.put(crc, maxReduce);
+                maxUse -= maxReduce;
             }
         }
 
@@ -63,10 +79,8 @@ public class SkillCostResult {
     }
 
     public void reallyUse() {
-        if (conditionalReduceCostList != null && !conditionalReduceCostList.isEmpty()) {
-            for (ConditionalReduceCost conditionalReduceCost : conditionalReduceCostList) {
-                conditionalReduceCost.enable();
-            }
+        if (conditionalReduceCostIntegerMap != null && !conditionalReduceCostIntegerMap.isEmpty()) {
+            conditionalReduceCostIntegerMap.forEach(ConditionalReduceCost::enable);
         }
         if (haiYueHuoYu != null) {
             haiYueHuoYu.enable();

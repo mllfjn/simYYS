@@ -94,6 +94,7 @@ class Skill3 extends Skill {
                     .getList();
 
             for (Character character : list) {
+                // TODO 将来把statuses写成safeRemoved的话改掉这个
                 if (character == belongTo) {
                     character.getStatus(StatusHuanJing.class)
                             .ifPresent(status ->
@@ -141,53 +142,6 @@ class Skill3 extends Skill {
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
             belongTo.bp.gainGuiHuo(belongTo, 1);
             return false;
-        }
-    }
-
-    static class StatusRuMeng extends Status implements Displayable, ConditionalReduceCost, AttributeModifier {
-        public static final String StatusName = "入梦";
-
-        private int stack = 2;
-
-        public StatusRuMeng(ShenWuYue from, Character belongTo) {
-            super(from, belongTo, StatusType.BUFF, StatusForm.YIN_JI);
-            setDurationType(StatusDurationType.WEI_CHI, 2);
-            from.setRuMeng(this, true);
-        }
-
-        @Override
-        public int getReduce() {
-            return 3;
-        }
-
-        @Override
-        public void enable() {
-            if (stack == 1) {
-                delete();
-                return;
-            }
-
-            stack--;
-        }
-
-        @Override
-        public String getDisplayText() {
-            return StatusName + stack + "-" + getDuration();
-        }
-
-        @Override
-        public void beforeDelete() {
-            ((ShenWuYue) from).setRuMeng(null, false);
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.JIAN_SHANG;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute) {
-            return 20;
         }
     }
 

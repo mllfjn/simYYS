@@ -9,9 +9,9 @@ public class ShenWuYue extends CharacterShiShenBase {
     public static final String CharacterName = "神无月";
 
     private Skill2.StatusMengShen statusMengShen;
-    private Skill3.StatusRuMeng ruMeng;
+    private StatusRuMeng ruMeng;
 
-    Optional<Skill3.StatusRuMeng> getRuMeng() {
+    Optional<StatusRuMeng> getRuMeng() {
         return Optional.ofNullable(ruMeng);
     }
 
@@ -23,7 +23,7 @@ public class ShenWuYue extends CharacterShiShenBase {
         }
     }
 
-    void setRuMeng(Skill3.StatusRuMeng ruMeng, boolean needDelete) {
+    void setRuMeng(StatusRuMeng ruMeng, boolean needDelete) {
         if (needDelete && this.ruMeng != null) {
             ruMeng.delete();
         }
