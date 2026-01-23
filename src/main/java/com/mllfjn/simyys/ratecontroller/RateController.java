@@ -23,7 +23,7 @@ public class RateController implements Serializable {
      * @param title         标题栏文本
      * @param event         事件名称
      * @param targets       目标
-     * @param stringGetter  获取目标文本
+     * @param stringGetter  获取目标显示文本
      * @param calc          总概率计算器
      * @param controlSupplier 概率控制获取
      * @param rateGetter    获取概率
@@ -149,4 +149,9 @@ public class RateController implements Serializable {
                 , s -> rate, (i, b) -> result.set(b));
         return result.get();
     }
+
+    /*public static boolean yuHun(Character owner, RateCalc calc, double rate) {
+        AtomicBoolean result = new AtomicBoolean();
+        whetherOrNot("御魂控制:");
+    }*/
 }

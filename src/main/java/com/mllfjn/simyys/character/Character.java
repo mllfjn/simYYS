@@ -634,6 +634,7 @@ public abstract class Character implements Serializable {
     public CharacterIcon getCharacterIcon() {
         if (characterIcon == null) {
             characterIcon = new CharacterIcon(this);
+            characterIcon.reset();
         }
         return characterIcon;
     }

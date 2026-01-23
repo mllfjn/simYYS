@@ -21,7 +21,6 @@ import com.mllfjn.simyys.character.status.determinant.IgnoreActionIncrease;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamageBeingAttack;
 
 import java.util.*;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 

@@ -3,11 +3,12 @@ package com.mllfjn.simyys.character;
 import java.util.function.Function;
 
 public enum Attribute {
+    SPEED("速度", Character::getSpeed),
+    LOCATION("行动条位置", Character::getLocation),
     HP("生命", Character::getHp),
     HP_PERCENT("生命百分比", character -> character.getHp() / character.getMaxHp() * 100),
     ATTACK("攻击", Character::getAttack),
     DEFENCE("防御", Character::getDefence),
-    SPEED("速度", Character::getSpeed),
     CRIT_RATE("暴击", Character::getCritRate),
     CRIT_POWER("爆伤", Character::getCritPower),
     EFFECT_HIT_RATE("命中", Character::getEffectHitRate),

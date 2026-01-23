@@ -1,12 +1,12 @@
 package com.mllfjn.simyys.character.list.yys.boya;
 
 import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.PropertyKey;
 import com.mllfjn.simyys.character.list.yys.CharacterYYSBase;
 import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
 import com.mllfjn.simyys.character.propertygetter.PropertiesMap;
 import com.mllfjn.simyys.character.propertygetter.PropertyMultiInput;
+import com.mllfjn.simyys.character.skill.Skill;
 
 import java.util.Optional;
 
@@ -30,6 +30,18 @@ public class BoYa extends CharacterYYSBase {
 
     void setYinFenShen(Skill4.YinFenShen yinFenShen) {
         this.yinFenShen = yinFenShen;
+    }
+
+    @Override
+    protected boolean useSkillAuto() {
+        if (yinFenShen == null) {
+            Optional<Skill> oSkill4 = getSkill(4);
+            if (oSkill4.isPresent()) {
+                return oSkill4.get().tryUse(bp);
+            }
+        }
+
+        return tryUseSkill(3);
     }
 
     @Override

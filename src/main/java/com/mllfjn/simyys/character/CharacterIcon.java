@@ -119,7 +119,10 @@ public class CharacterIcon implements Serializable {
             memoryLabels[i] = memoryLabel;
         }
 
-        reset();
+        shownAttributes.add(Attribute.SPEED);
+        shownAttributes.add(Attribute.LOCATION);
+        memoryLabels[Attribute.SPEED.ordinal()].displaying = true;
+        memoryLabels[Attribute.LOCATION.ordinal()].displaying = true;
     }
 
     public void reset() {
@@ -438,10 +441,6 @@ public class CharacterIcon implements Serializable {
                 character.getCharacterIcon().bottom.getChildren().add(i, label);
                 currentAttribute.add(attribute);
             }
-        }
-
-        private Attribute getAttribute() {
-            return attribute;
         }
 
         private void setLabelText() {

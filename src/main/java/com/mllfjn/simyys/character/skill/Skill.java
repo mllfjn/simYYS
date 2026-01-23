@@ -244,9 +244,15 @@ public abstract class Skill implements Serializable {
     @Override
     public String toString() {
         int skillID = getSkillID();
-        if (skillID == 0) return getName();
-        if (skillID == 1) return SKILL_LABEL[0] + "·" + getName();
-        return "妖术" + SKILL_LABEL[skillID - 1] + "·" + getName();
+        String name = getName();
+        return switch (skillID) {
+            case 0 -> name;
+            case 1 -> SKILL_LABEL[0] + "·" + name;
+            default -> "妖术" + SKILL_LABEL[skillID - 1] + "·" + name;
+        };
+        /*if (skillID == 0) return name;
+        if (skillID == 1) return SKILL_LABEL[0] + "·" + name;
+        return "妖术" + SKILL_LABEL[skillID - 1] + "·" + name;*/
     }
 
     public int getSkillID() {

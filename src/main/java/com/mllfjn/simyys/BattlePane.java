@@ -421,8 +421,7 @@ public class BattlePane {
 
     private void getNextActor() {
         // 如果有时之隙新回合,先时之隙,否则看一般获得新回合,最后跑条
-        Optional<Character> oCharacter = situation.sZXNewRoundCharacter();
-        situation.characterActing = oCharacter.orElseGet(() -> {
+        situation.characterActing = situation.sZXNewRoundCharacter().orElseGet(() -> {
             Character newRoundCharacter = situation.newRoundCharacter().orElseGet(() -> {
                 List<Character> characters = situation.characters;
                 Character c = characters.get(0);
