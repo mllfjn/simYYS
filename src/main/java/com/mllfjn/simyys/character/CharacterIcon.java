@@ -27,7 +27,6 @@ import javafx.scene.text.Text;
 import javafx.util.Callback;
 
 import java.io.Serializable;
-import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.StringJoiner;
@@ -92,7 +91,6 @@ public class CharacterIcon implements Serializable {
     private transient ComboBox<Skill> skillBox;
     // 状态显示
     private final MemoryLabel[] memoryLabels;
-    private final EnumSet<Attribute> shownAttributes = EnumSet.noneOf(Attribute.class);
     // 红绿标的那个标
     private transient HBox autoTo;
     // 左键点击时的红绿标菜单
@@ -118,9 +116,6 @@ public class CharacterIcon implements Serializable {
             MemoryLabel memoryLabel = new MemoryLabel(character, attributes[i]);
             memoryLabels[i] = memoryLabel;
         }
-
-        shownAttributes.add(Attribute.SPEED);
-        shownAttributes.add(Attribute.LOCATION);
         memoryLabels[Attribute.SPEED.ordinal()].displaying = true;
         memoryLabels[Attribute.LOCATION.ordinal()].displaying = true;
     }
@@ -129,10 +124,6 @@ public class CharacterIcon implements Serializable {
         setupUI();
         setEventHandler(character.getEventHandler());
         setInfoDisplay(character.getInfoDisplay());
-
-        for (MemoryLabel memoryLabel : memoryLabels) {
-            memoryLabel.reset();
-        }
     }
 
     private void setupUI() {
@@ -209,7 +200,19 @@ public class CharacterIcon implements Serializable {
         // 中间区域组装
         center = new VBox(healthBar, shieldBar, imagePane, skillBox);
 
+        // 底部区域,显示属性
         bottom = new VBox();
+        Menu menuSetAttributeVisible = new Menu("显示属性");
+        for (MemoryLabel memoryLabel : memoryLabels) {
+            memoryLabel.reset(menuSetAttributeVisible);
+        }
+
+        Menu menuSetAttribute = new Menu("设置属性(未完成)");
+
+        ContextMenu menu = new ContextMenu(menuSetAttributeVisible, menuSetAttribute);
+        bottom.setOnContextMenuRequested(event ->
+                menu.show(bottom, event.getScreenX(), event.getScreenY())
+        );
     }
 
     public VBox getTop() {
@@ -231,7 +234,6 @@ public class CharacterIcon implements Serializable {
     protected void onMouseClicked(MouseEvent event) {
         if (event.getButton() == MouseButton.PRIMARY || eventHandler == null) {
             autoToMenu.show(center, event.getScreenX(), event.getScreenY());
-//            character.bp.situation.teamPane[character.team].setAuto(character);
         } else {
             eventHandler.handle(event);
         }
@@ -378,7 +380,7 @@ public class CharacterIcon implements Serializable {
         return yuHunIcon[index];
     }
 
-    static class MemoryLabel implements Serializable {
+    class MemoryLabel implements Serializable {
         private final Character character;
         private final Attribute attribute;
 
@@ -387,6 +389,7 @@ public class CharacterIcon implements Serializable {
         private boolean showingChanged = false;
 
         private transient Label label;
+        private transient CheckMenuItem item;
 
         private MemoryLabel(Character character, Attribute attribute) {
             this.attribute = attribute;
@@ -395,7 +398,20 @@ public class CharacterIcon implements Serializable {
             num = attribute.getGetter().apply(character);
         }
 
-        public void reset() {
+        public void reset(Menu menu) {
+            item = new CheckMenuItem(attribute.getText());
+            if (displaying) {
+                item.setSelected(true);
+            }
+            item.selectedProperty().addListener((obs, old, val) -> {
+                if (val) {
+                    start();
+                    setLabelText();
+                } else {
+                    stop();
+                }
+            });
+            menu.getItems().add(item);
             if (displaying) {
                 createLabel(false);
                 setLabelText();
@@ -406,7 +422,8 @@ public class CharacterIcon implements Serializable {
             double newNumber = attribute.getGetter().apply(character);
             if (newNumber != num) {
                 if (!displaying) {
-                    start();
+                    item.setSelected(true);
+//                    start();
                 }
                 setLabelText(newNumber);
                 num = newNumber;
@@ -418,7 +435,16 @@ public class CharacterIcon implements Serializable {
 
         private void start() {
             displaying = true;
-            createLabel(true);
+            if (label == null) {
+                createLabel(true);
+            } else {
+                character.getCharacterIcon().bottom.getChildren().add(getIndex(), label);
+            }
+        }
+
+        private void stop() {
+            displaying = false;
+            character.getCharacterIcon().bottom.getChildren().remove(label);
         }
 
         private void createLabel(boolean shouldOrder) {
@@ -428,19 +454,19 @@ public class CharacterIcon implements Serializable {
             if (!shouldOrder) {
                 character.getCharacterIcon().bottom.getChildren().add(label);
             } else {
-                int ordinal = attribute.ordinal();
-                int i = 0;
-                EnumSet<Attribute> currentAttribute = character.getCharacterIcon().shownAttributes;
-                for (Attribute shownAttribute : currentAttribute) {
-                    if (shownAttribute.ordinal() < ordinal) {
-                        i++;
-                    } else {
-                        break;
-                    }
-                }
-                character.getCharacterIcon().bottom.getChildren().add(i, label);
-                currentAttribute.add(attribute);
+                character.getCharacterIcon().bottom.getChildren().add(getIndex(), label);
             }
+        }
+
+        private int getIndex() {
+            int ordinal = attribute.ordinal();
+            int count = 0;
+            for (int i = 0; i < ordinal; i++) {
+                if (CharacterIcon.this.memoryLabels[i].displaying) {
+                    count++;
+                }
+            }
+            return count;
         }
 
         private void setLabelText() {
