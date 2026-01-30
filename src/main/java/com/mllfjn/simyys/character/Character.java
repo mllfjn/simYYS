@@ -18,6 +18,7 @@ import com.mllfjn.simyys.character.status.determinant.IgnoreChangeMaxHp;
 import com.mllfjn.simyys.character.status.determinant.IgnoreDebuff;
 import com.mllfjn.simyys.character.status.determinant.PreventDie;
 import com.mllfjn.simyys.character.status.determinant.RejectAllStatuses;
+import com.mllfjn.simyys.character.status.triggerParam.ParamLocationChange;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunFactory;
@@ -44,6 +45,7 @@ public abstract class Character implements Serializable {
     private double location;
     private int lockSkill;
     public boolean alive = true;
+    private boolean isInRound = false;
 
     private double maxHp;
     private double hp;
@@ -114,7 +116,7 @@ public abstract class Character implements Serializable {
         this.effectResistRate = properties.get(PropertyKey.GENERAL_EFFECT_RESIST_RATE_KEY).getDouble();
 
         if (properties.get(PropertyKey.GENERAL_MOB_KEY).getBoolean()) {
-            setMob(1, 3);
+            setMob(0, 3);
         }
 
         this.isYYS = properties.get(PropertyKey.GENERAL_YYS_KEY).getBoolean();
@@ -343,10 +345,6 @@ public abstract class Character implements Serializable {
         return distance / speed;
     }
 
-    public double getTTA() {
-        return getTTA(100.0 - this.getLocation(), this.getSpeed());
-    }
-
     public static boolean before(double distance1, double v1, double distance2, double v2) {
         double tta1 = getTTA(distance1, v1);
         double tta2 = getTTA(distance2, v2);
@@ -371,7 +369,14 @@ public abstract class Character implements Serializable {
     }
 
     public void setLocation(double newLocation) {
-        this.location = newLocation;
+        if (newLocation != location) {
+            statusRun(Trigger.LOCATION_CHANGE, new ParamLocationChange(location, newLocation));
+            this.location = newLocation;
+        }
+    }
+
+    public void resetLocation() {
+        this.location = 0;
     }
 
     public void beforeRound() {
@@ -383,6 +388,8 @@ public abstract class Character implements Serializable {
             status.transform();
             return;
         }
+
+        isInRound = true;
 
         statusRun(Trigger.BEFORE_ROUND, null);
 
@@ -396,12 +403,12 @@ public abstract class Character implements Serializable {
             return false;
         });
 
-        if (lockSKillMap != null && lockSKillMap.containsKey(timesToAct)) {
-            setLockSkill(lockSKillMap.get(timesToAct));
+        if (lockSKillMap != null && lockSKillMap.containsKey(timesToAct + 1)) {
+            setLockSkill(lockSKillMap.get(timesToAct + 1));
         }
 
-        if (flagChangeMap != null && flagChangeMap.containsKey(timesToAct)) {
-            FlagChangeInfo flagChangeInfo = flagChangeMap.get(timesToAct);
+        if (flagChangeMap != null && flagChangeMap.containsKey(timesToAct + 1)) {
+            FlagChangeInfo flagChangeInfo = flagChangeMap.get(timesToAct + 1);
             FlagChangeInfo.FlagType flagType = flagChangeInfo.flagType;
             int targetTeam = (flagType == FlagChangeInfo.FlagType.GREEN ? team : 1 - team);
 
@@ -441,6 +448,7 @@ public abstract class Character implements Serializable {
     }
 
     public void afterRound() {
+        isInRound = false;
         // 不知道为什么，但是在时之隙跳过回合后结算的情况下需要让大缘拉条生效
         for (Status status : statuses) {
             if (status instanceof StatusShengTian sST) {
@@ -485,10 +493,7 @@ public abstract class Character implements Serializable {
     }
 
     public boolean isInRound() {
-        if (isHaveStatus(StatusShiZhiXi.class)) {
-            return false;
-        }
-        return bp.situation.characterActing == this;
+        return isInRound;
     }
 
     public Optional<Skill> getSkill(int skillID) {

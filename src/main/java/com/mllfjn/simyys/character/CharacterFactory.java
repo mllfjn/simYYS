@@ -9,6 +9,7 @@ import com.mllfjn.simyys.character.list.sp.spjin.SpJin;
 import com.mllfjn.simyys.character.list.sp.yinfan.YinFan;
 import com.mllfjn.simyys.character.list.sr.yaoqin.YaoQin;
 import com.mllfjn.simyys.character.list.ssr.beimihu.BeiMiHu;
+import com.mllfjn.simyys.character.list.ssr.maochuan.MaoChuan;
 import com.mllfjn.simyys.character.list.ssr.shenwuyue.ShenWuYue;
 import com.mllfjn.simyys.character.list.ssr.shiling.ShiLing;
 import com.mllfjn.simyys.character.list.ssr.xuzuo.XuZuo;
@@ -63,6 +64,8 @@ public class CharacterFactory {
         mapSSR.put(XuZuo.CharacterName, XuZuo.class);
         mapSSR.put(BeiMiHu.CharacterName, BeiMiHu.class);
         mapSSR.put(ShenWuYue.CharacterName, ShenWuYue.class);
+//        mapSSR.put(MaoChuan.CharacterName, MaoChuan.class);
+
 
         Map<String, Class<? extends Character>> mapSR = new LinkedHashMap<>();
         characterMap.put("SR", mapSR);
@@ -122,7 +125,7 @@ public class CharacterFactory {
     }
 
     public enum ImageSize {
-        CHARACTER_ICON_IMAGE(110),
+        CHARACTER_ICON_IMAGE(120),
         BIG(110),
         SMALL(70),
         LABEL(35);

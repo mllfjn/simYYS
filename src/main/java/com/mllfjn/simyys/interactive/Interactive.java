@@ -91,7 +91,7 @@ public class Interactive {
         }
 
         RateController.baoJi(skill.getName(), owner, bp.calc
-                , (target) -> owner.getCritRate() / target.getCritResist(), targets, interactiveInfos);
+                , (target) -> owner.getCritRate() - target.getCritResist(), targets, interactiveInfos);
 
         for (int i = 0; i < targets.size(); i++) {
             attack(interactiveInfos[i], attackType);
@@ -116,7 +116,7 @@ public class Interactive {
         }
 
         RateController.baoJi(skill.getName(), owner, bp.calc
-                , (target) -> owner.getCritRate() / target.getCritResist(), targets, interactiveInfos);
+                , (target) -> owner.getCritRate() - target.getCritResist(), targets, interactiveInfos);
 
         for (int i = 0; i < targets.size(); i++) {
             attack(interactiveInfos[i], attackType);
@@ -127,7 +127,7 @@ public class Interactive {
     public void attack(InteractiveInfo interactiveInfo, AttackType attackType) {
         if (interactiveInfo.canCrit() && !interactiveInfo.isCrit()) {
             RateController.baoJi(interactiveInfo.getSkill().getName(), owner, bp.calc
-                    , (target) -> owner.getCritRate() / target.getCritResist()
+                    , (target) -> owner.getCritRate() - target.getCritResist()
                     , List.of(interactiveInfo.getTarget()), new InteractiveInfo[]{interactiveInfo});
         }
         attackBase(interactiveInfo, attackType);

@@ -93,7 +93,7 @@ public abstract class Skill implements Serializable {
         belongTo.statusRun(Trigger.WILL_USE_SKILL, null);
 
         if (isCost) {
-            int finalCost = costResult.getFinalCost();
+            int finalCost = getCostResult().getFinalCost();
             costResult.reallyUse();
             if (finalCost > 0) {
                 bp.useGuiHuo(getBelongTo(), finalCost);

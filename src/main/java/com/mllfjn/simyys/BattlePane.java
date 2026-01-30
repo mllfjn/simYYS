@@ -300,7 +300,7 @@ public class BattlePane {
         }
 
         rt.add(situation.characterActing);
-        for (int i = 1; i < 9; i++) {
+        for (int i = 0; i < 8; i++) {
             int min = 0;
             for (int j = 1; j < size; j++) {
                 if (Character.before(distance[j], speed[j], distance[min], speed[min])) {
@@ -424,21 +424,30 @@ public class BattlePane {
         situation.characterActing = situation.sZXNewRoundCharacter().orElseGet(() -> {
             Character newRoundCharacter = situation.newRoundCharacter().orElseGet(() -> {
                 List<Character> characters = situation.characters;
-                Character c = characters.get(0);
-                for (Character character : characters) {
-                    if (character.before(c)) {
-                        c = character;
-                    }
-                }
-                for (Character character : characters) {
-                    if (character != c) {
-                        character.setLocation(character.getLocation() + character.getSpeed() * c.getTTA());
+                int indexMin = -1;
+                double ttaMin = Double.MAX_VALUE;
+                double[] locations = new double[characters.size()];
+                double[] speeds = new double[characters.size()];
+                for (int i = 0; i < characters.size(); i++) {
+                    locations[i] = characters.get(i).getLocation();
+                    speeds[i] = characters.get(i).getSpeed();
+                    double ttaNext = Character.getTTA(100 - locations[i], speeds[i]);
+                    if (ttaNext < ttaMin) {
+                        ttaMin = ttaNext;
+                        indexMin = i;
                     }
                 }
 
-                return c;
+                if (ttaMin > 0) {
+                    for (int i = 0; i < characters.size(); i++) {
+                        characters.get(i).setLocation(locations[i] + speeds[i] * ttaMin);
+                    }
+                }
+
+                return characters.get(indexMin);
             });
-            newRoundCharacter.setLocation(0);
+            // 这部分不在时之隙新回合生效
+            newRoundCharacter.resetLocation();
             newRoundCharacter.beforeRound();
             return newRoundCharacter;
         });

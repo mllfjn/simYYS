@@ -54,8 +54,14 @@ public class TuZhiZhu extends YuHun implements YuHunUnfullMark {
                     return false;
                 }
 
+                // 如果没有实际造成伤害，则返回
+                double number = interactiveInfo.getTraceableNumber().getNumber();
+                if (number <= 0) {
+                    return false;
+                }
+
                 map.put(target
-                        , map.getOrDefault(target, 0.0) + interactiveInfo.getTraceableNumber().getNumber());
+                        , map.getOrDefault(target, 0.0) + number);
             } else if (trigger == Trigger.USED_SKILL || trigger == Trigger.USE_PU_GONG) {
                 for (Map.Entry<Character, Double> entry : map.entrySet()) {
                     StatusTuZhiZhu.enable(belongTo, entry.getKey(), 0.1 * entry.getValue());
