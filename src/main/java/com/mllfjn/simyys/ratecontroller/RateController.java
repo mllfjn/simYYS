@@ -1,8 +1,10 @@
 package com.mllfjn.simyys.ratecontroller;
 
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.list.ssr.shenwuyue.StatusMeiMengBiCheng;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.Status;
+import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.interactive.EffectInfo;
 import com.mllfjn.simyys.interactive.InteractiveInfo;
 import com.mllfjn.simyys.interactive.StatusSupplier;
@@ -150,8 +152,15 @@ public class RateController implements Serializable {
         return result.get();
     }
 
-    /*public static boolean yuHun(Character owner, RateCalc calc, double rate) {
+    public static boolean yuHun(Character owner, YuHun yuHun, RateCalc calc, double rate) {
+        // 如果处于美梦必成状态下,直接成功
+        if (owner.isHaveStatus(StatusMeiMengBiCheng.class)) {
+            return true;
+        }
+
         AtomicBoolean result = new AtomicBoolean();
-        whetherOrNot("御魂控制:");
-    }*/
+        whetherOrNot("御魂控制", "触发", List.of(yuHun.getName()), item -> item
+                , calc, calc::isControlYuHun, item -> rate, (i, b) -> result.set(b));
+        return result.get();
+    }
 }
