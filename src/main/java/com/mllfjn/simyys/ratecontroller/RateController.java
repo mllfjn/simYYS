@@ -152,7 +152,7 @@ public class RateController implements Serializable {
         return result.get();
     }
 
-    public static boolean yuHun(Character owner, YuHun yuHun, RateCalc calc, double rate) {
+    public static boolean yuHun(Character owner, YuHun yuHun, double rate) {
         // 如果处于美梦必成状态下,直接成功
         if (owner.isHaveStatus(StatusMeiMengBiCheng.class)) {
             return true;
@@ -160,7 +160,7 @@ public class RateController implements Serializable {
 
         AtomicBoolean result = new AtomicBoolean();
         whetherOrNot("御魂控制", "触发", List.of(yuHun.getName()), item -> item
-                , calc, calc::isControlYuHun, item -> rate, (i, b) -> result.set(b));
+                , owner.bp.calc, owner.bp.calc::isControlYuHun, item -> rate, (i, b) -> result.set(b));
         return result.get();
     }
 }

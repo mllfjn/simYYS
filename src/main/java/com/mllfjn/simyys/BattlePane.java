@@ -261,13 +261,16 @@ public class BattlePane {
             }
         }
 
-        getNextActor();
+        situation.characterActing = getNextOrder();
+        situation.characterActing.timesToAct++;
 
         // 战斗开始
         onTrigger(new EventBattleStart());
         // 火灵
         situation.teamPane[0].calHuoLing();
         situation.teamPane[1].calHuoLing();
+
+        situation.characterActing.beforeRound();
 
         interactive.display();
         log.characterAct(situation.characterActing);
@@ -422,30 +425,7 @@ public class BattlePane {
     private void getNextActor() {
         // 如果有时之隙新回合,先时之隙,否则看一般获得新回合,最后跑条
         situation.characterActing = situation.sZXNewRoundCharacter().orElseGet(() -> {
-            Character newRoundCharacter = situation.newRoundCharacter().orElseGet(() -> {
-                List<Character> characters = situation.characters;
-                int indexMin = -1;
-                double ttaMin = Double.MAX_VALUE;
-                double[] locations = new double[characters.size()];
-                double[] speeds = new double[characters.size()];
-                for (int i = 0; i < characters.size(); i++) {
-                    locations[i] = characters.get(i).getLocation();
-                    speeds[i] = characters.get(i).getSpeed();
-                    double ttaNext = Character.getTTA(100 - locations[i], speeds[i]);
-                    if (ttaNext < ttaMin) {
-                        ttaMin = ttaNext;
-                        indexMin = i;
-                    }
-                }
-
-                if (ttaMin > 0) {
-                    for (int i = 0; i < characters.size(); i++) {
-                        characters.get(i).setLocation(locations[i] + speeds[i] * ttaMin);
-                    }
-                }
-
-                return characters.get(indexMin);
-            });
+            Character newRoundCharacter = situation.newRoundCharacter().orElseGet(this::getNextOrder);
             // 这部分不在时之隙新回合生效
             newRoundCharacter.resetLocation();
             newRoundCharacter.beforeRound();
@@ -453,6 +433,33 @@ public class BattlePane {
         });
         situation.characterActing.timesToAct++;
         situation.characterActing.refreshSkills();
+    }
+
+    private Character getNextOrder() {
+        List<Character> characters = situation.characters;
+        int indexMin = -1;
+        double ttaMin = Double.MAX_VALUE;
+        double[] locations = new double[characters.size()];
+        double[] speeds = new double[characters.size()];
+        for (int i = 0; i < characters.size(); i++) {
+            locations[i] = characters.get(i).getLocation();
+            speeds[i] = characters.get(i).getSpeed();
+            double ttaNext = Character.getTTA(100 - locations[i], speeds[i]);
+            if (ttaNext < ttaMin) {
+                ttaMin = ttaNext;
+                indexMin = i;
+            }
+        }
+
+        if (ttaMin > 0) {
+            for (int i = 0; i < characters.size(); i++) {
+                if (i != indexMin) {
+                    characters.get(i).setLocation(locations[i] + speeds[i] * ttaMin);
+                }
+            }
+        }
+
+        return characters.get(indexMin);
     }
 
     public Character getCharacterActing() {

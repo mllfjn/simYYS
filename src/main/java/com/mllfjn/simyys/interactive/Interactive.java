@@ -54,7 +54,6 @@ public class Interactive {
     }
 
     public void display() {
-        guiHuoLog.forEach(bp.log::addText);
         currentNumberLog.values().forEach(list -> {
             list.forEach(bp.log::addText);
             bp.log.addText("\n", type, TextFlowLog.TextColor.NORMAL, size);
@@ -64,6 +63,7 @@ public class Interactive {
                 bp.log.addText("\t" + character.name + "触发御魂：" + String.join("、", strings) + "\n"
                         , TextFlowLog.TextType.YU_HUN, TextFlowLog.TextColor.NORMAL, TextFlowLog.FontSize.NORMAL)));
 
+        guiHuoLog.forEach(bp.log::addText);
         increaseLog.forEach(bp.log::addLocationChange);
 
         guiHuoLog.clear();

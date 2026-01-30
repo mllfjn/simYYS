@@ -48,7 +48,7 @@ public class LunRuDao extends YuHun implements YuHunSealResponse {
 
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            if (RateController.yuHun(belongTo, LunRuDao.this, belongTo.bp.calc, RATE)) {
+            if (RateController.yuHun(belongTo, LunRuDao.this, RATE)) {
                 belongTo.doInteractive(interactive -> interactive.getNewRound(belongTo));
                 belongTo.addStatus(new StatusLRDMark(belongTo));
                 LunRuDao.this.yuHunEffect();
