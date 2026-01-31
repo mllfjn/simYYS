@@ -4,8 +4,8 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
+import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.AttackType;
-import com.mllfjn.simyys.interactive.InteractiveInfo;
 import com.mllfjn.simyys.interactive.Interactive;
 
 import java.util.List;
@@ -33,7 +33,7 @@ class Skill2 extends Skill {
                 .filterEnemy()
                 .getList();
         for (Character character : target) {
-            interactive.attack(InteractiveInfo.createRealAttack(
+            interactive.attack(AttackInfo.createRealAttack(
                             shenQiLou, this, character, (from, to) -> to.getHp() * 0.4)
                     , AttackType.ZHEN_SHI);
             character.addStatus(new StatusReduceCritRate(shenQiLou, character, 15));

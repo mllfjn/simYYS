@@ -13,6 +13,7 @@ import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
 import com.mllfjn.simyys.character.status.instance.StatusBiHu;
 import com.mllfjn.simyys.character.status.triggerParam.ParamCauseAttack;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
+import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.InteractiveInfo;
 import com.mllfjn.simyys.interactive.AttackType;
 
@@ -216,7 +217,7 @@ class Skill3 extends Skill {
 
             belongTo.doInteractive(interactive -> {
                 for (Character target : targets) {
-                    InteractiveInfo interactiveInfo = new InteractiveInfo(belongTo, skill, target
+                    AttackInfo interactiveInfo = new AttackInfo(belongTo, skill, target
                             , (c1, c2) -> numForeach);
                     interactiveInfo.setCalDefence(false);
                     interactiveInfo.setCanCrit(false);
@@ -230,7 +231,7 @@ class Skill3 extends Skill {
                     interactive.attack(interactiveInfo, AttackType.ZHEN_SHI);
 
                     if (extraDamage) {
-                        InteractiveInfo extraInfo = InteractiveInfo.createRealAttack(belongTo, skill, target
+                        AttackInfo extraInfo = AttackInfo.createRealAttack(belongTo, skill, target
                                 , (c1, c2) -> extra);
                         interactive.attack(extraInfo, AttackType.ZHEN_SHI);
                     }

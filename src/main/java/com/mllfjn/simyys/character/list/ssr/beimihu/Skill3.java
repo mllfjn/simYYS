@@ -4,7 +4,7 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
-import com.mllfjn.simyys.interactive.InteractiveInfo;
+import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
 
@@ -43,7 +43,7 @@ class Skill3 extends Skill {
 
         for (int i = 0; i < 2; i++) {
             interactive.attack(this, targets, AttackType.QUN_TI, character -> {
-                InteractiveInfo info = InteractiveInfo.createTypicalAttack(belongTo, this, character, multiplier);
+                AttackInfo info = AttackInfo.createTypicalAttack(belongTo, this, character, multiplier);
                 if (getLevel() >= 5) {
                     info.setCalYuHun(false);
                 }

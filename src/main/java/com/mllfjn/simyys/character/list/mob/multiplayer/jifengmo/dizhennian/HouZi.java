@@ -2,13 +2,13 @@ package com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.dizhennian;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.character.list.mob.multiplayer.DisplayDamageRecord;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill1PuGongBase;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
+import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.interactive.InteractiveInfo;
@@ -106,7 +106,7 @@ public class HouZi extends Character {
 
         @Override
         public void usePrivate(Interactive interactive, Character target) {
-            InteractiveInfo info = InteractiveInfo.createRealAttack(getBelongTo(), this, target
+            AttackInfo info = AttackInfo.createRealAttack(getBelongTo(), this, target
                     , (c1, c2) -> 5000.0);
 
             interactive.attack(info, AttackType.ZHEN_SHI);

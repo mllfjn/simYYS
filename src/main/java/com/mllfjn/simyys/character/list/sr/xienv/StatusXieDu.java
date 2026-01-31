@@ -7,6 +7,7 @@ import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
+import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.InteractiveInfo;
 
@@ -25,7 +26,7 @@ class StatusXieDu extends Status implements Displayable, AttributeModifier, Stat
     }
 
     public void setOff() {
-        InteractiveInfo info = InteractiveInfo.createJianJieAttack(from, SKILL, belongTo,
+        AttackInfo info = AttackInfo.createJianJieAttack(from, SKILL, belongTo,
                 (owner, target) -> from.getAttack() * multiplier);
         from.doInteractive(interactive -> interactive.attack(info, AttackType.JIAN_JIE));
         if (stack < 5) {
@@ -63,7 +64,7 @@ class StatusXieDu extends Status implements Displayable, AttributeModifier, Stat
         if (trigger == Trigger.AFTER_ROUND_FIRST) {
             setOff();
         } else if (param instanceof ParamAfterAttack paa) {
-            paa.interactiveInfo.
+//            paa.interactiveInfo.
         }
         return false;
     }

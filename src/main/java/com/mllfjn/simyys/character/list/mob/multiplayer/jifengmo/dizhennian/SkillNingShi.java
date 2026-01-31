@@ -6,6 +6,7 @@ import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
+import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.InteractiveInfo;
 
@@ -95,7 +96,7 @@ class SkillNingShi extends Skill {
                     // 已经有了BUFF
                     int duration = statusExist.getDuration();
                     // 剩余buff回合数*30%最大生命的穿盾伤害
-                    InteractiveInfo info = InteractiveInfo
+                    AttackInfo info = AttackInfo
                             .createRealAttack(character, Skill.getInstance("光球"), character
                                     , (c1, c2) -> duration * 0.3 * character.getMaxHp());
                     info.setCanThroughShield(true);

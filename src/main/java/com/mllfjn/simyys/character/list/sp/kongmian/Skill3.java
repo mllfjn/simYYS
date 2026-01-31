@@ -9,10 +9,7 @@ import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamageBeingAttack;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
-import com.mllfjn.simyys.interactive.AttackType;
-import com.mllfjn.simyys.interactive.Interactive;
-import com.mllfjn.simyys.interactive.InteractiveInfo;
-import com.mllfjn.simyys.interactive.TraceableNumber;
+import com.mllfjn.simyys.interactive.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -108,7 +105,7 @@ class Skill3 extends Skill {
         public void yinRan() {
             // 引燃后移除,造成等同一线目种怨痕值100%的间接伤害,最多不超过友方出场式神初始总攻击的4000%
             if (yuanHen > 0) {
-                InteractiveInfo info = InteractiveInfo.createJianJieAttack(from, Skill.getInstance(StatusName)
+                AttackInfo info = AttackInfo.createJianJieAttack(from, Skill.getInstance(StatusName)
                         , belongTo, (from, to) -> yuanHen);
                 info.setLimit(max);
 

@@ -11,6 +11,7 @@ import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
+import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.InteractiveInfo;
 import com.mllfjn.simyys.interactive.AttackType;
 
@@ -99,7 +100,7 @@ public class CiTiao1QiaoJin {
 
                     attacker.doInteractive(interactive -> {
                         for (Character target : targets) {
-                            interactive.attack(InteractiveInfo.createRealAttack(attacker
+                            interactive.attack(AttackInfo.createRealAttack(attacker
                                     , Skill.getInstance(CiTiao1QiaoJin.CiTiaoName)
                                     , target, (c1, c2) -> number * 0.4), AttackType.ZHEN_SHI);
                         }

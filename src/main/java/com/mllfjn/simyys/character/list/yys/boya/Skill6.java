@@ -5,6 +5,7 @@ import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
+import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.InteractiveInfo;
 
@@ -41,7 +42,7 @@ class Skill6 extends PassiveSkill {
                 .get(Attribute.HP, CharacterFinder.Criteria.MAX);
 
         belongTo.doInteractive(interactive -> {
-            InteractiveInfo interactiveInfo = InteractiveInfo
+            AttackInfo interactiveInfo = AttackInfo
                     .createTypicalAttack(belongTo, this, target, multiplier);
 
             if (level >= 5) {
