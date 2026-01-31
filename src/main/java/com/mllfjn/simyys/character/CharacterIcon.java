@@ -46,13 +46,13 @@ public class CharacterIcon implements Serializable {
                     } else {
                         if (skill instanceof PassiveSkill) {
                             // 被动技能不可点击
+                            setOnMousePressed(event -> {
+                            });
                             setText("被动 " + skill.getName());
-
                             String skillDesc = skill.getSkillDesc();
                             if (skillDesc != null) {
                                 setTooltip(new Tooltip(skillDesc));
                             }
-                            setDisable(true);
                         } else if (skill instanceof SkillAuto) {
                             // 妖术
                             setText("妖术");

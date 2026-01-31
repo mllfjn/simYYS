@@ -17,7 +17,7 @@ public class InteractiveInfo {
 
 
     // 技能系数
-    private int multiplier = 100;
+    private int multiplier;
     // 可否暴击
     private boolean canCrit = true;
     // 是否暴击

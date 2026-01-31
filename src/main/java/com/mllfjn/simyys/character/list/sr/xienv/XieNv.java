@@ -1,22 +1,17 @@
 package com.mllfjn.simyys.character.list.sr.xienv;
 
-import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.CharacterShiShenBase;
 
 public class XieNv extends CharacterShiShenBase {
     public static final String CharacterName = "蝎女";
 
-    private Skill3.StatusXieDu status;
+    private StatusXieDu status;
 
-    Skill3.StatusXieDu getXieDu() {
+    StatusXieDu getXieDu() {
         return status;
     }
 
-    Character getXieDuCarrier() {
-        return status.belongTo;
-    }
-
-    void setStatus(Skill3.StatusXieDu status) {
+    void setStatus(StatusXieDu status) {
         this.status = status;
     }
 
