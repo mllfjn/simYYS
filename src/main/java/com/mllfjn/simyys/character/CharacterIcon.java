@@ -47,6 +47,11 @@ public class CharacterIcon implements Serializable {
                         if (skill instanceof PassiveSkill) {
                             // 被动技能不可点击
                             setText("被动 " + skill.getName());
+
+                            String skillDesc = skill.getSkillDesc();
+                            if (skillDesc != null) {
+                                setTooltip(new Tooltip(skillDesc));
+                            }
                             setDisable(true);
                         } else if (skill instanceof SkillAuto) {
                             // 妖术
@@ -64,6 +69,10 @@ public class CharacterIcon implements Serializable {
                             additionalText.setMaxWidth(Double.MAX_VALUE);
                             HBox hBox = new HBox(text, additionalText);
                             HBox.setHgrow(additionalText, Priority.ALWAYS);
+                            String skillDesc = skill.getSkillDesc();
+                            if (skillDesc != null) {
+                                Tooltip.install(hBox, new Tooltip(skillDesc));
+                            }
                             setGraphic(hBox);
                         }
                     }

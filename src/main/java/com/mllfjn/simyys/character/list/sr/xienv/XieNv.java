@@ -6,14 +6,18 @@ import com.mllfjn.simyys.character.CharacterShiShenBase;
 public class XieNv extends CharacterShiShenBase {
     public static final String CharacterName = "蝎女";
 
-    private Character xieDuCarrier;
+    private Skill3.StatusXieDu status;
 
-    public Character getXieDuCarrier() {
-        return xieDuCarrier;
+    Skill3.StatusXieDu getXieDu() {
+        return status;
     }
 
-    public void setXieDuCarrier(Character xieDuCarrier) {
-        this.xieDuCarrier = xieDuCarrier;
+    Character getXieDuCarrier() {
+        return status.belongTo;
+    }
+
+    void setStatus(Skill3.StatusXieDu status) {
+        this.status = status;
     }
 
     @Override

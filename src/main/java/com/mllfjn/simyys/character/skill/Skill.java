@@ -177,6 +177,10 @@ public abstract class Skill implements Serializable {
         this.cooling = cooling;
     }
 
+    public String getSkillDesc() {
+        return null;
+    }
+
     public void addSkillEndListener(Runnable runnable) {
         if (skillEndListeners == null) {
             skillEndListeners = new ArrayList<>();
