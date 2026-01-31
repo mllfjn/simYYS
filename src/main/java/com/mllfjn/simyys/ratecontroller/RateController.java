@@ -3,17 +3,15 @@ package com.mllfjn.simyys.ratecontroller;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.list.ssr.shenwuyue.StatusMeiMengBiCheng;
 import com.mllfjn.simyys.character.skill.Skill;
-import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.character.yuhun.YuHun;
+import com.mllfjn.simyys.character.yuhun.YuHunUnfullMark;
 import com.mllfjn.simyys.interactive.EffectInfo;
 import com.mllfjn.simyys.interactive.InteractiveInfo;
-import com.mllfjn.simyys.interactive.StatusSupplier;
 
 import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -135,14 +133,55 @@ public class RateController implements Serializable {
         }
 
         if (calc.isControlChoose()) {
-            ChooseDialog<T> dialog = new ChooseDialog<>(title + "选取", list, stringGetter);
-            Optional<T> result = dialog.showAndWait();
-            if (result.isPresent()) {
+            ChooseController<T> chooseController = new ChooseController<>(title + "选取", list, stringGetter);
+            T result = chooseController.getResult();
+            if (result != null) {
                 calc.change(1.0 / list.size());
-                return result.get();
+                return result;
             }
         }
         return list.get(random.nextInt(list.size()));
+    }
+
+    // 该方法会影响原列表
+    public static <T> List<T> choose(String title, List<T> list, Function<T, String> stringGetter
+            , RateCalc calc, int count) {
+        if (list.size() <= count) {
+            return list;
+        }
+
+        int needToAdd;
+        List<T> resultList;
+        if (calc.isControlChoose()) {
+            ChooseController<T> chooseController = new ChooseController<>(title + "选取", list, stringGetter, count);
+            resultList = chooseController.getResultList();
+            if (resultList.size() == count) {
+                return resultList;
+            }
+            needToAdd = count - resultList.size();
+
+            // 计算C(list.size(), resultList.size)的概率
+            int n = resultList.size();
+            if (n != 0) {
+                int m = list.size();
+                n = Math.min(n, m - n);
+                long combination = 1;
+                for (int i = 1; i <= n; i++) {
+                    combination *= m - i + 1;
+                    combination /= i;
+                }
+                calc.change(1.0 / combination);
+            }
+        } else {
+            needToAdd = count;
+            resultList = new ArrayList<>();
+        }
+
+        list.removeAll(resultList);
+        for (int i = 0; i < needToAdd; i++) {
+            resultList.add(list.get(random.nextInt(list.size())));
+        }
+        return resultList;
     }
 
     public static boolean otherWhether(String title, String event, RateCalc calc, double rate) {
@@ -153,8 +192,8 @@ public class RateController implements Serializable {
     }
 
     public static boolean yuHun(Character owner, YuHun yuHun, double rate) {
-        // 如果处于美梦必成状态下,直接成功
-        if (owner.isHaveStatus(StatusMeiMengBiCheng.class)) {
+        // 如果处于美梦必成状态下,携带者"初始""4件套"御魂效果概率提升至100%
+        if (yuHun.isInit() && !(yuHun instanceof YuHunUnfullMark) && owner.isHaveStatus(StatusMeiMengBiCheng.class)) {
             return true;
         }
 

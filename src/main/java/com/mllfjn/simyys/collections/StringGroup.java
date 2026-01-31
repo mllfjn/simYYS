@@ -22,26 +22,35 @@ public record StringGroup(String label, String... values) implements Serializabl
             new StringGroup("攻击两件套",
                     KuangGu.YuHunName,
                     LunRuDao.YuHunName
-            ), new StringGroup("暴击两件套",
+            ),
+            new StringGroup("暴击两件套",
                     QingNvFang.YuHunName,
                     ShangHunNiao.YuHunName,
                     HaiYueHuoYu.YuHunName,
                     ZhenMuShou.YuHunName
-    ), new StringGroup("命中两件套",
+            ),
+            new StringGroup("命中两件套",
                     HuoLing.YuHunName,
                     YuanXingSi.YuHunName,
                     YiNianHuo.YuHunName
-    ), new StringGroup("抵抗两件套", DiaoPingHuo.YuHunName),
-            new StringGroup("生命两件套", TuFo.YuHunName),
+            ),
+            new StringGroup("抵抗两件套",
+                    DiaoPingHuo.YuHunName
+            ),
+            new StringGroup("生命两件套",
+                    TuFo.YuHunName
+            ),
             new StringGroup("防御两件套",
                     HuoZhiChe.YuHunName,
                     ZhenZhu.YuHunName,
                     ZhaoCaiMao.YuHunName
-            ), new StringGroup("首领两件套",
+            ),
+            new StringGroup("首领两件套",
                     TuZhiZhu.YuHunName,
                     DiZhenNian.YuHunName,
                     ShenQiLou.YuHunName,
-                    HuangKuLou.YuHunName
+                    HuangKuLou.YuHunName,
+                    LongChe.YuHunName
             ),
     };
     public final static StringGroup[] QI_LING

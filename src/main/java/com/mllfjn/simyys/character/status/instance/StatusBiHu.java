@@ -28,13 +28,13 @@ public class StatusBiHu extends Status implements StatusRunnable, Displayable {
     public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
         if (param instanceof ParamAddCrowdControl pac) {
             EffectInfo effectInfo = pac.getEffectInfo();
-            Skill fromSKill = effectInfo.getSkill();
+            Skill fromSkill = effectInfo.getSkill();
             // 如果还没生效或者生效的技能就是当前技能，则取消控制
-            if (skill == null || skill == fromSKill) {
+            if (skill == null || skill == fromSkill) {
                 effectInfo.setCancel(true);
                 if (skill == null) {
-                    skill = fromSKill;
-                    fromSKill.addSkillListener(this::delete);
+                    skill = fromSkill;
+                    fromSkill.addSkillEndListener(this::delete);
                 }
             }
         }

@@ -19,7 +19,7 @@ import java.util.Optional;
 // √     lv4-消耗鬼火减少2点
 // √     lv5-使目标下一回合内获得美梦必成
 // √     入梦:增益,印记.至多2层,友方场上至多存在1个此效果.携带者施放妖术消耗鬼火减少3点并消耗1层
-//      美梦必成:自身初始4件套御魂效果必定触发
+// √     美梦必成:自身初始4件套御魂效果必定触发
 
 class Skill3 extends Skill {
     public static final String SkillName = "美梦赐予";

@@ -10,7 +10,6 @@ import com.mllfjn.simyys.ratecontroller.RateController;
 
 public class ZhaoCaiMao extends YuHun implements YuHunSealResponse {
     public static final String YuHunName = "招财猫";
-    private static final int RATE = 50;
 
     private StatusZCMListener status;
 
@@ -48,7 +47,7 @@ public class ZhaoCaiMao extends YuHun implements YuHunSealResponse {
 
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            if (RateController.yuHun(belongTo, ZhaoCaiMao.this, RATE)) {
+            if (RateController.yuHun(belongTo, ZhaoCaiMao.this, 50)) {
                 ZhaoCaiMao.this.yuHunEffect();
                 belongTo.bp.gainGuiHuo(belongTo, 2);
             }

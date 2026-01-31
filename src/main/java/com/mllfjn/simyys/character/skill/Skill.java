@@ -27,7 +27,7 @@ public abstract class Skill implements Serializable {
     private transient SkillCostResult costResult;
 
     // 当技能结束时，遍历通知
-    private final List<SkillListener> skillListeners = new ArrayList<>();
+    private List<SkillEndListener> skillEndListeners;
 
     public Skill(Character belongTo, int level, int cost, int coolDown, int skillID) {
         this.belongTo = belongTo;
@@ -71,9 +71,9 @@ public abstract class Skill implements Serializable {
     }
 
     protected void useDone() {
-        if (!skillListeners.isEmpty()) {
-            skillListeners.forEach(SkillListener::run);
-            skillListeners.clear();
+        if (skillEndListeners != null && !skillEndListeners.isEmpty()) {
+            skillEndListeners.forEach(SkillEndListener::run);
+            skillEndListeners.clear();
         }
     }
 
@@ -133,92 +133,6 @@ public abstract class Skill implements Serializable {
         return getCostResult().getFinalCost();
     }
 
-    /*public int getRealCost(boolean reallyUse) {
-        int mustUse = cost;
-        // 强制增加或减少消耗 比如猛火、SP千
-        for (Status status : belongTo.getStatuses()) {
-            if (status instanceof ForceChangeCost rc) {
-                mustUse += rc.getChange();
-            }
-        }
-
-        // 可选消耗更多 比如海月火玉
-        AtomicInteger optionalUse = new AtomicInteger(0);
-        belongTo.forEachYuHun(yuHun -> {
-            if (yuHun instanceof HaiYueHuoYu) {
-                optionalUse.set(optionalUse.get() + 1);
-            }
-        });
-
-        int optionalUseInt = optionalUse.get();
-
-        // 如果加上可选消耗都还小于等于0,直接返回0
-        if (mustUse + optionalUseInt <= 0) {
-            if (reallyUse) {
-                belongTo.forEachYuHun(yuHun -> {
-                    if (yuHun instanceof HaiYueHuoYu) {
-                        ((HaiYueHuoYu) yuHun).enable();
-                    }
-                });
-            }
-            return 0;
-        }
-
-        // 有代价的减少，并且优先级较高，比如遗念火，入梦
-        int mustUseForCounting = mustUse;
-        int optionalUseForCounting = mustUse + optionalUseInt;
-        List<ConditionalReduceCost> mustUseReduceCostList = null;
-        List<ConditionalReduceCost> optionalUseReduceCostList = null;
-
-        if (mustUseForCounting > 0) {
-            mustUseReduceCostList = new ArrayList<>();
-        }
-
-        if (optionalUseInt > 0) {
-            optionalUseReduceCostList = new ArrayList<>();
-        }
-
-        for (Status status : belongTo.getStatuses()) {
-            if (status instanceof ConditionalReduceCost crc) {
-                int reduce = crc.getReduce();
-                if (mustUseForCounting > 0) {
-                    mustUseReduceCostList.add(crc);
-                    mustUseForCounting -= reduce;
-                }
-
-                if (optionalUseForCounting > 0 && optionalUseReduceCostList != null) {
-                    optionalUseReduceCostList.add(crc);
-                    optionalUseForCounting -= reduce;
-                }
-
-                if (mustUseForCounting <= 0 && optionalUseForCounting <= 0) {
-                    break;
-                }
-            }
-        }
-
-        if (optionalUseReduceCostList != null && belongTo.bp.canUseGuiHuo(belongTo, optionalUseForCounting)) {
-            if (reallyUse) {
-                for (ConditionalReduceCost conditionalReduceCost : optionalUseReduceCostList) {
-                    conditionalReduceCost.enable();
-                }
-                belongTo.forEachYuHun(yuHun -> {
-                    if (yuHun instanceof HaiYueHuoYu) {
-                        ((HaiYueHuoYu) yuHun).enable();
-                    }
-                });
-            }
-            return optionalUseForCounting;
-        } else {
-            if (reallyUse) {
-                for (ConditionalReduceCost conditionalReduceCost : mustUseReduceCostList) {
-                    conditionalReduceCost.enable();
-                }
-            }
-            return mustUseForCounting;
-        }
-    }*/
-
     public abstract Optional<Character> usePrivate(BattlePane bp);
 
     public boolean canUse(BattlePane bp) {
@@ -243,16 +157,12 @@ public abstract class Skill implements Serializable {
 
     @Override
     public String toString() {
-        int skillID = getSkillID();
         String name = getName();
         return switch (skillID) {
             case 0 -> name;
             case 1 -> SKILL_LABEL[0] + "·" + name;
             default -> "妖术" + SKILL_LABEL[skillID - 1] + "·" + name;
         };
-        /*if (skillID == 0) return name;
-        if (skillID == 1) return SKILL_LABEL[0] + "·" + name;
-        return "妖术" + SKILL_LABEL[skillID - 1] + "·" + name;*/
     }
 
     public int getSkillID() {
@@ -267,8 +177,11 @@ public abstract class Skill implements Serializable {
         this.cooling = cooling;
     }
 
-    public void addSkillListener(Runnable runnable) {
-        skillListeners.add(new SkillListener(runnable));
+    public void addSkillEndListener(Runnable runnable) {
+        if (skillEndListeners == null) {
+            skillEndListeners = new ArrayList<>();
+        }
+        skillEndListeners.add(new SkillEndListener(runnable));
     }
 
     private SkillCostResult getCostResult() {
@@ -278,14 +191,8 @@ public abstract class Skill implements Serializable {
         return costResult;
     }
 
-    static class SkillListener {
-        private final Runnable runnable;
-
-        public SkillListener(Runnable runnable) {
-            this.runnable = runnable;
-        }
-
-        public void run() {
+    private record SkillEndListener(Runnable runnable) {
+        private void run() {
             runnable.run();
         }
     }
