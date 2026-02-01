@@ -109,7 +109,7 @@ class Skill3 extends Skill {
                         , belongTo, (from, to) -> yuanHen);
                 info.setLimit(max);
 
-                from.doInteractive(interactive -> interactive.attack(info, AttackType.JIAN_JIE));
+                from.doInteractive(interactive -> interactive.attack(info));
             }
         }
 
@@ -163,7 +163,7 @@ class Skill3 extends Skill {
             @Override
             public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
                 if (param instanceof ParamAfterAttack pa) {
-                    InteractiveInfo info = pa.interactiveInfo;
+                    InteractiveInfo info = pa.attackInfo;
                     if (info.getAttacker().team != belongTo.team) {
                         statusYXM.add(info.getTraceableNumber().getNumber() * 0.2);
                     }
@@ -202,9 +202,9 @@ class Skill3 extends Skill {
             }
 
             @Override
-            public void doInfluenceBeingAttack(AttackType attackType, InteractiveInfo interactiveInfo) {
+            public void doInfluenceBeingAttack(AttackInfo attackInfo) {
                 // lv4-受到伤害时,将此伤害的30%印刻于一线目中并减免
-                TraceableNumber traceableNumber = interactiveInfo.getTraceableNumber();
+                TraceableNumber traceableNumber = attackInfo.getTraceableNumber();
                 double number = traceableNumber.getNumber() * 0.3;
 
                 traceableNumber.mul(0.7, StatusYiXianMu.StatusName);

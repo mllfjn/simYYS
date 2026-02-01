@@ -42,8 +42,9 @@ class Skill3 extends Skill {
                 .getList();
 
         for (int i = 0; i < 2; i++) {
-            interactive.attack(this, targets, AttackType.QUN_TI, character -> {
-                AttackInfo info = AttackInfo.createTypicalAttack(belongTo, this, character, multiplier);
+            interactive.attack(this, targets, character -> {
+                AttackInfo info = AttackInfo
+                        .createTypicalAttack(belongTo, this, character, multiplier, AttackType.QUN_TI);
                 if (getLevel() >= 5) {
                     info.setCalYuHun(false);
                 }

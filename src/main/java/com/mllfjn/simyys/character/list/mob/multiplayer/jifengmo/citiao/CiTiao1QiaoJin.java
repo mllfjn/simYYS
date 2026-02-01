@@ -13,7 +13,6 @@ import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.InteractiveInfo;
-import com.mllfjn.simyys.interactive.AttackType;
 
 import java.util.List;
 import java.util.Optional;
@@ -82,7 +81,7 @@ public class CiTiao1QiaoJin {
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
             // 己方（指玩家，在这里是对面的人）普攻时，会造成40%溅射伤害
             if (param instanceof ParamAfterAttack pa) {
-                InteractiveInfo interactiveInfo = pa.interactiveInfo;
+                InteractiveInfo interactiveInfo = pa.attackInfo;
                 Character attacker = interactiveInfo.getAttacker();
                 Skill skill = interactiveInfo.getSkill();
                 if (skill.getSkillID() == 1
@@ -102,7 +101,7 @@ public class CiTiao1QiaoJin {
                         for (Character target : targets) {
                             interactive.attack(AttackInfo.createRealAttack(attacker
                                     , Skill.getInstance(CiTiao1QiaoJin.CiTiaoName)
-                                    , target, (c1, c2) -> number * 0.4), AttackType.ZHEN_SHI);
+                                    , target, (c1, c2) -> number * 0.4));
                         }
                     });
                 }

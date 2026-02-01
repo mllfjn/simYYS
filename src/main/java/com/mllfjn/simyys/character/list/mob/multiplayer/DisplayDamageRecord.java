@@ -25,7 +25,7 @@ public class DisplayDamageRecord extends Status implements StatusRunnable, InfoD
     @Override
     public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
         if (param instanceof ParamAfterAttack paa) {
-            addDamage(paa.interactiveInfo.getTraceableNumber().getNumber());
+            addDamage(paa.attackInfo.getTraceableNumber().getNumber());
         }
         return false;
     }

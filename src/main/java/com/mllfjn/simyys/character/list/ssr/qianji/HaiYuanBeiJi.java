@@ -10,8 +10,8 @@ import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.determinant.IgnoreDebuff;
 import com.mllfjn.simyys.battleevent.EventUseGuiHuo;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamageBeingAttack;
+import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.InteractiveInfo;
-import com.mllfjn.simyys.interactive.AttackType;
 
 import java.util.List;
 
@@ -108,8 +108,8 @@ class HaiYuanBeiJi extends Character {
         }
 
         @Override
-        public void doInfluenceBeingAttack(AttackType attackType, InteractiveInfo interactiveInfo) {
-            interactiveInfo.getTraceableNumber().mul(0.7, "千姬减伤");
+        public void doInfluenceBeingAttack(AttackInfo attackInfo) {
+            attackInfo.getTraceableNumber().mul(0.7, "千姬减伤");
         }
     }
 }

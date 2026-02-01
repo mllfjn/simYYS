@@ -86,7 +86,7 @@ public class Interactive {
     public AttackInfo[] attackTypical(Skill skill, List<Character> targets, int multiplier, AttackType attackType) {
         AttackInfo[] attackInfos = new AttackInfo[targets.size()];
         for (int i = 0; i < targets.size(); i++) {
-            AttackInfo attackInfo = AttackInfo.createTypicalAttack(owner, skill, targets.get(i), multiplier);
+            AttackInfo attackInfo = AttackInfo.createTypicalAttack(owner, skill, targets.get(i), multiplier, attackType);
             attackInfos[i] = attackInfo;
         }
 
@@ -94,7 +94,7 @@ public class Interactive {
                 , (target) -> owner.getCritRate() - target.getCritResist(), targets, attackInfos);
 
         for (int i = 0; i < targets.size(); i++) {
-            attack(attackInfos[i], attackType);
+            attack(attackInfos[i]);
         }
 
         return attackInfos;
@@ -102,14 +102,13 @@ public class Interactive {
 
     // 普通的对单体伤害
     public AttackInfo attackTypical(Skill skill, Character target, int multiplier, AttackType attackType) {
-        AttackInfo attackInfo = AttackInfo.createTypicalAttack(owner, skill, target, multiplier);
-        attack(attackInfo, attackType);
+        AttackInfo attackInfo = AttackInfo.createTypicalAttack(owner, skill, target, multiplier, attackType);
+        attack(attackInfo);
         return attackInfo;
     }
 
     // 对群体伤害,需要指定AttackInfo
-    public void attack(Skill skill, List<Character> targets, AttackType attackType
-            , Function<Character, AttackInfo> attackInfoGetter) {
+    public void attack(Skill skill, List<Character> targets, Function<Character, AttackInfo> attackInfoGetter) {
         AttackInfo[] attackInfos = new AttackInfo[targets.size()];
         for (int i = 0; i < targets.size(); i++) {
             attackInfos[i] = attackInfoGetter.apply(targets.get(i));
@@ -119,21 +118,21 @@ public class Interactive {
                 , (target) -> owner.getCritRate() - target.getCritResist(), targets, attackInfos);
 
         for (int i = 0; i < targets.size(); i++) {
-            attack(attackInfos[i], attackType);
+            attack(attackInfos[i]);
         }
     }
 
     // 对单体伤害,需要指定AttackInfo
-    public void attack(AttackInfo attackInfo, AttackType attackType) {
+    public void attack(AttackInfo attackInfo) {
         if (attackInfo.canCrit() && !attackInfo.isCrit()) {
             RateController.baoJi(attackInfo.getSkill().getName(), owner, bp.calc
                     , (target) -> owner.getCritRate() - target.getCritResist()
                     , List.of(attackInfo.getTarget()), new AttackInfo[]{attackInfo});
         }
-        attackBase(attackInfo, attackType);
+        attackBase(attackInfo);
     }
 
-    private void attackBase(AttackInfo attackInfo, AttackType attackType) {
+    private void attackBase(AttackInfo attackInfo) {
         // https://bbs.nga.cn/read.php?tid=26176854 阴阳师底层机制——单次伤害型技能中的结算顺序总结
         // https://bbs.nga.cn/read.php?tid=35530141 关于减伤的分类
         // https://bbs.nga.cn/read.php?tid=24250479 伤害结算机制详细分析
@@ -195,14 +194,14 @@ public class Interactive {
         // 攻击者身上状态类影响
         for (Status status : owner.getStatuses()) {
             if (status instanceof InfluenceDamageWhenAttack iwa) {
-                iwa.doInfluenceWhenAttack(attackType, attackInfo);
+                iwa.doInfluenceWhenAttack(attackInfo);
             }
         }
 
         // 被攻击者身上状态类影响
         for (Status status : target.getStatuses()) {
             if (status instanceof InfluenceDamageBeingAttack sid) {
-                sid.doInfluenceBeingAttack(attackType, attackInfo);
+                sid.doInfluenceBeingAttack(attackInfo);
             }
         }
 

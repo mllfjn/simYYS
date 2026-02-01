@@ -7,7 +7,6 @@ import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
-import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.InteractiveInfo;
 
 import java.util.HashMap;
@@ -67,7 +66,7 @@ class SkillNingShi extends Skill {
                 selfDuration--;
                 return selfDuration == 0;
             } else if (trigger == Trigger.AFTER_ATTACK && param instanceof ParamAfterAttack paa) {
-                InteractiveInfo info = paa.interactiveInfo;
+                InteractiveInfo info = paa.attackInfo;
                 Character attacker = info.getAttacker();
                 map.put(attacker
                         , map.getOrDefault(attacker, 0.0) + info.getTraceableNumber().getNumber());
@@ -100,7 +99,7 @@ class SkillNingShi extends Skill {
                             .createRealAttack(character, Skill.getInstance("光球"), character
                                     , (c1, c2) -> duration * 0.3 * character.getMaxHp());
                     info.setCanThroughShield(true);
-                    character.doInteractive(interactive -> interactive.attack(info, AttackType.ZHEN_SHI));
+                    character.doInteractive(interactive -> interactive.attack(info));
                     // 红凝
                     character.addStatus(new StatusHongNing(belongTo, character));
                 });

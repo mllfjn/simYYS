@@ -7,8 +7,6 @@ import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
-import com.mllfjn.simyys.interactive.InteractiveInfo;
-import com.mllfjn.simyys.interactive.AttackType;
 
 public class CaoRen extends Character {
     public static final String CharacterName = "诅咒草人";
@@ -71,11 +69,12 @@ public class CaoRen extends Character {
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
             if (param instanceof ParamAfterAttack pa) {
-                double number = pa.interactiveInfo.getTraceableNumber().getNumber();
+                double number = pa.attackInfo.getTraceableNumber().getNumber();
                 from.doInteractive(interactive ->
-                        interactive.attack(AttackInfo
-                                        .createChuanDaoAttack(from, skill, bind, (c1, c2) -> number)
-                                , AttackType.CHUAN_DAO));
+                        interactive.attack(
+                                AttackInfo.createChuanDaoAttack(from, skill, bind, (c1, c2) -> number)
+                        )
+                );
             }
             return false;
         }

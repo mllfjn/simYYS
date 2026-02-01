@@ -14,8 +14,11 @@ class Skill3 extends Skill {
     public static final String SkillName = "百蝎之毒";
     private static final int[] multiplier = new int[]{0, 75, 80, 85, 90, 90};
 
-    public Skill3(Character belongTo, int level) {
+    private final Skill2 skill2;
+
+    public Skill3(Character belongTo, int level, Skill2 skill2) {
         super(belongTo, level, 2, 0, 3);
+        this.skill2 = skill2;
     }
 
     @Override
@@ -30,7 +33,7 @@ class Skill3 extends Skill {
                 √\tlv4-引爆蝎毒造成的间接伤害增加至90%
                 √\tlv5-陷入蝎毒的目标回合结束后,引爆蝎毒,对其造成攻击90%间接伤害
                 √\t蝎毒:减益,印记:每层减低80点防御,上限5层.引爆后加深1层.
-                 \t单次受到蝎女攻击100%的治疗效果后减少1层
+                 \t\t单次受到蝎女攻击100%的治疗效果后减少1层
                 """;
     }
 
@@ -55,7 +58,8 @@ class Skill3 extends Skill {
 
         // 如果没有人携带蝎毒,则给target上蝎毒
         if (xieDu == null) {
-            xieDu = new StatusXieDu(belongTo, target, multiplier[level], level == 5);
+            xieDu = new StatusXieDu(belongTo, target, multiplier[level], level == 5, skill2);
+            target.addStatus(xieDu);
             belongTo.setStatus(xieDu);
             // 如果携带者和目标是同一个,则引爆蝎毒
         } else if (xieDu.belongTo == target) {

@@ -50,9 +50,9 @@ public class LongChe extends YuHun implements YuHunUnfullMark, YuHunSealResponse
 
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            if (param instanceof ParamAfterAttack paa && paa.interactiveInfo.getAttacker().isMob()) {
+            if (param instanceof ParamAfterAttack paa && paa.attackInfo.getAttacker().isMob()) {
                 if (RateController.yuHun(belongTo, LongChe.this, 50)) {
-                    causeSkill = paa.interactiveInfo.getSkill();
+                    causeSkill = paa.attackInfo.getSkill();
                     LongChe.this.yuHunEffect();
                     belongTo.doInteractive(interactive -> interactive.increaseLocation(belongTo, 30));
                     causeSkill.addSkillEndListener(() -> causeSkill = null);

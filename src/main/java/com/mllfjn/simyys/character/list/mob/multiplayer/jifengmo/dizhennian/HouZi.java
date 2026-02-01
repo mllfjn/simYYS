@@ -9,9 +9,7 @@ import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
-import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
-import com.mllfjn.simyys.interactive.InteractiveInfo;
 
 import java.util.List;
 import java.util.Optional;
@@ -106,10 +104,9 @@ public class HouZi extends Character {
 
         @Override
         public void usePrivate(Interactive interactive, Character target) {
-            AttackInfo info = AttackInfo.createRealAttack(getBelongTo(), this, target
-                    , (c1, c2) -> 5000.0);
-
-            interactive.attack(info, AttackType.ZHEN_SHI);
+            interactive.attack(AttackInfo.createRealAttack(getBelongTo(), this, target,
+                    (c1, c2) -> 5000.0)
+            );
             interactive.increaseLocation(getBelongTo(), 10);
         }
     }
@@ -152,7 +149,7 @@ public class HouZi extends Character {
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
             if (param instanceof ParamAfterAttack paa) {
-                double number = paa.interactiveInfo.getTraceableNumber().getNumber();
+                double number = paa.attackInfo.getTraceableNumber().getNumber();
                 damage += number;
                 ((DiZhenNian) ((HouZi) belongTo).owner).display.addDamage(number);
             }
@@ -171,8 +168,8 @@ public class HouZi extends Character {
         }
 
         @Override
-        public void doInfluenceWhenAttack(AttackType attackType, InteractiveInfo interactiveInfo) {
-            interactiveInfo.getTraceableNumber().mul(bonus, StatusName);
+        public void doInfluenceWhenAttack(AttackInfo attackInfo) {
+            attackInfo.getTraceableNumber().mul(bonus, StatusName);
         }
     }
 }

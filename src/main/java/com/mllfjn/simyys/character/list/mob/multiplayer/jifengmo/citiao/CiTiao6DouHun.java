@@ -9,6 +9,7 @@ import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.character.status.StatusForm;
 import com.mllfjn.simyys.character.status.StatusType;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamageBeingAttack;
+import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.InteractiveInfo;
 import com.mllfjn.simyys.interactive.AttackType;
 
@@ -36,10 +37,10 @@ public class CiTiao6DouHun {
         }
 
         @Override
-        public void doInfluenceBeingAttack(AttackType attackType, InteractiveInfo interactiveInfo) {
-            if (!interactiveInfo.isCrit()) {
+        public void doInfluenceBeingAttack(AttackInfo attackInfo) {
+            if (!attackInfo.isCrit()) {
                 // 首领受到非暴击伤害降低80%
-                interactiveInfo.getTraceableNumber().mul(0.2, CiTiaoName);
+                attackInfo.getTraceableNumber().mul(0.2, CiTiaoName);
             }
         }
     }

@@ -7,6 +7,7 @@ import com.mllfjn.simyys.character.status.StatusForm;
 import com.mllfjn.simyys.character.status.StatusType;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
 import com.mllfjn.simyys.character.yuhun.YuHun;
+import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.InteractiveInfo;
 import com.mllfjn.simyys.interactive.AttackType;
 
@@ -31,8 +32,8 @@ public class HaiYueHuoYu extends YuHun {
         }
 
         @Override
-        public void doInfluenceWhenAttack(AttackType attackType, InteractiveInfo interactiveInfo) {
-            interactiveInfo.getTraceableNumber().mul(1.4, YuHunName);
+        public void doInfluenceWhenAttack(AttackInfo attackInfo) {
+            attackInfo.getTraceableNumber().mul(1.4, YuHunName);
         }
     }
 }

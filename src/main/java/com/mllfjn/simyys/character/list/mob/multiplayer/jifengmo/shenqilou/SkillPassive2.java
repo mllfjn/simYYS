@@ -51,8 +51,8 @@ class SkillPassive2 extends PassiveSkill {
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
             if (param instanceof ParamAfterAttack pa) {
-                double number = pa.interactiveInfo.getTraceableNumber().getNumber();
-                if (!pa.interactiveInfo.isCrit() && number > 0) {
+                double number = pa.attackInfo.getTraceableNumber().getNumber();
+                if (!pa.attackInfo.isCrit() && number > 0) {
                     // 蜃气楼每受到3次非暴击伤害，获得[蜃雾笼罩]
                     count++;
                     if (count == 3) {

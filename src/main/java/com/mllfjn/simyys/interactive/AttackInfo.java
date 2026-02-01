@@ -6,6 +6,7 @@ import com.mllfjn.simyys.character.skill.Skill;
 import java.util.function.BiFunction;
 
 public class AttackInfo extends InteractiveInfo {
+    private final AttackType attackType;
     // 计算防御
     private boolean calDefence = true;
     // 计算增伤
@@ -18,13 +19,16 @@ public class AttackInfo extends InteractiveInfo {
     // 伤害上限
     private double limit = 10000000;
 
-    public AttackInfo(Character attacker, Skill skill, Character target, BiFunction<Character, Character, Double> basicNumber) {
+    private AttackInfo(Character attacker, Skill skill, Character target, AttackType attackType,
+                       BiFunction<Character, Character, Double> basicNumber) {
         super(attacker, skill, target, basicNumber);
+        this.attackType = attackType;
     }
 
     // 基本伤害类型
-    public static AttackInfo createTypicalAttack(Character attacker, Skill skill, Character target, int multiplier) {
-        AttackInfo attackInfo = new AttackInfo(attacker, skill, target,
+    public static AttackInfo createTypicalAttack(Character attacker, Skill skill, Character target,
+                                                 int multiplier, AttackType attackType) {
+        AttackInfo attackInfo = new AttackInfo(attacker, skill, target, attackType,
                 (from, to) -> from.getAttack());
         attackInfo.multiplier = multiplier;
         return attackInfo;
@@ -33,7 +37,7 @@ public class AttackInfo extends InteractiveInfo {
     // 真实伤害:无视防御,不会暴击(没写,但是无视增伤,减伤和御魂)
     public static AttackInfo createRealAttack(Character attacker, Skill skill, Character target
             , BiFunction<Character, Character, Double> basicNumber) {
-        AttackInfo attackInfo = new AttackInfo(attacker, skill, target, basicNumber);
+        AttackInfo attackInfo = new AttackInfo(attacker, skill, target, AttackType.ZHEN_SHI, basicNumber);
 
         attackInfo.calDefence = false;
         attackInfo.canCrit = false;
@@ -48,7 +52,7 @@ public class AttackInfo extends InteractiveInfo {
     // 对防御为0的敌人必定暴击
     public static AttackInfo createJianJieAttack(Character attacker, Skill skill, Character target
             , BiFunction<Character, Character, Double> basicNumber) {
-        AttackInfo attackInfo = new AttackInfo(attacker, skill, target, basicNumber);
+        AttackInfo attackInfo = new AttackInfo(attacker, skill, target, AttackType.JIAN_JIE, basicNumber);
 
         attackInfo.calYuHun = false;
         if (target.getDefence() - target.getIgnoreDefense() == 0) {
@@ -62,13 +66,17 @@ public class AttackInfo extends InteractiveInfo {
     // 没写，但是不吃防御、增伤、易伤
     public static AttackInfo createChuanDaoAttack(Character attacker, Skill skill, Character target
             , BiFunction<Character, Character, Double> basicNumber) {
-        AttackInfo attackInfo = new AttackInfo(attacker, skill, target, basicNumber);
+        AttackInfo attackInfo = new AttackInfo(attacker, skill, target, AttackType.CHUAN_DAO, basicNumber);
 
         attackInfo.canCrit = false;
         attackInfo.calDefence = false;
         attackInfo.calZengShang = false;
         attackInfo.calYiShang = false;
         return attackInfo;
+    }
+
+    public AttackType getAttackType() {
+        return attackType;
     }
 
     public boolean isCalDefence() {

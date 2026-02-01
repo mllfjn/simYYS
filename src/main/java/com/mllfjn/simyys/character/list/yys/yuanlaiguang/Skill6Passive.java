@@ -96,7 +96,7 @@ class Skill6Passive extends PassiveSkill {
                 reset();
             } else if (trigger == Trigger.AFTER_ATTACK) {
                 belongTo.getSkill(7).ifPresent(skill -> {
-                    InteractiveInfo interactiveInfo = ((ParamAfterAttack) param).interactiveInfo;
+                    InteractiveInfo interactiveInfo = ((ParamAfterAttack) param).attackInfo;
                     // 鬼兵部附身的目标受到攻击但未受到伤害时，鬼兵部劈斩目标来源
                     if (interactiveInfo.getTraceableNumber().getNumber() == 0) {
                         ((Skill7Passive) skill).piZhan(interactiveInfo.getAttacker());

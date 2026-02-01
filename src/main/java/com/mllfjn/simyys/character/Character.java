@@ -30,6 +30,7 @@ import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.guihuo.MobGuiHuo;
 import com.mllfjn.simyys.collections.SerializableObservableList;
 import com.mllfjn.simyys.battleevent.EventHpChange;
+import com.mllfjn.simyys.ratecontroller.RateController;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
@@ -215,7 +216,6 @@ public abstract class Character implements Serializable {
     }
 
 
-
     public boolean isMob() {
         return isMob;
     }
@@ -358,10 +358,6 @@ public abstract class Character implements Serializable {
         }
 
         return v1 > v2;
-    }
-
-    public boolean before(Character character) {
-        return before(100.0 - this.getLocation(), this.getSpeed(), 100 - character.getLocation(), character.getSpeed());
     }
 
     public double getLocation() {
@@ -629,7 +625,22 @@ public abstract class Character implements Serializable {
     }
 
     public void dispelDeBuff(int count) {
-        // TODO 驱散指定数量的减益状态
+        List<Status> debuffs = new ArrayList<>();
+        for (Status status : statuses) {
+            if (status.statusType == StatusType.DEBUFF
+                    && status.statusForm == StatusForm.ZHUANG_TAI
+                    && status instanceof Displayable) {
+                debuffs.add(status);
+            }
+        }
+
+        List<Status> tobeDelete = RateController
+                .choose("驱散减益状态", debuffs,
+                        status -> ((Displayable) status).getDisplayText(), bp.calc, count);
+
+        for (Status status : tobeDelete) {
+            status.delete();
+        }
     }
 
     public void removeAllCrowControl() {
@@ -675,7 +686,9 @@ public abstract class Character implements Serializable {
         // 拒绝添加所有状态:堕落之剑和青女房
         for (Status status : getStatuses()) {
             if (status instanceof RejectAllStatuses
-                    || newStatus.statusType == StatusType.DEBUFF && status instanceof IgnoreDebuff
+                    || (newStatus.statusType == StatusType.DEBUFF
+                    && newStatus.statusForm == StatusForm.ZHUANG_TAI
+                    && status instanceof IgnoreDebuff)
             ) {
                 return Optional.empty();
             }
@@ -683,15 +696,6 @@ public abstract class Character implements Serializable {
 
         statuses.add(newStatus);
         return Optional.of(newStatus);
-    }
-
-    public boolean isIgnoreDebuff() {
-        for (Status status : getStatuses()) {
-            if (status instanceof IgnoreDebuff) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public boolean isIgnoreChangeMaxHp() {
@@ -706,11 +710,6 @@ public abstract class Character implements Serializable {
     public void addMaintainedStatus(Status status) {
         maintainedStatuses.add(status);
     }
-
-    public void removeMaintainedStatus(Status status) {
-        maintainedStatuses.remove(status);
-    }
-
 
     public List<Status> getStatuses() {
         return statuses;
@@ -836,18 +835,6 @@ public abstract class Character implements Serializable {
                 return false;
             }
         }
-        /*// 如果技能全都用不了,无法行动
-        boolean canUse = false;
-        for (Skill skill : skills) {
-            if (skill instanceof SkillAuto) {
-                continue;
-            }
-            if (skill.canUse(bp)) {
-                canUse = true;
-                break;
-            }
-        }
-        return canUse;*/
         return true;
     }
 

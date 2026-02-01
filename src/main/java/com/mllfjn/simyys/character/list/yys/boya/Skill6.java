@@ -43,13 +43,13 @@ class Skill6 extends PassiveSkill {
 
         belongTo.doInteractive(interactive -> {
             AttackInfo interactiveInfo = AttackInfo
-                    .createTypicalAttack(belongTo, this, target, multiplier);
+                    .createTypicalAttack(belongTo, this, target, multiplier, AttackType.DAN_TI);
 
             if (level >= 5) {
                 interactiveInfo.setCalYuHun(false);
             }
 
-            interactive.attack(interactiveInfo, AttackType.DAN_TI);
+            interactive.attack(interactiveInfo);
         });
 
         log(target);

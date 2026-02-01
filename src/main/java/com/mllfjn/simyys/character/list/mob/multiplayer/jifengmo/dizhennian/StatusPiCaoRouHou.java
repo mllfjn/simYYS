@@ -7,8 +7,7 @@ import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamageBeingAttack;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
-import com.mllfjn.simyys.interactive.AttackType;
-import com.mllfjn.simyys.interactive.InteractiveInfo;
+import com.mllfjn.simyys.interactive.AttackInfo;
 
 class StatusPiCaoRouHou extends Status implements StatusRunnable, Displayable {
     public static final String StatusName = "皮糙肉厚";
@@ -47,7 +46,7 @@ class StatusPiCaoRouHou extends Status implements StatusRunnable, Displayable {
     @Override
     public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
         if (param instanceof ParamAfterAttack paa) {
-            double number = paa.interactiveInfo.getTraceableNumber().getNumber();
+            double number = paa.attackInfo.getTraceableNumber().getNumber();
             if (number > breakDamage) {
                 stack--;
                 return stack == 0;
@@ -69,8 +68,8 @@ class StatusPiCaoRouHou extends Status implements StatusRunnable, Displayable {
         }
 
         @Override
-        public void doInfluenceBeingAttack(AttackType attackType, InteractiveInfo interactiveInfo) {
-            interactiveInfo.getTraceableNumber().mul(0.3, StatusPiCaoRouHou.StatusName);
+        public void doInfluenceBeingAttack(AttackInfo attackInfo) {
+            attackInfo.getTraceableNumber().mul(0.3, StatusPiCaoRouHou.StatusName);
         }
     }
 }

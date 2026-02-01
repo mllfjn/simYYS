@@ -5,6 +5,7 @@ import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.character.status.StatusForm;
 import com.mllfjn.simyys.character.status.StatusType;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
+import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.InteractiveInfo;
 
@@ -24,9 +25,9 @@ public class StatusShiZhiXi extends Status implements InfluenceDamageWhenAttack 
     }
 
     @Override
-    public void doInfluenceWhenAttack(AttackType attackType, InteractiveInfo interactiveInfo) {
+    public void doInfluenceWhenAttack(AttackInfo attackInfo) {
         if (increase != 1) {
-            interactiveInfo.getTraceableNumber().mul(increase, StatusName);
+            attackInfo.getTraceableNumber().mul(increase, StatusName);
         }
     }
 }

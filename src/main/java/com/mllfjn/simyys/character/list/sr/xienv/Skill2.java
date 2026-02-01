@@ -17,8 +17,11 @@ class Skill2 extends PassiveSkill {
     public static final String SkillName = "以毒攻毒";
     private boolean enable = false;
 
+    private final StatusXieDuSpecialOnXieNv status;
+
     public Skill2(Character belongTo, int level) {
         super(belongTo, level, 2);
+        status = new StatusXieDuSpecialOnXieNv(belongTo);
     }
 
     @Override
@@ -30,23 +33,29 @@ class Skill2 extends PassiveSkill {
                  \tlv2-蝎毒使目标减疗40%
                 √\tlv3-引爆蝎毒恢复比例提升至30%
                  \tlv4-蝎毒超过1层时,每层额外使目标减疗10%
-                 \tlv5-陷入5层蝎毒的敌方目标受到间接伤害回合后,向其他敌方溅射该伤害60%的间接伤害(此伤害不超过蝎女攻击上限800%)
+                √\tlv5-陷入5层蝎毒的敌方目标受到间接伤害回合后,向其他敌方溅射该伤害60%的间接伤害(此伤害不超过蝎女攻击上限800%)
                 """;
     }
 
     @Override
     public void enable() {
         enable = true;
+        getBelongTo().addStatus(status);
     }
 
     @Override
     protected void disable() {
         enable = false;
+        getBelongTo().removeStatus(status);
     }
 
     @Override
     public String getName() {
         return SkillName;
+    }
+
+    public boolean canCount() {
+        return enable && getLevel() >= 5;
     }
 
     class StatusXieDuSpecialOnXieNv extends Status implements StatusRunnable, AttributeModifier {
@@ -67,25 +76,27 @@ class Skill2 extends PassiveSkill {
                 InteractiveInfo info = pca.interactiveInfo;
                 Skill skill = info.getSkill();
                 if (skill == StatusXieDu.SKILL && !info.isCancel()) {
-                    double maxRecovery = info.getTraceableNumber().getNumber() * (Skill2.this.getLevel() >= 3 ? 0.3 : 0.2);
-                    double loseHP = belongTo.getMaxHp() - belongTo.getHp();
-                    belongTo.doInteractive(interactive -> {
-                        if (maxRecovery <= loseHP) {
-                            interactive.recovery(SKILL, belongTo, maxRecovery);
-                        } else {
-                            List<Character> list = new CharacterFinder(belongTo)
-                                    .filterTeammate()
-                                    .filterSelf()
-                                    .getList();
-                            if (!list.isEmpty()) {
-                                double averageOverflow = (maxRecovery - loseHP) / list.size();
-                                for (Character character : list) {
-                                    interactive.recovery(SKILL, character, averageOverflow);
+                    double number = info.getTraceableNumber().getNumber();
+                    if (number > 0) {
+                        double maxRecovery = number * (Skill2.this.getLevel() >= 3 ? 0.3 : 0.2);
+                        double loseHP = belongTo.getMaxHp() - belongTo.getHp();
+                        belongTo.doInteractive(interactive -> {
+                            if (maxRecovery <= loseHP) {
+                                interactive.recovery(SKILL, belongTo, maxRecovery);
+                            } else {
+                                List<Character> list = new CharacterFinder(belongTo)
+                                        .filterTeammate()
+                                        .filterSelf()
+                                        .getList();
+                                if (!list.isEmpty()) {
+                                    double averageOverflow = (maxRecovery - loseHP) / list.size();
+                                    for (Character character : list) {
+                                        interactive.recovery(SKILL, character, averageOverflow);
+                                    }
                                 }
                             }
-                        }
-                    });
-
+                        });
+                    }
                 }
             }
             return false;

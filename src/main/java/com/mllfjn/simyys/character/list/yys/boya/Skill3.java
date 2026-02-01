@@ -10,6 +10,7 @@ import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
 import com.mllfjn.simyys.character.status.triggerParam.ParamUseSkill;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
+import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.interactive.InteractiveInfo;
@@ -122,8 +123,8 @@ class Skill3 extends Skill {
         }
 
         @Override
-        public void doInfluenceWhenAttack(AttackType attackType, InteractiveInfo interactiveInfo) {
-            skill.doInfluence(interactiveInfo);
+        public void doInfluenceWhenAttack(AttackInfo attackInfo) {
+            skill.doInfluence(attackInfo);
         }
 
         @Override

@@ -3,8 +3,8 @@ package com.mllfjn.simyys.character.list.sp.shenshe;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
+import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.AttackType;
-import com.mllfjn.simyys.interactive.InteractiveInfo;
 import com.mllfjn.simyys.character.status.determinant.IgnoreChangeMaxHp;
 import com.mllfjn.simyys.character.status.determinant.IgnoreDebuff;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamageBeingAttack;
@@ -72,9 +72,9 @@ public class StatusSheShen extends Status implements IgnoreChangeMaxHp, IgnoreDe
     }
 
     @Override
-    public void doInfluenceBeingAttack(AttackType attackType, InteractiveInfo interactiveInfo) {
-        if (level >= 3 && attackType == AttackType.QUN_TI) {
-            interactiveInfo.getTraceableNumber().mul(0.7, text);
+    public void doInfluenceBeingAttack(AttackInfo attackInfo) {
+        if (level >= 3 && attackInfo.getAttackType() == AttackType.QUN_TI) {
+            attackInfo.getTraceableNumber().mul(0.7, text);
         }
     }
 

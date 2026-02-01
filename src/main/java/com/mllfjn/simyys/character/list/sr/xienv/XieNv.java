@@ -16,6 +16,11 @@ public class XieNv extends CharacterShiShenBase {
     }
 
     @Override
+    protected boolean useSkillAuto() {
+        return tryUseSkill(3);
+    }
+
+    @Override
     protected String getDefaultSkillLevel() {
         return "555";
     }
@@ -33,7 +38,8 @@ public class XieNv extends CharacterShiShenBase {
     @Override
     protected void addOwnSkills() {
         addSkill(new Skill1(this, skill1Level));
-        addSkill(new Skill2(this, skill2Level));
-        addSkill(new Skill3(this, skill3Level));
+        Skill2 skill2 = new Skill2(this, skill2Level);
+        addSkill(skill2);
+        addSkill(new Skill3(this, skill3Level, skill2));
     }
 }

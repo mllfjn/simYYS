@@ -7,6 +7,7 @@ import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.character.status.StatusForm;
 import com.mllfjn.simyys.character.status.StatusType;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamageBeingAttack;
+import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.InteractiveInfo;
 import com.mllfjn.simyys.interactive.AttackType;
 
@@ -34,10 +35,10 @@ public class CiTiao2YiSui {
         }
 
         @Override
-        public void doInfluenceBeingAttack(AttackType attackType, InteractiveInfo interactiveInfo) {
+        public void doInfluenceBeingAttack(AttackInfo attackInfo) {
             // 首领受到的间接伤害降低99%
-            if (attackType == AttackType.JIAN_JIE) {
-                interactiveInfo.getTraceableNumber().mul(0.01, CiTiaoName);
+            if (attackInfo.getAttackType() == AttackType.JIAN_JIE) {
+                attackInfo.getTraceableNumber().mul(0.01, CiTiaoName);
             }
         }
     }

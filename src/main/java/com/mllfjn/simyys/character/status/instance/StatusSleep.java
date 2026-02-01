@@ -31,7 +31,7 @@ public class StatusSleep extends Status implements Displayable, CrowdControl, St
     @Override
     public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
         if (param instanceof ParamAfterAttack pa) {
-            return pa.interactiveInfo.getTraceableNumber().getNumber() > 0;
+            return pa.attackInfo.getTraceableNumber().getNumber() > 0;
         }
         return false;
     }

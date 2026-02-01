@@ -3,7 +3,6 @@ package com.mllfjn.simyys.character.list.sp.kongmian;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill1PuGongBase;
 import com.mllfjn.simyys.interactive.AttackInfo;
-import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
 
 class Skill1 extends Skill1PuGongBase {
@@ -18,7 +17,7 @@ class Skill1 extends Skill1PuGongBase {
         AttackInfo info = AttackInfo.createJianJieAttack(getBelongTo(), this, target
                 , (from, to) -> from.getAttack());
         info.setMultiplier(multiplierGeneral[getLevel()]);
-        interactive.attack(info, AttackType.JIAN_JIE);
+        interactive.attack(info);
     }
 
     @Override

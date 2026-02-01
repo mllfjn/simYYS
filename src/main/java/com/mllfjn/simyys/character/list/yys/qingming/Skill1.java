@@ -4,10 +4,7 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill1PuGongBase;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
-import com.mllfjn.simyys.interactive.AttackType;
-import com.mllfjn.simyys.interactive.Interactive;
-import com.mllfjn.simyys.interactive.InteractiveInfo;
-import com.mllfjn.simyys.interactive.StatusSupplier;
+import com.mllfjn.simyys.interactive.*;
 
 class Skill1 extends Skill1PuGongBase {
     public static final String SkillName = "基础术式";
@@ -75,8 +72,8 @@ class Skill1 extends Skill1PuGongBase {
         }
 
         @Override
-        public void doInfluenceWhenAttack(AttackType attackType, InteractiveInfo interactiveInfo) {
-            interactiveInfo.getTraceableNumber().mul(bonus, StatusName);
+        public void doInfluenceWhenAttack(AttackInfo attackInfo) {
+            attackInfo.getTraceableNumber().mul(bonus, StatusName);
         }
     }
 }
