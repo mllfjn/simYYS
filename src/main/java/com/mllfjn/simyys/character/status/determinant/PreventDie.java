@@ -5,7 +5,7 @@ public interface PreventDie {
         return true;
     }
 
-    void preventDie();
+    void preventDie(double excessDamage);
 
     String getName();
 }

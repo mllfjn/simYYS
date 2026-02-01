@@ -23,7 +23,7 @@ import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunFactory;
 import com.mllfjn.simyys.character.yuhun.YuHunSealResponse;
-import com.mllfjn.simyys.character.list.yys.QiLingFactory;
+import com.mllfjn.simyys.character.list.yys.qiling.QiLingFactory;
 import com.mllfjn.simyys.interactive.TraceableNumber;
 import com.mllfjn.simyys.interactive.InteractiveInfo;
 import com.mllfjn.simyys.interactive.Interactive;
@@ -586,7 +586,7 @@ public abstract class Character implements Serializable {
             // 如果剩余血量比伤害小,进入死亡判定
             if (getHp() <= damage) {
                 interactiveInfo.getTraceableNumber().addTrace("\t(击杀)");
-                beforeDie(interactiveInfo);
+                beforeDie(interactiveInfo, damage - getHp());
             } else {
                 // 受到攻击
                 setHp(getHp() - damage);
@@ -799,10 +799,10 @@ public abstract class Character implements Serializable {
         return yuHunSet;
     }
 
-    public void beforeDie(InteractiveInfo interactiveInfo) {
+    public void beforeDie(InteractiveInfo interactiveInfo, double excessDamage) {
         for (Status status : getStatuses()) {
             if (status instanceof PreventDie pd && pd.effective()) {
-                pd.preventDie();
+                pd.preventDie(excessDamage);
                 interactiveInfo.getTraceableNumber().addTrace("(" + pd.getName() + "免死生效)");
                 interactiveInfo.setCancel(true);
                 return;
@@ -816,11 +816,7 @@ public abstract class Character implements Serializable {
         alive = false;
         bp.removeCharacter(this);
 
-        for (Status status : getStatuses()) {
-            if (status instanceof ActionWhenDie awd) {
-                awd.action(bp);
-            }
-        }
+        statusRun(Trigger.DIE, null);
         // 通过老头死亡时可以叠一层伤魂鸟判断，应该先触发死亡，再执行
         dieHandle();
     }

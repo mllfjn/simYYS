@@ -502,17 +502,19 @@ public class BattlePane {
         return situation.teamPane[1 - character.team].isMobTeam();
     }
 
-    public BattleActionListener forEveryone(SerializableConsumer<Character> action) {
+    public BattleActionListener forEveryone(Character owner, SerializableConsumer<Character> action) {
         for (Character character : situation.characters) {
             action.accept(character);
         }
 
-        return event -> {
+        BattleActionListener listener = event -> {
             if (event instanceof EventAddCharacter eac) {
                 action.accept(eac.getCharacter());
             }
             return false;
         };
+        addActionListener(owner, listener);
+        return listener;
     }
 
     private enum ActionBarType {

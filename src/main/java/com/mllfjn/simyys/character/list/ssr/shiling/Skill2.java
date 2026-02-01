@@ -65,7 +65,7 @@ class Skill2 extends PassiveSkill {
         }
 
         Character belongTo = getBelongTo();
-        listener = belongTo.bp.forEveryone(character -> {
+        listener = belongTo.bp.forEveryone(belongTo, character -> {
             if (character.team == belongTo.team) {
                 character.addStatus(new StatusOutRoundInfluence(belongTo, character, multiplier));
 

@@ -13,12 +13,10 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.stage.*;
 
 import java.io.*;
@@ -92,7 +90,6 @@ public class Initializer extends Application {
             // TODO
 //            ListViewWithBasicController<ExtraFlag> listViewPane = new ListViewWithBasicController<>(extraFlags);
             *//*listViewPane.setDefaultControlButtons(e -> {
-                // String int int combobox int
                 TextField tfName = new TextField();
                 TextField tfTeam = new TextField();
                 TextField tfRound = new TextField();
@@ -196,11 +193,7 @@ public class Initializer extends Application {
 
     private void loadData(Stage stage) {
         FileChooser fileChooser = new FileChooser();
-        File directory = new File("save");
-        if (!directory.exists() && !directory.mkdir()) {
-            Utils.error("创建目录失败");
-        }
-        fileChooser.setInitialDirectory(directory);
+        fileChooser.setInitialDirectory(getDirectory());
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("队伍预设", "*.team"));
 
         File file = fileChooser.showOpenDialog(stage);
@@ -270,11 +263,7 @@ public class Initializer extends Application {
     private void saveDate(Stage stage) {
 
         FileChooser fileChooser = new FileChooser();
-        File directory = new File("save");
-        if (!directory.exists() && !directory.mkdir()) {
-            Utils.error("创建目录失败");
-        }
-        fileChooser.setInitialDirectory(directory);
+        fileChooser.setInitialDirectory(getDirectory());
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("队伍预设", "*.team"));
 
         File file = fileChooser.showSaveDialog(stage);
@@ -292,6 +281,23 @@ public class Initializer extends Application {
         }
     }
 
+    private File getDirectory() {
+        File directory = new File("save");
+        /*String osName = System.getProperty("os.name").toLowerCase();
+        String userHome = System.getProperty("user.home");
+        File directory;
+        if (osName.contains("win")) {
+            String winDocsPath = System.getenv("USERPROFILE") + "\\Documents";
+            directory = new File(winDocsPath);
+        } else {
+            directory = new File("save");
+        }*/
+        if (!directory.exists() && !directory.mkdir()) {
+            Utils.error("创建目录失败");
+        }
+        return directory;
+    }
+
     public static void installScale(Stage stage, Region root, double expectedWidth, double expectedHeight) {
         root.setMaxSize(expectedWidth, expectedHeight);
         root.setMinSize(expectedWidth, expectedHeight);
@@ -303,38 +309,6 @@ public class Initializer extends Application {
         stage.setWidth(expectedWidth * Initializer.scaleX + Initializer.BORDER_WIDTH);
         stage.setHeight(expectedHeight * Initializer.scaleY + Initializer.BORDER_HEIGHT);
     }
-
-
-    /*public static void installScale(Stage stage, Region root) {
-        stage.setScene(new Scene(new Group(root)));
-
-        root.applyCss();
-        root.layout();
-
-        double expectedWidth = root.getBoundsInLocal().getWidth();
-        double expectedHeight = root.getBoundsInLocal().getHeight();
-
-        System.out.println("expectedWidth: " + expectedWidth);
-        System.out.println("expectedHeight: " + expectedHeight);
-
-        root.setMaxSize(expectedWidth, expectedHeight);
-        root.setMinSize(expectedWidth, expectedHeight);
-
-        root.setScaleX(Initializer.scaleX);
-        root.setScaleY(Initializer.scaleY);
-
-        stage.setWidth(expectedWidth * Initializer.scaleX + Initializer.BORDER_WIDTH);
-        stage.setHeight(expectedHeight * Initializer.scaleY + Initializer.BORDER_HEIGHT);
-
-        stage.show();
-
-        System.out.println("realWidth:" + root.getWidth());
-        System.out.println("realHeight:" + root.getHeight());
-
-        stage.close();
-
-//        installScale(stage, root, root.getBoundsInLocal().getWidth(), root.getBoundsInLocal().getHeight());
-    }*/
 
     record ExtraFlag(String name, int team, int timesToAct, FlagChangeInfo flagChangeInfo) implements Serializable {
     }

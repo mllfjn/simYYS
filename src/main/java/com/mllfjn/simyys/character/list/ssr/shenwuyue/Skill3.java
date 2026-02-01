@@ -80,7 +80,7 @@ class Skill3 extends Skill {
         }
 
         private void addListener(boolean gainGuiHuo, Skill2.StatusMengShen statusMengShen) {
-            listener = belongTo.bp.forEveryone(c -> {
+            listener = belongTo.bp.forEveryone(belongTo, c -> {
                 if (c.team == belongTo.team) {
                     c.addStatus(new StatusHuanJing(belongTo, c, gainGuiHuo, statusMengShen));
                 }

@@ -65,7 +65,7 @@ class Skill5 extends PassiveSkill implements YingFenShenCopy {
             super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
             this.multiplier = multiplier;
 
-            character.bp.forEveryone(c -> {
+            character.bp.forEveryone(character, c -> {
                 if (c.team == character.team && c != character) {
                     c.addStatus(new StatusZXJListener(character, c, this));
                 }

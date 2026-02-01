@@ -41,7 +41,7 @@ public class QingNvFang extends YuHun {
         }
 
         @Override
-        public void preventDie() {
+        public void preventDie(double excessDamage) {
 
             belongTo.bp.interactive.addYuHunEffectLog(belongTo, QingNvFang.YuHunName);
 

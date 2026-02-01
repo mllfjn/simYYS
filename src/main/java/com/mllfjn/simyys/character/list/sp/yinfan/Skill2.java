@@ -76,7 +76,7 @@ class Skill2 extends Skill {
             this.getYuanLiBeforeRound = skill2Level >= 3;
             setDurationType(StatusDurationType.WEI_CHI, duration);
 
-            character.bp.forEveryone(c -> {
+            character.bp.forEveryone(character, c -> {
                 if (c.team == character.team && c != character && !c.isYYS()) {
                     c.addStatus(new StatusUseSkillListener(character, c));
                 }

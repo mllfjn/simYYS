@@ -3,8 +3,8 @@ package com.mllfjn.simyys.character.list.yys.yuanlaiguang;
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.PropertyKey;
+import com.mllfjn.simyys.character.list.yys.qiling.QiLingFactory;
 import com.mllfjn.simyys.character.propertygetter.*;
-import com.mllfjn.simyys.collections.StringGroup;
 
 public class YuanLaiGuang extends Character {
     public static final String CharacterName = "源赖光";
@@ -27,7 +27,7 @@ public class YuanLaiGuang extends Character {
         ((PropertyInput) map.get(PropertyKey.GENERAL_EFFECT_HIT_RATE_KEY)).setValue("0");
         ((PropertyInput) map.get(PropertyKey.GENERAL_EFFECT_RESIST_RATE_KEY)).setValue("0");
 
-        map.put(PropertyKey.QI_LING_KEY, new PropertySelectSingle(StringGroup.QI_LING));
+        map.put(PropertyKey.QI_LING_KEY, new PropertySelectSingle(QiLingFactory.QI_LING));
 
         ((PropertyCheck) map.get(PropertyKey.GENERAL_YYS_KEY)).setValue(true);
 

@@ -5,6 +5,7 @@ import com.mllfjn.simyys.character.PropertyKey;
 import com.mllfjn.simyys.character.list.yys.CharacterYYSBase;
 import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
 import com.mllfjn.simyys.character.propertygetter.PropertiesMap;
+import com.mllfjn.simyys.character.propertygetter.PropertyInput;
 import com.mllfjn.simyys.character.propertygetter.PropertyMultiInput;
 import com.mllfjn.simyys.character.skill.Skill;
 
@@ -47,6 +48,9 @@ public class BoYa extends CharacterYYSBase {
     @Override
     public PropertiesMap getProperties() {
         PropertiesMap map = super.getProperties();
+
+        // 博雅初始暴击20
+        ((PropertyInput) map.get(PropertyKey.GENERAL_CRIT_RATE_KEY)).setValue("20");
 
         PropertyKey.addYYSSkill(map, SkillNames, DefaultSkillLevels, DefaultShuYin);
 

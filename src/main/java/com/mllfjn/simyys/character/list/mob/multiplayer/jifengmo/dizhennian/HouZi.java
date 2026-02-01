@@ -32,7 +32,7 @@ public class HouZi extends Character {
 
         addSkills();
 
-        bp.forEveryone(character -> {
+        bp.forEveryone(this, character -> {
             if (character.team != team) {
                 character.addStatus(new StatusIncreaseActionListener(this, character));
             }

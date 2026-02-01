@@ -12,12 +12,10 @@ import com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.citiao.CiTiao6D
 import com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.citiao.CiTiaoManager;
 import com.mllfjn.simyys.character.propertygetter.*;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
-import com.mllfjn.simyys.character.status.ActionWhenDie;
-import com.mllfjn.simyys.character.status.Status;
-import com.mllfjn.simyys.character.status.StatusForm;
-import com.mllfjn.simyys.character.status.StatusType;
+import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.instance.StatusBoss;
 import com.mllfjn.simyys.character.status.instance.StatusCanNotChoose;
+import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.collections.StringGroup;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
@@ -198,7 +196,7 @@ public class DiZhenNian extends Character {
         this.hongNing = hongNing;
     }
 
-    static class StatusBuffSetter extends Status implements ActionWhenDie {
+    static class StatusBuffSetter extends Status implements StatusRunnable {
         private final StatusBuff.BuffType buffType;
 
         public StatusBuffSetter(Character from, Character belongTo, StatusBuff.BuffType buffType) {
@@ -207,8 +205,14 @@ public class DiZhenNian extends Character {
         }
 
         @Override
-        public void action(BattlePane bp) {
+        public boolean runnable(Trigger trigger) {
+            return trigger == Trigger.DIE;
+        }
+
+        @Override
+        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
             ((DiZhenNian) from).setBuffType(buffType);
+            return false;
         }
     }
 }

@@ -1,7 +1,6 @@
 package com.mllfjn.simyys.collections;
 
 import com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.citiao.*;
-import com.mllfjn.simyys.character.list.yys.QiLingFactory;
 import com.mllfjn.simyys.character.yuhun.list.*;
 
 import java.io.Serializable;
@@ -53,6 +52,4 @@ public record StringGroup(String label, String... values) implements Serializabl
                     LongChe.YuHunName
             ),
     };
-    public final static StringGroup[] QI_LING
-            = new StringGroup[]{new StringGroup("契灵", QiLingFactory.ZhenMuShou, QiLingFactory.HuoLing)};
 }

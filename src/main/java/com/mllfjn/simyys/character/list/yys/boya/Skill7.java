@@ -6,6 +6,7 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.status.*;
+import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
 import java.util.List;
 
@@ -30,7 +31,7 @@ class Skill7 extends PassiveSkill {
         this.zengShang = baseZengShang[level];
         this.speed = baseSpeed[level];
 
-        belongTo.addStatus(new StatusWhenDie(belongTo, this));
+        belongTo.addStatus(new StatusWhenDie(belongTo));
     }
 
     private void use() {
@@ -61,17 +62,21 @@ class Skill7 extends PassiveSkill {
         return SkillName;
     }
 
-    static class StatusWhenDie extends Status implements ActionWhenDie {
-        private final Skill7 skill7;
+    class StatusWhenDie extends Status implements StatusRunnable {
 
-        public StatusWhenDie(Character character, Skill7 skill7) {
+        public StatusWhenDie(Character character) {
             super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-            this.skill7 = skill7;
         }
 
         @Override
-        public void action(BattlePane bp) {
-            skill7.use();
+        public boolean runnable(Trigger trigger) {
+            return trigger == Trigger.DIE;
+        }
+
+        @Override
+        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
+            Skill7.this.use();
+            return false;
         }
     }
 

@@ -30,7 +30,7 @@ class Skill2 extends PassiveSkill {
         belongTo.bp.addActionListener(belongTo, (event) -> {
             if (event instanceof EventBattleStart) {
                 belongTo.addStatus(new StatusMeiMengBiCheng(belongTo, belongTo));
-                belongTo.bp.forEveryone(c -> {
+                belongTo.bp.forEveryone(belongTo, c -> {
                     if (c.team == belongTo.team) {
                         c.addStatus(new StatusJianShang(belongTo, c));
                     }

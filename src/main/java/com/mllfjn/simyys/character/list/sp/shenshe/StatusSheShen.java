@@ -42,7 +42,7 @@ public class StatusSheShen extends Status implements IgnoreChangeMaxHp, IgnoreDe
     }
 
     @Override
-    public void preventDie() {
+    public void preventDie(double excessDamage) {
         if (!die) {
             belongTo.bp.addActionListener(belongTo, event -> {
                 if (event instanceof EventActionDone) {
