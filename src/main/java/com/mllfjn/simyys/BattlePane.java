@@ -57,6 +57,8 @@ public class BattlePane {
     // teamPane容器
     private final StackPane teamPaneContainer1 = new StackPane();
     private final StackPane teamPaneContainer0 = new StackPane();
+    // 战斗开始时事件列表，用于先机
+    private List<Runnable> battleStartEventList = new ArrayList<>();
 
 
     public BattlePane(Scene scene, Pane stageRoot, Runnable back, SerializableObservableList<PropertiesHolder> list) {
@@ -265,7 +267,10 @@ public class BattlePane {
         situation.characterActing.timesToAct++;
 
         // 战斗开始
-        onTrigger(new EventBattleStart());
+//        onTrigger(new EventBattleStart());
+        for (Runnable runnable : battleStartEventList) {
+            runnable.run();
+        }
         // 火灵
         situation.teamPane[0].calHuoLing();
         situation.teamPane[1].calHuoLing();
@@ -496,6 +501,10 @@ public class BattlePane {
         for (List<BattleActionListener> list : situation.listenerMap.values()) {
             list.removeIf(listener -> listener.onBattleAction(event));
         }
+    }
+
+    public void atBattleStart(Runnable runnable) {
+        battleStartEventList.add(runnable);
     }
 
     public boolean isMobBattle(Character character) {

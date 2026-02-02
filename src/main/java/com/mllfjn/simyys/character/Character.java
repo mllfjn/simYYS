@@ -310,7 +310,7 @@ public abstract class Character implements Serializable {
 
         maxHp = num;
         if (replenish) {
-            setHp(maxHp);
+            hp = maxHp;
         }
     }
 
