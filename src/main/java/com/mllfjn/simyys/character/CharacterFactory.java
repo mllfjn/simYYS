@@ -4,6 +4,7 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.dizhennian.DiZhenNian;
 import com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.huangkulou.HuangKuLou;
 import com.mllfjn.simyys.character.list.r.chounv.ChouNv;
+import com.mllfjn.simyys.character.list.sp.fuji.FuJi;
 import com.mllfjn.simyys.character.list.sp.laotou.LaoTou;
 import com.mllfjn.simyys.character.list.sp.spjin.SpJin;
 import com.mllfjn.simyys.character.list.sp.yinfan.YinFan;
@@ -56,6 +57,7 @@ public class CharacterFactory {
 //        mapSP.put(KongMian.CharacterName, KongMian.class);
         mapSP.put(SpJin.CharacterName, SpJin.class);
         mapSP.put(YinFan.CharacterName, YinFan.class);
+        mapSP.put(FuJi.CharacterName, FuJi.class);
 
         Map<String, Class<? extends Character>> mapSSR = new LinkedHashMap<>();
         characterMap.put("SSR", mapSSR);
