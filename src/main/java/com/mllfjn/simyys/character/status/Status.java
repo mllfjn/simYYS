@@ -53,6 +53,11 @@ public abstract class Status implements Serializable {
         belongTo.getStatuses().remove(this);
 
         // 这里不能直接在维持列表中删除,因为可能会从维持列表中遍历并调用delete方法,如果后续有需要维持状态主动删除,需要修改
+        // 不行真的不行
+        /*// 不记得上面的注释是什么意思了，先写，出了问题再改
+        if (durationType == StatusDurationType.WEI_CHI) {
+            from.removeMaintainedStatus(this);
+        }*/
     }
 
     public void beforeDelete() {}

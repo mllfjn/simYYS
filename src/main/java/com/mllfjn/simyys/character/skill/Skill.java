@@ -116,7 +116,7 @@ public abstract class Skill implements Serializable {
         useDone();
     }
 
-    protected void log(Character target) {
+    public void log(Character target) {
         log(belongTo, target);
     }
 

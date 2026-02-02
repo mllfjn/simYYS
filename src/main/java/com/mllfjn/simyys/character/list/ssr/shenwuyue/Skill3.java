@@ -51,7 +51,9 @@ class Skill3 extends Skill {
 
 
         if (level >= 5) {
-            target.addStatus(new StatusMeiMengJiangCheng(belongTo, target));
+            if (!target.isHaveStatus(StatusMeiMengJiangCheng.class)) {
+                target.addStatus(new StatusMeiMengJiangCheng(belongTo, target));
+            }
         }
 
         return Optional.of(target);

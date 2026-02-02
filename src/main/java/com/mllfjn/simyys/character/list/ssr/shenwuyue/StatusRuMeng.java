@@ -15,6 +15,11 @@ public class StatusRuMeng extends Status implements Displayable, ConditionalRedu
         from.setRuMeng(this, true);
     }
 
+    public void deleteAndRemoveMaintained() {
+        from.removeMaintainedStatus(this);
+        delete();
+    }
+
     @Override
     public int getMaxReduce() {
         return 3;
@@ -23,7 +28,7 @@ public class StatusRuMeng extends Status implements Displayable, ConditionalRedu
     @Override
     public void enable(int usedCount) {
         if (stack == 1) {
-            delete();
+            deleteAndRemoveMaintained();
         } else {
             stack--;
         }

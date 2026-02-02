@@ -3,17 +3,11 @@ package com.mllfjn.simyys.character.list.ssr.shenwuyue;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.CharacterShiShenBase;
 
-import java.util.Optional;
-
 public class ShenWuYue extends CharacterShiShenBase {
     public static final String CharacterName = "神无月";
 
     private Skill2.StatusMengShen statusMengShen;
     private StatusRuMeng ruMeng;
-
-    Optional<StatusRuMeng> getRuMeng() {
-        return Optional.ofNullable(ruMeng);
-    }
 
     Character getRuMengCarrier() {
         if (ruMeng == null) {
@@ -23,11 +17,11 @@ public class ShenWuYue extends CharacterShiShenBase {
         }
     }
 
-    void setRuMeng(StatusRuMeng ruMeng, boolean needDelete) {
+    void setRuMeng(StatusRuMeng newRuMeng, boolean needDelete) {
         if (needDelete && this.ruMeng != null) {
-            ruMeng.delete();
+            this.ruMeng.deleteAndRemoveMaintained();
         }
-        this.ruMeng = ruMeng;
+        this.ruMeng = newRuMeng;
     }
 
     Skill2.StatusMengShen addStack() {

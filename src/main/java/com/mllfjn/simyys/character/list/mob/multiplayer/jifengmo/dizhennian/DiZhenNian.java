@@ -105,7 +105,7 @@ public class DiZhenNian extends Character {
             addStatus(new StatusCanNotChoose(this, this));
             // 如果在凝视立即吐出光球
             getStatus(SkillNingShi.StatusNingShiRecordDamage.class)
-                    .ifPresent(SkillNingShi.StatusNingShiRecordDamage::tuGuangQiu);
+                    .ifPresent(SkillNingShi.StatusNingShiRecordDamage::delete);
         });
 
         // 第二次转阶段

@@ -17,8 +17,21 @@ class SkillNingShi extends Skill {
     public static final String SkillName = "凝视";
     public static final int skillID = 5;
 
+    private final Skill skillGuangQiu;
+
     public SkillNingShi(Character belongTo) {
         super(belongTo, 0, 0, 0, 5);
+        skillGuangQiu = new Skill(belongTo, 0, 0, 0, 0) {
+            @Override
+            public String getName() {
+                return "光球";
+            }
+
+            @Override
+            public Optional<Character> usePrivate(BattlePane bp) {
+                return Optional.empty();
+            }
+        };
     }
 
     @Override
@@ -41,7 +54,7 @@ class SkillNingShi extends Skill {
         return Optional.empty();
     }
 
-    static class StatusNingShiRecordDamage extends Status implements StatusRunnable, Displayable {
+    class StatusNingShiRecordDamage extends Status implements StatusRunnable, Displayable {
         private final Map<Character, Double> map = new HashMap<>();
 
         private int selfDuration;
@@ -96,13 +109,14 @@ class SkillNingShi extends Skill {
                     int duration = statusExist.getDuration();
                     // 剩余buff回合数*30%最大生命的穿盾伤害
                     AttackInfo info = AttackInfo
-                            .createRealAttack(character, Skill.getInstance("光球"), character
+                            .createRealAttack(character, SkillNingShi.this.skillGuangQiu, character
                                     , (c1, c2) -> duration * 0.3 * character.getMaxHp());
                     info.setCanThroughShield(true);
                     character.doInteractive(interactive -> interactive.attack(info));
                     // 红凝
                     character.addStatus(new StatusHongNing(belongTo, character));
                 });
+                skillGuangQiu.log(character);
                 character.addStatus(new StatusBuff(belongTo, character, diZhenNian.getBuffType(), 7));
             });
         }

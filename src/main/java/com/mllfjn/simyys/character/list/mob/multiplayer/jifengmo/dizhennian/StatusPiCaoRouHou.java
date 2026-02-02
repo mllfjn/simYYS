@@ -2,6 +2,8 @@ package com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.dizhennian;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.skill.CharacterFinder;
+import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamageBeingAttack;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
@@ -53,6 +55,13 @@ class StatusPiCaoRouHou extends Status implements StatusRunnable, Displayable {
         for (Character character : belongTo.bp.situation.characters) {
             character.removeStatus(StatusPiCaoRouHouReduceDamage.class);
         }
+        Character enemyYYS = new CharacterFinder(belongTo)
+                .filterEnemy()
+                .filterYYS(true)
+                .getFirst();
+        AttackInfo attackInfo = AttackInfo.createRealAttack(enemyYYS, Skill.getInstance(StatusName), belongTo,
+                (c1, c2) -> 5000000.0);
+        enemyYYS.doInteractive(interactive -> interactive.attack(attackInfo));
     }
 
     static class StatusPiCaoRouHouReduceDamage extends Status implements InfluenceDamageBeingAttack {

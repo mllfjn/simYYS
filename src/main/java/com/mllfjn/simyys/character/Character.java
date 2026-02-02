@@ -713,6 +713,10 @@ public abstract class Character implements Serializable {
         maintainedStatuses.add(status);
     }
 
+    public void removeMaintainedStatus(Status status) {
+        maintainedStatuses.remove(status);
+    }
+
     public List<Status> getStatuses() {
         return statuses;
     }
