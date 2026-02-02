@@ -53,6 +53,9 @@ class Skill3 extends Skill {
 
     private void doWhenAttack(ParamUseSkill pus) {
         BoYa boYa = (BoYa) getBelongTo();
+        if (!boYa.alive) {
+            return;
+        }
         if (RateController.otherWhether(SkillName, "协同攻击", boYa.bp.calc, rate)) {
             Character target = new CharacterFinder(boYa)
                     .filterEnemy()

@@ -55,7 +55,7 @@ public class DiZhenNian extends Character {
         PropertiesMap map = super.getProperties();
         ((PropertyInput) map.get(PropertyKey.GENERAL_SPEED_KEY)).setValue("175");
         ((PropertyInput) map.get(PropertyKey.GENERAL_YU_HUN_ATTACK_KEY)).setValue("0");
-        ((PropertyInput) map.get(PropertyKey.GENERAL_HP_KEY)).setValue("999999999");
+        ((PropertyInput) map.get(PropertyKey.GENERAL_HP_KEY)).setValue("9999999999");
         ((PropertyInput) map.get(PropertyKey.GENERAL_DEFENSE_KEY)).setValue("704");
         ((PropertyInput) map.get(PropertyKey.GENERAL_CRIT_RATE_KEY)).setValue("10");
         ((PropertyInput) map.get(PropertyKey.GENERAL_CRIT_POWER_KEY)).setValue("150");
@@ -111,20 +111,24 @@ public class DiZhenNian extends Character {
             canNingShi = false;
         });
 
-        // 第二次转阶段
-        multiStageManager.addStage(() -> {
-            // 删除猴子
-            for (Character character : this.bp.situation.characters) {
-                if (character instanceof HouZi) {
-                    character.die();
-                }
-            }
-            // 自己回到可选中状态
-            removeStatus(StatusCanNotChoose.class);
-            // 凝视变为光球后下一回合立即释放
-            beforeHouZi = false;
-            canNingShi = true;
-        });
+        // 猴子死亡会自己触发
+        // 第二次转阶段是鸟居
+    }
+
+    void houZiDie() {
+        // 自己回到可选中状态
+        removeStatus(StatusCanNotChoose.class);
+        // 凝视变为光球后下一回合立即释放
+        beforeHouZi = false;
+        canNingShi = true;
+
+        // 清除敌方身上的地震鲶增益
+        List<Character> list = new CharacterFinder(this, true)
+                .filterEnemy()
+                .getList();
+        for (Character character : list) {
+            character.removeStatus(StatusBuff.class);
+        }
     }
 
     @Override

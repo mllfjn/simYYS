@@ -320,6 +320,10 @@ public abstract class Character implements Serializable {
         bp.onTrigger(new EventHpChange(this));
     }
 
+    public void setHpWithoutTrigger(double num) {
+        this.hp = Math.min(maxHp, num);
+    }
+
     public void setLockSkill(int i) {
         getSkill(i).ifPresent(skill -> {
             if (!(skill instanceof PassiveSkill)) {

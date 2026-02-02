@@ -39,26 +39,29 @@ public class MultiStageManager implements Serializable {
             MenuItem itemAfter = new MenuItem("该回合行动后切换阶段");
 
             itemSkip.setOnAction(event -> {
-                // 该错误不可能出现
-                stageQueue.poll().run();
-                character.bp.skipCharacterAct();
+                // 不会出现为空的情况
+                if (!stageQueue.isEmpty()) {
+                    stageQueue.poll().run();
+                    character.bp.skipCharacterAct();
+                }
             });
 
-            itemAfter.setOnAction(event -> {
-                character.bp.addActionListener(character, e -> {
-                    prepareChangeStage = true;
-                    if (e instanceof EventActionDone) {
-                        // 该错误不可能出现
-                        stageQueue.poll().run();
-                        prepareChangeStage = false;
-                        return true;
-                    }
-                    return false;
-                });
-            });
+            itemAfter.setOnAction(event ->
+                    character.bp.addActionListener(character, e -> {
+                        prepareChangeStage = true;
+                        if (e instanceof EventActionDone) {
+                            // 不会出现为空的情况
+                            if (!stageQueue.isEmpty()) {
+                                stageQueue.poll().run();
+                                prepareChangeStage = false;
+                                return true;
+                            }
+                        }
+                        return false;
+                    })
+            );
 
             contextMenu = new ContextMenu(itemSkip, itemAfter);
-            MultiplayerHpManager.addTo(contextMenu, character);
         }
         return contextMenu;
     }

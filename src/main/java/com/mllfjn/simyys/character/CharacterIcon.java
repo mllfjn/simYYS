@@ -10,6 +10,7 @@ import com.mllfjn.simyys.character.yuhun.YuHunFactory;
 import com.mllfjn.simyys.character.status.Displayable;
 import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.character.status.StatusShield;
+import com.mllfjn.simyys.customnode.CustomInputMenuItem;
 import com.mllfjn.simyys.utils.DecimalFormatUtil;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -216,7 +217,32 @@ public class CharacterIcon implements Serializable {
             memoryLabel.reset(menuSetAttributeVisible);
         }
 
-        Menu menuSetAttribute = new Menu("设置属性(未完成)");
+        Menu menuSetAttribute = new Menu("设置属性");
+        menuSetAttribute.getItems().addAll(
+                CustomInputMenuItem.of("最大生命值", number -> {
+                    character.setMaxHp(number, false);
+                    update();
+                }),
+                CustomInputMenuItem.of("当前生命值", number -> {
+                    character.setHpWithoutTrigger(number);
+                    update();
+                }),
+                CustomInputMenuItem.of("生命百分比", number -> {
+                    character.setHpWithoutTrigger(character.getMaxHp() * number / 100);
+                    update();
+                }),
+                CustomInputMenuItem.of("基础攻击力", number -> {
+                    character.setInitBaseAttack(number);
+                    update();
+                }),
+                CustomInputMenuItem.of("额外攻击力", number -> {
+                    character.setInitAdditionAttack(number);
+                    update();
+                }),
+                CustomInputMenuItem.of("防御", number -> {
+                    character.setInitDefense(number);
+                    update();
+                }));
 
         ContextMenu menu = new ContextMenu(menuSetAttributeVisible, menuSetAttribute);
         bottom.setOnContextMenuRequested(event ->

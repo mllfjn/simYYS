@@ -11,6 +11,10 @@ import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.ratecontroller.RateController;
+import javafx.event.EventHandler;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.input.MouseEvent;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,14 +22,16 @@ import java.util.Optional;
 public class HouZi extends Character {
     public static final String CharacterName = "猴子";
 
-    private final Character owner;
+    private final DiZhenNian owner;
 
-    public HouZi(BattlePane bp, Character owner) {
+    private transient ContextMenu contextMenu;
+
+    public HouZi(BattlePane bp, DiZhenNian owner) {
         this.owner = owner;
         this.name = CharacterName;
         this.bp = bp;
         this.team = owner.team;
-        this.setMaxHp(99999999, true);
+        this.setMaxHp(9999999999.0, true);
         setMob(1, 1);
 
         this.setInitDefense(352);
@@ -44,6 +50,23 @@ public class HouZi extends Character {
 
     public Character getOwner() {
         return owner;
+    }
+
+    @Override
+    protected EventHandler<MouseEvent> getEventHandler() {
+        if (contextMenu == null) {
+            MenuItem item = new MenuItem("承受下次攻击后死亡");
+            item.setOnAction(event -> {
+                setHpWithoutTrigger(0.01);
+                getCharacterIcon().update();
+            });
+            contextMenu = new ContextMenu(item);
+        }
+        return event -> {
+            if (getHp() > 0.01) {
+                contextMenu.show(getCharacterIcon().getCenter(), event.getScreenX(), event.getScreenY());
+            }
+        };
     }
 
     @Override
@@ -74,6 +97,8 @@ public class HouZi extends Character {
                 target.addStatus(new StatusHouZiBonus(this, target, bonus));
             }
         }
+
+        owner.houZiDie();
     }
 
     @Override
@@ -158,7 +183,7 @@ public class HouZi extends Character {
             if (param instanceof ParamAfterAttack paa) {
                 double number = paa.attackInfo.getTraceableNumber().getNumber();
                 damage += number;
-                ((DiZhenNian) ((HouZi) belongTo).owner).display.addDamage(number);
+                ((HouZi) belongTo).owner.display.addDamage(number);
             }
             return false;
         }

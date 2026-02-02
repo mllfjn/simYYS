@@ -1,6 +1,7 @@
 package com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.dizhennian;
 
 import com.mllfjn.simyys.BattlePane;
+import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
@@ -94,30 +95,34 @@ class SkillNingShi extends Skill {
 
         public void tuGuangQiu() {
             DiZhenNian diZhenNian = (DiZhenNian) belongTo;
+            if (diZhenNian.isBeforeHouZi()) {
+                diZhenNian.getSkill(SkillNingShi.skillID).ifPresent(skill -> skill.setCooling(2));
+            }
+
             Optional<Character> oC = map.entrySet().stream()
                     .filter(entry -> entry.getKey() != diZhenNian.getHongNing())
                     .max(Map.Entry.comparingByValue())
                     .map(Map.Entry::getKey);
 
-            if (diZhenNian.isBeforeHouZi()) {
-                diZhenNian.getSkill(SkillNingShi.skillID).ifPresent(skill -> skill.setCooling(2));
-            }
-
             oC.ifPresent(character -> {
-                character.getStatus(StatusBuff.class).ifPresent(statusExist -> {
-                    // 已经有了BUFF
-                    int duration = statusExist.getDuration();
-                    // 剩余buff回合数*30%最大生命的穿盾伤害
-                    AttackInfo info = AttackInfo
-                            .createRealAttack(character, SkillNingShi.this.skillGuangQiu, character
-                                    , (c1, c2) -> duration * 0.3 * character.getMaxHp());
-                    info.setCanThroughShield(true);
-                    character.doInteractive(interactive -> interactive.attack(info));
-                    // 红凝
-                    character.addStatus(new StatusHongNing(belongTo, character));
-                });
+                character.getStatus(StatusDZNBuffsDebuff.class).ifPresentOrElse(
+                        statusDebuff -> {
+                            // 已经有了BUFF
+                            int duration = statusDebuff.getDuration();
+                            AttackInfo info = AttackInfo
+                                    .createRealAttack(character, SkillNingShi.this.skillGuangQiu, character
+                                            , (c1, c2) -> duration * 0.3 * character.getMaxHp());
+                            info.setCanThroughShield(true);
+                            character.doInteractive(interactive -> interactive.attack(info));
+                            // 红凝
+                            character.addStatus(new StatusHongNing(belongTo, character));
+                        },
+                        () -> character.addStatus(new StatusDZNBuffsDebuff(diZhenNian, character)));
                 skillGuangQiu.log(character);
-                character.addStatus(new StatusBuff(belongTo, character, diZhenNian.getBuffType(), 7));
+                Optional<StatusBuff> oSBuff = character.getStatus(StatusBuff.class);
+                if (oSBuff.isEmpty()) {
+                    character.addStatus(new StatusBuff(belongTo, character, diZhenNian.getBuffType(), 7));
+                }
             });
         }
 
@@ -136,6 +141,29 @@ class SkillNingShi extends Skill {
             @Override
             public String getDisplayText() {
                 return "红凝";
+            }
+        }
+
+        static class StatusDZNBuffsDebuff extends Status implements AttributeModifier, Displayable {
+
+            public StatusDZNBuffsDebuff(Character from, Character belongTo) {
+                super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
+                setDurationType(StatusDurationType.CHI_XU, 7);
+            }
+
+            @Override
+            public boolean isAffectAttribute(Attribute attribute) {
+                return attribute == Attribute.DEFENCE;
+            }
+
+            @Override
+            public double getInfluence(Attribute attribute) {
+                return -belongTo.getInitDefense();
+            }
+
+            @Override
+            public String getDisplayText() {
+                return "减防" + getDuration();
             }
         }
     }
