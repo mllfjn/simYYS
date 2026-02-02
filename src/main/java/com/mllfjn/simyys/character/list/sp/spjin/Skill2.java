@@ -12,6 +12,7 @@ import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackType;
 
 import java.util.List;
+import java.util.Optional;
 
 // √     战斗开始时与每次回合结束后,唤醒琵琶玄象
 // √     lv2-玄象被唤醒时,提升自身100%暴击抵抗,持续2回合
@@ -111,11 +112,15 @@ class Skill2 extends PassiveSkill {
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
             if (param instanceof ParamUseSkill pus) {
-                Character target = pus.getTarget().orElseGet(
-                        () -> new CharacterFinder(belongTo)
-                                .filterEnemy()
-                                .get(Attribute.HP_PERCENT, CharacterFinder.Criteria.MIN));
-
+                Character target;
+                Optional<Character> oTarget = pus.getTarget();
+                if (oTarget.isPresent() && oTarget.get().team != belongTo.team) {
+                    target = oTarget.get();
+                } else {
+                    target = new CharacterFinder(belongTo)
+                            .filterEnemy()
+                            .get(Attribute.HP_PERCENT, CharacterFinder.Criteria.MIN);
+                }
                 // lv5-玄象每次攻击后,提升[skill3]12%伤害系数(至多24%)
                 Skill3 skill3 = ((Skill3) from.getSkill(3).orElse(null));
                 boolean increasing = skill3 != null && skill3.isIncreasing(target);

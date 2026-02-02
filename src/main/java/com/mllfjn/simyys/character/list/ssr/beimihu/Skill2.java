@@ -30,13 +30,14 @@ class Skill2 extends Skill {
     public Skill2(Character belongTo, int level) {
         super(belongTo, level, 2, 0, 2);
 
-        belongTo.bp.atBattleStart(() -> {
-            Character target = new CharacterFinder(belongTo)
-                    .filterTeammate()
-                    .get(Attribute.ATTACK, CharacterFinder.Criteria.MAX);
-
-            StatusShiZhiHui.get(belongTo, target, 1, level);
-        });
+        if (level == 5) {
+            belongTo.bp.atBattleStart(() -> {
+                Character target = new CharacterFinder(belongTo)
+                        .filterTeammate()
+                        .get(Attribute.ATTACK, CharacterFinder.Criteria.MAX);
+                StatusShiZhiHui.get(belongTo, target, 1, level);
+            });
+        }
     }
 
     @Override

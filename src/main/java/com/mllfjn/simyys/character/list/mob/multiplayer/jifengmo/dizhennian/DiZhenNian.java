@@ -91,10 +91,7 @@ public class DiZhenNian extends Character {
         // 先机召唤4只海坊主
         bp.atBattleStart(() -> {
             for (StatusBuff.BuffType type : StatusBuff.BuffType.values()) {
-                SpecialHaiFangZhu specialHaiFangZhu = new SpecialHaiFangZhu(bp, team);
-                specialHaiFangZhu.addStatus(new StatusBuff(this, specialHaiFangZhu, type, 0));
-                specialHaiFangZhu.addStatus(new StatusBuffSetter(this, specialHaiFangZhu, type));
-                bp.addCharacter(specialHaiFangZhu);
+                bp.addCharacter(new SpecialHaiFangZhu(bp, team, this, type));
             }
         });
     }

@@ -6,6 +6,11 @@ public class SpJin extends CharacterShiShenBase {
     public static final String CharacterName = "瑶音紧那罗";
 
     @Override
+    protected boolean useSkillAuto() {
+        return tryUseSkill(3);
+    }
+
+    @Override
     protected String getDefaultSkillLevel() {
         return "555";
     }

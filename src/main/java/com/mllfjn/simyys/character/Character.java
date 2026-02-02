@@ -398,31 +398,33 @@ public abstract class Character implements Serializable {
             }
             return false;
         });
+    }
 
-        if (lockSKillMap != null && lockSKillMap.containsKey(timesToAct + 1)) {
-            setLockSkill(lockSKillMap.get(timesToAct + 1));
+    public void setLockSkillAndAuto() {
+        if (lockSKillMap != null && lockSKillMap.containsKey(timesToAct)) {
+            setLockSkill(lockSKillMap.get(timesToAct));
         }
 
-        if (flagChangeMap != null && flagChangeMap.containsKey(timesToAct + 1)) {
-            FlagChangeInfo flagChangeInfo = flagChangeMap.get(timesToAct + 1);
+        if (flagChangeMap != null && flagChangeMap.containsKey(timesToAct)) {
+            FlagChangeInfo flagChangeInfo = flagChangeMap.get(timesToAct);
             FlagChangeInfo.FlagType flagType = flagChangeInfo.flagType;
-            int targetTeam = (flagType == FlagChangeInfo.FlagType.GREEN ? team : 1 - team);
-
-            TeamPane targetTeamPane = bp.situation.teamPane[targetTeam];
-            Character auto = targetTeamPane.getAuto(flagType).orElse(null);
+            TeamPane teamPane = bp.situation.teamPane[team];
+            Character auto = teamPane.getAuto(flagType).orElse(null);
             // 如果目标角色序号值为0且标存在,则取消.如果目标值为0且标不存在,不需要任何操作
             // 如果目标角色序号值不为0并且值有效,如果目标角色!=现有标,切换标,如果目标角色==现有标不需要任何操作
             if (flagChangeInfo.target == 0) {
                 if (auto != null) {
-                    targetTeamPane.setAuto(auto, flagType);
+                    teamPane.setAuto(auto, flagType);
                 }
             } else {
                 int targetIndex = flagChangeInfo.target - 1;
+                TeamPane targetTeamPane = bp.situation
+                        .teamPane[flagType == FlagChangeInfo.FlagType.GREEN ? team : 1 - team];
                 List<Character> characters = targetTeamPane.getCharacters();
                 if (targetIndex >= 0 && targetIndex < characters.size()) {
                     Character target = characters.get(targetIndex);
                     if (target != auto) {
-                        targetTeamPane.setAuto(target, flagType);
+                        teamPane.setAuto(target, flagType);
                     }
                 }
             }

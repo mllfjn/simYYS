@@ -48,6 +48,7 @@ public class StatusShiZhiHui extends Status implements Displayable {
         stack--;
         if (stack == 0) {
             belongTo.removeStatus(this);
+            ((BeiMiHu) from).setShiZhiHuiCarrier(null);
         }
     }
 

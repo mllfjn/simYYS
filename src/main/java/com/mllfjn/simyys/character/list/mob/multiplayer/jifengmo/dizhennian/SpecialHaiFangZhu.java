@@ -4,7 +4,7 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.list.sr.haifangzhu.HaiFangZhu;
 
 class SpecialHaiFangZhu extends HaiFangZhu {
-    public SpecialHaiFangZhu(BattlePane bp, int team) {
+    public SpecialHaiFangZhu(BattlePane bp, int team, DiZhenNian diZhenNian, StatusBuff.BuffType type) {
         this.name = CharacterName;
         this.bp = bp;
         this.team = team;
@@ -18,5 +18,9 @@ class SpecialHaiFangZhu extends HaiFangZhu {
 
         skill1Level = 5;
         addSkills();
+
+        addStatus(new StatusBuff(diZhenNian, this, type, 0));
+        addStatus(new DiZhenNian.StatusBuffSetter(diZhenNian, this, type));
+
     }
 }

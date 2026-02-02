@@ -276,6 +276,7 @@ public class BattlePane {
         situation.teamPane[1].calHuoLing();
 
         situation.characterActing.beforeRound();
+        situation.characterActing.setLockSkillAndAuto();
 
         interactive.display();
         log.characterAct(situation.characterActing);
@@ -438,6 +439,7 @@ public class BattlePane {
         });
         situation.characterActing.timesToAct++;
         situation.characterActing.refreshSkills();
+        situation.characterActing.setLockSkillAndAuto();
     }
 
     private Character getNextOrder() {
