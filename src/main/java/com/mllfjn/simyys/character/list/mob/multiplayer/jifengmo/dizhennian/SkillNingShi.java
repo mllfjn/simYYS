@@ -38,7 +38,7 @@ class SkillNingShi extends Skill {
     public boolean canUse(BattlePane bp) {
         DiZhenNian diZhenNian = (DiZhenNian) getBelongTo();
         return super.canUse(bp)
-                && diZhenNian.getBuffType() != null
+                && diZhenNian.canNingShi()
                 && !diZhenNian.isHaveStatus(StatusNingShiRecordDamage.class);
     }
 

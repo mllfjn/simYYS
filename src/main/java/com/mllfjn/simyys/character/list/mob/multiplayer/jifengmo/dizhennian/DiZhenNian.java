@@ -44,8 +44,10 @@ public class DiZhenNian extends Character {
     public final DisplayDamageRecord display = new DisplayDamageRecord(this);
 
     private StatusBuff.BuffType buffType;
-    private boolean beforeHouZi = true;
     private Character hongNing;
+
+    private boolean beforeHouZi = true;
+    private boolean canNingShi = false;
 
 
     @Override
@@ -106,6 +108,7 @@ public class DiZhenNian extends Character {
             // 如果在凝视立即吐出光球
             getStatus(SkillNingShi.StatusNingShiRecordDamage.class)
                     .ifPresent(SkillNingShi.StatusNingShiRecordDamage::delete);
+            canNingShi = false;
         });
 
         // 第二次转阶段
@@ -120,6 +123,7 @@ public class DiZhenNian extends Character {
             removeStatus(StatusCanNotChoose.class);
             // 凝视变为光球后下一回合立即释放
             beforeHouZi = false;
+            canNingShi = true;
         });
     }
 
@@ -164,6 +168,7 @@ public class DiZhenNian extends Character {
 
             bp.addActionListener(this, event -> {
                 if (event instanceof EventActionDone) {
+                    canNingShi = true;
                     getSkill(SkillNingShi.skillID).ifPresent(skill -> skill.use(bp));
                     return true;
                 }
@@ -176,16 +181,20 @@ public class DiZhenNian extends Character {
         return buffType;
     }
 
-    public boolean isBeforeHouZi() {
+    boolean isBeforeHouZi() {
         return beforeHouZi;
     }
 
-    public Character getHongNing() {
+    Character getHongNing() {
         return hongNing;
     }
 
-    public void setHongNing(Character hongNing) {
+    void setHongNing(Character hongNing) {
         this.hongNing = hongNing;
+    }
+
+    boolean canNingShi() {
+        return canNingShi;
     }
 
     static class StatusBuffSetter extends Status implements StatusRunnable {

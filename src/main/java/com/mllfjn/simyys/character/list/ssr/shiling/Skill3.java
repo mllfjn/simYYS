@@ -121,7 +121,7 @@ class Skill3 extends Skill {
                 return true;
             }
             if (trigger == Trigger.CAUSE_ATTACK && param instanceof ParamCauseAttack pca) {
-                xiangShiCount += pca.interactiveInfo.getTraceableNumber().getNumber();
+                xiangShiCount += pca.getAttackInfo().getTraceableNumber().getNumber();
             }
             return false;
         }

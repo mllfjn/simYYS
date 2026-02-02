@@ -7,7 +7,7 @@ public class HaiFangZhu extends CharacterShiShenBase {
 
     @Override
     protected String getDefaultSkillLevel() {
-        return "555";
+        return "515";
     }
 
     @Override
@@ -21,7 +21,14 @@ public class HaiFangZhu extends CharacterShiShenBase {
     }
 
     @Override
+    protected boolean useSkillAuto() {
+        return tryUseSkill(3);
+    }
+
+    @Override
     protected void addOwnSkills() {
         addSkill(new Skill1(this, skill1Level));
+        addSkill(new Skill2(this));
+        addSkill(new Skill3(this, skill3Level));
     }
 }

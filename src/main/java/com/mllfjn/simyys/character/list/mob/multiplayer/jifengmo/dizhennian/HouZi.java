@@ -10,6 +10,7 @@ import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.Interactive;
+import com.mllfjn.simyys.ratecontroller.RateController;
 
 import java.util.List;
 import java.util.Optional;
@@ -48,7 +49,9 @@ public class HouZi extends Character {
     @Override
     public void afterRound() {
         super.afterRound();
-
+        if (RateController.otherWhether(CharacterName, "多动", bp.calc, 50)) {
+            doInteractive(interactive -> interactive.getNewRound(this));
+        }
     }
 
     @Override
@@ -125,7 +128,11 @@ public class HouZi extends Character {
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
             from.doInteractive(interactive ->
-                    from.getPuGong().ifPresent(skill1 -> skill1.usePrivate(interactive, belongTo)));
+                    from.getPuGong().ifPresent(skill1 -> {
+                        skill1.usePrivate(interactive, belongTo);
+                        skill1.log(belongTo);
+                    })
+            );
             return false;
         }
     }

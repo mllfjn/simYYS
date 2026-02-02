@@ -11,7 +11,7 @@ public class AttackInfo extends InteractiveInfo {
     private boolean calDefence = true;
     // 计算增伤
     private boolean calZengShang = true;
-    // 计算减伤
+    // 计算易伤
     private boolean calYiShang = true;
     // 是否穿盾
     private boolean canThroughShield = false;

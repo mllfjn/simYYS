@@ -17,6 +17,7 @@ class SpecialHaiFangZhu extends HaiFangZhu {
         this.setInitCritPower(150);
 
         skill1Level = 5;
+        skill3Level = 5;
         addSkills();
 
         addStatus(new StatusBuff(diZhenNian, this, type, 0));

@@ -47,15 +47,15 @@ public class TuZhiZhu extends YuHun implements YuHunUnfullMark {
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
             if (trigger == Trigger.CAUSE_ATTACK && param instanceof ParamCauseAttack pca) {
-                InteractiveInfo interactiveInfo = pca.interactiveInfo;
-                Character target = interactiveInfo.getTarget();
+                AttackInfo attackInfo = pca.getAttackInfo();
+                Character target = attackInfo.getTarget();
                 // 对怪物造成伤害时
                 if (!target.isMob()) {
                     return false;
                 }
 
                 // 如果没有实际造成伤害，则返回
-                double number = interactiveInfo.getTraceableNumber().getNumber();
+                double number = attackInfo.getTraceableNumber().getNumber();
                 if (number <= 0) {
                     return false;
                 }

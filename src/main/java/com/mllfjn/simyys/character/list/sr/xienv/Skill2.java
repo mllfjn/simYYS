@@ -73,9 +73,11 @@ class Skill2 extends PassiveSkill {
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
             if (param instanceof ParamCauseAttack pca) {
-                InteractiveInfo info = pca.interactiveInfo;
+                InteractiveInfo info = pca.getAttackInfo();
                 Skill skill = info.getSkill();
-                if (skill == StatusXieDu.SKILL && !info.isCancel()) {
+                if (skill == StatusXieDu.SKILL
+                        && !info.isCancel()
+                        && info.getTarget() == ((XieNv) belongTo).getXieDu().belongTo) {
                     double number = info.getTraceableNumber().getNumber();
                     if (number > 0) {
                         double maxRecovery = number * (Skill2.this.getLevel() >= 3 ? 0.3 : 0.2);
@@ -84,6 +86,7 @@ class Skill2 extends PassiveSkill {
                             if (maxRecovery <= loseHP) {
                                 interactive.recovery(SKILL, belongTo, maxRecovery);
                             } else {
+                                interactive.recovery(SKILL, belongTo, loseHP);
                                 List<Character> list = new CharacterFinder(belongTo)
                                         .filterTeammate()
                                         .filterSelf()

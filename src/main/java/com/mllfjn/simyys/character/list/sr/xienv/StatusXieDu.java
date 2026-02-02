@@ -93,16 +93,19 @@ class StatusXieDu extends Status implements Displayable, AttributeModifier, Stat
                 .getList();
         list.remove(belongTo);
         double average = receivedDamage / list.size() * 0.6;
-        from.doInteractive(interactive ->
-                interactive.attack(SKILL, list, (target) ->
-                        AttackInfo.createJianJieAttack(
-                                from,
-                                SKILL,
-                                target,
-                                (from, to) -> average
-                        )
-                )
-        );
+        from.doInteractive(interactive -> {
+            double limit = from.getAttack() * 8;
+            interactive.attack(SKILL, list, (target) -> {
+                AttackInfo attackInfo = AttackInfo.createJianJieAttack(
+                        from,
+                        SKILL,
+                        target,
+                        (from, to) -> average
+                );
+                attackInfo.setLimit(limit);
+                return attackInfo;
+            });
+        });
         receivedDamage = 0;
     }
 }

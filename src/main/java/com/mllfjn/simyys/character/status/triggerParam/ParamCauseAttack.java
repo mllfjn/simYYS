@@ -1,11 +1,15 @@
 package com.mllfjn.simyys.character.status.triggerParam;
 
-import com.mllfjn.simyys.interactive.InteractiveInfo;
+import com.mllfjn.simyys.interactive.AttackInfo;
 
 public class ParamCauseAttack extends TriggerParam {
-    public final InteractiveInfo interactiveInfo;
+    private final AttackInfo attackInfo;
 
-    public ParamCauseAttack(InteractiveInfo interactiveInfo) {
-        this.interactiveInfo = interactiveInfo;
+    public ParamCauseAttack(AttackInfo attackInfo) {
+        this.attackInfo = attackInfo;
+    }
+
+    public AttackInfo getAttackInfo() {
+        return attackInfo;
     }
 }

@@ -106,6 +106,7 @@ class Skill4 extends Skill {
         private int times = 0;
 
         public YinFenShen(Character owner, double coefficient, int extraMultiplier) {
+            this.bp = owner.bp;
             this.extraMultiplier = extraMultiplier;
             this.name = CharacterName;
 

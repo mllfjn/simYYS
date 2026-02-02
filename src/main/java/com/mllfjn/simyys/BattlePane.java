@@ -201,7 +201,6 @@ public class BattlePane {
             next(false);
             repaint();
         });
-        backBtn.setOnAction(event -> back.run());
         prevBtn.setPrefSize(100, 25);
         nextBtn.setPrefSize(100, 25);
         backBtn.setPrefSize(100, 25);
@@ -219,6 +218,14 @@ public class BattlePane {
         KeyCombination kcb = new KeyCodeCombination(KeyCode.B);
 
         ObservableMap<KeyCombination, Runnable> accelerators = scene.getAccelerators();
+
+        // next和edit快捷键冲突
+        Runnable temp = accelerators.get(kce);
+        backBtn.setOnAction(event -> {
+            back.run();
+            accelerators.put(kce, temp);
+        });
+
         accelerators.put(kcq, prevBtn::fire);
         accelerators.put(kce, nextBtn::fire);
         accelerators.put(kcb, backBtn::fire);
@@ -226,6 +233,7 @@ public class BattlePane {
 
         round.setPrefSize(100, 25);
         skip.setPrefSize(100, 25);
+
 
 
         GridPane controller = new GridPane();
@@ -285,6 +293,7 @@ public class BattlePane {
 
     public void addCharacter(Character character) {
         situation.addCharacter(character);
+        onTrigger(new EventAddCharacter(character));
     }
 
     private List<Character> getCharactersByLocation() {
