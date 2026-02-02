@@ -9,6 +9,7 @@ import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAddCrowdControl;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
 import com.mllfjn.simyys.character.status.triggerParam.ParamCauseAttack;
+import com.mllfjn.simyys.character.yuhun.YuHunAfterCauseAttack;
 import com.mllfjn.simyys.character.yuhun.YuHunAttack;
 import com.mllfjn.simyys.character.yuhun.YuHunHitFeedBack;
 import com.mllfjn.simyys.character.yuhun.list.ZhenZhu;
@@ -205,7 +206,7 @@ public class Interactive {
             }
         }
 
-        // 御魂 TODO 被攻击的人的御魂
+        // 部分造成伤害时生效的御魂(破势狂骨等)
         if (traceableNumber.getNumber() > 0 && attackInfo.isCalYuHun()) {
             owner.forEachYuHun(yuHun -> {
                 if (yuHun instanceof YuHunAttack yei) {
@@ -225,6 +226,15 @@ public class Interactive {
         addNumberRecord(target, new CustomText(traceableNumber.getNumberString() + " "
                 , traceableNumber.getTrace(), type
                 , attackInfo.isCrit() ? TextFlowLog.TextColor.CRITICAL : TextFlowLog.TextColor.ATTACK, size));
+
+        // 部分造成伤害后生效的御魂(日女等)
+        if (traceableNumber.getNumber() > 0 && attackInfo.isCalYuHun()) {
+            owner.forEachYuHun(yuHun -> {
+                if (yuHun instanceof YuHunAfterCauseAttack yca) {
+                    yca.action(attackInfo, this);
+                }
+            });
+        }
 
         // 触发攻击的目标身上的状态
         target.statusRun(Trigger.AFTER_ATTACK, new ParamAfterAttack(attackInfo));

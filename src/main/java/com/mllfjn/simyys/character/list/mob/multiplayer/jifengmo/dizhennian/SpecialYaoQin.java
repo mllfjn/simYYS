@@ -63,7 +63,7 @@ class SpecialYaoQin extends YaoQin {
 
             public StatusAttack(Character from, Character belongTo) {
                 super(from, belongTo, StatusType.BUFF, StatusForm.ZHUANG_TAI);
-                setDurationType(StatusDurationType.CHI_XU, 7);
+                setDurationType(StatusDurationType.CHI_XU, 2);
             }
 
             @Override

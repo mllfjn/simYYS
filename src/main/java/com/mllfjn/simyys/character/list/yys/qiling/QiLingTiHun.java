@@ -34,20 +34,26 @@ class QiLingTiHun {
                     c.addStatus(new StatusTHPreventDie(character, c));
                 }
             });
+            character.addStatus(new StatusDieListener(character));
         }
 
         public void takeEffect() {
             if (remainingTimes == 1) {
                 belongTo.bp.removeActionTrigger(belongTo, listener);
-                List<Character> list = new CharacterFinder(belongTo, true)
-                        .filterTeammate()
-                        .filterSelf()
-                        .getList();
-                for (Character character : list) {
-                    character.removeStatus(StatusTHPreventDie.class);
-                }
+                removePreventDie();
+                belongTo.removeStatus(StatusDieListener.class);
             } else {
                 remainingTimes--;
+            }
+        }
+
+        public void removePreventDie() {
+            List<Character> list = new CharacterFinder(belongTo, true)
+                    .filterTeammate()
+                    .filterSelf()
+                    .getList();
+            for (Character character : list) {
+                character.removeStatus(StatusTHPreventDie.class);
             }
         }
 
@@ -94,6 +100,24 @@ class QiLingTiHun {
             }
             // 冷却2回合,好像实际是3回合
             cooling = 3;
+        }
+
+        class StatusDieListener extends Status implements StatusRunnable {
+
+            public StatusDieListener(Character c) {
+                super(c, c, StatusType.SPECIAL, StatusForm.SPECIAL);
+            }
+
+            @Override
+            public boolean runnable(Trigger trigger) {
+                return trigger == Trigger.DIE;
+            }
+
+            @Override
+            public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
+                StatusQLTHListener.this.removePreventDie();
+                return true;
+            }
         }
 
         class StatusTHPreventDie extends Status implements PreventDie {
