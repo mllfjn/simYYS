@@ -1,7 +1,6 @@
 package com.mllfjn.simyys.character.list.yys.qiling;
 
 import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.battleevent.EventBattleStart;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
@@ -17,13 +16,7 @@ public class QiLingHuoLing {
     private static final Skill SKILL = Skill.getInstance("火灵之力");
 
     public static void install(Character character) {
-        character.bp.addActionListener(character, event -> {
-            if (event instanceof EventBattleStart) {
-                character.bp.gainGuiHuo(character, 2);
-                return true;
-            }
-            return false;
-        });
+        character.bp.atBattleStart(() -> character.bp.gainGuiHuo(character, 2));
         character.addStatus(new StatusQiHuoLing(character));
     }
 

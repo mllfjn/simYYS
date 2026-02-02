@@ -6,7 +6,6 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.battleevent.EventBattleStart;
 import com.mllfjn.simyys.battleevent.EventHpChange;
 
 import java.util.HashSet;
@@ -29,13 +28,7 @@ class Skill2 extends Skill {
 
         // lv5-先机:对攻击攻击最高的友方式神无消耗释放神赐之吻(2)
         if (level >= 5) {
-            naMei.bp.addActionListener(naMei, event -> {
-                if (event instanceof EventBattleStart) {
-                    useFront(naMei.bp);
-                    return true;
-                }
-                return false;
-            });
+            naMei.bp.atBattleStart(() -> useFront(naMei.bp));
         }
 
         // lv2-当场上非召唤物友方目标首次剩余1点生命时，速度提升50%，持续2回合(每个目标至多生效1次,单次战斗累计至多生效3次)

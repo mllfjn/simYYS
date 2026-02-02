@@ -1,7 +1,6 @@
 package com.mllfjn.simyys.character.list.ssr.beimihu;
 
 import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.battleevent.EventBattleStart;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
@@ -31,16 +30,12 @@ class Skill2 extends Skill {
     public Skill2(Character belongTo, int level) {
         super(belongTo, level, 2, 0, 2);
 
-        belongTo.bp.addActionListener(belongTo, event -> {
-            if (event instanceof EventBattleStart) {
-                Character target = new CharacterFinder(belongTo)
-                        .filterTeammate()
-                        .get(Attribute.ATTACK, CharacterFinder.Criteria.MAX);
+        belongTo.bp.atBattleStart(() -> {
+            Character target = new CharacterFinder(belongTo)
+                    .filterTeammate()
+                    .get(Attribute.ATTACK, CharacterFinder.Criteria.MAX);
 
-                StatusShiZhiHui.get(belongTo, target, 1, level);
-                return true;
-            }
-            return false;
+            StatusShiZhiHui.get(belongTo, target, 1, level);
         });
     }
 

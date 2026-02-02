@@ -1,7 +1,6 @@
 package com.mllfjn.simyys.character.list.sp.yinfan;
 
 import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.battleevent.EventBattleStart;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
@@ -32,13 +31,7 @@ class Skill2 extends Skill {
         super(belongTo, level, 2, 0, 2);
         this.skill3Level = skill3Level;
 
-        belongTo.bp.addActionListener(belongTo, event -> {
-            if (event instanceof EventBattleStart) {
-                useWithoutCost(belongTo.bp);
-                return true;
-            }
-            return false;
-        });
+        belongTo.bp.atBattleStart(() -> useWithoutCost(belongTo.bp));
     }
 
     public void reduceCost() {

@@ -183,8 +183,15 @@ public class Initializer extends Application {
 
         saveButton.setOnAction(event -> saveDate(stage));
         loadButton.setOnAction(event -> loadData(stage));
-        startButton.setOnAction(event -> new BattlePane(scene, stageRoot,
-                () -> stageRoot.getChildren().set(0, borderPane), items));
+        startButton.setOnAction(event -> new BattlePane(
+                scene,
+                stageRoot,
+                () -> {
+                    stageRoot.getChildren().set(0, borderPane);
+
+                },
+                items
+        ));
 
         controlPane.getChildren().addAll(saveButton, loadButton, startButton);
 

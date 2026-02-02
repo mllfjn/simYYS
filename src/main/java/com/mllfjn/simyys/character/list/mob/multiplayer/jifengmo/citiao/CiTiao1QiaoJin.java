@@ -1,8 +1,6 @@
 package com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.citiao;
 
 import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.battleevent.EventBattleStart;
-import com.mllfjn.simyys.battleevent.EventUsePuGong;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
@@ -24,28 +22,34 @@ public class CiTiao1QiaoJin {
         character.addStatus(new StatusQJListener(character));
 
         // 己方（指玩家）攻击力最高的单位普攻时，额外获得一次行动，回合结束后增加自身35%行动条
-        character.bp.addActionListener(character, event -> {
-            if (event instanceof EventBattleStart) {
-                Character maxAttack = new CharacterFinder(character)
-                        .filterEnemy()
-                        .get(Attribute.ATTACK, CharacterFinder.Criteria.MAX);
-                maxAttack.bp.addActionListener(maxAttack, e -> {
-                    if (e instanceof EventUsePuGong eup) {
-                        if (eup.getAttacker() == maxAttack) {
-                            Optional<StatusQJNewRoundMark> optional = maxAttack.getStatus(StatusQJNewRoundMark.class);
-                            if (optional.isEmpty()) {
-                                maxAttack.addStatus(new StatusQJNewRoundMark(character, maxAttack));
-                                maxAttack.doInteractive(interactive -> interactive.getNewRound(maxAttack));
-                            }
-                        }
-                    }
-                    return false;
-                });
+        character.bp.atBattleStart(() -> {
+            Character maxAttack = new CharacterFinder(character)
+                    .filterEnemy()
+                    .get(Attribute.ATTACK, CharacterFinder.Criteria.MAX);
+            maxAttack.addStatus(new StatusQJUsePugGongListener(character, maxAttack));
+        });
+    }
 
-                return true;
+    static class StatusQJUsePugGongListener extends Status implements StatusRunnable {
+
+        public StatusQJUsePugGongListener(Character from, Character belongTo) {
+            super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
+        }
+
+        @Override
+        public boolean runnable(Trigger trigger) {
+            return trigger == Trigger.USE_PU_GONG;
+        }
+
+        @Override
+        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
+            Optional<StatusQJNewRoundMark> optional = belongTo.getStatus(StatusQJNewRoundMark.class);
+            if (optional.isEmpty()) {
+                belongTo.addStatus(new StatusQJNewRoundMark(from, belongTo));
+                belongTo.doInteractive(interactive -> interactive.getNewRound(belongTo));
             }
             return false;
-        });
+        }
     }
 
     static class StatusQJNewRoundMark extends Status implements StatusRunnable {

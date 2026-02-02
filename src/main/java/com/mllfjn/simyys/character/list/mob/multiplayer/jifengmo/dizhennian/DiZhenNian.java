@@ -2,7 +2,6 @@ package com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.dizhennian;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.battleevent.EventActionDone;
-import com.mllfjn.simyys.battleevent.EventBattleStart;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.PropertyKey;
 import com.mllfjn.simyys.character.list.mob.multiplayer.DisplayDamageRecord;
@@ -90,17 +89,13 @@ public class DiZhenNian extends Character {
         addStatus(display);
 
         // 先机召唤4只海坊主
-        bp.addActionListener(this, event -> {
-            if (event instanceof EventBattleStart) {
-                for (StatusBuff.BuffType type : StatusBuff.BuffType.values()) {
-                    SpecialHaiFangZhu specialHaiFangZhu = new SpecialHaiFangZhu(bp, team);
-                    specialHaiFangZhu.addStatus(new StatusBuff(this, specialHaiFangZhu, type, 0));
-                    specialHaiFangZhu.addStatus(new StatusBuffSetter(this, specialHaiFangZhu, type));
-                    bp.addCharacter(specialHaiFangZhu);
-                }
-                return true;
+        bp.atBattleStart(() -> {
+            for (StatusBuff.BuffType type : StatusBuff.BuffType.values()) {
+                SpecialHaiFangZhu specialHaiFangZhu = new SpecialHaiFangZhu(bp, team);
+                specialHaiFangZhu.addStatus(new StatusBuff(this, specialHaiFangZhu, type, 0));
+                specialHaiFangZhu.addStatus(new StatusBuffSetter(this, specialHaiFangZhu, type));
+                bp.addCharacter(specialHaiFangZhu);
             }
-            return false;
         });
     }
 

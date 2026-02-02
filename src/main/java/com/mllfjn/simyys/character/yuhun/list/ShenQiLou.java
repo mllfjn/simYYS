@@ -1,6 +1,5 @@
 package com.mllfjn.simyys.character.yuhun.list;
 
-import com.mllfjn.simyys.battleevent.EventBattleStart;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.instance.StatusBiHu;
@@ -20,16 +19,12 @@ public class ShenQiLou extends YuHun implements YuHunUnfullMark {
         super.init(character, isInit);
 
         // 与怪物的战斗开始时，获得庇护
-        character.bp.addActionListener(character, event -> {
-            if (event instanceof EventBattleStart) {
-                if (character.bp.isMobBattle(character)) {
-                    if (character.getStatus(StatusBiHuSQL.class).isEmpty()) {
-                        character.addStatus(new StatusBiHuSQL(character));
-                    }
+        character.bp.atBattleStart(() -> {
+            if (character.bp.isMobBattle(character)) {
+                if (character.getStatus(StatusBiHuSQL.class).isEmpty()) {
+                    character.addStatus(new StatusBiHuSQL(character));
                 }
-                return true;
             }
-            return false;
         });
     }
 

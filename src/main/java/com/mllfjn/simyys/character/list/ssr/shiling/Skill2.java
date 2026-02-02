@@ -2,7 +2,6 @@ package com.mllfjn.simyys.character.list.ssr.shiling;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.battleevent.BattleActionListener;
-import com.mllfjn.simyys.battleevent.EventBattleStart;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
@@ -13,8 +12,6 @@ import com.mllfjn.simyys.character.status.instance.StatusXieZhan;
 import com.mllfjn.simyys.character.status.triggerParam.ParamUseSkill;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
-import com.mllfjn.simyys.interactive.InteractiveInfo;
-import com.mllfjn.simyys.interactive.AttackType;
 
 import java.util.List;
 
@@ -37,22 +34,17 @@ class Skill2 extends PassiveSkill {
         super(belongTo, level, 2);
         this.multiplier = level >= 4 ? 1.5 : level >= 2 ? 1.4 : 1.3;
         if (level >= 3) {
-            belongTo.bp.addActionListener(belongTo, event -> {
-                if (event instanceof EventBattleStart) {
-                    maxCritPower = new CharacterFinder(belongTo)
-                            .filterTeammate()
-                            .filterSelf()
-                            .get(Attribute.CRIT_POWER, CharacterFinder.Criteria.MAX);
+            belongTo.bp.atBattleStart(() -> {
+                maxCritPower = new CharacterFinder(belongTo)
+                        .filterTeammate()
+                        .filterSelf()
+                        .get(Attribute.CRIT_POWER, CharacterFinder.Criteria.MAX);
 
-                    if (level >= 5) {
-                        maxCritPower.addStatus(new StatusShiLingZhuZhan(belongTo, maxCritPower));
-                    }
-
-                    enable();
-
-                    return true;
+                if (level >= 5) {
+                    maxCritPower.addStatus(new StatusShiLingZhuZhan(belongTo, maxCritPower));
                 }
-                return false;
+
+                enable();
             });
         }
     }

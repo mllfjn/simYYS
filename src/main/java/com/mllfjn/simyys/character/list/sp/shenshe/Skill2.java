@@ -4,7 +4,6 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
-import com.mllfjn.simyys.battleevent.EventBattleStart;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,13 +18,7 @@ class Skill2 extends Skill {
         // lv5-先机：释放神堕之力
         if (level >= 5) {
             Character character = getBelongTo();
-            character.bp.addActionListener(character, event -> {
-                if (event instanceof EventBattleStart) {
-                    use(character.bp);
-                    return true;
-                }
-                return false;
-            });
+            character.bp.atBattleStart(() -> use(character.bp));
         }
     }
 

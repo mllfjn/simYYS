@@ -1,7 +1,6 @@
 package com.mllfjn.simyys.character.list.sp.kongmian;
 
 import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.battleevent.EventBattleStart;
 import com.mllfjn.simyys.battleevent.EventCharacterDie;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
@@ -32,20 +31,16 @@ class Skill2 extends Skill {
     public Skill2(Character belongTo, int level) {
         super(belongTo, level, 0, 0, 2);
         // 开局时记录一下队友的总攻击
-        belongTo.bp.addActionListener(belongTo, event -> {
-            if (event instanceof EventBattleStart) {
-                List<Character> targets = new CharacterFinder(belongTo)
-                        .filterTeammate()
-                        .filterShiShen()
-                        .getList();
-                double sum = 0;
-                for (Character target : targets) {
-                    sum += target.getInitAttack();
-                }
-                max = sum * 40;
-                return true;
+        belongTo.bp.atBattleStart(() -> {
+            List<Character> targets = new CharacterFinder(belongTo)
+                    .filterTeammate()
+                    .filterShiShen()
+                    .getList();
+            double sum = 0;
+            for (Character target : targets) {
+                sum += target.getInitAttack();
             }
-            return false;
+            max = sum * 40;
         });
 
         belongTo.bp.addActionListener(belongTo, event -> {

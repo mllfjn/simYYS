@@ -1,7 +1,6 @@
 package com.mllfjn.simyys.character.list.sp.spjin;
 
 import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.battleevent.EventBattleStart;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
@@ -33,13 +32,7 @@ class Skill2 extends PassiveSkill {
         this.skill = Skill.getInstance(StatusXX.StatusName);
         listener = new StatusXXListener(belongTo, this);
 
-        belongTo.bp.addActionListener(belongTo, event -> {
-            if (event instanceof EventBattleStart) {
-                wakeUp();
-                return true;
-            }
-            return false;
-        });
+        belongTo.bp.atBattleStart(this::wakeUp);
     }
 
     @Override

@@ -267,10 +267,10 @@ public class BattlePane {
         situation.characterActing.timesToAct++;
 
         // 战斗开始
-//        onTrigger(new EventBattleStart());
         for (Runnable runnable : battleStartEventList) {
             runnable.run();
         }
+        battleStartEventList = null;
         // 火灵
         situation.teamPane[0].calHuoLing();
         situation.teamPane[1].calHuoLing();

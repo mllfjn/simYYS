@@ -1,7 +1,6 @@
 package com.mllfjn.simyys.character.list.ssr.shiling;
 
 import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.battleevent.EventBattleStart;
 import com.mllfjn.simyys.battleevent.EventRoundDone;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
@@ -38,20 +37,16 @@ class Skill3 extends Skill {
 
     public Skill3(Character belongTo, int level) {
         super(belongTo, level, level >= 2 ? 2 : 3, 0, 3);
-        belongTo.bp.addActionListener(belongTo, event -> {
-            if (event instanceof EventBattleStart) {
-                List<Character> targets = new CharacterFinder(belongTo)
-                        .filterTeammate()
-                        .filterShiShen()
-                        .getList();
-                double limit = 0;
-                for (Character target : targets) {
-                    limit += target.getInitAttack();
-                }
-                xiangShiLimit = limit * 30;
-                return true;
+        belongTo.bp.atBattleStart(() -> {
+            List<Character> targets = new CharacterFinder(belongTo)
+                    .filterTeammate()
+                    .filterShiShen()
+                    .getList();
+            double limit = 0;
+            for (Character target : targets) {
+                limit += target.getInitAttack();
             }
-            return false;
+            xiangShiLimit = limit * 30;
         });
     }
 

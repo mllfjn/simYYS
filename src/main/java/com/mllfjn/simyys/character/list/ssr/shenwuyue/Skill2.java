@@ -1,6 +1,5 @@
 package com.mllfjn.simyys.character.list.ssr.shenwuyue;
 
-import com.mllfjn.simyys.battleevent.EventBattleStart;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
@@ -27,20 +26,16 @@ class Skill2 extends PassiveSkill {
         belongTo.addStatus(statusMengShen);
         belongTo.setStatusMengShen(statusMengShen);
 
-        belongTo.bp.addActionListener(belongTo, (event) -> {
-            if (event instanceof EventBattleStart) {
-                belongTo.addStatus(new StatusMeiMengBiCheng(belongTo, belongTo));
-                belongTo.bp.forEveryone(belongTo, c -> {
-                    if (c.team == belongTo.team) {
-                        c.addStatus(new StatusJianShang(belongTo, c));
-                    }
-                });
-                if (level == 5) {
-                    belongTo.addStack();
+        belongTo.bp.atBattleStart(() -> {
+            belongTo.addStatus(new StatusMeiMengBiCheng(belongTo, belongTo));
+            belongTo.bp.forEveryone(belongTo, c -> {
+                if (c.team == belongTo.team) {
+                    c.addStatus(new StatusJianShang(belongTo, c));
                 }
-                return true;
+            });
+            if (level == 5) {
+                belongTo.addStack();
             }
-            return false;
         });
     }
 

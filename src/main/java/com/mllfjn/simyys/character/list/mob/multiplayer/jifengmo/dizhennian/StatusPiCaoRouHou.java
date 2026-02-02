@@ -1,7 +1,6 @@
 package com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.dizhennian;
 
 import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.battleevent.EventBattleStart;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamageBeingAttack;
@@ -20,17 +19,11 @@ class StatusPiCaoRouHou extends Status implements StatusRunnable, Displayable {
         super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
         this.breakDamage = breakDamage;
 
-        belongTo.bp.addActionListener(belongTo, event -> {
-            if (event instanceof EventBattleStart) {
-                for (Character target : belongTo.bp.situation.characters) {
-                    target.addStatus(new StatusPiCaoRouHouReduceDamage(character, target));
-                }
-                return true;
+        belongTo.bp.atBattleStart(() -> {
+            for (Character target : belongTo.bp.situation.characters) {
+                target.addStatus(new StatusPiCaoRouHouReduceDamage(character, target));
             }
-            return false;
         });
-
-
     }
 
     @Override

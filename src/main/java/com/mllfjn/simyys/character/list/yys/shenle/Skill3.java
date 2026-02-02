@@ -6,7 +6,6 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.battleevent.EventBattleStart;
 
 import java.util.Optional;
 
@@ -20,16 +19,12 @@ class Skill3 extends Skill {
     public Skill3(Character belongTo, int level, int shuYin) {
         super(belongTo, level, 0, 1, 2);
         this.shuYin = shuYin;
-        belongTo.bp.addActionListener(belongTo, event -> {
-            if (event instanceof EventBattleStart) {
-                mobBattle = belongTo.bp.isMobBattle(belongTo);
-                if (mobBattle) {
-                    // 且不进入冷却
-                    setCoolDown(0);
-                }
-                return true;
+        belongTo.bp.atBattleStart(() -> {
+            mobBattle = belongTo.bp.isMobBattle(belongTo);
+            if (mobBattle) {
+                // 且不进入冷却
+                setCoolDown(0);
             }
-            return false;
         });
     }
 
