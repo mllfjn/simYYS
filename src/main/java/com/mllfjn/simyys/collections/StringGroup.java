@@ -26,7 +26,8 @@ public record StringGroup(String label, String... values) implements Serializabl
                     QingNvFang.YuHunName,
                     ShangHunNiao.YuHunName,
                     HaiYueHuoYu.YuHunName,
-                    ZhenMuShou.YuHunName
+                    ZhenMuShou.YuHunName,
+                    YingShengChong.YuHunName
             ),
             new StringGroup("命中两件套",
                     HuoLing.YuHunName,

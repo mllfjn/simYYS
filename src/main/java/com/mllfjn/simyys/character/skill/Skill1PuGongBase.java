@@ -1,13 +1,13 @@
 package com.mllfjn.simyys.character.skill;
 
 import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.battleevent.EventUsePuGong;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.Trigger;
 import com.mllfjn.simyys.character.status.triggerParam.ParamUseSkill;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
+import com.mllfjn.simyys.ratecontroller.RateController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +53,7 @@ public abstract class Skill1PuGongBase extends Skill {
         }
 
         getBelongTo().doInteractive(interactive -> usePrivate(interactive, target));
+        log(target);
         useDone();
     }
 
@@ -64,15 +65,26 @@ public abstract class Skill1PuGongBase extends Skill {
     @Override
     public void use(BattlePane bp) {
         Character target = getTarget();
-        // 广播使用普攻
-        bp.onTrigger(new EventUsePuGong(getBelongTo(), target));
+        Character belongTo = getBelongTo();
 
-        usePrivate(getBelongTo().getInteractive(), target);
+        usePrivate(belongTo.getInteractive(), target);
 
         // 消息记录
         log(target);
 
-        getBelongTo().statusRun(Trigger.USE_PU_GONG, new ParamUseSkill(this, target));
+        belongTo.statusRun(Trigger.USE_PU_GONG, new ParamUseSkill(this, target));
+
+        List<Character> list = new CharacterFinder(belongTo)
+                .filterTeammate()
+                .filterSelf()
+                .getList();
+
+        for (Character character : list) {
+            if (RateController.xieZhan(this, character)) {
+                character.xieZhan(this, target);
+            }
+
+        }
 
         useDone();
     }

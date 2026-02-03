@@ -19,7 +19,8 @@ public enum Attribute {
     YI_SHANG("易伤", Character::getYiShang),
     MaxHP("最大生命值", Character::getMaxHp),
     IGNORE_DEFENCE("无视防御", Character::getIgnoreDefense),
-    CRIT_RESIST("暴击抵抗", Character::getCritResist)
+    CRIT_RESIST("暴击抵抗", Character::getCritResist),
+    XIE_ZHAN("协战", Character::getXieZhanProbability),
     ;
 
     private final String text;

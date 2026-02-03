@@ -15,8 +15,9 @@ public class TraversalOrderManager {
             StatusRuMeng.class, 0,
             YiNianHuo.clazz, 1
     );
-    private final static Comparator<ConditionalReduceCost> CRC_COMPARATOR = Comparator
-            .comparingInt(crc -> CRC_MAP.get(crc.getClass()));
+    private final static Comparator<ConditionalReduceCost> CRC_COMPARATOR =
+            Comparator.comparingInt(crc -> CRC_MAP.get(crc.getClass()));
+
     public static double getAttribute(Attribute attribute, double base, List<Status> statuses) {
         for (Status status : statuses) {
             if (status instanceof AttributeModifier a && a.isAffectAttribute(attribute)) {
@@ -24,6 +25,16 @@ public class TraversalOrderManager {
             }
         }
         return base < 0 ? 0 : base;
+    }
+
+    public static double getProbabilityAtLeastOne(Attribute attribute, List<Status> statuses) {
+        double noEventProbability = 100;
+        for (Status status : statuses) {
+            if (status instanceof AttributeModifier am && am.isAffectAttribute(attribute)) {
+                noEventProbability *= (100 - am.getInfluence(attribute)) / 100;
+            }
+        }
+        return 100 - noEventProbability;
     }
 
     public static List<ConditionalReduceCost> getConditionalReduceCosts(List<Status> statuses) {

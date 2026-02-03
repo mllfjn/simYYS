@@ -217,6 +217,10 @@ public abstract class Character implements Serializable {
         return TraversalOrderManager.getAttribute(Attribute.CRIT_RESIST, 0, getStatuses());
     }
 
+    public double getXieZhanProbability() {
+        return TraversalOrderManager.getProbabilityAtLeastOne(Attribute.XIE_ZHAN, getStatuses());
+    }
+
 
     public boolean isMob() {
         return isMob;
@@ -645,7 +649,7 @@ public abstract class Character implements Serializable {
         }
 
         List<Status> tobeDelete = RateController
-                .choose("驱散减益状态", debuffs,
+                .choose(name + "驱散减益状态", debuffs,
                         status -> ((Displayable) status).getDisplayText(), bp.calc, count);
 
         for (Status status : tobeDelete) {

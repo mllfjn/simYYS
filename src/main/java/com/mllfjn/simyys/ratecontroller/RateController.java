@@ -114,15 +114,20 @@ public class RateController implements Serializable {
         return infos;
     }
 
-    public static boolean xieZhan(Skill skill, Character owner, RateCalc calc, double rate) {
+    public static boolean xieZhan(Skill skill, Character owner) {
         if (!owner.canXieZhan(skill)) {
             return false;
         }
 
         AtomicBoolean result = new AtomicBoolean();
-        whetherOrNot("协战控制：" + owner.name, "协战", List.of("协战")
-                , s -> s, calc, calc::isControlXieZhan, item -> rate
-                , (i, x) -> result.set(x));
+        whetherOrNot("协战控制：" + owner.name,
+                "协战",
+                List.of("协战"),
+                s -> s,
+                owner.bp.calc,
+                owner.bp.calc::isControlXieZhan,
+                item -> owner.getXieZhanProbability(),
+                (i, x) -> result.set(x));
 
         return result.get();
     }
@@ -167,7 +172,7 @@ public class RateController implements Serializable {
                 n = Math.min(n, m - n);
                 long combination = 1;
                 for (int i = 1; i <= n; i++) {
-                    combination *= m - i + 1;
+                    combination *= (m - i + 1);
                     combination /= i;
                 }
                 calc.change(1.0 / combination);

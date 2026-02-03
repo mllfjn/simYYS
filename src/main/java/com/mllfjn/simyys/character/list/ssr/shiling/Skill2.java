@@ -8,7 +8,6 @@ import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
-import com.mllfjn.simyys.character.status.instance.StatusXieZhan;
 import com.mllfjn.simyys.character.status.triggerParam.ParamUseSkill;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
@@ -60,12 +59,12 @@ class Skill2 extends PassiveSkill {
         listener = belongTo.bp.forEveryone(belongTo, character -> {
             if (character.team == belongTo.team) {
                 character.addStatus(new StatusOutRoundInfluence(belongTo, character, multiplier));
-
-                if (getLevel() >= 3) {
-                    character.addStatus(new StatusXieZhanFromShiLing(maxCritPower, character));
-                }
             }
         });
+
+        if (getLevel() >= 3) {
+            maxCritPower.addStatus(new StatusXieZhanFromShiLing(belongTo, maxCritPower));
+        }
     }
 
     @Override
@@ -135,14 +134,18 @@ class Skill2 extends PassiveSkill {
         }
     }
 
-    static class StatusXieZhanFromShiLing extends StatusXieZhan {
-
+    static class StatusXieZhanFromShiLing extends Status implements AttributeModifier {
         public StatusXieZhanFromShiLing(Character from, Character belongTo) {
-            super(from, belongTo);
+            super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
         }
 
         @Override
-        protected double getRate() {
+        public boolean isAffectAttribute(Attribute attribute) {
+            return attribute == Attribute.XIE_ZHAN;
+        }
+
+        @Override
+        public double getInfluence(Attribute attribute) {
             return 30;
         }
     }
