@@ -504,7 +504,7 @@ public class BattlePane {
         situation.listenerMap.computeIfAbsent(character, k -> new ArrayList<>()).add(listener);
     }
 
-    public void removeActionTrigger(Character character, BattleActionListener listener) {
+    public void removeActionListener(Character character, BattleActionListener listener) {
         situation.listenerMap.get(character).remove(listener);
     }
 

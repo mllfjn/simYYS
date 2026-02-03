@@ -39,7 +39,7 @@ class QiLingTiHun {
 
         public void takeEffect() {
             if (remainingTimes == 1) {
-                belongTo.bp.removeActionTrigger(belongTo, listener);
+                belongTo.bp.removeActionListener(belongTo, listener);
                 removePreventDie();
                 belongTo.removeStatus(StatusDieListener.class);
             } else {

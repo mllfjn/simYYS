@@ -80,7 +80,7 @@ class Skill2 extends PassiveSkill {
                 target.removeStatus(StatusXieZhanFromShiLing.class);
             }
 
-            getBelongTo().bp.removeActionTrigger(getBelongTo(), listener);
+            getBelongTo().bp.removeActionListener(getBelongTo(), listener);
         }
     }
 

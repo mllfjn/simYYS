@@ -41,7 +41,7 @@ public class ShangHunNiao extends YuHun implements YuHunSealResponse {
 
     @Override
     public void disable() {
-        getBelongTo().bp.removeActionTrigger(getBelongTo(), listener);
+        getBelongTo().bp.removeActionListener(getBelongTo(), listener);
     }
 
 

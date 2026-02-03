@@ -18,12 +18,14 @@ import com.mllfjn.simyys.character.status.determinant.IgnoreChangeMaxHp;
 import com.mllfjn.simyys.character.status.determinant.IgnoreDebuff;
 import com.mllfjn.simyys.character.status.determinant.PreventDie;
 import com.mllfjn.simyys.character.status.determinant.RejectAllStatuses;
+import com.mllfjn.simyys.character.status.triggerParam.ParamBeforeAttack;
 import com.mllfjn.simyys.character.status.triggerParam.ParamLocationChange;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunFactory;
 import com.mllfjn.simyys.character.yuhun.YuHunSealResponse;
 import com.mllfjn.simyys.character.list.yys.qiling.QiLingFactory;
+import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.TraceableNumber;
 import com.mllfjn.simyys.interactive.InteractiveInfo;
 import com.mllfjn.simyys.interactive.Interactive;
@@ -571,13 +573,13 @@ public abstract class Character implements Serializable {
         return false;
     }
 
-    public void checkShield(InteractiveInfo interactiveInfo) {
-        TraceableNumber traceableNumber = interactiveInfo.getTraceableNumber();
+    public void checkShield(AttackInfo attackInfo) {
+        TraceableNumber traceableNumber = attackInfo.getTraceableNumber();
         // 遍历状态找护盾
         Iterator<Status> iterator = getStatuses().iterator();
         while (traceableNumber.getNumber() > 0 && iterator.hasNext()) {
             if (iterator.next() instanceof StatusShield ss) {
-                if (ss.handle(interactiveInfo)) {
+                if (ss.handle(attackInfo)) {
                     iterator.remove();
                 } else {
                     break;
@@ -586,13 +588,15 @@ public abstract class Character implements Serializable {
         }
     }
 
-    public void beHurt(InteractiveInfo interactiveInfo) {
-        double damage = interactiveInfo.getTraceableNumber().getNumber();
+    public void beHurt(AttackInfo attackInfo) {
+        statusRun(Trigger.BEFORE_ATTACK, new ParamBeforeAttack(attackInfo));
+
+        double damage = attackInfo.getTraceableNumber().getNumber();
         if (damage > 0) {
             // 如果剩余血量比伤害小,进入死亡判定
             if (getHp() <= damage) {
-                interactiveInfo.getTraceableNumber().addTrace("\t(击杀)");
-                beforeDie(interactiveInfo, damage - getHp());
+                attackInfo.getTraceableNumber().addTrace("\t(击杀)");
+                beforeDie(attackInfo, damage - getHp());
             } else {
                 // 受到攻击
                 setHp(getHp() - damage);
