@@ -13,7 +13,7 @@ import com.mllfjn.simyys.character.status.instance.StatusRejectAllStatusesInstan
 import java.util.Optional;
 
 class SpecialYaoQin extends YaoQin {
-    public SpecialYaoQin(BattlePane bp, int team) {
+    private SpecialYaoQin(BattlePane bp, int team) {
         this.name = CharacterName;
         this.bp = bp;
         this.team = team;
@@ -29,8 +29,27 @@ class SpecialYaoQin extends YaoQin {
 
         addSkill(new SpecialYaoQinSkill2(this));
         addStatus(new StatusCanNotChoose(this, this));
-
         addStatus(new StatusRejectAllStatusesInstance(this));
+    }
+
+    private SpecialYaoQin(Character character) {
+        this(character.bp, character.team);
+        this.lockSkillMap = character.getLockSkillMap();
+        this.flagChangeMap = character.getFlagChangeMap();
+    }
+
+    public static void add(BattlePane bp, int team) {
+        for (Character character : bp.situation.characters) {
+            if (character.getInitSpeed() == 100
+                    && character.team != team
+                    && character instanceof YaoQin
+            ) {
+                bp.addCharacter(new SpecialYaoQin(character));
+                bp.removeCharacterWithoutTrigger(character);
+                return;
+            }
+        }
+        bp.addCharacter(new SpecialYaoQin(bp, CharacterFinder.getEnemyTeam(team)));
     }
 
     static class SpecialYaoQinSkill2 extends Skill {

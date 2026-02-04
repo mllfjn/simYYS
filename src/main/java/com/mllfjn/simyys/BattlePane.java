@@ -500,6 +500,10 @@ public class BattlePane {
         onTrigger(new EventCharacterDie(character));
     }
 
+    public void removeCharacterWithoutTrigger(Character character) {
+        situation.removeCharacter(character);
+    }
+
     public void addActionListener(Character character, BattleActionListener listener) {
         situation.listenerMap.computeIfAbsent(character, k -> new ArrayList<>()).add(listener);
     }

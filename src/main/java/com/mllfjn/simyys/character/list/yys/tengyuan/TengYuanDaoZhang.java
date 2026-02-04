@@ -46,19 +46,18 @@ public class TengYuanDaoZhang extends Character {
         int[] skill4 = ((PropertyMultiInput) map.get(Skill4.SkillName)).getValuesInt();
         int[] skill5 = ((PropertyMultiInput) map.get(Skill5.SkillName)).getValuesInt();
         int[] skill6 = ((PropertyMultiInput) map.get(Skill6.SkillName)).getValuesInt();
-//        int[] skill7 = ((PropertyMultiInput) map.get(Skill7.SkillName)).getValuesInt();
+        int[] skill7 = ((PropertyMultiInput) map.get(Skill7.SkillName)).getValuesInt();
         int[] skill8 = ((PropertyMultiInput) map.get(Skill8.SkillName)).getValuesInt();
 
-        addSkills(
-                new Skill1(this, skill1[0]),
-                new Skill2(this, skill2[0]),
-                new Skill3(this, skill3[0]),
-                new Skill4(this, skill4[0]),
-                new Skill5(this, skill5[0]),
-                new Skill6(this, skill6[0]),
-                new Skill7(this),
-                new Skill8(this, skill8[0])
-        );
+        addSkill(new Skill1(this, skill1[0]));
+        if (skill2[0] > 0) addSkill(new Skill2(this, skill2[0]));
+        if (skill3[0] > 0) addSkill(new Skill3(this, skill3[0]));
+        if (skill4[0] > 0) addSkill(new Skill4(this, skill4[0]));
+        if (skill5[0] > 0) addSkill(new Skill5(this, skill5[0]));
+        if (skill6[0] > 0) addSkill(new Skill6(this, skill6[0]));
+        if (skill7[0] > 0) addSkill(new Skill7(this));
+        if (skill8[0] > 0) addSkill(new Skill8(this, skill8[0]));
+
     }
 
     public TengYuanDaoZhang() {

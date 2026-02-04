@@ -136,6 +136,10 @@ public class CharacterFinder {
         return stream.collect(Collectors.toCollection(ArrayList::new));
     }
 
+    public int getCount() {
+        return Math.toIntExact(stream.count());
+    }
+
     public static int getEnemyTeam(int team) {
         return 1 - team;
     }

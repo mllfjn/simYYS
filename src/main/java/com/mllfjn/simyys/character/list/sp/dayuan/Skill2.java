@@ -43,7 +43,7 @@ class Skill2 extends Skill {
 
     @Override
     public boolean canUse(BattlePane bp) {
-        return super.canUse(bp) && !getBelongTo().isHaveStatus(StatusCombined.class);
+        return super.canUse(bp) && getBelongTo().isHaveStatus(StatusCombined.class);
     }
 
     static class StatusIgnoreOtherActionChange extends Status implements IgnoreActionIncrease, IgnoreActionDecrease {

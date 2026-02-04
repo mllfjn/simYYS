@@ -85,7 +85,8 @@ public class DiZhenNian extends Character {
         addStatus(new StatusPiCaoRouHou(this, (ciTiao != null && ciTiao.equals(CiTiao6DouHun.CiTiaoName)) ? 150000 : 250000));
 
         // 给对面放一个妖琴
-        bp.addCharacter(new SpecialYaoQin(bp, 1 - team));
+        // 特殊:为了实现妖琴锁技能和红绿标,如果敌方有一个100速的妖琴,则将其替换为特殊妖琴,并继承其锁定
+        SpecialYaoQin.add(bp, team);
 
         // 添加伤害显示器
         addStatus(display);

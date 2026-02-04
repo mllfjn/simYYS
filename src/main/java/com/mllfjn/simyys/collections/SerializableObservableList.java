@@ -4,10 +4,13 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
 
 public class SerializableObservableList<E extends Serializable> implements Serializable, Iterable<E>{
+    @Serial
+    private static final long serialVersionUID = 3451015018844167861L;
     private final List<E> list = new ArrayList<>();
     private transient ObservableList<E> observableList;
 

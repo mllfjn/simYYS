@@ -66,8 +66,8 @@ public abstract class Character implements Serializable {
     protected boolean isSummon;
 
     private final SerializableObservableList<Skill> skills = new SerializableObservableList<>();
-    private Map<Integer, Integer> lockSKillMap;
-    private Map<Integer, FlagChangeInfo> flagChangeMap;
+    protected Map<Integer, Integer> lockSkillMap;
+    protected Map<Integer, FlagChangeInfo> flagChangeMap;
 
     // 自身状态
     private final List<Status> statuses = new ArrayList<>();
@@ -102,7 +102,7 @@ public abstract class Character implements Serializable {
 
     public void init(PropertiesHolder propertiesHolder, BattlePane bp) {
         reset(bp);
-        this.lockSKillMap = propertiesHolder.lockSkillMap;
+        this.lockSkillMap = propertiesHolder.lockSkillMap;
         this.flagChangeMap = propertiesHolder.flagChangeMap;
         PropertiesMap properties = propertiesHolder.propertiesMap;
         this.name = propertiesHolder.name;
@@ -415,8 +415,8 @@ public abstract class Character implements Serializable {
     }
 
     public void setLockSkillAndAuto() {
-        if (lockSKillMap != null && lockSKillMap.containsKey(timesToAct)) {
-            setLockSkill(lockSKillMap.get(timesToAct));
+        if (lockSkillMap != null && lockSkillMap.containsKey(timesToAct)) {
+            setLockSkill(lockSkillMap.get(timesToAct));
         }
 
         if (flagChangeMap != null && flagChangeMap.containsKey(timesToAct)) {
@@ -453,10 +453,13 @@ public abstract class Character implements Serializable {
             if (os.isPresent() && os.get().tryUse(bp)) {
                 return;
             }
+        } else {
+            if (useSkillAuto()) {
+                return;
+            }
         }
-        if (!useSkillAuto()) {
-            usePuGong();
-        }
+
+        usePuGong();
     }
 
     public void afterRound() {
@@ -542,12 +545,11 @@ public abstract class Character implements Serializable {
     public void removeSkill(int skillID) {
         Optional<Skill> os = getSkill(skillID);
         os.ifPresent(skill -> {
-            doIfCharacterIconExist(CharacterIcon::startChangeSkill);
             skills.remove(skill);
             if (skillID == lockSkill) {
                 lockSkill = 0;
+                doIfCharacterIconExist(CharacterIcon::selectLockSkill);
             }
-            doIfCharacterIconExist(CharacterIcon::endChangeSkill);
         });
     }
 
@@ -561,32 +563,25 @@ public abstract class Character implements Serializable {
         return skills.getObservableList();
     }
 
-    protected void addSkill(Skill skill) {
-        int i = 0;
-        Iterator<Skill> iterator = skills.iterator();
-        while (iterator.hasNext() && iterator.next().getSkillID() < skill.getSkillID()) {
-            i++;
+    public void addSkill(Skill skill, boolean needOrder) {
+        if (needOrder) {
+            int i = 0;
+            Iterator<Skill> iterator = skills.iterator();
+            while (iterator.hasNext() && iterator.next().getSkillID() < skill.getSkillID()) {
+                i++;
+            }
+            skills.add(i, skill);
+        } else {
+            skills.add(skill);
         }
-
-        doIfCharacterIconExist(CharacterIcon::startChangeSkill);
-        skills.add(i, skill);
-        doIfCharacterIconExist(CharacterIcon::endChangeSkill);
 
         if (skill instanceof PassiveSkill ps) {
             ps.enable();
         }
     }
 
-    protected void addSkills(Skill... c) {
-        doIfCharacterIconExist(CharacterIcon::startChangeSkill);
-        this.skills.addAll(c);
-        doIfCharacterIconExist(CharacterIcon::endChangeSkill);
-
-        for (Skill skill : c) {
-            if (skill instanceof PassiveSkill ps) {
-                ps.enable();
-            }
-        }
+    public void addSkill(Skill skill) {
+        addSkill(skill, false);
     }
 
     protected boolean useSkillAuto() {
@@ -646,9 +641,9 @@ public abstract class Character implements Serializable {
         setHp(getHp() + num);
     }
 
-    public void dispelAllBuff() {
+    /*public void dispelAllBuff() {
         getStatuses().removeIf(status -> status.statusType == StatusType.BUFF && status.statusForm == StatusForm.ZHUANG_TAI);
-    }
+    }*/
 
     public void dispelAllDebuff() {
         getStatuses().removeIf(status -> status.statusType == StatusType.DEBUFF && status.statusForm == StatusForm.ZHUANG_TAI);
@@ -674,7 +669,23 @@ public abstract class Character implements Serializable {
     }
 
     public void removeAllCrowControl() {
-        getStatuses().removeIf(status -> status instanceof CrowdControl);
+        getStatuses().removeIf(status -> {
+            if (status instanceof CrowdControl) {
+                status.beforeDelete();
+                return true;
+            }
+            return false;
+        });
+    }
+
+    public void removeAllDeBuff() {
+        getStatuses().removeIf(status -> {
+            if (status.statusType == StatusType.DEBUFF) {
+                status.beforeDelete();
+                return true;
+            }
+            return false;
+        });
     }
 
     public CharacterIcon getCharacterIcon() {
@@ -892,5 +903,13 @@ public abstract class Character implements Serializable {
         for (Skill skill : skills) {
             skill.refresh();
         }
+    }
+
+    public Map<Integer, Integer> getLockSkillMap() {
+        return lockSkillMap;
+    }
+
+    public Map<Integer, FlagChangeInfo> getFlagChangeMap() {
+        return flagChangeMap;
     }
 }

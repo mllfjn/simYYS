@@ -109,8 +109,6 @@ public class CharacterIcon implements Serializable {
     private transient AnchorPane imagePane;
     // 御魂显示
     private transient ImageView[] yuHunIcon;
-    // 修改技能时comboBox切换不生效
-    private boolean isModifyingItems = false;
     // 可选,右键时触发其他事件,比如极逢魔的转阶段,须佐的天威
     private transient EventHandler<MouseEvent> eventHandler;
     // 其他信息显示，比如极逢魔的伤害显示
@@ -199,11 +197,9 @@ public class CharacterIcon implements Serializable {
         ObservableList<Skill> skills = character.getReadOnlySkillList();
         skillBox = new ComboBox<>(skills);
         selectLockSkill();
-        skillBox.valueProperty().addListener((obs, old, val) -> {
-            if (!isModifyingItems) {
-                character.setLockSkill(val.getSkillID());
-            }
-        });
+        skillBox.valueProperty().addListener((obs, old, val) ->
+                character.setLockSkill(val.getSkillID())
+        );
         skillBox.setCellFactory(skillCellFactory);
         skillBox.setMaxWidth(MAX_WIDTH);
 
@@ -284,21 +280,11 @@ public class CharacterIcon implements Serializable {
             return;
         }
 
-        isModifyingItems = true;
         Optional<Skill> os = character.getSkill(character.getLockSkill());
         os.ifPresentOrElse(
                 s -> skillBox.getSelectionModel().select(s)
                 , () -> skillBox.getSelectionModel().select(0)
         );
-        isModifyingItems = false;
-    }
-
-    public void startChangeSkill() {
-        isModifyingItems = true;
-    }
-
-    public void endChangeSkill() {
-        selectLockSkill();
     }
 
     public void update() {

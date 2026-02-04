@@ -15,10 +15,10 @@ abstract class SkillJieYuan extends Skill {
 
     @Override
     public boolean canUse(BattlePane bp) {
-        return super.canUse(bp) && getTarget(bp) != null;
+        return super.canUse(bp) && getTarget() != null;
     }
 
-    public Character getTarget(BattlePane bp) {
+    public Character getTarget() {
         return new CharacterFinder(getBelongTo())
                 .filterTeammate()
                 .filterSelf()
@@ -27,7 +27,7 @@ abstract class SkillJieYuan extends Skill {
 
     @Override
     public Optional<Character> usePrivate(BattlePane bp) {
-        Character target = getTarget(bp);
+        Character target = getTarget();
         // 为自身以外的指定友方目标缔结胜天之缘·赤(Skill5)或胜天之缘·青(Skill6)
         jieYuan(target);
         // 并提升自身2层神力
@@ -36,7 +36,7 @@ abstract class SkillJieYuan extends Skill {
         getBelongTo().removeSkill(5);
         getBelongTo().removeSkill(6);
         // 释放后可以获得解除结缘的技能二
-        getBelongTo().addSkill(new Skill2(getBelongTo()));
+        getBelongTo().addSkill(new Skill2(getBelongTo()), true);
         return Optional.of(target);
     }
 

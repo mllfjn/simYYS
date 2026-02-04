@@ -1,13 +1,33 @@
 package com.mllfjn.simyys.character.list.yys.tengyuan;
 
+import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
+import com.mllfjn.simyys.character.status.*;
+import com.mllfjn.simyys.character.status.determinant.InfluenceDamageBeingAttack;
+import com.mllfjn.simyys.character.status.determinant.PreventDie;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAddCrowdControl;
+import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
+import com.mllfjn.simyys.interactive.AttackInfo;
 
 class Skill8 extends PassiveSkill {
     public static final String SkillName = "余音入梦";
 
     public Skill8(Character belongTo, int level) {
         super(belongTo, level, 8);
+        belongTo.addStatus(new StatusPreventDie(belongTo, level >= 6 ? 6 : level - 1));
+    }
+
+    @Override
+    public String getSkillDesc() {
+        return """
+                √\t受到致命伤害后,移除自身所有减益并化为梦境意识留存于场上,持续回合数等同于当前场上存活友方式神数
+                √\tlv2-5:触发时获得lv-1层律音
+                √\tlv6-触发时获得6层律音
+                √\t梦境意识:免疫伤害,控制效果
+                √\t\t与放逐.当场上仅剩梦境意识时,战斗失败
+                """;
     }
 
     @Override
@@ -22,6 +42,65 @@ class Skill8 extends PassiveSkill {
 
     @Override
     public String getName() {
-        return "";
+        return SkillName;
+    }
+
+    static class StatusPreventDie extends Status implements PreventDie {
+        private final int getLvYin;
+
+        public StatusPreventDie(Character character, int getLvYin) {
+            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
+            this.getLvYin = getLvYin;
+        }
+
+        @Override
+        public void preventDie(double excessDamage) {
+            belongTo.removeAllDeBuff();
+            belongTo.addStatus(new StatusDeadLine(belongTo));
+            if (getLvYin > 0) {
+                ((TengYuanDaoZhang) belongTo).getLvYin().addStack(getLvYin);
+            }
+            delete();
+        }
+
+        @Override
+        public String getName() {
+            return SkillName;
+        }
+
+        static class StatusDeadLine extends Status implements StatusRunnable, InfluenceDamageBeingAttack {
+
+            public StatusDeadLine(Character character) {
+                super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
+                int duration = new CharacterFinder(character)
+                        .filterTeammate()
+                        .filterShiShen()
+                        .getCount();
+                setDurationType(StatusDurationType.CHI_XU, duration);
+            }
+
+            @Override
+            public void beforeDelete() {
+                belongTo.die();
+            }
+
+            @Override
+            public boolean runnable(Trigger trigger) {
+                return trigger == Trigger.ADDING_CROWD_CONTROL;
+            }
+
+            @Override
+            public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
+                if (param instanceof ParamAddCrowdControl pac) {
+                    pac.getEffectInfo().setCancel(true);
+                }
+                return false;
+            }
+
+            @Override
+            public void doInfluenceBeingAttack(AttackInfo attackInfo) {
+                attackInfo.setCancel(true);
+            }
+        }
     }
 }
