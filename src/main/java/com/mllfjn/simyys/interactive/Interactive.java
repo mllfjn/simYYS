@@ -390,8 +390,9 @@ public class Interactive {
     public void decreaseLocation(Character target, double decrease) {
         // 免疫行动条提升效果
         for (Status status : target.getStatuses()) {
-            if (status instanceof IgnoreActionDecrease) {
+            if (status instanceof IgnoreActionDecrease iad) {
                 increaseLog.add(target.name + "免疫行动条改变");
+                iad.takeEffectFeedBack();
                 return;
             }
         }

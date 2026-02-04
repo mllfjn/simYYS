@@ -71,7 +71,7 @@ class HaiYuanBeiJi extends Character {
             qianJi.addStatus(new StatusJianShang(qianJi));
         }
 
-        addSkills();
+        fillSkills();
     }
 
     @Override
@@ -97,8 +97,8 @@ class HaiYuanBeiJi extends Character {
     }
 
     @Override
-    public boolean controllable() {
-        return false;
+    public boolean isUncontrollable() {
+        return true;
     }
 
     static class StatusJianShang extends Status implements InfluenceDamageBeingAttack {

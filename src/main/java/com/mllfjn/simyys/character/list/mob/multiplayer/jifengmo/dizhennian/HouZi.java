@@ -37,7 +37,7 @@ public class HouZi extends Character {
         this.setInitDefense(352);
         this.setInitSpeed(100);
 
-        addSkills();
+        fillSkills();
 
         bp.forEveryone(this, character -> {
             if (character.team != team) {

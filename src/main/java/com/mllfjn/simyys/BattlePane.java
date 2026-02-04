@@ -427,7 +427,7 @@ public class BattlePane {
             getNextActor();
             interactive.display();
             log.characterAct(situation.characterActing);
-        } while (!situation.characterActing.controllable());
+        } while (situation.characterActing.isUncontrollable());
 
         log.next();
     }

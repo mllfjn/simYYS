@@ -182,7 +182,7 @@ class Skill3 extends Skill {
                         round--;
                     }
 
-                    if (round == 0 && belongTo.controllable()) {
+                    if (round == 0 && belongTo.isNotUnderCrowdControl()) {
                         delete();
                         xiangShi();
                         return true;

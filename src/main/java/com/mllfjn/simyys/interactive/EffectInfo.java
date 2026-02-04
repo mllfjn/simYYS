@@ -2,9 +2,6 @@ package com.mllfjn.simyys.interactive;
 
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
-import com.mllfjn.simyys.character.status.Status;
-
-import java.util.function.BiFunction;
 
 public class EffectInfo {
     private final Character from;

@@ -105,7 +105,7 @@ public class CharacterFactory {
         Optional<Character> oc = getCharacter(ph.name);
         oc.ifPresent(character -> {
             character.init(ph, bp);
-            character.addSkills();
+            character.fillSkills();
         });
         return oc;
     }

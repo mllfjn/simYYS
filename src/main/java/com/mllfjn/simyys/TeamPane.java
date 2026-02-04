@@ -87,7 +87,11 @@ public class TeamPane implements Serializable {
         if (center != null) {
             CharacterIcon characterIcon = character.getCharacterIcon();
 //            int index = ;
-            center.addColumn(center.getColumnCount(), characterIcon.getTop(), characterIcon.getCenter(), characterIcon.getBottom());
+            center.addColumn(center.getColumnCount(),
+                    characterIcon.getTop(),
+                    characterIcon.getCenter(),
+                    characterIcon.getBottom()
+            );
 //            center.add(characterIcon.getTop(), index, 0);
 //            center.add(characterIcon.getCenter(), index, 1);
 //            center.add(characterIcon.getBottom(), index, 2);

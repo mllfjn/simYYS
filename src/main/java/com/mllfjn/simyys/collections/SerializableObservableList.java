@@ -26,6 +26,10 @@ public class SerializableObservableList<E extends Serializable> implements Seria
         Objects.requireNonNullElse(observableList, list).add(index, e);
     }
 
+    public boolean addAll(E... c) {
+        return observableList == null ? list.addAll(List.of(c)) : observableList.addAll(c);
+    }
+
     public boolean remove(E e) {
         return observableList == null ? list.remove(e) : observableList.remove(e);
     }

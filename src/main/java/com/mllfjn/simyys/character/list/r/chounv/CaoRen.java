@@ -28,7 +28,7 @@ public class CaoRen extends Character {
 
         this.addStatus(new StatusAfterAttack(chouNv, this, bind));
 
-        addSkills();
+        fillSkills();
     }
 
     public Character getBind() {
@@ -36,8 +36,8 @@ public class CaoRen extends Character {
     }
 
     @Override
-    public boolean controllable() {
-        return false;
+    public boolean isUncontrollable() {
+        return true;
     }
 
     @Override

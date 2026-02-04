@@ -23,7 +23,7 @@ class SpecialYaoQin extends YaoQin {
         this.setInitSpeed(100);
 
         skill1Level = 5;
-        addSkills();
+        fillSkills();
         removeSkill(2);
         removeSkill(3);
 

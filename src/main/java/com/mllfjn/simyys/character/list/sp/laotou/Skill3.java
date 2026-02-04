@@ -8,11 +8,9 @@ import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunUnfullMark;
 import com.mllfjn.simyys.interactive.Interactive;
-import com.mllfjn.simyys.ratecontroller.RateCalc;
 import com.mllfjn.simyys.ratecontroller.RateController;
 import com.mllfjn.simyys.character.status.StatusDurationType;
 
-import java.util.List;
 import java.util.Optional;
 
 class Skill3 extends Skill {
@@ -46,7 +44,7 @@ class Skill3 extends Skill {
 
         target.getStatus(StatusYuHunTransfer.class).ifPresentOrElse(statusYHT -> {
             // 若目标未处于控制效果,则使其获得新的回合并在该回合结束后移除御魂转移效果
-            if (target.controllable()) {
+            if (target.isNotUnderCrowdControl()) {
                 interactive.getNewRound(target);
                 statusYHT.setDurationType(StatusDurationType.CHI_XU, 1);
             } else {

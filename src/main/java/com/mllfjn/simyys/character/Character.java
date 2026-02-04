@@ -231,6 +231,10 @@ public abstract class Character implements Serializable {
         addStatus(new MobGuiHuo(this, initGuiHuo, max));
     }
 
+    public boolean isShiShen() {
+        return !isYYS && !isSummon && !isMob;
+    }
+
     public boolean isYYS() {
         return isYYS;
     }
@@ -344,7 +348,7 @@ public abstract class Character implements Serializable {
         return this.lockSkill;
     }
 
-    public void addSkills() {
+    public void fillSkills() {
         addSkill(SkillAuto.INSTANCE);
         addOwnSkills();
     }
@@ -557,7 +561,7 @@ public abstract class Character implements Serializable {
         return skills.getObservableList();
     }
 
-    public void addSkill(Skill skill) {
+    protected void addSkill(Skill skill) {
         int i = 0;
         Iterator<Skill> iterator = skills.iterator();
         while (iterator.hasNext() && iterator.next().getSkillID() < skill.getSkillID()) {
@@ -570,6 +574,18 @@ public abstract class Character implements Serializable {
 
         if (skill instanceof PassiveSkill ps) {
             ps.enable();
+        }
+    }
+
+    protected void addSkills(Skill... c) {
+        doIfCharacterIconExist(CharacterIcon::startChangeSkill);
+        this.skills.addAll(c);
+        doIfCharacterIconExist(CharacterIcon::endChangeSkill);
+
+        for (Skill skill : c) {
+            if (skill instanceof PassiveSkill ps) {
+                ps.enable();
+            }
         }
     }
 
@@ -842,8 +858,16 @@ public abstract class Character implements Serializable {
     protected void dieHandle() {
     }
 
-    public boolean controllable() {
+    /**
+     * 该方法仅用于确定在battlePane中算作需要控制的回合.
+     * 如果需要确认是否处于控制状态: {@link Character#isNotUnderCrowdControl()}
+     */
+    public boolean isUncontrollable() {
         // 如果被控了,无法行动
+        return !isNotUnderCrowdControl();
+    }
+
+    public boolean isNotUnderCrowdControl() {
         for (Status status : getStatuses()) {
             if (status instanceof CrowdControl) {
                 return false;

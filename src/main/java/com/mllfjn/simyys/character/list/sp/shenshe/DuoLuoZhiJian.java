@@ -42,7 +42,7 @@ public class DuoLuoZhiJian extends Character {
         bp.addCharacter(this);
         StatusShenSheJianShang.add(shenShe);
 
-        addSkills();
+        fillSkills();
     }
 
     @Override
@@ -61,8 +61,8 @@ public class DuoLuoZhiJian extends Character {
     }
 
     @Override
-    public boolean controllable() {
-        return false;
+    public boolean isUncontrollable() {
+        return true;
     }
 
 

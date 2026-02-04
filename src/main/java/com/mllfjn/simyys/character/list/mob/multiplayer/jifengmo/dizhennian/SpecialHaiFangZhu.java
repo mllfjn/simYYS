@@ -18,7 +18,7 @@ class SpecialHaiFangZhu extends HaiFangZhu {
 
         skill1Level = 5;
         skill3Level = 5;
-        addSkills();
+        fillSkills();
 
         addStatus(new StatusBuff(diZhenNian, this, type, 0));
         addStatus(new DiZhenNian.StatusBuffSetter(diZhenNian, this, type));
