@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 class Skill4 extends Skill {
-    public static final String SkillName = "咏叹巧韵";
+    static final String SkillName = "咏叹巧韵";
     private static final int[] duration = new int[]{0, 3, 4, 4, 5, 5};
     private static final int[] ratio = new int[]{0, 10, 10, 20, 20, 30};
 
@@ -56,7 +56,7 @@ class Skill4 extends Skill {
     }
 
     static class StatusZouLv extends Status implements Displayable, StatusRunnable {
-        public static final String StatusName = "奏律状态";
+        private static final String StatusName = "奏律状态";
 
         public StatusZouLv(Character character, int duration) {
             super(character, character, StatusType.BUFF, StatusForm.YIN_JI);

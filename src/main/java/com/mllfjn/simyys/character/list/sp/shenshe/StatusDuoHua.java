@@ -47,7 +47,7 @@ public class StatusDuoHua extends Status implements Displayable, StatusRunnable,
                 // 携带者阵亡时,神堕八岐大蛇提升40%行动条
                 belongTo.doInteractive(interactive -> interactive.increaseLocation(from, 40));
                 // 并将携带者献祭成1把堕落之剑
-                new DuoLuoZhiJian((ShenShe) from, belongTo, bp, false);
+                new DuoLuoZhiJian((ShenShe) from, belongTo, false);
                 // 立即破除1把天羽羽斩封印
                 ((ShenShe) from).poChuZhenYa();
             }

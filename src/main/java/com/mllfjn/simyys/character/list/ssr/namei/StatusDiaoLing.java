@@ -12,7 +12,7 @@ import com.mllfjn.simyys.character.status.Trigger;
 import com.mllfjn.simyys.interactive.StatusSupplier;
 
 public class StatusDiaoLing extends Status implements Displayable, AttributeModifier, StatusRunnable {
-    public static final String StatusName = "凋零";
+    private static final String StatusName = "凋零";
 
     private StatusDiaoLing(Character from, Character belongTo, int duration) {
         super(from, belongTo, StatusType.GENERAL, StatusForm.YIN_JI);

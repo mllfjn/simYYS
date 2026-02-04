@@ -4,6 +4,7 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.battleevent.EventAttack;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.CharacterSummonBase;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
@@ -15,24 +16,23 @@ import com.mllfjn.simyys.interactive.InteractiveInfo;
 
 import java.util.List;
 
-class HaiYuanBeiJi extends Character {
-    public static final String CharacterName = "海原贝戟";
+class HaiYuanBeiJi extends CharacterSummonBase {
+    private static final String CharacterName = "海原贝戟";
     private final QianJi qianJi;
     private final StatusChaoSheng chaoSheng;
 
     public HaiYuanBeiJi(QianJi qianJi, BattlePane bp, int level) {
-        this.isSummon = true;
-        this.name = CharacterName;
+        super(bp, CharacterName, qianJi.team);
         this.qianJi = qianJi;
+        this.isSummon = true;
+
+        bp.addCharacter(this);
 
         // 标记千姬已经放下锤子,并且移除免控
         qianJi.setHaiYuanBeiJi(this);
         qianJi.removeStatus(QianJi.StatusQianJiIgnoreDebuff.class);
-        // 在bp中添加角色和鬼火监听器
-        reset(bp);
-        bp.addCharacter(this);
 
-        // 该状态同时完成免疫debuff和无法行动
+        // 该状态同时完成免疫debuff
         chaoSheng = new StatusChaoSheng(this, level);
         addStatus(chaoSheng);
         // 继承千姬100%的防御
@@ -70,18 +70,6 @@ class HaiYuanBeiJi extends Character {
             this.addStatus(new StatusJianShang(this));
             qianJi.addStatus(new StatusJianShang(qianJi));
         }
-
-        fillSkills();
-    }
-
-    @Override
-    protected String getDefaultBaseAttack() {
-        return null;
-    }
-
-    @Override
-    public void addOwnSkills() {
-
     }
 
     @Override

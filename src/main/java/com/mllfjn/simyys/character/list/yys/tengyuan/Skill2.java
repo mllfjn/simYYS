@@ -11,7 +11,7 @@ import com.mllfjn.simyys.interactive.Interactive;
 import java.util.Optional;
 
 class Skill2 extends Skill {
-    public static final String SkillName = "破阵奏曲";
+    static final String SkillName = "破阵奏曲";
 
     private final int chargeMultiplier;
     private final int chargeDecrease;

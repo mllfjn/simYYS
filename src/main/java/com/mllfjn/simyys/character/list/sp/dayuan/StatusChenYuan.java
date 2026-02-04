@@ -13,8 +13,10 @@ import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import java.util.List;
 
 class StatusChi extends Status implements StatusRunnable, Displayable {
-    public static final String StatusName = "尘缘·赤";
+    static final String StatusName = "尘缘·赤";
+
     private final boolean isLv2;
+
     public StatusChi(DaYuan from, Character belongTo, int level) {
         super(from, belongTo, StatusType.BUFF, StatusForm.YIN_JI);
         setDurationType(StatusDurationType.CHI_XU, 1);
@@ -80,8 +82,10 @@ class StatusChiNewRound extends Status implements ForceChangeCost {
 }
 
 class StatusQing extends Status implements StatusRunnable, Displayable {
-    public static final String StatusName = "尘缘·青";
+    static final String StatusName = "尘缘·青";
+
     private final boolean isLv2;
+
     public StatusQing(DaYuan from, Character belongTo, int level) {
         super(from, belongTo, StatusType.BUFF, StatusForm.YIN_JI);
         setDurationType(StatusDurationType.CHI_XU, 1);

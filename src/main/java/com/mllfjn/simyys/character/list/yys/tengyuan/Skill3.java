@@ -11,7 +11,7 @@ import com.mllfjn.simyys.interactive.Interactive;
 import java.util.Optional;
 
 class Skill3 extends Skill {
-    public static final String SkillName = "神鸟惊弦";
+    static final String SkillName = "神鸟惊弦";
     private static final int costLvYin = 3;
 
     public Skill3(Character belongTo, int level) {

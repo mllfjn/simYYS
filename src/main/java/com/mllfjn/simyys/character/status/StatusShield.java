@@ -5,7 +5,7 @@ import com.mllfjn.simyys.interactive.InteractiveInfo;
 import com.mllfjn.simyys.interactive.TraceableNumber;
 
 public class StatusShield extends Status {
-    public static final String StatusName = "护盾";
+    private static final String StatusName = "护盾";
     private double shield;
 
     public StatusShield(Character from, Character belongTo, double shield) {

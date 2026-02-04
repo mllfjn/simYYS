@@ -7,7 +7,7 @@ import com.mllfjn.simyys.character.skill.Skill;
 import java.util.Optional;
 
 class Skill3_1 extends Skill {
-    public static final String SkillName = "海潮入梦";
+    private static final String SkillName = "海潮入梦";
 
     public Skill3_1(Character belongTo, int level) {
         super(belongTo, level, 0, 0, 3);

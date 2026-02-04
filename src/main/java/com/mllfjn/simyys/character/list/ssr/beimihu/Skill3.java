@@ -18,7 +18,7 @@ import java.util.Optional;
 // √     lv5-伤害无视御魂效果
 
 class Skill3 extends Skill {
-    public static final String SkillName = "日耀时辉";
+    private static final String SkillName = "日耀时辉";
 
     private final int multiplier;
 

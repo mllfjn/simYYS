@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 public abstract class Skill implements Serializable {
-    public static final String[] SKILL_LABEL = new String[]{"普攻", "贰", "叁", "肆", "伍", "陆", "柒", "捌", "玖", "拾"};
+    private static final String[] SKILL_LABEL = new String[]{"普攻", "贰", "叁", "肆", "伍", "陆", "柒", "捌", "玖", "拾"};
 
     private final Character belongTo;
     private final int level;
@@ -66,7 +66,6 @@ public abstract class Skill implements Serializable {
     }
 
     public void use(BattlePane bp) {
-//        bp.onTrigger(new EventWillUseSkill(belongTo, this));
         useBase(bp, true);
     }
 

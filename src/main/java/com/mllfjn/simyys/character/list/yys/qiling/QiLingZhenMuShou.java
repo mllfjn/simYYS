@@ -10,7 +10,7 @@ import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import java.util.List;
 
 class QiLingZhenMuShou {
-    public static final String QiLingName = "镇墓兽";
+    static final String QiLingName = "镇墓兽";
 
     public static void install(Character character) {
         character.addStatus(new StatusQLZMUListener(character));

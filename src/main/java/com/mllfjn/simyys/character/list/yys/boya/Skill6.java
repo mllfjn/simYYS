@@ -4,6 +4,7 @@ import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
+import com.mllfjn.simyys.character.skill.PassiveSkillCanNotSeal;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.AttackType;
 
@@ -15,8 +16,8 @@ import com.mllfjn.simyys.interactive.AttackType;
 // √     lv5-伤害增加至140%,该次伤害不触发
 //      敌方全体的御魂被动效果
 // √     术印:伤害额外提升40%
-class Skill6 extends PassiveSkill {
-    public static final String SkillName = "秘术·豹袭";
+class Skill6 extends PassiveSkillCanNotSeal {
+    static final String SkillName = "秘术·豹袭";
 
     private final int multiplier;
 
@@ -45,16 +46,6 @@ class Skill6 extends PassiveSkill {
         });
 
         log(target);
-    }
-
-    @Override
-    public void enable() {
-
-    }
-
-    @Override
-    protected void disable() {
-
     }
 
     @Override

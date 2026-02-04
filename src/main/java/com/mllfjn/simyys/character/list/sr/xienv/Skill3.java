@@ -11,7 +11,7 @@ import com.mllfjn.simyys.interactive.Interactive;
 import java.util.Optional;
 
 class Skill3 extends Skill {
-    public static final String SkillName = "百蝎之毒";
+    private static final String SkillName = "百蝎之毒";
     private static final int[] multiplier = new int[]{0, 75, 80, 85, 90, 90};
 
     private final Skill2 skill2;

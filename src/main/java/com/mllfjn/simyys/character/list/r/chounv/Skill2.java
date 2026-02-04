@@ -17,7 +17,7 @@ import com.mllfjn.simyys.interactive.StatusSupplier;
 // √    咒火:5%易伤
 
 class Skill2 extends PassiveSkill {
-    public static final String SkillName = "咒火";
+    private static final String SkillName = "咒火";
 
     private final Status status;
 

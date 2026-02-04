@@ -12,7 +12,7 @@ import com.mllfjn.simyys.interactive.Interactive;
 import java.util.Optional;
 
 class Skill2 extends Skill {
-    public static final String SkillName = "汐梦";
+    private static final String SkillName = "汐梦";
     private static final int[] multiplier = new int[]{0, 172, 185, 198, 211, 211};
 
     public Skill2(Character belongTo, int level) {

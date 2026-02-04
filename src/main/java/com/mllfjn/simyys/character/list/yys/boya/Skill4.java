@@ -3,6 +3,7 @@ package com.mllfjn.simyys.character.list.yys.boya;
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.CharacterSummonBase;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.AttributeModifier;
 import com.mllfjn.simyys.character.status.Status;
@@ -19,7 +20,7 @@ import java.util.Optional;
 // √     lv5-释放后提升自身70%行动条
 // √     术印:影分身造成的伤害额外提升阴阳师攻击的20%
 class Skill4 extends Skill {
-    public static final String SkillName = "秘术·影分身";
+    static final String SkillName = "秘术·影分身";
 
     private final int extraMultiplier;
 
@@ -98,17 +99,16 @@ class Skill4 extends Skill {
         }
     }
 
-    static class YinFenShen extends Character {
-        public static final String CharacterName = "影分身";
+    static class YinFenShen extends CharacterSummonBase {
+        private static final String CharacterName = "影分身";
 
         private final int extraMultiplier;
 
         private int times = 0;
 
         public YinFenShen(Character owner, double coefficient, int extraMultiplier) {
-            this.bp = owner.bp;
+            super(owner.bp, CharacterName, owner.team);
             this.extraMultiplier = extraMultiplier;
-            this.name = CharacterName;
 
             this.setInitBaseAttack(owner.getInitBaseAttack() * coefficient);
             this.setInitAdditionAttack(owner.getInitAdditionAttack() * coefficient);
@@ -124,15 +124,6 @@ class Skill4 extends Skill {
                 times = 0;
             }
             times++;
-        }
-
-        @Override
-        protected String getDefaultBaseAttack() {
-            return "";
-        }
-
-        @Override
-        protected void addOwnSkills() {
         }
     }
 }

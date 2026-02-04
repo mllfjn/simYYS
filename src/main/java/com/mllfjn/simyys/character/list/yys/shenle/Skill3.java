@@ -10,7 +10,7 @@ import com.mllfjn.simyys.character.status.*;
 import java.util.Optional;
 
 class Skill3 extends Skill {
-    public static final String SkillName = "通灵·疾风";
+    static final String SkillName = "通灵·疾风";
     public static final int[] multiplier = new int[]{0, 10, 15, 20, 25, 30};
 
     private final int shuYin;

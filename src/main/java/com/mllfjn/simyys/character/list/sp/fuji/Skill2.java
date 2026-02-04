@@ -9,7 +9,7 @@ import com.mllfjn.simyys.character.skill.Skill;
 import java.util.Optional;
 
 class Skill2 extends Skill {
-    public static final String SkillName = "蚀骨";
+    private static final String SkillName = "蚀骨";
 
     public Skill2(Character belongTo, int level) {
         super(belongTo, level, 0, 0, 2);

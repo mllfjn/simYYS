@@ -5,7 +5,7 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
 
 class StatusFJReduceDefense extends Status implements AttributeModifier, Displayable {
-    public static final String StatusName = "缚姬减防";
+    private static final String StatusName = "缚姬减防";
 
     private final int defensePerStack;
     private int stack = 1;

@@ -24,7 +24,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Prediction implements Serializable {
-    public static final String NOT_PREDICTION = "不限";
+    private static final String NOT_PREDICTION = "不限";
     @Serial
     private static final long serialVersionUID = -4891093640103493137L;
 

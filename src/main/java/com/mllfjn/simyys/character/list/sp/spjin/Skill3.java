@@ -17,7 +17,7 @@ import java.util.Optional;
 // √     lv5-攻击怪物时,自身与玄象的单次攻击内伤害系数递增23%
 
 class Skill3 extends Skill {
-    public static final String SkillName = "世间之曲";
+    private static final String SkillName = "世间之曲";
 
     private static final int[] multipliers = new int[]{0, 70, 80, 90, 100, 100};
 

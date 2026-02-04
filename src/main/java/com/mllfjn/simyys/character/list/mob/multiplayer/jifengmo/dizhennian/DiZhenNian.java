@@ -4,24 +4,16 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.battleevent.EventActionDone;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.PropertyKey;
-import com.mllfjn.simyys.character.list.mob.multiplayer.DisplayDamageRecord;
-import com.mllfjn.simyys.character.list.mob.multiplayer.InfoDisplay;
 import com.mllfjn.simyys.character.list.mob.multiplayer.MultiStageManager;
+import com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.CharacterJiFengMoBase;
 import com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.citiao.CiTiao6DouHun;
-import com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.citiao.CiTiaoManager;
 import com.mllfjn.simyys.character.propertygetter.*;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.instance.StatusBoss;
 import com.mllfjn.simyys.character.status.instance.StatusCanNotChoose;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
-import com.mllfjn.simyys.collections.StringGroup;
-import javafx.event.EventHandler;
-import javafx.scene.input.MouseEvent;
 
 import java.util.List;
-
-import static com.mllfjn.simyys.character.PropertyKey.JI_FENG_MO_CI_TIAO_KEY;
 
 /**
  * 地震鲶相关机制
@@ -37,11 +29,8 @@ import static com.mllfjn.simyys.character.PropertyKey.JI_FENG_MO_CI_TIAO_KEY;
  *
  */
 
-public class DiZhenNian extends Character {
+public class DiZhenNian extends CharacterJiFengMoBase {
     public static final String CharacterName = "地震鲶";
-
-    private final MultiStageManager multiStageManager = new MultiStageManager(this);
-    public final DisplayDamageRecord display = new DisplayDamageRecord(this);
 
     private StatusBuff.BuffType buffType;
     private Character hongNing;
@@ -51,45 +40,18 @@ public class DiZhenNian extends Character {
 
 
     @Override
-    public PropertiesMap getProperties() {
-        PropertiesMap map = super.getProperties();
-        ((PropertyInput) map.get(PropertyKey.GENERAL_SPEED_KEY)).setValue("175");
-        ((PropertyInput) map.get(PropertyKey.GENERAL_YU_HUN_ATTACK_KEY)).setValue("0");
-        ((PropertyInput) map.get(PropertyKey.GENERAL_HP_KEY)).setValue("9999999999");
-        ((PropertyInput) map.get(PropertyKey.GENERAL_DEFENSE_KEY)).setValue("704");
-        ((PropertyInput) map.get(PropertyKey.GENERAL_CRIT_RATE_KEY)).setValue("10");
-        ((PropertyInput) map.get(PropertyKey.GENERAL_CRIT_POWER_KEY)).setValue("150");
-        ((PropertyInput) map.get(PropertyKey.GENERAL_EFFECT_HIT_RATE_KEY)).setValue("0");
-        ((PropertyInput) map.get(PropertyKey.GENERAL_EFFECT_RESIST_RATE_KEY)).setValue("0");
-        ((PropertyCheck) map.get(PropertyKey.GENERAL_MOB_KEY)).setValue(true);
-        ((PropertyCheck) map.get(PropertyKey.GENERAL_TEAM_KEY)).setValue(true);
-
-        map.put(JI_FENG_MO_CI_TIAO_KEY, new PropertySelectSingle(StringGroup.JI_FENG_MO_CI_TIAO));
-        return map;
-    }
-
-    @Override
     public void init(PropertiesHolder propertiesHolder, BattlePane bp) {
         super.init(propertiesHolder, bp);
 
-        addStatus(new StatusBoss(this));
-
-        String ciTiao = propertiesHolder.propertiesMap.get(JI_FENG_MO_CI_TIAO_KEY).getString();
-        CiTiaoManager.installCiTiao(ciTiao, this);
-
-        // 添加转阶段事件
-        addStage();
-
         // 皮糙肉厚
         // 斗魂15万,其他25万
+        String ciTiao = propertiesHolder.propertiesMap.get(PropertyKey.JI_FENG_MO_CI_TIAO_KEY).getString();
         addStatus(new StatusPiCaoRouHou(this, (ciTiao != null && ciTiao.equals(CiTiao6DouHun.CiTiaoName)) ? 150000 : 250000));
 
         // 给对面放一个妖琴
         // 特殊:为了实现妖琴锁技能和红绿标,如果敌方有一个100速的妖琴,则将其替换为特殊妖琴,并继承其锁定
         SpecialYaoQin.add(bp, team);
 
-        // 添加伤害显示器
-        addStatus(display);
 
         // 先机召唤4只海坊主
         bp.atBattleStart(() -> {
@@ -99,11 +61,17 @@ public class DiZhenNian extends Character {
         });
     }
 
-    private void addStage() {
+    @Override
+    protected String getJiFengMoSpeed() {
+        return "175";
+    }
+
+    @Override
+    protected void addStage(MultiStageManager multiStageManager) {
         // 第一次转阶段
         multiStageManager.addStage(() -> {
             // 召唤一个猴子
-            this.bp.addCharacter(new HouZi(this.bp, this));
+            this.bp.addCharacter(new HouZi(this));
             // 自己进入无法选中状态
             addStatus(new StatusCanNotChoose(this, this));
             // 如果在凝视立即吐出光球
@@ -112,8 +80,8 @@ public class DiZhenNian extends Character {
             canNingShi = false;
         });
 
-        // 猴子死亡会自己触发
-        // 第二次转阶段是鸟居
+        // 猴子死亡会自行进入下一阶段
+        // TODO第二次转阶段是鸟居
     }
 
     void houZiDie() {
@@ -130,21 +98,6 @@ public class DiZhenNian extends Character {
         for (Character character : list) {
             character.removeStatus(StatusBuff.class);
         }
-    }
-
-    @Override
-    protected EventHandler<MouseEvent> getEventHandler() {
-        return multiStageManager.getEventHandler();
-    }
-
-    @Override
-    protected InfoDisplay getInfoDisplay() {
-        return display;
-    }
-
-    @Override
-    protected String getDefaultBaseAttack() {
-        return "8000";
     }
 
     @Override

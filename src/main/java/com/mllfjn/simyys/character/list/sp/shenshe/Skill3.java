@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 class Skill3 extends Skill {
-    public static final String SkillName = "审判仪式";
+    private static final String SkillName = "审判仪式";
 
     public Skill3(Character belongTo, int level) {
         super(belongTo, level, 3, 0, 3);

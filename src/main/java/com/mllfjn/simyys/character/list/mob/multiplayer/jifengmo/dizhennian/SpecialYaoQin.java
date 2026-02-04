@@ -53,9 +53,9 @@ class SpecialYaoQin extends YaoQin {
     }
 
     static class SpecialYaoQinSkill2 extends Skill {
-        public static final String SkillName = "余音";
+        private static final String SkillName = "余音";
 
-        public SpecialYaoQinSkill2(com.mllfjn.simyys.character.Character belongTo) {
+        public SpecialYaoQinSkill2(Character belongTo) {
             super(belongTo, 5, 0, 15, 2);
         }
 

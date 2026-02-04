@@ -13,15 +13,15 @@ import java.util.Optional;
 
 public class BoYa extends CharacterYYSBase {
     public static final String CharacterName = "源博雅";
-    public static final String[] SkillNames = new String[]{
+    private static final String[] SkillNames = new String[]{
             Skill1.SkillName, Skill2.SkillName, Skill3.SkillName,
             Skill4.SkillName, Skill5.SkillName, Skill6.SkillName,
             Skill7.SkillName, Skill8.SkillName};
-    public static final String[] DefaultSkillLevels = new String[]{
+    private static final String[] DefaultSkillLevels = new String[]{
             "5", "0", "5",
             "5", "5", "5",
             "5", "1"};
-    public static final String[] DefaultShuYin = new String[]{
+    private static final String[] DefaultShuYin = new String[]{
             "0", "0", "3",
             "0", "0", "0",
             "0", "0"};

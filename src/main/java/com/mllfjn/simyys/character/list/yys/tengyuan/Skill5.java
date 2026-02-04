@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 class Skill5 extends Skill {
-    public static final String SkillName = "琴月齐鸣";
+    static final String SkillName = "琴月齐鸣";
     private static final int[] increase = new int[]{0, 10, 13, 16, 20, 20};
 
     public Skill5(Character belongTo, int level) {

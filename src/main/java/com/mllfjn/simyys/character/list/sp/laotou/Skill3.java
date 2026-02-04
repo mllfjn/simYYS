@@ -14,7 +14,7 @@ import com.mllfjn.simyys.character.status.StatusDurationType;
 import java.util.Optional;
 
 class Skill3 extends Skill {
-    public static final String SkillName = "委以重任";
+    private static final String SkillName = "委以重任";
     private final int[] multiplier = new int[]{0, 14, 16, 18, 20, 20};
 
     public Skill3(Character belongTo, int level) {

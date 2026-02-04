@@ -6,7 +6,7 @@ import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
 
 class Skill1 extends Skill1PuGongBase {
-    public static final String SkillName = "缠心";
+    private static final String SkillName = "缠心";
     private static final int[] multiplier = {0, 70, 80, 90, 100, 100};
 
     private final int defensePerStack;

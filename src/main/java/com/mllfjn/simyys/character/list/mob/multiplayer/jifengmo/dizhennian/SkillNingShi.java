@@ -15,8 +15,8 @@ import java.util.Map;
 import java.util.Optional;
 
 class SkillNingShi extends Skill {
-    public static final String SkillName = "凝视";
-    public static final int skillID = 5;
+    private static final String SkillName = "凝视";
+    static final int skillID = 5;
 
     private final Skill skillGuangQiu;
 

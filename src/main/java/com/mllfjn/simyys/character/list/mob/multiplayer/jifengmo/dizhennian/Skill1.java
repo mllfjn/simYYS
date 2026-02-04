@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 class Skill1 extends Skill {
-    public static final String SkillName = "尾鳍攻击";
+    private static final String SkillName = "尾鳍攻击";
 
     public Skill1(Character belongTo) {
         super(belongTo, 0, 0, 0, 1);

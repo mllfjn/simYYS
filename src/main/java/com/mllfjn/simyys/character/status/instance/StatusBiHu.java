@@ -10,7 +10,7 @@ import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.EffectInfo;
 
 public class StatusBiHu extends Status implements StatusRunnable, Displayable {
-    public static final String StatusName = "庇护";
+    private static final String StatusName = "庇护";
 
     private Skill skill = null;
 

@@ -13,7 +13,7 @@ import com.mllfjn.simyys.battleevent.EventActionDone;
 
 // 无法改变生命上限,免疫减益和 TODO 放逐
 public class StatusSheShen extends Status implements IgnoreChangeMaxHp, IgnoreDebuff, PreventDie, InfluenceDamageBeingAttack, Displayable {
-    public static final String text = "蛇神";
+    private static final String text = "蛇神";
     // 变身前的血量和上限
     private final double originalMaxHp;
     private final double originalHp;

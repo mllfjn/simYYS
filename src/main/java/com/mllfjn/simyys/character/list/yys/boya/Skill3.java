@@ -28,7 +28,7 @@ import java.util.Optional;
 // √     术印:秘术·豹眼黑豹释放秘术·穷追[skill8]的概率额外提升8%；额外提升全体友方10%普攻伤害
 
 class Skill3 extends Skill {
-    public static final String SkillName = "秘术·豹眼";
+    static final String SkillName = "秘术·豹眼";
 
     private final int critPower;
     private final int rate;
@@ -92,7 +92,7 @@ class Skill3 extends Skill {
 
     static class StatusBaoYan extends Status implements Displayable, AttributeModifier
             , InfluenceDamageWhenAttack, StatusRunnable {
-        public static final String StatusName = "豹眼";
+        private static final String StatusName = "豹眼";
 
         private final Skill3 skill;
 

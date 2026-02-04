@@ -2,21 +2,24 @@ package com.mllfjn.simyys.character.list.sp.shenshe;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.CharacterSummonBase;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.instance.StatusRejectAllStatusesInstance;
 import com.mllfjn.simyys.interactive.Interactive;
 
 import java.util.Optional;
 
-public class DuoLuoZhiJian extends Character {
-    public static final String CharacterName = "堕落之剑";
+public class DuoLuoZhiJian extends CharacterSummonBase {
+    private static final String CharacterName = "堕落之剑";
     private final ShenShe shenShe;
 
-    public DuoLuoZhiJian(ShenShe shenShe, Character character, BattlePane bp, boolean xianJi) {
+    private final Skill skill = new DLZJSkill1(this);
+
+    public DuoLuoZhiJian(ShenShe shenShe, Character character, boolean xianJi) {
+        super(shenShe.bp, CharacterName, shenShe.team);
         this.isSummon = true;
         this.shenShe = shenShe;
-        name = CharacterName;
-        reset(bp);
+
         // 生命为神堕八岐大蛇攻击的310%
         double hp = shenShe.getAttack() * 3.1;
         setMaxHp(hp, true);
@@ -41,8 +44,6 @@ public class DuoLuoZhiJian extends Character {
 
         bp.addCharacter(this);
         StatusShenSheJianShang.add(shenShe);
-
-        fillSkills();
     }
 
     @Override
@@ -51,13 +52,8 @@ public class DuoLuoZhiJian extends Character {
     }
 
     @Override
-    protected String getDefaultBaseAttack() {
-        return null;
-    }
-
-    @Override
-    public void addOwnSkills() {
-        addSkill(new DLZJSkill1(this));
+    public void round() {
+        skill.useWithoutCost(bp);
     }
 
     @Override

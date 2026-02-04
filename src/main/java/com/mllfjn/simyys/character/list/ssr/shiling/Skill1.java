@@ -8,7 +8,7 @@ import com.mllfjn.simyys.interactive.Interactive;
 
 // √     lv5-若在回合外释放,灼伤敌方,为其附加20%易伤,持续2回合
 class Skill1 extends Skill1PuGongBase {
-    public static final String SkillName = "开锅";
+    private static final String SkillName = "开锅";
 
     public Skill1(Character belongTo, int level) {
         super(belongTo, level);
@@ -29,7 +29,7 @@ class Skill1 extends Skill1PuGongBase {
     }
 
     static class StatusZhuoShang extends Status implements Displayable, AttributeModifier {
-        public static final String StatusName = "灼伤";
+        private static final String StatusName = "灼伤";
 
         public StatusZhuoShang(Character from, Character belongTo) {
             super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);

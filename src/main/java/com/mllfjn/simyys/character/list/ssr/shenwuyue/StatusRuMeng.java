@@ -5,7 +5,7 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
 
 public class StatusRuMeng extends Status implements Displayable, ConditionalReduceCost, AttributeModifier {
-    public static final String StatusName = "入梦";
+    private static final String StatusName = "入梦";
 
     private int stack = 2;
 

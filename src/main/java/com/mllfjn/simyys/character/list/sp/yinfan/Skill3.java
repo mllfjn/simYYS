@@ -21,7 +21,7 @@ import java.util.Optional;
 //       月之洗礼:对敌方全体再次造成攻击153%伤害,本次伤害无视敌方御魂和被动效果
 
 class Skill3 extends Skill {
-    public static final String SkillName = "寂光映月";
+    private static final String SkillName = "寂光映月";
 
     public Skill3(Character belongTo, int level) {
         super(belongTo, level, 3, 0, 3);

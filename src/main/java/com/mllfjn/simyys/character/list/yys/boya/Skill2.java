@@ -18,7 +18,7 @@ import java.util.Optional;
 // √     术印:系数额外提升40,攻击目标增加1(至多增至3)
 
 class Skill2 extends Skill implements YingFenShenCopy {
-    public static final String SkillName = "多重箭";
+    static final String SkillName = "多重箭";
     private static final int[] baseMultiplier = new int[]{0, 100, 110, 120, 130, 130};
 
     private final int realMultiplier;

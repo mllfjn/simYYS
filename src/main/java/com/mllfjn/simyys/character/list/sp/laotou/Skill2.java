@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 class Skill2 extends PassiveSkill {
-    public static final String SkillName = "洪福降临";
+    private static final String SkillName = "洪福降临";
 
     private final StatusAfterRound status;
 

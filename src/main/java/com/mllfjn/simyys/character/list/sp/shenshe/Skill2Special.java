@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 class Skill2Special extends Skill {
-    public static final String SkillName = "蛇神之噬";
+    private static final String SkillName = "蛇神之噬";
 
     public Skill2Special(Character belongTo) {
         super(belongTo, 0, 0, 0, 2);
@@ -45,7 +45,7 @@ class Skill2Special extends Skill {
         getBelongTo().removeSkill(3);
         getBelongTo().addSkill(new Skill3Special(shenShe));
         // 并在原地召唤1把堕落之剑
-        new DuoLuoZhiJian(shenShe, shenShe, bp, false);
+        new DuoLuoZhiJian(shenShe, shenShe, false);
         // 将剩余非召唤物的友方目标献祭为堕落之剑,并夺取其6%的初始攻击
         // 既然献祭之后立马就死而且不能复活,那就没必要减了直接加上就行
         List<Character> teammateShiShen = new CharacterFinder(shenShe)
@@ -56,7 +56,7 @@ class Skill2Special extends Skill {
                 .filter(character -> !character.isHaveStatus(QingNvFang.getStatusClass()))
                 .getList();
         for (Character character : teammateShiShen) {
-            new DuoLuoZhiJian(shenShe, character, bp, true);
+            new DuoLuoZhiJian(shenShe, character, true);
             StatusAddAttack.addAttack((ShenShe) getBelongTo(), character.getInitAttack() * 0.06);
         }
         return Optional.empty();

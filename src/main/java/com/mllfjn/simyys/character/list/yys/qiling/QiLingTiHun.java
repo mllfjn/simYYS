@@ -15,7 +15,7 @@ import com.mllfjn.simyys.interactive.AttackType;
 import java.util.List;
 
 class QiLingTiHun {
-    public static final String QiLingName = "薙魂";
+    static final String QiLingName = "薙魂";
     private static final Skill SKILL = Skill.getInstance(QiLingName);
 
     public static void install(Character character) {

@@ -11,7 +11,7 @@ import com.mllfjn.simyys.interactive.Interactive;
 import java.util.Optional;
 
 class Skill3 extends Skill {
-    public static final String SkillName = "降蛊之瞳";
+    private static final String SkillName = "降蛊之瞳";
     private static final int[] multiplier = {0, 70, 85, 85, 100, 100};
 
     private final int defensePerStack;

@@ -2,33 +2,31 @@ package com.mllfjn.simyys.character.list.r.chounv;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.CharacterSummonBase;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 
-public class CaoRen extends Character {
-    public static final String CharacterName = "诅咒草人";
+public class CaoRen extends CharacterSummonBase {
+    private static final String CharacterName = "诅咒草人";
 
     private static final double[] hpPercent = new double[]{0, 0.1, 0.15, 0.2, 0.25, 0.3};
 
     private final Character bind;
 
     public CaoRen(Character chouNv, Character bind, int level) {
-        this.isSummon = true;
-        this.name = CharacterName;
-        this.bp = chouNv.bp;
-        this.team = bind.team;
+        super(chouNv.bp, CharacterName, bind.team);
         this.bind = bind;
+        this.isSummon = true;
+
         this.setInitSpeed(bind.getSpeed());
 
         this.setInitDefense(bind.getDefence() * 0.5);
         this.setMaxHp(bind.getHp() * hpPercent[level], true);
 
         this.addStatus(new StatusAfterAttack(chouNv, this, bind));
-
-        fillSkills();
     }
 
     public Character getBind() {
@@ -38,16 +36,6 @@ public class CaoRen extends Character {
     @Override
     public boolean isUncontrollable() {
         return true;
-    }
-
-    @Override
-    protected String getDefaultBaseAttack() {
-        return "";
-    }
-
-    @Override
-    protected void addOwnSkills() {
-
     }
 
     static class StatusAfterAttack extends Status implements StatusRunnable, Displayable {

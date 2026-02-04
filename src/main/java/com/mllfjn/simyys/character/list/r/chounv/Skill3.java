@@ -16,7 +16,7 @@ import java.util.Optional;
 // √     lv5-继承生命值增至30%
 
 class Skill3 extends Skill {
-    public static final String SkillName = "草人替身";
+    private static final String SkillName = "草人替身";
 
     public Skill3(Character belongTo, int level) {
         super(belongTo, level, 2, 0, 3);

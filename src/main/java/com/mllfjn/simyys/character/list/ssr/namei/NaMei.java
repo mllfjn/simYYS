@@ -5,10 +5,6 @@ import com.mllfjn.simyys.character.CharacterShiShenBase;
 public class NaMei extends CharacterShiShenBase {
     public static final String CharacterName = "伊邪那美";
 
-    public NaMei() {
-
-    }
-
     @Override
     protected String getDefaultBaseAttack() {
         return "3618";

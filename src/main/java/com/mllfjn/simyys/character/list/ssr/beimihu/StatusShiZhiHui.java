@@ -9,7 +9,7 @@ import com.mllfjn.simyys.character.status.StatusType;
 import java.util.Optional;
 
 public class StatusShiZhiHui extends Status implements Displayable {
-    public static final String StatusName = "时之辉";
+    private static final String StatusName = "时之辉";
 
     private final int level;
 

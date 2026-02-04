@@ -7,7 +7,7 @@ import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
 import com.mllfjn.simyys.interactive.*;
 
 class Skill1 extends Skill1PuGongBase {
-    public static final String SkillName = "基础术式";
+    static final String SkillName = "基础术式";
 
     private final int multiplier;
     private final int rate;
@@ -42,7 +42,7 @@ class Skill1 extends Skill1PuGongBase {
     }
 
     static class StatusLuan extends Status implements InfluenceDamageWhenAttack, Displayable {
-        public static final String StatusName = "符咒·乱";
+        private static final String StatusName = "符咒·乱";
 
         private final double bonus;
 

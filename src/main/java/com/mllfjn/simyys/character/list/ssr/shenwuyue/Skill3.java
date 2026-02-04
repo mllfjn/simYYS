@@ -22,7 +22,7 @@ import java.util.Optional;
 // √     美梦必成:自身初始4件套御魂效果必定触发
 
 class Skill3 extends Skill {
-    public static final String SkillName = "美梦赐予";
+    private static final String SkillName = "美梦赐予";
 
     public Skill3(Character belongTo, int level) {
         super(belongTo, level, level >= 4 ? 0 : 2, 0, 3);
@@ -148,7 +148,7 @@ class Skill3 extends Skill {
     }
 
     static class StatusMeiMengJiangCheng extends Status implements StatusRunnable, Displayable {
-        public static final String StatusName = "美梦将成";
+        private static final String StatusName = "美梦将成";
 
         public StatusMeiMengJiangCheng(Character from, Character belongTo) {
             super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);

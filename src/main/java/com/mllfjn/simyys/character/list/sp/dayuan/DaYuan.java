@@ -4,9 +4,6 @@ import com.mllfjn.simyys.character.CharacterShiShenBase;
 
 public class DaYuan extends CharacterShiShenBase {
     public static final String CharacterName = "纺愿缘结神";
-    public DaYuan() {
-
-    }
 
     @Override
     protected boolean useSkillAuto() {

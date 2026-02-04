@@ -24,7 +24,7 @@ import java.util.Optional;
 // √     lv5-每次造成的伤害增加至80%
 
 class Skill3 extends Skill {
-    public static final String SkillName = "天雷万象";
+    private static final String SkillName = "天雷万象";
 
     private final int multiplier;
     private final int maxZengShang;

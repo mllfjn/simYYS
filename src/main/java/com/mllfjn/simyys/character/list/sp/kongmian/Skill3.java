@@ -23,7 +23,7 @@ import java.util.Optional;
 
 
 class Skill3 extends Skill {
-    public static final String SkillName = "梦虚空境";
+    private static final String SkillName = "梦虚空境";
 
     public Skill3(Character belongTo, int level) {
         super(belongTo, level, 3, 0, 3);
@@ -62,7 +62,7 @@ class Skill3 extends Skill {
     }
 
     static class StatusYiXianMu extends Status implements AttributeModifier, Displayable {
-        public static final String StatusName = "一线目";
+        private static final String StatusName = "一线目";
 
         private final double max;
         private double yuanHen = 0;

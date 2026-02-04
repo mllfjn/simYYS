@@ -12,7 +12,7 @@ import com.mllfjn.simyys.interactive.Interactive;
 import java.util.List;
 
 public class QiLingHuoLing {
-    public static final String QiLingName = "火灵";
+    static final String QiLingName = "火灵";
     private static final Skill SKILL = Skill.getInstance("火灵之力");
 
     public static void install(Character character) {

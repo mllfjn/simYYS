@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 class Skill3 extends Skill {
-    public static final String SkillName = "巨浪";
+    private static final String SkillName = "巨浪";
 
     private final int multiplier;
 

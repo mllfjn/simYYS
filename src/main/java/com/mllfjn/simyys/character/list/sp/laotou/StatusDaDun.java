@@ -10,7 +10,7 @@ import com.mllfjn.simyys.character.status.instance.StatusSleep;
 import java.util.List;
 
 public class StatusDaDun extends StatusSleep implements Displayable {
-    public static final String StatusName = "打盹";
+    private static final String StatusName = "打盹";
 
     public StatusDaDun(Character laoTou, boolean levelGZ4) {
         super(laoTou, laoTou);

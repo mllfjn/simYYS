@@ -1,6 +1,5 @@
 package com.mllfjn.simyys.character.list.ssr.beimihu;
 
-import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.CharacterShiShenBase;
 
 import java.util.Optional;

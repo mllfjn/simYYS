@@ -6,7 +6,7 @@ import com.mllfjn.simyys.interactive.InteractiveInfo;
 import com.mllfjn.simyys.character.status.StatusShield;
 
 class StatusShenWuHuDun extends StatusShield implements Displayable {
-    public static final String StatusName = "蜃气护盾";
+    private static final String StatusName = "蜃气护盾";
 
     private int count = 3;
 

@@ -5,7 +5,7 @@ import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.interactive.StatusSupplier;
 
 public class StatusStun extends Status implements CrowdControl, Displayable {
-    public static final String StatusName = "眩晕";
+    private static final String StatusName = "眩晕";
 
     public StatusStun(Character from, Character belongTo, int duration) {
         super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);

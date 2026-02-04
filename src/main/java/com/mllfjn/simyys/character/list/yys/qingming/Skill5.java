@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 class Skill5 extends Skill {
-    public static final String SkillName = "符咒·灭";
+    static final String SkillName = "符咒·灭";
 
     private static final int[] baseBonus = new int[]{0, 15, 20, 25, 30, 30};
 
@@ -45,7 +45,7 @@ class Skill5 extends Skill {
     }
 
     static class StatusMie extends Status implements AttributeModifier, Displayable {
-        public static final String StatusName = "灭";
+        private static final String StatusName = "灭";
         private final int bonus;
 
         public StatusMie(Character from, Character belongTo, int duration, int bonus) {

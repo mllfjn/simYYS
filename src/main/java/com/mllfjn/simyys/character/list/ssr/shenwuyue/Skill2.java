@@ -16,7 +16,7 @@ import com.mllfjn.simyys.character.status.*;
 // √     梦神：增益,印记.上限5层,使幻境中的友方获得12%增伤
 
 class Skill2 extends PassiveSkill {
-    public static final String SkillName = "织梦曲";
+    private static final String SkillName = "织梦曲";
     private static final int[] perStacks = new int[]{0, 12, 14, 16, 18, 18};
 
     public Skill2(ShenWuYue belongTo, int level) {

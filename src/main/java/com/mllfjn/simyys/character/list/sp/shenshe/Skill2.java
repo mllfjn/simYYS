@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 class Skill2 extends Skill {
-    public static final String SkillName = "神堕之力";
+    private static final String SkillName = "神堕之力";
     private int continuousUse;
 
     public Skill2(Character belongTo, int level) {

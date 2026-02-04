@@ -10,7 +10,7 @@ import com.mllfjn.simyys.character.skill.PassiveSkill;
 // lv5-驱散概率提升至100%
 
 class Skill2 extends PassiveSkill {
-    public static final String SkillName = "泉涌";
+    private static final String SkillName = "泉涌";
 
     public Skill2(Character belongTo, int level) {
         super(belongTo, level, 2);

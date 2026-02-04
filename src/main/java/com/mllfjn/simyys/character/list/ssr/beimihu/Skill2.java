@@ -25,7 +25,7 @@ import java.util.Optional;
 
 
 class Skill2 extends Skill {
-    public static final String SkillName = "溯回时隙";
+    private static final String SkillName = "溯回时隙";
 
     public Skill2(Character belongTo, int level) {
         super(belongTo, level, 2, 0, 2);

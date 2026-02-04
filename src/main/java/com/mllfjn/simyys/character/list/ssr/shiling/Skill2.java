@@ -22,7 +22,7 @@ import java.util.List;
 // √     lv5-初始暴击伤害最高的友方回合内若选择敌方单体目标,食灵使用普攻进行助战
 
 class Skill2 extends PassiveSkill {
-    public static final String SkillName = "热浪";
+    private static final String SkillName = "热浪";
 
     private final double multiplier;
 

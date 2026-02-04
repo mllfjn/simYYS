@@ -14,7 +14,7 @@ import com.mllfjn.simyys.interactive.InteractiveInfo;
 import java.util.List;
 
 class Skill2 extends PassiveSkill {
-    public static final String SkillName = "以毒攻毒";
+    private static final String SkillName = "以毒攻毒";
     private boolean enable = false;
 
     private final StatusXieDuSpecialOnXieNv status;

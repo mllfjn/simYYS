@@ -15,7 +15,7 @@ import com.mllfjn.simyys.interactive.AttackType;
 import java.util.List;
 
 class StatusXieDu extends Status implements Displayable, AttributeModifier, StatusRunnable {
-    public static final String StatusName = "蝎毒";
+    private static final String StatusName = "蝎毒";
     public static final Skill SKILL = Skill.getInstance(StatusName);
 
     private final int multiplier;

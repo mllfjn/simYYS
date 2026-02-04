@@ -2,7 +2,7 @@ package com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.shenqilou;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.character.skill.PassiveSkill;
+import com.mllfjn.simyys.character.skill.PassiveSkillCanNotSeal;
 import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.character.status.StatusForm;
@@ -11,24 +11,12 @@ import com.mllfjn.simyys.character.status.Trigger;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
-class SkillPassive2 extends PassiveSkill {
-    public static final String SkillName = "蜃气升腾";
-
-    private final StatusBeAttack statusBeAttack;
+class SkillPassive2 extends PassiveSkillCanNotSeal {
+    private static final String SkillName = "蜃气升腾";
 
     public SkillPassive2(Character belongTo) {
         super(belongTo, 0, 6);
-        this.statusBeAttack = new StatusBeAttack(belongTo);
-    }
-
-    @Override
-    public void enable() {
-        getBelongTo().addStatus(statusBeAttack);
-    }
-
-    @Override
-    public void disable() {
-        getBelongTo().removeStatus(statusBeAttack);
+        belongTo.addStatus(new StatusBeAttack(belongTo));
     }
 
     @Override

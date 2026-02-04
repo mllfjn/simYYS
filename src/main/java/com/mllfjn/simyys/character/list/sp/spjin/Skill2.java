@@ -23,7 +23,7 @@ import java.util.Optional;
 // √     玄象:唤醒后将在初始攻击最高的非召唤物友方回合内协助攻击3次,每次造成攻击62%伤害,攻击后沉眠.若未指定目标,优先攻击生命比例最低的敌方目标
 
 class Skill2 extends PassiveSkill {
-    public static final String SkillName = "与世同奏";
+    private static final String SkillName = "与世同奏";
 
     private final Status listener;
     private final Skill skill;
@@ -93,7 +93,7 @@ class Skill2 extends PassiveSkill {
     }
 
     class StatusXX extends Status implements StatusRunnable, Displayable {
-        public static final String StatusName = "玄象";
+        private static final String StatusName = "玄象";
 
         public StatusXX(Character from, Character belongTo) {
             super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);

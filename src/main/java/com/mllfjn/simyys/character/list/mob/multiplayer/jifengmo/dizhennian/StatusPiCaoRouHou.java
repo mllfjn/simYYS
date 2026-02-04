@@ -12,7 +12,7 @@ import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.AttackType;
 
 class StatusPiCaoRouHou extends Status implements StatusRunnable, Displayable {
-    public static final String StatusName = "皮糙肉厚";
+    private static final String StatusName = "皮糙肉厚";
 
     private final double breakDamage;
 

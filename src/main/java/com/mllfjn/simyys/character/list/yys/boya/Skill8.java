@@ -1,15 +1,15 @@
 package com.mllfjn.simyys.character.list.yys.boya;
 
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.character.skill.PassiveSkill;
+import com.mllfjn.simyys.character.skill.PassiveSkillCanNotSeal;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.ratecontroller.RateController;
 
 // √     使用破魔矢[skill1]攻击时,黑豹有30%概率进行协同攻击,造成源博雅攻击100%伤害
 // √     术印:黑豹的协同攻击概率提升5%
 
-class Skill8 extends PassiveSkill {
-    public static final String SkillName = "秘术·穷追";
+class Skill8 extends PassiveSkillCanNotSeal {
+    static final String SkillName = "秘术·穷追";
 
     private final int rate;
 
@@ -28,16 +28,6 @@ class Skill8 extends PassiveSkill {
         getBelongTo().doInteractive(interactive ->
                 interactive.attackTypical(this, target, 100, AttackType.DAN_TI));
         log(target);
-    }
-
-    @Override
-    public void enable() {
-
-    }
-
-    @Override
-    protected void disable() {
-
     }
 
     @Override

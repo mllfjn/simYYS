@@ -11,8 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 class Skill2 extends Skill {
-    public static final String SkillName = "余音";
-
+    private static final String SkillName = "余音";
     private static final int[] bonus = new int[]{0, 8, 11, 14, 17, 20};
 
     private final int currentBonus;

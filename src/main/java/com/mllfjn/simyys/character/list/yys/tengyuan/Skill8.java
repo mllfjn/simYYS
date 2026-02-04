@@ -3,7 +3,7 @@ package com.mllfjn.simyys.character.list.yys.tengyuan;
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
-import com.mllfjn.simyys.character.skill.PassiveSkill;
+import com.mllfjn.simyys.character.skill.PassiveSkillCanNotSeal;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamageBeingAttack;
 import com.mllfjn.simyys.character.status.determinant.PreventDie;
@@ -11,8 +11,8 @@ import com.mllfjn.simyys.character.status.triggerParam.ParamAddCrowdControl;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 
-class Skill8 extends PassiveSkill {
-    public static final String SkillName = "余音入梦";
+class Skill8 extends PassiveSkillCanNotSeal {
+    static final String SkillName = "余音入梦";
 
     public Skill8(Character belongTo, int level) {
         super(belongTo, level, 8);
@@ -23,21 +23,11 @@ class Skill8 extends PassiveSkill {
     public String getSkillDesc() {
         return """
                 √\t受到致命伤害后,移除自身所有减益并化为梦境意识留存于场上,持续回合数等同于当前场上存活友方式神数
-                √\tlv2-5:触发时获得lv-1层律音
+                √\tlv2-5:触发时获得(lv-1)层律音
                 √\tlv6-触发时获得6层律音
                 √\t梦境意识:免疫伤害,控制效果
-                √\t\t与放逐.当场上仅剩梦境意识时,战斗失败
+                \t\t与放逐.当场上仅剩梦境意识时,战斗失败
                 """;
-    }
-
-    @Override
-    public void enable() {
-
-    }
-
-    @Override
-    protected void disable() {
-
     }
 
     @Override

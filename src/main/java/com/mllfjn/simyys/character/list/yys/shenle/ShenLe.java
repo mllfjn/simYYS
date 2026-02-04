@@ -9,13 +9,9 @@ import com.mllfjn.simyys.character.propertygetter.PropertyMultiInput;
 
 public class ShenLe extends CharacterYYSBase {
     public static final String CharacterName = "神乐";
-    public static final String[] SkillNames = new String[]{Skill1.SkillName, Skill3.SkillName};
-    public static final String[] DefaultSkillLevels = new String[]{"5", "5"};
-    public static final String[] DefaultShuYin = new String[]{"0", "3"};
-
-    public ShenLe() {
-
-    }
+    private static final String[] SkillNames = new String[]{Skill1.SkillName, Skill3.SkillName};
+    private static final String[] DefaultSkillLevels = new String[]{"5", "5"};
+    private static final String[] DefaultShuYin = new String[]{"0", "3"};
 
     @Override
     public PropertiesMap getProperties() {

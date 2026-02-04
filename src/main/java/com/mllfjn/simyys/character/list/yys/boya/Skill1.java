@@ -6,7 +6,7 @@ import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
 
 class Skill1 extends Skill1PuGongBase implements YingFenShenCopy {
-    public static final String SkillName = "破魔矢";
+    static final String SkillName = "破魔矢";
     private static final int[] baseMultiplier = new int[]{0, 100, 110, 120, 130, 140};
 
     private final int multiplier;

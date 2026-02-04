@@ -13,7 +13,7 @@ import java.util.Optional;
 import java.util.Set;
 
 class Skill2 extends Skill {
-    public static final String SkillName = "神赐之吻";
+    private static final String SkillName = "神赐之吻";
     private boolean useFront = false;
     private final boolean awakening;
 

@@ -9,10 +9,10 @@ import com.mllfjn.simyys.character.propertygetter.*;
 public class YuanLaiGuang extends Character {
     public static final String CharacterName = "源赖光";
 
-    public static final String[] SkillNames = new String[]{
+    private static final String[] SkillNames = new String[]{
             Skill1.SkillName, Skill4.SkillName, Skill5.SkillName, Skill6Passive.SkillName, Skill7Passive.SkillName};
-    public static final String[] DefaultSkillLevels = new String[]{"5", "5", "5", "1", "5"};
-    public static final String[] DefaultShuYin = new String[]{"0", "0", "3", "0", "0"};
+    private static final String[] DefaultSkillLevels = new String[]{"5", "5", "5", "1", "5"};
+    private static final String[] DefaultShuYin = new String[]{"0", "0", "3", "0", "0"};
 
     @Override
     public PropertiesMap getProperties() {

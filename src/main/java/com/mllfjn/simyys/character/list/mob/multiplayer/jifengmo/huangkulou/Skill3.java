@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 class Skill3 extends Skill {
-    public static final String SkillName = "刀剑乱舞";
+    private static final String SkillName = "刀剑乱舞";
 
     public Skill3(Character belongTo) {
         super(belongTo, 0, 2, 4, 3);
@@ -43,7 +43,7 @@ class Skill3 extends Skill {
     }
 
     static class StatusDefense extends Status implements AttributeModifier, Displayable {
-        public static final String StatusName = "破防";
+        private static final String StatusName = "破防";
 
         public StatusDefense(Character from, Character belongTo) {
             super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);

@@ -10,7 +10,7 @@ import com.mllfjn.simyys.interactive.Interactive;
 import java.util.Optional;
 
 class Skill3 extends Skill {
-    public static final String SkillName = "绀连击";
+    private static final String SkillName = "绀连击";
 
     public Skill3(Character belongTo) {
         super(belongTo, 0, 3, 4, 3);

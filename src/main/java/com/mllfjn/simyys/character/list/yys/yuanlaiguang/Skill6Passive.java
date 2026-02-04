@@ -2,7 +2,7 @@ package com.mllfjn.simyys.character.list.yys.yuanlaiguang;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.character.skill.PassiveSkill;
+import com.mllfjn.simyys.character.skill.PassiveSkillCanNotSeal;
 import com.mllfjn.simyys.character.status.Displayable;
 import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.StatusShield;
@@ -11,15 +11,16 @@ import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.InteractiveInfo;
 
-class Skill6Passive extends PassiveSkill {
-    public static final String SkillName = "鬼胄";
+class Skill6Passive extends PassiveSkillCanNotSeal {
+    static final String SkillName = "鬼胄";
 
     private final StatusShieldGZ status;
     private StatusGZFS statusGZFS;
 
     public Skill6Passive(Character belongTo, int shuYin) {
         super(belongTo, 0, 6);
-        status = new StatusShieldGZ(belongTo);
+        status = new StatusShieldGZ(belongTo, shuYin);
+        belongTo.addStatus(status);
     }
 
     public void fuShen(Character target) {
@@ -31,18 +32,8 @@ class Skill6Passive extends PassiveSkill {
         target.addStatus(statusGZFS);
     }
 
-    public void setAbsorb(double absorb) {
-        status.setAbsorb(absorb);
-    }
-
-    @Override
-    public void enable() {
-        getBelongTo().addStatus(status);
-    }
-
-    @Override
-    public void disable() {
-        getBelongTo().removeStatus(status);
+    public void addAbsorb(double addAbsorb) {
+        status.addAbsorb(addAbsorb);
     }
 
     @Override
@@ -51,17 +42,18 @@ class Skill6Passive extends PassiveSkill {
     }
 
     static class StatusShieldGZ extends StatusShield implements StatusRunnable, Displayable {
-        public static final String StatusName = "鬼兵部";
+        private static final String StatusName = "鬼兵部";
         private double maxShield;
-        private double absorb = 0.3;
+        private double absorb;
 
-        public StatusShieldGZ(Character character) {
+        public StatusShieldGZ(Character character, int shuYin) {
             super(character, character, 0);
+            absorb = 0.3 + shuYin * 0.05;
             reset();
         }
 
-        public void setAbsorb(double newAbsorb) {
-            this.absorb = newAbsorb;
+        public void addAbsorb(double addAbsorb) {
+            this.absorb += addAbsorb;
         }
 
         private void reset() {

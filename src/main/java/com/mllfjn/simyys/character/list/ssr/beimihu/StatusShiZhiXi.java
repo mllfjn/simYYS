@@ -6,8 +6,6 @@ import com.mllfjn.simyys.character.status.StatusForm;
 import com.mllfjn.simyys.character.status.StatusType;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
 import com.mllfjn.simyys.interactive.AttackInfo;
-import com.mllfjn.simyys.interactive.AttackType;
-import com.mllfjn.simyys.interactive.InteractiveInfo;
 
 public class StatusShiZhiXi extends Status implements InfluenceDamageWhenAttack {
     public static final String StatusName = "时之隙";

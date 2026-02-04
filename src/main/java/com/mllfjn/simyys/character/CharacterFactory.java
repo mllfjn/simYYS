@@ -3,6 +3,7 @@ package com.mllfjn.simyys.character;
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.dizhennian.DiZhenNian;
 import com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.huangkulou.HuangKuLou;
+import com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.tuzhizhu.TuZhiZhu;
 import com.mllfjn.simyys.character.list.r.chounv.ChouNv;
 import com.mllfjn.simyys.character.list.sp.fuji.FuJi;
 import com.mllfjn.simyys.character.list.sp.laotou.LaoTou;
@@ -85,6 +86,7 @@ public class CharacterFactory {
         Map<String, Class<? extends Character>> mapMob = new LinkedHashMap<>();
         characterMap.put("怪物", mapMob);
         mapMob.put(ShenQiLou.CharacterName, ShenQiLou.class);
+        mapMob.put(TuZhiZhu.CharacterName, TuZhiZhu.class);
         mapMob.put(HuangKuLou.CharacterName, HuangKuLou.class);
         mapMob.put(DiZhenNian.CharacterName, DiZhenNian.class);
     }

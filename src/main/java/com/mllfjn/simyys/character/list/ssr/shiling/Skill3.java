@@ -31,7 +31,7 @@ import java.util.Optional;
 // √         对单目标伤害最多不超过友方出场式神初始总攻击的3000%
 
 class Skill3 extends Skill {
-    public static final String SkillName = "梦想料理";
+    private static final String SkillName = "梦想料理";
 
     private double xiangShiLimit;
 
@@ -70,7 +70,7 @@ class Skill3 extends Skill {
 
     static class StatusYongCan extends Status implements Displayable, StatusRunnable
             , InfluenceDamageWhenAttack, InfluenceDamageBeingAttack {
-        public static final String StatusName = "用餐";
+        private static final String StatusName = "用餐";
 
         private final int level;
         private final double xiangShiLimit;
@@ -160,7 +160,7 @@ class Skill3 extends Skill {
     }
 
     static class StatusBaoShi extends Status implements Displayable {
-        public static final String StatusName = "饱食";
+        private static final String StatusName = "饱食";
 
         private final double num;
         private final boolean extraDamage;

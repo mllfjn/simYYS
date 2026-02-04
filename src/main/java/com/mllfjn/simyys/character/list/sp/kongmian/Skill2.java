@@ -25,7 +25,7 @@ import java.util.Optional;
 //      黑光:通用,印记:移除一线目和自身所有减益,将[skill3]替换成[skill3Special],恢复100%生命,攻击时额外无视200点防御并附加15%吸血效果
 
 class Skill2 extends Skill {
-    public static final String SkillName = "表里之相";
+    private static final String SkillName = "表里之相";
     private double max;
 
     public Skill2(Character belongTo, int level) {
@@ -92,7 +92,7 @@ class Skill2 extends Skill {
     }
 
     static class StatusWeiMian extends Status implements AttributeModifier, Displayable {
-        public static final String StatusName = "未面";
+        private static final String StatusName = "未面";
 
         private int stack;
 

@@ -11,7 +11,7 @@ import java.util.Optional;
 
 // 这个技能虽然从冷却和消耗上来看像是普攻,但是普攻似乎只有攻击单体目标这一种形式,所以不算作普攻
 class Skill1 extends Skill {
-    public static final String SkillName = "刀锋突刺";
+    private static final String SkillName = "刀锋突刺";
 
     public Skill1(Character belongTo) {
         super(belongTo, 0, 0, 0, 1);

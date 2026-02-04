@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 class Skill2 extends Skill {
-    public static final String SkillName = "毒雾冲击";
+    private static final String SkillName = "毒雾冲击";
 
     public Skill2(Character belongTo) {
         super(belongTo, 0, 0, 4, 2);
@@ -60,7 +60,7 @@ class Skill2 extends Skill {
     }
 
     static class StatusDuShang extends Status implements StatusRunnable, Displayable {
-        public static final String StatusName = "毒伤";
+        private static final String StatusName = "毒伤";
 
         public StatusDuShang(Character from, Character belongTo) {
             super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
@@ -100,7 +100,7 @@ class Skill2 extends Skill {
     }
 
     static class StatusJinLiao extends Status implements Displayable, InfluenceNumberBeingHeal {
-        public static final String StatusName = "禁疗";
+        private static final String StatusName = "禁疗";
 
         public StatusJinLiao(Character from, Character belongTo) {
             super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
@@ -132,7 +132,7 @@ class Skill2 extends Skill {
     }
 
     static class StatusResist extends Status implements Displayable, AttributeModifier {
-        public static final String StatusName = "减抗";
+        private static final String StatusName = "减抗";
 
         public StatusResist(Character from, Character belongTo) {
             super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
@@ -170,7 +170,7 @@ class Skill2 extends Skill {
     }
 
     static class StatusAttack extends Status implements Displayable, AttributeModifier {
-        public static final String StatusName = "减攻";
+        private static final String StatusName = "减攻";
 
         public StatusAttack(Character from, Character belongTo) {
             super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
@@ -208,7 +208,7 @@ class Skill2 extends Skill {
     }
 
     static class StatusSpeed extends Status implements Displayable, AttributeModifier {
-        public static final String StatusName = "减速";
+        private static final String StatusName = "减速";
 
         public StatusSpeed(Character from, Character belongTo) {
             super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);

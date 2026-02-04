@@ -4,12 +4,12 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
-import com.mllfjn.simyys.character.skill.PassiveSkill;
+import com.mllfjn.simyys.character.skill.PassiveSkillCanNotSeal;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
-class Skill7 extends PassiveSkill {
-    public static final String SkillName = "调律润心";
+class Skill7 extends PassiveSkillCanNotSeal {
+    static final String SkillName = "调律润心";
 
     public Skill7(TengYuanDaoZhang belongTo) {
         super(belongTo, 1, 7);
@@ -39,16 +39,6 @@ class Skill7 extends PassiveSkill {
             interactive.increaseLocation(belongTo, 5 * count);
             interactive.increaseLocation(locationMax, 5 * count);
         });
-    }
-
-    @Override
-    public void enable() {
-
-    }
-
-    @Override
-    protected void disable() {
-
     }
 
     @Override

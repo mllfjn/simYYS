@@ -7,7 +7,7 @@ import com.mllfjn.simyys.character.status.StatusForm;
 import com.mllfjn.simyys.character.status.StatusType;
 
 class StatusLvYin extends Status implements Displayable {
-    public static final String StatusName = "律音";
+    private static final String StatusName = "律音";
 
     private int maxStack = 6;
     private int stack;

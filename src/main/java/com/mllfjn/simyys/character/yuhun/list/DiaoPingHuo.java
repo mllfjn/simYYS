@@ -10,7 +10,6 @@ import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunSealResponse;
 import com.mllfjn.simyys.interactive.HealInfo;
-import com.mllfjn.simyys.interactive.InteractiveInfo;
 
 import java.util.List;
 

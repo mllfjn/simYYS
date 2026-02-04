@@ -5,7 +5,7 @@ import com.mllfjn.simyys.character.skill.Skill1PuGongBase;
 import com.mllfjn.simyys.interactive.Interactive;
 
 class Skill1 extends Skill1PuGongBase {
-    public static final String SkillName = "湮灭";
+    private static final String SkillName = "湮灭";
     public Skill1(Character belongTo, int level) {
         super(belongTo, level);
     }

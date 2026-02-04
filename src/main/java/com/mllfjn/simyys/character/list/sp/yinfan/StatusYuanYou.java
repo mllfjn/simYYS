@@ -7,7 +7,7 @@ import com.mllfjn.simyys.character.status.*;
 import java.util.Optional;
 
 class StatusYuanYou extends Status implements AttributeModifier, Displayable {
-    public static final String StatusName = "愿佑";
+    private static final String StatusName = "愿佑";
 
     private StatusYuanYou(Character from, Character belongTo) {
         super(from, belongTo, StatusType.BUFF, StatusForm.YIN_JI);

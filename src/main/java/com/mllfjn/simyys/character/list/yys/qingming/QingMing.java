@@ -15,9 +15,9 @@ import java.util.Optional;
 
 public class QingMing extends CharacterYYSBase {
     public static final String CharacterName = "晴明";
-    public static final String[] SkillNames = new String[]{Skill1.SkillName, Skill5.SkillName, Skill8.SkillName};
-    public static final String[] DefaultSkillLevels = new String[]{"5", "5", "5"};
-    public static final String[] DefaultShuYin = new String[]{"0", "3", "3"};
+    private static final String[] SkillNames = new String[]{Skill1.SkillName, Skill5.SkillName, Skill8.SkillName};
+    private static final String[] DefaultSkillLevels = new String[]{"5", "5", "5"};
+    private static final String[] DefaultShuYin = new String[]{"0", "3", "3"};
 
     @Override
     public PropertiesMap getProperties() {

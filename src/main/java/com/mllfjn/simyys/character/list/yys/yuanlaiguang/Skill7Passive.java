@@ -5,8 +5,7 @@ import com.mllfjn.simyys.battleevent.BattleActionListener;
 import com.mllfjn.simyys.battleevent.EventRoundDone;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
-import com.mllfjn.simyys.character.skill.PassiveSkill;
-import com.mllfjn.simyys.character.skill.Skill;
+import com.mllfjn.simyys.character.skill.PassiveSkillCanNotSeal;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
@@ -15,8 +14,8 @@ import com.mllfjn.simyys.interactive.AttackType;
 import java.util.List;
 import java.util.Optional;
 
-class Skill7Passive extends PassiveSkill {
-    public static final String SkillName = "剑之垒";
+class Skill7Passive extends PassiveSkillCanNotSeal {
+    static final String SkillName = "剑之垒";
 
     private int count;
     private BattleActionListener listener;
@@ -92,16 +91,6 @@ class Skill7Passive extends PassiveSkill {
 
     public void refuel() {
         count = 0;
-    }
-
-    @Override
-    public void enable() {
-
-    }
-
-    @Override
-    public void disable() {
-
     }
 
     @Override

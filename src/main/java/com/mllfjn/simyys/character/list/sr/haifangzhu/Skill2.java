@@ -14,7 +14,7 @@ import com.mllfjn.simyys.interactive.HealInfo;
 import java.util.List;
 
 class Skill2 extends PassiveSkill {
-    public static final String SkillName = "祝福之水";
+    private static final String SkillName = "祝福之水";
 
     private final StatusHeal status;
 

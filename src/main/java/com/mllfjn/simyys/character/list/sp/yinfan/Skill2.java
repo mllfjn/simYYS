@@ -23,7 +23,7 @@ import java.util.Optional;
 // √     愿佑:增益,印记:获得因幡辉夜姬暴击伤害和防御属性的30%,最多获得不超过120%暴击伤害和200防御
 
 class Skill2 extends Skill {
-    public static final String SkillName = "愿满夜";
+    private static final String SkillName = "愿满夜";
 
     private final int skill3Level;
 
@@ -138,7 +138,7 @@ class Skill2 extends Skill {
     }
 
     static class StatusYuanLi extends Status implements Displayable, SubstituteProvider {
-        public static final String StatusName = "愿力";
+        private static final String StatusName = "愿力";
 
         private final int skill2Level;
         private final int skill3Level;

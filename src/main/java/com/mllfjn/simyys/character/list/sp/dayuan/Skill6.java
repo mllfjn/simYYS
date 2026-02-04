@@ -3,7 +3,7 @@ package com.mllfjn.simyys.character.list.sp.dayuan;
 import com.mllfjn.simyys.character.Character;
 
 class Skill6 extends SkillJieYuan {
-    public static final String SkillName = "胜天之缘·青";
+    private static final String SkillName = "胜天之缘·青";
 
     public Skill6(Character belongTo) {
         super(belongTo, 6);

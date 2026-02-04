@@ -12,7 +12,7 @@ import com.mllfjn.simyys.character.status.determinant.IgnoreActionIncrease;
 import java.util.Optional;
 
 class Skill2 extends Skill {
-    public static final String SKillName = "守缘刃";
+    private static final String SKillName = "守缘刃";
 
     public Skill2(Character belongTo) {
         super(belongTo, 1, 1, 0, 2);

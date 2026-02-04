@@ -10,15 +10,15 @@ import com.mllfjn.simyys.character.propertygetter.PropertyMultiInput;
 public class TengYuanDaoZhang extends Character {
     public static final String CharacterName = "藤原道长";
 
-    public static final String[] SkillNames = new String[]{
+    private static final String[] SkillNames = new String[]{
             Skill1.SkillName, Skill2.SkillName, Skill3.SkillName,
             Skill4.SkillName, Skill5.SkillName, Skill6.SkillName,
             Skill7.SkillName, Skill8.SkillName};
-    public static final String[] DefaultSkillLevels = new String[]{
+    private static final String[] DefaultSkillLevels = new String[]{
             "5", "0", "0",
             "5", "5", "5",
             "1", "6"};
-    public static final String[] DefaultShuYin = new String[]{
+    private static final String[] DefaultShuYin = new String[]{
             "0", "0", "0",
             "0", "0", "0",
             "0", "0"};
