@@ -3,6 +3,7 @@ package com.mllfjn.simyys.character.list.mob.multiplayer;
 import com.mllfjn.simyys.battleevent.EventActionDone;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.utils.SerializableRunnable;
+import com.mllfjn.simyys.utils.SerializableSupplier;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
@@ -15,19 +16,21 @@ import java.util.Queue;
 
 public class MultiStageManager implements Serializable {
     private final Queue<SerializableRunnable> stageQueue = new LinkedList<>();
+    private final SerializableSupplier<Boolean> canChangeStage;
     private final Character character;
 
     private boolean prepareChangeStage = false;
 
     private transient ContextMenu contextMenu;
 
-    public MultiStageManager(Character character) {
+    public MultiStageManager(Character character, SerializableSupplier<Boolean> canChangeStage) {
+        this.canChangeStage = canChangeStage;
         this.character = character;
     }
 
     public EventHandler<MouseEvent> getEventHandler() {
         return event -> {
-            if (!prepareChangeStage && !stageQueue.isEmpty()) {
+            if (!prepareChangeStage && !stageQueue.isEmpty() && canChangeStage.get()) {
                 getContextMenu().show((Node) event.getSource(), event.getScreenX(), event.getScreenY());
             }
         };

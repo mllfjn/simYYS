@@ -38,7 +38,7 @@ class HaiYuanBeiJi extends CharacterSummonBase {
         // 继承千姬100%的防御
         setInitDefense(qianJi.getInitDefense());
         // 生命值是千姬攻击力的550%
-        setMaxHp(qianJi.getAttack() * 5.5, true);
+        forceSetMaxHp(qianJi.getAttack() * 5.5, true);
         // 放下锤子后开始记录悲歌层数
         qianJi.addStatus(new StatusBeiGe(qianJi));
 

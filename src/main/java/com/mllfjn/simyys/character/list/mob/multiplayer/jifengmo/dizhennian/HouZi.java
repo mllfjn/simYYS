@@ -30,7 +30,7 @@ public class HouZi extends CharacterSummonBase {
         super(owner.bp, CharacterName, owner.team);
         this.owner = owner;
 
-        this.setMaxHp(9999999999.0, true);
+        this.forceSetMaxHp(9999999999L, true);
         setMob(1, 1);
 
         this.setInitDefense(352);

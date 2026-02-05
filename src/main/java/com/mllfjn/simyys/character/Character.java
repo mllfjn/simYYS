@@ -333,6 +333,10 @@ public abstract class Character implements Serializable {
             return;
         }
 
+        forceSetMaxHp(num, replenish);
+    }
+
+    public void forceSetMaxHp(double num, boolean replenish) {
         maxHp = num;
         if (replenish) {
             hp = maxHp;

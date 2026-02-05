@@ -24,7 +24,7 @@ public class CaoRen extends CharacterSummonBase {
         this.setInitSpeed(bind.getSpeed());
 
         this.setInitDefense(bind.getDefence() * 0.5);
-        this.setMaxHp(bind.getHp() * hpPercent[level], true);
+        this.forceSetMaxHp(bind.getHp() * hpPercent[level], true);
 
         this.addStatus(new StatusAfterAttack(chouNv, this, bind));
     }

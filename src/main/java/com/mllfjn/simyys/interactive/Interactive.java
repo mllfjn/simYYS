@@ -165,7 +165,7 @@ public class Interactive {
                 defense = target.getDefence();
             }
             double realDefense = Math.max(0, defense - owner.getIgnoreDefense());
-            traceableNumber.mul(300.0 / (300 + realDefense), realDefense + "防御");
+            traceableNumber.mul(300.0 / (300 + realDefense), (int) realDefense + "防御");
         }
 
         // 一般增伤乘区

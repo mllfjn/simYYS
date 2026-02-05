@@ -22,7 +22,7 @@ public class DuoLuoZhiJian extends CharacterSummonBase {
 
         // 生命为神堕八岐大蛇攻击的310%
         double hp = shenShe.getAttack() * 3.1;
-        setMaxHp(hp, true);
+        forceSetMaxHp(hp, true);
         // 其余属性继承原式神
         this.setInitBaseAttack(character.getInitBaseAttack());
         this.setInitAdditionAttack(character.getInitAdditionAttack());

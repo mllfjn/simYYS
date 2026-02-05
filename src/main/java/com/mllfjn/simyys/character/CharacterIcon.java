@@ -216,7 +216,7 @@ public class CharacterIcon implements Serializable {
         Menu menuSetAttribute = new Menu("设置属性");
         menuSetAttribute.getItems().addAll(
                 CustomInputMenuItem.of("最大生命值", number -> {
-                    character.setMaxHp(number, false);
+                    character.forceSetMaxHp(number, false);
                     update();
                 }),
                 CustomInputMenuItem.of("当前生命值", number -> {

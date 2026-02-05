@@ -13,9 +13,11 @@ import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 
 public abstract class CharacterJiFengMoBase extends Character {
+    public boolean canChangeStage;
 
-    private final MultiStageManager multiStageManager = new MultiStageManager(this);
+    private final MultiStageManager multiStageManager = new MultiStageManager(this, () -> this.canChangeStage);
     private final DisplayDamageRecord display = new DisplayDamageRecord(this);
+
 
     @Override
     public PropertiesMap getProperties() {
