@@ -158,8 +158,14 @@ public class Interactive {
 
         // 防御
         if (attackInfo.isCalDefence()) {
-            double realDefense = Math.max(0, target.getDefence() - owner.getIgnoreDefense());
-            traceableNumber.mul(300.0 / (300 + realDefense), "防御");
+            double defense;
+            if (attackInfo.getAttackType() == AttackType.JIAN_JIE) {
+                defense = target.getDefenceForJianJieShangHai();
+            } else {
+                defense = target.getDefence();
+            }
+            double realDefense = Math.max(0, defense - owner.getIgnoreDefense());
+            traceableNumber.mul(300.0 / (300 + realDefense), realDefense + "防御");
         }
 
         // 一般增伤乘区

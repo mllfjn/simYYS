@@ -55,7 +55,7 @@ public class AttackInfo extends InteractiveInfo {
         AttackInfo attackInfo = new AttackInfo(attacker, skill, target, AttackType.JIAN_JIE, basicNumber);
 
         attackInfo.calYuHun = false;
-        if (target.getDefence() - target.getIgnoreDefense() == 0) {
+        if (target.getDefenceForJianJieShangHai() - target.getIgnoreDefense() <= 0) {
             attackInfo.setCrit(true);
         }
 

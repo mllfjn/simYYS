@@ -7,32 +7,20 @@ import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
-import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.InteractiveInfo;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-class SkillNingShi extends Skill {
+class Skill4 extends Skill {
     private static final String SkillName = "凝视";
-    static final int skillID = 5;
 
-    private final Skill skillGuangQiu;
+    private final Skill2 skillGuangQiu;
 
-    public SkillNingShi(Character belongTo) {
-        super(belongTo, 0, 0, 0, 5);
-        skillGuangQiu = new Skill(belongTo, 0, 0, 0, 0) {
-            @Override
-            public String getName() {
-                return "光球";
-            }
-
-            @Override
-            public Optional<Character> usePrivate(BattlePane bp) {
-                return Optional.empty();
-            }
-        };
+    public Skill4(Character belongTo, Skill2 skillGuangQiu) {
+        super(belongTo, 0, 0, 0, 4);
+        this.skillGuangQiu = skillGuangQiu;
     }
 
     @Override
@@ -94,36 +82,12 @@ class SkillNingShi extends Skill {
         }
 
         public void tuGuangQiu() {
-            DiZhenNian diZhenNian = (DiZhenNian) belongTo;
-            if (diZhenNian.isBeforeHouZi()) {
-                diZhenNian.getSkill(SkillNingShi.skillID).ifPresent(skill -> skill.setCooling(2));
-            }
-
             Optional<Character> oC = map.entrySet().stream()
-                    .filter(entry -> entry.getKey() != diZhenNian.getHongNing())
+                    .filter(entry -> entry.getKey() != ((DiZhenNian) belongTo).getHongNing())
                     .max(Map.Entry.comparingByValue())
                     .map(Map.Entry::getKey);
 
-            oC.ifPresent(character -> {
-                character.getStatus(StatusDZNBuffsDebuff.class).ifPresentOrElse(
-                        statusDebuff -> {
-                            // 已经有了BUFF
-                            int duration = statusDebuff.getDuration();
-                            AttackInfo info = AttackInfo
-                                    .createRealAttack(character, SkillNingShi.this.skillGuangQiu, character
-                                            , (c1, c2) -> duration * 0.3 * character.getMaxHp());
-                            info.setCanThroughShield(true);
-                            character.doInteractive(interactive -> interactive.attack(info));
-                            // 红凝
-                            character.addStatus(new StatusHongNing(belongTo, character));
-                        },
-                        () -> character.addStatus(new StatusDZNBuffsDebuff(diZhenNian, character)));
-                skillGuangQiu.log(character);
-                Optional<StatusBuff> oSBuff = character.getStatus(StatusBuff.class);
-                if (oSBuff.isEmpty()) {
-                    character.addStatus(new StatusBuff(belongTo, character, diZhenNian.getBuffType(), 7));
-                }
-            });
+            oC.ifPresent(c -> Skill4.this.skillGuangQiu.tuGuangQiu(Skill4.this, c));
         }
 
         @Override

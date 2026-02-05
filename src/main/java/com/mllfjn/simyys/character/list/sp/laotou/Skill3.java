@@ -44,7 +44,7 @@ class Skill3 extends Skill {
 
         target.getStatus(StatusYuHunTransfer.class).ifPresentOrElse(statusYHT -> {
             // 若目标未处于控制效果,则使其获得新的回合并在该回合结束后移除御魂转移效果
-            if (target.isNotUnderCrowdControl()) {
+            if (!target.isUnderCrowdControl()) {
                 interactive.getNewRound(target);
                 statusYHT.setDurationType(StatusDurationType.CHI_XU, 1);
             } else {

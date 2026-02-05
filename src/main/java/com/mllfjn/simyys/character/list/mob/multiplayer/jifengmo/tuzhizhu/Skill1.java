@@ -16,14 +16,14 @@ class Skill1 extends Skill1PuGongBase {
     public String getSkillDesc() {
         return """
                 √\t对目标造成攻击力100%的伤害
-                \t并使该目标中毒5回合,每回合造成土蜘蛛攻击10%的伤害,最多叠加3层
+                √\t并使该目标中毒5回合,每回合造成土蜘蛛攻击10%的伤害,最多叠加3层
                 """;
     }
 
     @Override
     public void usePrivate(Interactive interactive, Character target) {
         interactive.attackTypical(this, target, 100, AttackType.DAN_TI);
-        // TODO:中毒
+        StatusTZZPoisoning.addTZZPoisoning(getBelongTo(), target, 5);
     }
 
     @Override

@@ -43,15 +43,9 @@ public class DiZhenNian extends CharacterJiFengMoBase {
     public void init(PropertiesHolder propertiesHolder, BattlePane bp) {
         super.init(propertiesHolder, bp);
 
-        // 皮糙肉厚
-        // 斗魂15万,其他25万
-        String ciTiao = propertiesHolder.propertiesMap.get(PropertyKey.JI_FENG_MO_CI_TIAO_KEY).getString();
-        addStatus(new StatusPiCaoRouHou(this, (ciTiao != null && ciTiao.equals(CiTiao6DouHun.CiTiaoName)) ? 150000 : 250000));
-
         // 给对面放一个妖琴
         // 特殊:为了实现妖琴锁技能和红绿标,如果敌方有一个100速的妖琴,则将其替换为特殊妖琴,并继承其锁定
         SpecialYaoQin.add(bp, team);
-
 
         // 先机召唤4只海坊主
         bp.atBattleStart(() -> {
@@ -59,6 +53,18 @@ public class DiZhenNian extends CharacterJiFengMoBase {
                 bp.addCharacter(new SpecialHaiFangZhu(bp, team, this, type));
             }
         });
+
+        addSkill(new Skill1(this));
+        Skill2 skill2 = new Skill2(this);
+        addSkill(skill2);
+        // 皮糙肉厚
+        // 斗魂15万,其他25万
+        String ciTiao = propertiesHolder.propertiesMap.get(PropertyKey.JI_FENG_MO_CI_TIAO_KEY).getString();
+        addSkill(new Skill3(this,
+                (ciTiao != null && ciTiao.equals(CiTiao6DouHun.CiTiaoName)) ? 150000 : 250000));
+        addSkill(new Skill4(this, skill2));
+        addSkill(new Skill5(this));
+        addSkill(new Skill6(this));
     }
 
     @Override
@@ -75,8 +81,8 @@ public class DiZhenNian extends CharacterJiFengMoBase {
             // 自己进入无法选中状态
             addStatus(new StatusCanNotChoose(this, this));
             // 如果在凝视立即吐出光球
-            getStatus(SkillNingShi.StatusNingShiRecordDamage.class)
-                    .ifPresent(SkillNingShi.StatusNingShiRecordDamage::delete);
+            getStatus(Skill4.StatusNingShiRecordDamage.class)
+                    .ifPresent(Skill4.StatusNingShiRecordDamage::delete);
             canNingShi = false;
         });
 
@@ -102,14 +108,13 @@ public class DiZhenNian extends CharacterJiFengMoBase {
 
     @Override
     protected void addOwnSkills() {
-        addSkill(new Skill1(this));
-        addSkill(new Skill2(this));
-        addSkill(new SkillNingShi(this));
+
     }
 
     @Override
     protected boolean useSkillAuto() {
-        return tryUseSkill(SkillNingShi.skillID) || tryUseSkill(2) || tryUseSkill(1);
+        // 凝视,波浪翻涌,尾鳍攻击
+        return tryUseSkill(4) || tryUseSkill(5) || tryUseSkill(1);
     }
 
     private void setBuffType(StatusBuff.BuffType buffType) {
@@ -127,7 +132,7 @@ public class DiZhenNian extends CharacterJiFengMoBase {
             bp.addActionListener(this, event -> {
                 if (event instanceof EventActionDone) {
                     canNingShi = true;
-                    getSkill(SkillNingShi.skillID).ifPresent(skill -> skill.use(bp));
+                    getSkill(4).ifPresent(skill -> skill.use(bp));
                     return true;
                 }
                 return false;

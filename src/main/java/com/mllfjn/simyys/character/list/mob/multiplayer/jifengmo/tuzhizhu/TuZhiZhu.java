@@ -11,8 +11,6 @@ public class TuZhiZhu extends CharacterJiFengMoBase {
     @Override
     public void init(PropertiesHolder propertiesHolder, BattlePane bp) {
         super.init(propertiesHolder, bp);
-
-        // 召唤右方大腿,中间背部,左方钳子
     }
 
     @Override
@@ -22,7 +20,14 @@ public class TuZhiZhu extends CharacterJiFengMoBase {
 
     @Override
     protected void addOwnSkills() {
-
+        addSkill(new Skill1(this));
+        addSkill(new Skill2(this));
+        Skill4 skill4 = new Skill4(this);
+        addSkill(skill4);
+        addSkill(new Skill3(this, skill4));
+        addSkill(new Skill5(this));
+        addSkill(new Skill6(this));
+        addSkill(new Skill7(this));
     }
 
     @Override

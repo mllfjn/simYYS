@@ -6,8 +6,8 @@ import com.mllfjn.simyys.character.skill.PassiveSkillCanNotSeal;
 class Skill7 extends PassiveSkillCanNotSeal {
     private static final String SkillName = "坚韧";
 
-    public Skill7(Character belongTo, int level, int skillID) {
-        super(belongTo, level, skillID);
+    public Skill7(Character belongTo) {
+        super(belongTo, -1, 7);
     }
 
     @Override

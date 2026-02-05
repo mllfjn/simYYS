@@ -18,6 +18,9 @@ import com.mllfjn.simyys.character.status.determinant.IgnoreChangeMaxHp;
 import com.mllfjn.simyys.character.status.determinant.IgnoreDebuff;
 import com.mllfjn.simyys.character.status.determinant.PreventDie;
 import com.mllfjn.simyys.character.status.determinant.RejectAllStatuses;
+import com.mllfjn.simyys.character.status.instance.StatusBind;
+import com.mllfjn.simyys.character.status.instance.StatusConfusion;
+import com.mllfjn.simyys.character.status.instance.StatusPoisoning;
 import com.mllfjn.simyys.character.status.triggerParam.ParamBeforeAttack;
 import com.mllfjn.simyys.character.status.triggerParam.ParamLocationChange;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
@@ -162,6 +165,18 @@ public abstract class Character implements Serializable {
 
     public double getDefence() {
         return TraversalOrderManager.getAttribute(Attribute.DEFENCE, defence, statuses);
+    }
+
+    public double getDefenceForJianJieShangHai() {
+        double defence = this.defence;
+        for (Status status : statuses) {
+            if (status instanceof AttributeModifier am && am.isAffectAttribute(Attribute.DEFENCE)) {
+                defence += am.getInfluence(Attribute.DEFENCE);
+            } else if (status instanceof StatusPoisoning sp) {
+                defence += sp.getDefenseForJianJieShangHai();
+            }
+        }
+        return Math.max(0, defence);
     }
 
     public double getCritRate() {
@@ -349,7 +364,7 @@ public abstract class Character implements Serializable {
     }
 
     public void fillSkills() {
-        addSkill(SkillAuto.INSTANCE);
+        skills.add(0, SkillAuto.INSTANCE);
         addOwnSkills();
     }
 
@@ -448,6 +463,25 @@ public abstract class Character implements Serializable {
     }
 
     public void round() {
+        // TODO :一次遍历完成控制效果确认
+        // 束缚:记录一次普攻,但是没有效果
+        Optional<StatusBind> oSBind = getStatus(StatusBind.class);
+        if (oSBind.isPresent()) {
+            oSBind.get().doBind();
+            return;
+        }
+
+        // 混乱:使用普攻随机攻击一个目标,包括队友
+        Optional<StatusConfusion> oSConfusion = getStatus(StatusConfusion.class);
+        if (oSConfusion.isPresent()) {
+            oSConfusion.get().doConfusion();
+            return;
+        }
+
+        if (isUnderCrowdControl()) {
+            return;
+        }
+
         if (lockSkill != 0) {
             Optional<Skill> os = getSkill(lockSkill);
             if (os.isPresent() && os.get().tryUse(bp)) {
@@ -521,10 +555,11 @@ public abstract class Character implements Serializable {
     }
 
     public Optional<Skill1PuGongBase> getPuGong() {
-        for (Skill skill : skills) {
-            if (skill instanceof Skill1PuGongBase s1) {
-                return Optional.of(s1);
-            }
+        if (skills.size() < 2) {
+            return Optional.empty();
+        }
+        if (skills.get(1) instanceof Skill1PuGongBase s1) {
+            return Optional.of(s1);
         }
         return Optional.empty();
     }
@@ -871,20 +906,20 @@ public abstract class Character implements Serializable {
 
     /**
      * 该方法仅用于确定在battlePane中算作需要控制的回合.
-     * 如果需要确认是否处于控制状态: {@link Character#isNotUnderCrowdControl()}
+     * 如果需要确认是否处于控制状态: {@link Character#isUnderCrowdControl()}
      */
     public boolean isUncontrollable() {
         // 如果被控了,无法行动
-        return !isNotUnderCrowdControl();
+        return isUnderCrowdControl();
     }
 
-    public boolean isNotUnderCrowdControl() {
+    public boolean isUnderCrowdControl() {
         for (Status status : getStatuses()) {
             if (status instanceof CrowdControl) {
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     public void statusRun(Trigger trigger, TriggerParam param) {

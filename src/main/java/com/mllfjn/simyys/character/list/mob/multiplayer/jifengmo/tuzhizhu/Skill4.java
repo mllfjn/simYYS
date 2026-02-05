@@ -6,8 +6,8 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
+import com.mllfjn.simyys.character.status.instance.StatusBind;
 import com.mllfjn.simyys.interactive.AttackType;
-import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.ratecontroller.RateController;
 
 import java.util.List;
@@ -24,9 +24,9 @@ class Skill4 extends Skill {
     public String getSkillDesc() {
         return """
                 √\t对全体敌方单位造成攻击力100%伤害
-                \t使目标中毒和速度降低20点,持续1回合(没写概率,但是可以被抵抗的)
+                √\t使目标中毒和速度降低20点,持续1回合
                 √\t并有33%的概率额外击退目标25%的行动条
-                \t有20%基础概率束缚敌方1回合
+                √\t\t有20%基础概率束缚敌方1回合
                 """;
     }
 
@@ -38,21 +38,37 @@ class Skill4 extends Skill {
     @Override
     public Optional<Character> usePrivate(BattlePane bp) {
         Character belongTo = getBelongTo();
-        Interactive interactive = belongTo.getInteractive();
-
         List<Character> list = new CharacterFinder(belongTo)
                 .filterEnemy()
                 .getList();
 
-        interactive.attackTypical(this, list, 100, AttackType.QUN_TI);
+        // 因为有可能回合外释放，保险起见用doInteractive
+        belongTo.doInteractive(interactive -> {
+            interactive.attackTypical(this, list, 100, AttackType.QUN_TI);
 
-        for (Character character : list) {
-            if (RateController.otherWhether(SkillName + "击退" + character.name + "行动条",
-                    "击退", belongTo.bp.calc, 33
-            )) {
-                interactive.decreaseLocation(character, 25);
+            for (Character character : list) {
+                character.addStatus(
+                        new StatusModifyAttribute(belongTo, character, StatusType.DEBUFF, StatusForm.ZHUANG_TAI) {
+                            @Override
+                            public boolean isAffectAttribute(Attribute attribute) {
+                                return attribute == Attribute.SPEED;
+                            }
+
+                            @Override
+                            public double getInfluence(Attribute attribute) {
+                                return -20;
+                            }
+                        });
+                StatusTZZPoisoning.addTZZPoisoning(belongTo, character, 1);
+                if (RateController.otherWhether(SkillName + "击退" + character.name + "行动条",
+                        "击退", belongTo.bp.calc, 33
+                )) {
+                    interactive.decreaseLocation(character, 25);
+                }
             }
-        }
+
+            interactive.effect(this, list, 20, true, StatusBind.getSupplier(1));
+        });
 
         return Optional.empty();
     }

@@ -208,8 +208,11 @@ public class BattlePane {
         CustomTextField round = new CustomTextField();
         Button skip = new Button("跳过回合(S)");
         skip.setOnAction(event -> {
-            skip(Utils.parseIntOrDefault(round.getText(), 0));
-            repaint();
+            int skipRound = Utils.parseIntOrDefault(round.getText(), 0);
+            if (skipRound > 0) {
+                skip(skipRound);
+                repaint();
+            }
         });
 
         KeyCombination kcq = new KeyCodeCombination(KeyCode.Q);

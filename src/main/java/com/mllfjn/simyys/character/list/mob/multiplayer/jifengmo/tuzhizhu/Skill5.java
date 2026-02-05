@@ -2,16 +2,25 @@ package com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.tuzhizhu;
 
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.CharacterSummonBase;
+import com.mllfjn.simyys.character.list.mob.multiplayer.ClearHpHandler;
 import com.mllfjn.simyys.character.skill.PassiveSkillCanNotSeal;
 import com.mllfjn.simyys.character.status.*;
+import javafx.event.EventHandler;
+import javafx.scene.input.MouseEvent;
 
 class Skill5 extends PassiveSkillCanNotSeal {
     private static final String SkillName = "破损";
 
     public Skill5(TuZhiZhu belongTo) {
         super(belongTo, -1, 5);
+        CharacterSummonBase characterTui = new CharacterSummonBase(belongTo.bp, "土蜘蛛-腿", belongTo.team) {
+            private final ClearHpHandler clearHpHandler = new ClearHpHandler(this);
 
-        belongTo.bp.addCharacter(new CharacterSummonBase(belongTo.bp, "土蜘蛛-腿", belongTo.team) {
+            @Override
+            protected EventHandler<MouseEvent> getEventHandler() {
+                return clearHpHandler.getEventHandler();
+            }
+
             @Override
             protected void dieHandle() {
                 belongTo.addStatus(
@@ -27,9 +36,15 @@ class Skill5 extends PassiveSkillCanNotSeal {
                             }
                         });
             }
-        });
+        };
+        CharacterSummonBase characterBei = new CharacterSummonBase(belongTo.bp, "土蜘蛛-背", belongTo.team) {
+            private final ClearHpHandler clearHpHandler = new ClearHpHandler(this);
 
-        belongTo.bp.addCharacter(new CharacterSummonBase(belongTo.bp, "土蜘蛛-背", belongTo.team) {
+            @Override
+            protected EventHandler<MouseEvent> getEventHandler() {
+                return clearHpHandler.getEventHandler();
+            }
+
             @Override
             protected void dieHandle() {
                 belongTo.addStatus(
@@ -45,9 +60,15 @@ class Skill5 extends PassiveSkillCanNotSeal {
                             }
                         });
             }
-        });
+        };
+        CharacterSummonBase characterQian = new CharacterSummonBase(belongTo.bp, "土蜘蛛-钳", belongTo.team) {
+            private final ClearHpHandler clearHpHandler = new ClearHpHandler(this);
 
-        belongTo.bp.addCharacter(new CharacterSummonBase(belongTo.bp, "土蜘蛛-钳", belongTo.team) {
+            @Override
+            protected EventHandler<MouseEvent> getEventHandler() {
+                return clearHpHandler.getEventHandler();
+            }
+
             @Override
             protected void dieHandle() {
                 belongTo.addStatus(
@@ -63,8 +84,17 @@ class Skill5 extends PassiveSkillCanNotSeal {
                             }
                         });
             }
-        });
+        };
 
+        characterTui.setMaxHp(9999999999L, true);
+        characterBei.setMaxHp(9999999999L, true);
+        characterQian.setMaxHp(9999999999L, true);
+
+        belongTo.bp.atBattleStart(() -> {
+            belongTo.bp.addCharacter(characterTui);
+            belongTo.bp.addCharacter(characterBei);
+            belongTo.bp.addCharacter(characterQian);
+        });
     }
 
     @Override
