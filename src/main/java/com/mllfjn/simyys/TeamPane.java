@@ -24,6 +24,8 @@ public class TeamPane implements Serializable {
     private GuiHuo guiHuo;
     private boolean mobTeam = true;
 
+    public int totalActTimes = 0;
+
     public Pane getPane() {
         if (root == null) {
             center = new GridPane();

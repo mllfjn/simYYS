@@ -3,6 +3,7 @@ package com.mllfjn.simyys.character.list.yys.qiling;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.PropertyKey;
 import com.mllfjn.simyys.character.propertygetter.PropertiesMap;
+import com.mllfjn.simyys.character.propertygetter.PropertyRequire;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.collections.StringGroup;
 
@@ -14,7 +15,11 @@ public class QiLingFactory {
     )};
 
     public static void addQiLing(PropertiesMap map, Character character) {
-        String s = map.get(PropertyKey.QI_LING_KEY).getString();
+        PropertyRequire propertyRequire = map.get(PropertyKey.QI_LING_KEY);
+        if (propertyRequire == null) {
+            return;
+        }
+        String s = propertyRequire.getString();
         if (s == null || s.isEmpty()) {
             return;
         }
@@ -23,5 +28,9 @@ public class QiLingFactory {
             case QiLingZhenMuShou.QiLingName -> QiLingZhenMuShou.install(character);
             case QiLingTiHun.QiLingName -> QiLingTiHun.install(character);
         }
+    }
+
+    public static void yuHunEffect(Character character, String name) {
+        character.bp.interactive.addYuHunEffectLog(character, name);
     }
 }

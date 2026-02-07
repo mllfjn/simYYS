@@ -290,7 +290,8 @@ public class BattlePane {
         situation.characterActing.setLockSkillAndAuto();
 
         interactive.display();
-        log.characterAct(situation.characterActing);
+        situation.teamPane[situation.characterActing.team].totalActTimes++;
+        log.characterAct(situation.characterActing, 1);
         log.next();
     }
 
@@ -393,7 +394,6 @@ public class BattlePane {
             repaint();
             log.prev();
         }
-
     }
 
     private void skip(int round) {
@@ -429,7 +429,8 @@ public class BattlePane {
             onTrigger(new EventRoundDone(situation.characterActing));
             getNextActor();
             interactive.display();
-            log.characterAct(situation.characterActing);
+            situation.teamPane[situation.characterActing.team].totalActTimes++;
+            log.characterAct(situation.characterActing, situation.teamPane[situation.characterActing.team].totalActTimes);
         } while (situation.characterActing.isUncontrollable());
 
         log.next();

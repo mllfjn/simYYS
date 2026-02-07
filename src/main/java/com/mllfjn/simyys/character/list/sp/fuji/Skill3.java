@@ -14,11 +14,8 @@ class Skill3 extends Skill {
     private static final String SkillName = "降蛊之瞳";
     private static final int[] multiplier = {0, 70, 85, 85, 100, 100};
 
-    private final int defensePerStack;
-
-    public Skill3(Character belongTo, int level, int defensePerStack) {
+    public Skill3(Character belongTo, int level) {
         super(belongTo, level, 3, 0, 3);
-        this.defensePerStack = defensePerStack;
     }
 
     @Override
@@ -42,7 +39,7 @@ class Skill3 extends Skill {
 
     @Override
     public Optional<Character> usePrivate(BattlePane bp) {
-        Character belongTo = getBelongTo();
+        FuJi belongTo = (FuJi) getBelongTo();
         Interactive interactive = belongTo.getInteractive();
         Character target = new CharacterFinder(belongTo)
                 .filterEnemy()
@@ -50,7 +47,7 @@ class Skill3 extends Skill {
 
         for (int i = 0; i < 3; i++) {
             interactive.attackTypical(this, target, multiplier[getLevel()], AttackType.DAN_TI);
-            StatusFJReduceDefense.addStack(belongTo, target, defensePerStack);
+            belongTo.attack(target);
         }
         return Optional.of(target);
     }

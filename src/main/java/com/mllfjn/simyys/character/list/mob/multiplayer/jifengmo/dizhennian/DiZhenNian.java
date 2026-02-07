@@ -47,13 +47,6 @@ public class DiZhenNian extends CharacterJiFengMoBase {
         // 特殊:为了实现妖琴锁技能和红绿标,如果敌方有一个100速的妖琴,则将其替换为特殊妖琴,并继承其锁定
         SpecialYaoQin.add(bp, team);
 
-        // 先机召唤4只海坊主
-        bp.atBattleStart(() -> {
-            for (StatusBuff.BuffType type : StatusBuff.BuffType.values()) {
-                bp.addCharacter(new SpecialHaiFangZhu(bp, team, this, type));
-            }
-        });
-
         addSkill(new Skill1(this));
         Skill2 skill2 = new Skill2(this);
         addSkill(skill2);
@@ -65,6 +58,13 @@ public class DiZhenNian extends CharacterJiFengMoBase {
         addSkill(new Skill4(this, skill2));
         addSkill(new Skill5(this));
         addSkill(new Skill6(this));
+
+        // 先机召唤4只海坊主
+        bp.atBattleStart(() -> {
+            for (StatusBuff.BuffType type : StatusBuff.BuffType.values()) {
+                bp.addCharacter(new SpecialHaiFangZhu(bp, team, this, type));
+            }
+        });
     }
 
     @Override

@@ -85,6 +85,7 @@ class QiLingTiHun {
         }
 
         private void action() {
+            QiLingFactory.yuHunEffect(belongTo, QiLingName);
             List<Character> enemies = new CharacterFinder(belongTo)
                     .filterEnemy()
                     .getList();

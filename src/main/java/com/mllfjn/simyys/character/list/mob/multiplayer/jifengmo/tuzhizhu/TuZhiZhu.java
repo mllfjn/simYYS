@@ -1,19 +1,20 @@
 package com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.tuzhizhu;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.list.mob.multiplayer.MultiStageManager;
 import com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.CharacterJiFengMoBase;
-import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
 
 public class TuZhiZhu extends CharacterJiFengMoBase {
     public static final String CharacterName = "土蜘蛛";
 
     Skill6 skill6;
 
+    public TuZhiZhu() {
+        canChangeStage = false;
+    }
 
     @Override
-    public void init(PropertiesHolder propertiesHolder, BattlePane bp) {
-        super.init(propertiesHolder, bp);
+    protected boolean useSkillAuto() {
+        return tryUseSkill(4);
     }
 
     @Override

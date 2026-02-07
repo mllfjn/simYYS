@@ -133,6 +133,8 @@ class Skill2 extends PassiveSkill {
                             multiplier += 23;
                         }
                     }
+                    from.statusRun(Trigger.USED_SKILL, new ParamUseSkill(Skill2.this.skill, target));
+                    Skill2.this.useDone();
                 });
 
                 if (skill3 != null && getLevel() >= 5) {

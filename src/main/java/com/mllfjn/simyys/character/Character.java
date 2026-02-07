@@ -680,12 +680,14 @@ public abstract class Character implements Serializable {
         setHp(getHp() + num);
     }
 
-    /*public void dispelAllBuff() {
-        getStatuses().removeIf(status -> status.statusType == StatusType.BUFF && status.statusForm == StatusForm.ZHUANG_TAI);
-    }*/
-
     public void dispelAllDebuff() {
-        getStatuses().removeIf(status -> status.statusType == StatusType.DEBUFF && status.statusForm == StatusForm.ZHUANG_TAI);
+        getStatuses().removeIf(status -> {
+            if (status.statusType == StatusType.DEBUFF && status.statusForm == StatusForm.ZHUANG_TAI) {
+                status.beforeDelete();
+                return true;
+            }
+            return false;
+        });
     }
 
     public void dispelDeBuff(int count) {

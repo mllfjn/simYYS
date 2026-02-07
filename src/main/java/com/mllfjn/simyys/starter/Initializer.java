@@ -86,21 +86,8 @@ public class Initializer extends Application {
             prediction.predictionOrder.clear();
             // TODO 还要清空红绿标和锁技能
         });
-        /*borderPane.addControlButton("额外红绿标", e -> {
-            // TODO
-//            ListViewWithBasicController<ExtraFlag> listViewPane = new ListViewWithBasicController<>(extraFlags);
-            *//*listViewPane.setDefaultControlButtons(e -> {
-                TextField tfName = new TextField();
-                TextField tfTeam = new TextField();
-                TextField tfRound = new TextField();
-            });*//*
-        });
-        borderPane.addControlButton("额外锁技能", e -> {
 
-
-        });*/
-
-        borderPane.addControlButton("设置行动顺序", e -> prediction.showPrediction(scene, items));
+        borderPane.addControlButton("设置预计顺序", e -> prediction.showPrediction(scene, items));
         borderPane.addControlButton("检查是否符合", e -> prediction.check(items
                 , stage, () -> stage.setScene(scene)), scene, KeyCode.C);
 
@@ -293,15 +280,6 @@ public class Initializer extends Application {
 
     private File getDirectory() {
         File directory = new File("save");
-        /*String osName = System.getProperty("os.name").toLowerCase();
-        String userHome = System.getProperty("user.home");
-        File directory;
-        if (osName.contains("win")) {
-            String winDocsPath = System.getenv("USERPROFILE") + "\\Documents";
-            directory = new File(winDocsPath);
-        } else {
-            directory = new File("save");
-        }*/
         if (!directory.exists() && !directory.mkdir()) {
             Utils.error("创建目录失败");
         }

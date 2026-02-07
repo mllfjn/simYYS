@@ -66,7 +66,9 @@ class Skill5 extends Skill {
         return Optional.empty();
     }
 
-    static class StatusAttack extends Status implements AttributeModifier {
+    static class StatusAttack extends Status implements AttributeModifier, Displayable {
+        private final static String StatusName = "琴月";
+
         private final double ratio;
 
         public StatusAttack(Character from, Character belongTo, double ratio, int duration) {
@@ -84,6 +86,11 @@ class Skill5 extends Skill {
         @Override
         public double getInfluence(Attribute attribute) {
             return belongTo.getInitBaseAttack() * ratio;
+        }
+
+        @Override
+        public String getDisplayText() {
+            return StatusName + getDuration();
         }
     }
 }

@@ -78,7 +78,7 @@ public class TextFlowLog extends ScrollPane {
         }
     }
 
-    public void characterAct(Character characterActing) {
+    public void characterAct(Character characterActing, int totalTimes) {
         this.addText(DIVIDER, TextType.ROUND, TextColor.NORMAL, FontSize.NORMAL);
 
         StringBuilder sb = new StringBuilder(characterActing.name);
@@ -87,6 +87,8 @@ public class TextFlowLog extends ScrollPane {
         if (characterActing.isHaveStatus(StatusShiZhiXi.class)) {
             sb.append("(").append(StatusShiZhiXi.StatusName).append(")");
         }
+
+        sb.append("(队伍总次数").append(totalTimes).append(")");
 
         this.addText(sb + "\n", TextType.ROUND, TextColor.NORMAL, FontSize.BIG);
     }

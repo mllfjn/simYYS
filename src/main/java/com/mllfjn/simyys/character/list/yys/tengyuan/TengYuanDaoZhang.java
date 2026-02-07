@@ -3,9 +3,8 @@ package com.mllfjn.simyys.character.list.yys.tengyuan;
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.PropertyKey;
-import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
-import com.mllfjn.simyys.character.propertygetter.PropertiesMap;
-import com.mllfjn.simyys.character.propertygetter.PropertyMultiInput;
+import com.mllfjn.simyys.character.list.yys.qiling.QiLingFactory;
+import com.mllfjn.simyys.character.propertygetter.*;
 
 public class TengYuanDaoZhang extends Character {
     public static final String CharacterName = "藤原道长";
@@ -29,8 +28,20 @@ public class TengYuanDaoZhang extends Character {
     public PropertiesMap getProperties() {
         PropertiesMap map = super.getProperties();
 
-        PropertyKey.addYYSSkill(map, SkillNames, DefaultSkillLevels, DefaultShuYin);
+        ((PropertyInput) map.get(PropertyKey.GENERAL_SPEED_KEY)).setValue("142");
+        ((PropertyInput) map.get(PropertyKey.GENERAL_YU_HUN_ATTACK_KEY)).setValue("5568");
+        ((PropertyInput) map.get(PropertyKey.GENERAL_HP_KEY)).setValue("20826");
+        ((PropertyInput) map.get(PropertyKey.GENERAL_DEFENSE_KEY)).setValue("806");
+        ((PropertyInput) map.get(PropertyKey.GENERAL_CRIT_RATE_KEY)).setValue("20");
+        ((PropertyInput) map.get(PropertyKey.GENERAL_CRIT_POWER_KEY)).setValue("150");
+        ((PropertyInput) map.get(PropertyKey.GENERAL_EFFECT_HIT_RATE_KEY)).setValue("0");
+        ((PropertyInput) map.get(PropertyKey.GENERAL_EFFECT_RESIST_RATE_KEY)).setValue("0");
 
+        map.put(PropertyKey.QI_LING_KEY, new PropertySelectSingle(QiLingFactory.QI_LING));
+
+        ((PropertyCheck) map.get(PropertyKey.GENERAL_YYS_KEY)).setValue(true);
+
+        PropertyKey.addYYSSkill(map, SkillNames, DefaultSkillLevels, DefaultShuYin);
         return map;
     }
 
@@ -72,7 +83,6 @@ public class TengYuanDaoZhang extends Character {
     @Override
     public boolean isUncontrollable() {
         if (isHaveStatus(Skill4.StatusZouLv.class)) {
-            statusLvYin.addStack(1);
             return true;
         } else {
             return super.isUncontrollable();
@@ -80,8 +90,17 @@ public class TengYuanDaoZhang extends Character {
     }
 
     @Override
+    public void round() {
+        if (isHaveStatus(Skill4.StatusZouLv.class)) {
+            statusLvYin.addStack(1);
+        } else {
+            super.round();
+        }
+    }
+
+    @Override
     protected String getDefaultBaseAttack() {
-        return "";
+        return "3256";
     }
 
     @Override

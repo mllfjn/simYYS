@@ -29,6 +29,7 @@ class QiLingZhenMuShou {
 
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
+            QiLingFactory.yuHunEffect(belongTo, QiLingName);
             List<Character> list = new CharacterFinder(belongTo)
                     .filterTeammate()
                     .getList();

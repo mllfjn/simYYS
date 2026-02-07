@@ -47,6 +47,8 @@ class Skill4 extends Skill {
                 .filterTeammate()
                 .getList();
 
+        getBelongTo().addStatus(new StatusZouLv(getBelongTo(), duration[level]));
+
         for (Character character : list) {
             character.addStatus(
                     new StatusIncreaseAttack(getBelongTo(), character, duration[level], ratio[level] / 100.0));
