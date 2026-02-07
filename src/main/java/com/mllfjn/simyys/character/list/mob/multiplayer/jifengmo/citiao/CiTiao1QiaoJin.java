@@ -72,6 +72,8 @@ public class CiTiao1QiaoJin {
 
     // 巧劲要用状态类生效在BOSS身上，因为只有BOSS本体直接受到伤害才会触发这个效果，打在盾上不生效
     static class StatusQJListener extends Status implements StatusRunnable {
+        private final Skill SKILL = Skill.getInstance(CiTiao1QiaoJin.CiTiaoName);
+
         public StatusQJListener(Character character) {
             super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
         }
@@ -104,9 +106,9 @@ public class CiTiao1QiaoJin {
                     attacker.doInteractive(interactive -> {
                         for (Character target : targets) {
                             interactive.attack(AttackInfo.createRealAttack(attacker
-                                    , Skill.getInstance(CiTiao1QiaoJin.CiTiaoName)
-                                    , target, (c1, c2) -> number * 0.4));
+                                    , SKILL, target, (c1, c2) -> number * 0.4));
                         }
+                        SKILL.useDone();
                     });
                 }
             }

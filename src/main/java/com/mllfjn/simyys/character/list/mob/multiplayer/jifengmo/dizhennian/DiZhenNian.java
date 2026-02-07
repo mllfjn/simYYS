@@ -126,7 +126,7 @@ public class DiZhenNian extends CharacterJiFengMoBase {
                     .getList();
 
             for (Character character : list) {
-                bp.removeCharacter(character);
+                character.die();
             }
 
             bp.addActionListener(this, event -> {

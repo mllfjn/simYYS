@@ -4,6 +4,7 @@ import com.mllfjn.simyys.battleevent.*;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.CharacterFactory;
 import com.mllfjn.simyys.character.PropertyKey;
+import com.mllfjn.simyys.collections.SafeList;
 import com.mllfjn.simyys.customnode.CustomTextField;
 import com.mllfjn.simyys.customnode.TextFlowLog;
 import com.mllfjn.simyys.guihuo.MobGuiHuo;
@@ -505,20 +506,26 @@ public class BattlePane {
     }
 
     public void removeCharacterWithoutTrigger(Character character) {
-        situation.removeCharacter(character);
+        situation.characters.remove(character);
     }
 
     public void addActionListener(Character character, BattleActionListener listener) {
-        situation.listenerMap.computeIfAbsent(character, k -> new ArrayList<>()).add(listener);
+        situation.listenerMap.computeIfAbsent(character, k -> new SafeList<>()).add(listener);
     }
 
     public void removeActionListener(Character character, BattleActionListener listener) {
-        situation.listenerMap.get(character).remove(listener);
+        situation.listenerMap.get(character).safeRemove(listener);
     }
 
     public void onTrigger(BattleEvent event) {
-        for (List<BattleActionListener> list : situation.listenerMap.values()) {
-            list.removeIf(listener -> listener.onBattleAction(event));
+        for (SafeList<BattleActionListener> list : situation.listenerMap.values()) {
+            for (BattleActionListener battleActionListener : list) {
+                if (battleActionListener.onBattleAction(event)) {
+                    list.safeRemove(battleActionListener);
+                }
+            }
+            list.endIterator();
+//            list.removeIf(listener -> listener.onBattleAction(event));
         }
     }
 

@@ -28,6 +28,7 @@ class StatusYuanHuo extends Status implements StatusRunnable {
                     .createJianJieAttack(from, SKILL, belongTo, (c1, c2) -> from.getAttack());
             attackInfo.setMultiplier(99);
             interactive.attack(attackInfo);
+            SKILL.useDone();
         });
         return false;
     }

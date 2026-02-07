@@ -1,8 +1,5 @@
 package com.mllfjn.simyys.character.yuhun.list;
 
-import com.mllfjn.simyys.battleevent.BattleActionListener;
-import com.mllfjn.simyys.battleevent.BattleEvent;
-import com.mllfjn.simyys.battleevent.EventActionDone;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.AttributeModifier;
@@ -13,6 +10,7 @@ import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunHitFeedBack;
 import com.mllfjn.simyys.character.yuhun.YuHunSealResponse;
 import com.mllfjn.simyys.character.yuhun.YuHunUnfullMark;
+import com.mllfjn.simyys.interactive.AttackInfo;
 
 public class DiZhenNian extends YuHun implements YuHunUnfullMark, YuHunSealResponse, YuHunHitFeedBack {
     public static final String YuHunName = "地震鲶";
@@ -38,32 +36,22 @@ public class DiZhenNian extends YuHun implements YuHunUnfullMark, YuHunSealRespo
     }
 
     @Override
-    public void hitFeedBack() {
-        status.tackEffect();
+    public void hitFeedBack(AttackInfo info) {
+        status.tackEffect(info);
         yuHunEffect();
     }
 
     static class StatusDiZhenNian extends Status implements AttributeModifier {
         private int stack = 0;
-        private final BattleActionListener listener = new BattleActionListener() {
-            @Override
-            public boolean onBattleAction(BattleEvent event) {
-                if (event instanceof EventActionDone) {
-                    installed = false;
-                    return true;
-                }
-                return false;
-            }
-        };
         private boolean installed = false;
 
         public StatusDiZhenNian(Character character) {
             super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
         }
 
-        public void tackEffect() {
+        public void tackEffect(AttackInfo info) {
             if (!installed && stack < 10) {
-                belongTo.bp.addActionListener(belongTo, listener);
+                info.getSkill().addSkillEndListener(() -> installed = false);
                 installed = true;
                 stack++;
             }

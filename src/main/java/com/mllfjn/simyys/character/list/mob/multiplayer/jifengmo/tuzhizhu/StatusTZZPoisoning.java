@@ -53,6 +53,7 @@ class StatusTZZPoisoning extends Status implements StatusRunnable {
             for (int i = 0; i < stack; i++) {
                 interactive.attackTypical(SKILL, belongTo, 10, AttackType.DAN_TI);
             }
+            SKILL.useDone();
         });
         return false;
     }

@@ -59,7 +59,8 @@ class StatusPiCaoRouHou extends Status implements StatusRunnable, Displayable {
         Character enemyYYS = new CharacterFinder(belongTo)
                 .filterEnemy()
                 .getFirst();
-        AttackInfo attackInfo = AttackInfo.createRealAttack(enemyYYS, Skill.getInstance(StatusName), belongTo,
+        Skill skill = Skill.getInstance(StatusName);
+        AttackInfo attackInfo = AttackInfo.createRealAttack(enemyYYS, skill, belongTo,
                 (c1, c2) -> 5000000.0);
         enemyYYS.doInteractive(interactive -> interactive.attack(attackInfo));
     }

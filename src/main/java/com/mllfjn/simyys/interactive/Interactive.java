@@ -1,7 +1,6 @@
 package com.mllfjn.simyys.interactive;
 
 import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.battleevent.EventAttack;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.Trigger;
@@ -188,7 +187,7 @@ public class Interactive {
         if (attackInfo.isCalYuHun()) {
             target.forEachYuHun(yuHun -> {
                 if (yuHun instanceof YuHunHitFeedBack f) {
-                    f.hitFeedBack();
+                    f.hitFeedBack(attackInfo);
                 }
             });
         }
@@ -247,11 +246,6 @@ public class Interactive {
 
         // 触发攻击者身上的攻击监听
         owner.statusRun(Trigger.CAUSE_ATTACK, new ParamCauseAttack(attackInfo));
-
-        if (!attackInfo.isCancel()) {
-            // 广播攻击信息
-            bp.onTrigger(new EventAttack(attackInfo));
-        }
     }
 
     public HealInfo healTypical(Skill skill, Character target, int multiplier) {

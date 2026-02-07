@@ -70,8 +70,9 @@ class Skill2 extends PassiveSkill {
                     if (skill instanceof Skill3) {
                         if (decay == 1) {
                             skill.addSkillEndListener(() -> decay = 1);
+                        } else {
+                            decay *= 0.85;
                         }
-                        decay *= 0.85;
                     }
                 }
             }

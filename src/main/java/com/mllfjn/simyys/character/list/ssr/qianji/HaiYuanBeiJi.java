@@ -1,7 +1,6 @@
 package com.mllfjn.simyys.character.list.ssr.qianji;
 
 import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.battleevent.EventAttack;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.CharacterSummonBase;
@@ -11,6 +10,8 @@ import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.determinant.IgnoreDebuff;
 import com.mllfjn.simyys.battleevent.EventUseGuiHuo;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamageBeingAttack;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
+import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.InteractiveInfo;
 
@@ -18,6 +19,8 @@ import java.util.List;
 
 class HaiYuanBeiJi extends CharacterSummonBase {
     private static final String CharacterName = "海原贝戟";
+    private static final Skill skill = Skill.getInstance(CharacterName);
+
     private final QianJi qianJi;
     private final StatusChaoSheng chaoSheng;
 
@@ -46,20 +49,13 @@ class HaiYuanBeiJi extends CharacterSummonBase {
         // TODO 有50%的概率
         // 使海原贝戟叠加1层潮声
         // lv3-概率增至100%
+        bp.forEveryone(this, c -> {
+            if (c.team == this.team) {
+                c.addStatus(new StatusRecovery(this, c));
+            }
+        });
         bp.addActionListener(this, event -> {
-            if (event instanceof EventAttack ea) {
-                InteractiveInfo interactiveInfo = ea.getAttackInfo();
-                double number = interactiveInfo.getTraceableNumber().getNumber();
-                if (number > 0) {
-                    Character target = interactiveInfo.getTarget();
-                    if (target.team == this.team && target.alive) {
-                        this.doInteractive(interactive ->
-                                interactive.recovery(Skill.getInstance(HaiYuanBeiJi.CharacterName), target
-                                        , number * 0.3));
-                    }
-                }
-
-            } else if (event instanceof EventUseGuiHuo eg && eg.getTeam() == team) {
+            if (event instanceof EventUseGuiHuo eg && eg.getTeam() == team) {
                 chaoSheng.addStack(eg.getNum());
             }
             return false;
@@ -98,6 +94,31 @@ class HaiYuanBeiJi extends CharacterSummonBase {
         @Override
         public void doInfluenceBeingAttack(AttackInfo attackInfo) {
             attackInfo.getTraceableNumber().mul(0.7, "千姬减伤");
+        }
+    }
+
+    static class StatusRecovery extends Status implements StatusRunnable {
+
+        public StatusRecovery(Character from, Character belongTo) {
+            super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
+        }
+
+        @Override
+        public boolean runnable(Trigger trigger) {
+            return belongTo.alive || trigger == Trigger.AFTER_ATTACK;
+        }
+
+        @Override
+        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
+            if (param instanceof ParamAfterAttack paa) {
+                InteractiveInfo interactiveInfo = paa.attackInfo;
+                double number = interactiveInfo.getTraceableNumber().getNumber();
+                if (number > 0) {
+                    from.doInteractive(interactive ->
+                            interactive.recovery(skill, belongTo, number * 0.3));
+                }
+            }
+            return false;
         }
     }
 }

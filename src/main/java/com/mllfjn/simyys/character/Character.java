@@ -43,6 +43,7 @@ import javafx.scene.input.MouseEvent;
 import java.io.Serializable;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public abstract class Character implements Serializable {
     public String name;
@@ -701,11 +702,52 @@ public abstract class Character implements Serializable {
         }
 
         List<Status> tobeDelete = RateController
-                .choose(name + "驱散减益状态", debuffs,
-                        status -> ((Displayable) status).getDisplayText(), bp.calc, count);
+                .choose(name + "驱散减益状态,目前里面会有一些显示不正常的东西,以后再修", debuffs,
+                        status -> {
+                            if (status instanceof Displayable d) {
+                                return d.getDisplayText();
+                            } else {
+                                return status.getClass().getName();
+                            }
+                        }, bp.calc, count);
 
         for (Status status : tobeDelete) {
             status.delete();
+        }
+    }
+
+    public void dispelBuff(int count) {
+        List<Status> buffs = new ArrayList<>();
+        for (Status status : statuses) {
+            if (status.statusType == StatusType.BUFF
+                    && status.statusForm == StatusForm.ZHUANG_TAI) {
+                buffs.add(status);
+            }
+        }
+
+        List<Status> tobeDelete = RateController
+                .choose(name + "驱散增益状态,目前里面会有一些显示不正常的东西,以后再修", buffs,
+                        status -> {
+                            if (status instanceof Displayable d) {
+                                return d.getDisplayText();
+                            } else {
+                                return status.getClass().getName();
+                            }
+                        }, bp.calc, count);
+
+        for (Status status : tobeDelete) {
+            status.delete();
+        }
+    }
+
+    public void removeStatusIf(Predicate<Status> filter) {
+        final Iterator<Status> iterator = getStatuses().iterator();
+        while (iterator.hasNext()) {
+            Status next = iterator.next();
+            if (filter.test(next)) {
+                next.beforeDelete();
+                iterator.remove();
+            }
         }
     }
 

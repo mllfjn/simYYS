@@ -64,6 +64,8 @@ class Skill3 extends Skill {
     static class StatusYiXianMu extends Status implements AttributeModifier, Displayable {
         private static final String StatusName = "一线目";
 
+        private static final Skill skill = Skill.getInstance(StatusName);
+
         private final double max;
         private double yuanHen = 0;
         private final StatusYXMBeingAttackListener statusYXMBeingAttackListener;
@@ -105,11 +107,14 @@ class Skill3 extends Skill {
         public void yinRan() {
             // 引燃后移除,造成等同一线目种怨痕值100%的间接伤害,最多不超过友方出场式神初始总攻击的4000%
             if (yuanHen > 0) {
-                AttackInfo info = AttackInfo.createJianJieAttack(from, Skill.getInstance(StatusName)
+                AttackInfo info = AttackInfo.createJianJieAttack(from, skill
                         , belongTo, (from, to) -> yuanHen);
                 info.setLimit(max);
 
-                from.doInteractive(interactive -> interactive.attack(info));
+                from.doInteractive(interactive -> {
+                    interactive.attack(info);
+                    skill.useDone();
+                });
             }
         }
 

@@ -62,6 +62,8 @@ class Skill2 extends Skill {
     static class StatusDuShang extends Status implements StatusRunnable, Displayable {
         private static final String StatusName = "毒伤";
 
+        private static final Skill skill = Skill.getInstance(StatusName);
+
         public StatusDuShang(Character from, Character belongTo) {
             super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
             setDurationType(StatusDurationType.CHI_XU, 3);
@@ -93,8 +95,10 @@ class Skill2 extends Skill {
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
             // 毒伤每回合造成攻击力33%的伤害。
-            from.doInteractive(interactive ->
-                    interactive.attackTypical(Skill.getInstance(StatusName), belongTo, 33, AttackType.DAN_TI));
+            from.doInteractive(interactive -> {
+                interactive.attackTypical(skill, belongTo, 33, AttackType.DAN_TI);
+                skill.useDone();
+            });
             return false;
         }
     }

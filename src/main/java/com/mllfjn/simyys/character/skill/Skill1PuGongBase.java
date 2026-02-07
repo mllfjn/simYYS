@@ -95,7 +95,7 @@ public abstract class Skill1PuGongBase extends Skill {
     }
 
     @Override
-    protected void useDone() {
+    public void useDone() {
         super.useDone();
         xieZhanSkills.clear();
     }

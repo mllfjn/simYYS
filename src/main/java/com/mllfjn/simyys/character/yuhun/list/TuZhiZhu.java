@@ -33,19 +33,31 @@ public class TuZhiZhu extends YuHun implements YuHunUnfullMark {
     class StatusTZZListener extends Status implements StatusRunnable {
         private final Map<Character, Double> map = new LinkedHashMap<>();
 
+        private Skill causeSkill;
+
         public StatusTZZListener(Character character) {
             super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
         }
 
         @Override
         public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.CAUSE_ATTACK
-                    || (!map.isEmpty() && (trigger == Trigger.USED_SKILL || trigger == Trigger.USE_PU_GONG));
+            return trigger == Trigger.CAUSE_ATTACK;
         }
 
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
             if (trigger == Trigger.CAUSE_ATTACK && param instanceof ParamCauseAttack pca) {
+                if (causeSkill == null) {
+                    causeSkill = pca.getAttackInfo().getSkill();
+                    causeSkill.addSkillEndListener(() -> {
+                        for (Map.Entry<Character, Double> entry : map.entrySet()) {
+                            StatusTuZhiZhu.enable(belongTo, entry.getKey(), 0.1 * entry.getValue());
+                        }
+                        TuZhiZhu.this.yuHunEffect();
+                        map.clear();
+                        causeSkill = null;
+                    });
+                }
                 AttackInfo attackInfo = pca.getAttackInfo();
                 Character target = attackInfo.getTarget();
                 // 对怪物造成伤害时
@@ -59,14 +71,7 @@ public class TuZhiZhu extends YuHun implements YuHunUnfullMark {
                     return false;
                 }
 
-                map.put(target
-                        , map.getOrDefault(target, 0.0) + number);
-            } else if (trigger == Trigger.USED_SKILL || trigger == Trigger.USE_PU_GONG) {
-                for (Map.Entry<Character, Double> entry : map.entrySet()) {
-                    StatusTuZhiZhu.enable(belongTo, entry.getKey(), 0.1 * entry.getValue());
-                }
-                TuZhiZhu.this.yuHunEffect();
-                map.clear();
+                map.put(target, map.getOrDefault(target, 0.0) + number);
             }
             return false;
         }

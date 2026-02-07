@@ -6,6 +6,7 @@ import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunAttack;
 import com.mllfjn.simyys.character.yuhun.YuHunHitFeedBack;
 import com.mllfjn.simyys.character.yuhun.YuHunUnfullMark;
+import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.InteractiveInfo;
 
 public class HuangKuLou extends YuHun implements YuHunUnfullMark, YuHunAttack, YuHunHitFeedBack {
@@ -23,7 +24,7 @@ public class HuangKuLou extends YuHun implements YuHunUnfullMark, YuHunAttack, Y
     }
 
     @Override
-    public void hitFeedBack() {
+    public void hitFeedBack(AttackInfo info) {
         StatusHKLMark.enable(character);
     }
 

@@ -3,6 +3,7 @@ package com.mllfjn.simyys;
 import com.mllfjn.simyys.battleevent.BattleActionListener;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.propertygetter.FlagChangeInfo;
+import com.mllfjn.simyys.collections.SafeList;
 
 import java.io.Serializable;
 import java.util.*;
@@ -10,6 +11,8 @@ import java.util.*;
 public class SerializableItems implements Serializable {
     // 角色列表
     public final List<Character> characters = new ArrayList<>();
+    // 死亡角色列表
+    public final List<Character> deadCharacters = new ArrayList<>();
     // 当前行动角色
     public Character characterActing;
     // 记录获得新回合的单位
@@ -21,7 +24,7 @@ public class SerializableItems implements Serializable {
     // 队伍面板，负责显示头像和管理鬼火条
     public final TeamPane[] teamPane = new TeamPane[2];
     // 全局监听器,可用于幻境,结界
-    public final Map<Character, List<BattleActionListener>> listenerMap = new HashMap<>();
+    public final Map<Character, SafeList<BattleActionListener>> listenerMap = new HashMap<>();
     // 保存的概率
     private double currentRate;
 
@@ -85,6 +88,8 @@ public class SerializableItems implements Serializable {
 
     public void removeCharacter(Character character) {
         characters.remove(character);
+        deadCharacters.add(character);
+
         for (TeamPane teamPane : teamPane) {
             teamPane.removeCharacter(character);
         }

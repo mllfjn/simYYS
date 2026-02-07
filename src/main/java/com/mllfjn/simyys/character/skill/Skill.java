@@ -69,7 +69,7 @@ public abstract class Skill implements Serializable {
         useBase(bp, true);
     }
 
-    protected void useDone() {
+    public void useDone() {
         if (skillEndListeners != null && !skillEndListeners.isEmpty()) {
             skillEndListeners.forEach(SkillEndListener::run);
             skillEndListeners.clear();

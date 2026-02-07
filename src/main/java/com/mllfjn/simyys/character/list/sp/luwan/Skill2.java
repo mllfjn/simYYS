@@ -1,0 +1,220 @@
+package com.mllfjn.simyys.character.list.sp.luwan;
+
+import com.mllfjn.simyys.BattlePane;
+import com.mllfjn.simyys.battleevent.BattleActionListener;
+import com.mllfjn.simyys.battleevent.EventActionDone;
+import com.mllfjn.simyys.battleevent.EventCharacterDie;
+import com.mllfjn.simyys.character.Attribute;
+import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.skill.CharacterFinder;
+import com.mllfjn.simyys.character.skill.Skill;
+import com.mllfjn.simyys.character.status.*;
+import com.mllfjn.simyys.character.status.determinant.IgnoreDebuff;
+import com.mllfjn.simyys.character.status.determinant.InfluenceDamageBeingAttack;
+import com.mllfjn.simyys.character.status.triggerParam.ParamCauseAttack;
+import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
+import com.mllfjn.simyys.interactive.AttackInfo;
+import com.mllfjn.simyys.interactive.AttackType;
+
+import java.util.List;
+import java.util.Optional;
+
+class Skill2 extends Skill {
+    private static final String SkillName = "铭海之主";
+
+    public Skill2(Character belongTo, int level) {
+        super(belongTo, level, 0, 0, 2);
+        if (level >= 5) {
+            belongTo.bp.atBattleStart(() -> useWithoutCost(belongTo.bp));
+        }
+    }
+
+    @Override
+    public String getSkillDesc() {
+        return """
+                √\t进入驭魂形态,持续2回合,提升100%效果抵抗
+                √\t其他友方释放妖术技能后,获得1层麓泽
+                √\t驭魂形态下,场上有3名或以上非召唤物单位阵亡时,移除自身所有状态和印记
+                √\t\t进入归骸形态,提升100点速度,受到的伤害降低50%,免疫减益
+                \t\t\t和放逐
+                √\t\t造成伤害时附带12%吸血,自身行动回合自动释放[逆魂尽断]
+                √\tlv2-驭魂形态下自身受到的单体伤害降低50%
+                √\tlv3-驭魂形态下任意非召唤物单位阵亡时,恢复生命上限30%的生命
+                √\tlv4-驭魂形态持续3回合
+                √\tlv5-先机:释放该技能
+                √\t麓泽:增益,印记:上限4层,每层使[断末无铭]的鬼火消耗降低1点,释放[断末无铭]后消耗所有麓泽
+                """;
+    }
+
+    @Override
+    public String getName() {
+        return SkillName;
+    }
+
+    @Override
+    public Optional<Character> usePrivate(BattlePane bp) {
+        Character belongTo = getBelongTo();
+        int level = getLevel();
+        int duration = level >= 4 ? 3 : 2;
+
+        belongTo.getStatus(StatusYuHun.class).ifPresentOrElse(
+                status -> status.setDuration(duration),
+                () -> belongTo.addStatus(new StatusYuHun(belongTo, duration, level))
+        );
+        return Optional.empty();
+    }
+
+    class StatusYuHun extends Status implements AttributeModifier, Displayable, InfluenceDamageBeingAttack {
+        private static final String StatusName = "驭魂";
+
+        private final BattleActionListener listener;
+        private final BattleActionListener everyone;
+
+        private final boolean reduceDamage;
+
+        // true:监听单位死亡事件,false:回合结束后变身 能跑就行
+        private boolean listenerType = true;
+
+        public StatusYuHun(Character character, int duration, int level) {
+            super(character, character, StatusType.BUFF, StatusForm.ZHUANG_TAI);
+
+            reduceDamage = level >= 2;
+            setDurationType(StatusDurationType.WEI_CHI, duration);
+
+            listener = event -> {
+                if (!listenerType && event instanceof EventActionDone) {
+                    transform();
+                    return true;
+                } else if (listenerType && event instanceof EventCharacterDie) {
+                    if (level >= 3) {
+                        belongTo.doInteractive(interactive ->
+                                interactive.recovery(Skill2.this, belongTo, belongTo.getMaxHp() * 0.3)
+                        );
+                    }
+                    check();
+                }
+                return false;
+            };
+
+            everyone = belongTo.bp.forEveryone(belongTo, c -> {
+                if (c.team == belongTo.team && c != belongTo) {
+                    c.addStatus(new StatusLuWanUseSkillListener(character, c));
+                }
+            });
+
+            character.bp.addActionListener(character, listener);
+        }
+
+        private void transform() {
+            belongTo.removeStatusIf(status -> status.statusType != StatusType.SPECIAL);
+            belongTo.addStatus(new StatusGuiHai(belongTo));
+            ((LuWan) belongTo).skill2Special = new Skill2Special(belongTo);
+        }
+
+        private void check() {
+            int count = 0;
+            for (Character deadCharacter : belongTo.bp.situation.deadCharacters) {
+                if (!deadCharacter.isSummon()) {
+                    if (count == 2) {
+                        listenerType = false;
+                    } else {
+                        count++;
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void beforeDelete() {
+            belongTo.bp.removeActionListener(belongTo, listener);
+            belongTo.bp.removeActionListener(belongTo, everyone);
+            List<Character> list = new CharacterFinder(belongTo, true)
+                    .filterTeammate()
+                    .filterSelf()
+                    .getList();
+            for (Character character : list) {
+                character.removeStatus(StatusLuWanUseSkillListener.class);
+            }
+        }
+
+        @Override
+        public boolean isAffectAttribute(Attribute attribute) {
+            return attribute == Attribute.EFFECT_RESIST_RATE;
+        }
+
+        @Override
+        public double getInfluence(Attribute attribute) {
+            return 100;
+        }
+
+        @Override
+        public String getDisplayText() {
+            return StatusName + getDuration();
+        }
+
+        @Override
+        public void doInfluenceBeingAttack(AttackInfo attackInfo) {
+            if (reduceDamage && attackInfo.getAttackType() == AttackType.DAN_TI) {
+                attackInfo.getTraceableNumber().mul(0.5, StatusName);
+            }
+        }
+
+        static class StatusLuWanUseSkillListener extends Status implements StatusRunnable {
+
+            public StatusLuWanUseSkillListener(Character from, Character belongTo) {
+                super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
+            }
+
+            @Override
+            public boolean runnable(Trigger trigger) {
+                return trigger == Trigger.USED_SKILL;
+            }
+
+            @Override
+            public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
+                StatusLuZe.addStack(from);
+                return false;
+            }
+        }
+    }
+
+    class StatusGuiHai extends Status
+            implements AttributeModifier, IgnoreDebuff, InfluenceDamageBeingAttack, StatusRunnable {
+        private static final String StatusName = "归骸形态";
+
+        public StatusGuiHai(Character character) {
+            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
+        }
+
+        @Override
+        public boolean isAffectAttribute(Attribute attribute) {
+            return attribute == Attribute.SPEED;
+        }
+
+        @Override
+        public double getInfluence(Attribute attribute) {
+            return 100;
+        }
+
+        @Override
+        public void doInfluenceBeingAttack(AttackInfo attackInfo) {
+            attackInfo.getTraceableNumber().mul(0.5, StatusName);
+        }
+
+        @Override
+        public boolean runnable(Trigger trigger) {
+            return trigger == Trigger.CAUSE_ATTACK;
+        }
+
+        @Override
+        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
+            if (param instanceof ParamCauseAttack pca) {
+                double number = pca.getAttackInfo().getTraceableNumber().getNumber();
+                belongTo.doInteractive(interactive ->
+                        interactive.recovery(Skill2.this, belongTo, number * 0.12)
+                );
+            }
+            return false;
+        }
+    }
+}

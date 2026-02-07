@@ -8,6 +8,7 @@ import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.instance.StatusBind;
 import com.mllfjn.simyys.interactive.AttackType;
+import com.mllfjn.simyys.interactive.StatusSupplier;
 import com.mllfjn.simyys.ratecontroller.RateController;
 
 import java.util.List;
@@ -47,18 +48,6 @@ class Skill4 extends Skill {
             interactive.attackTypical(this, list, 100, AttackType.QUN_TI);
 
             for (Character character : list) {
-                character.addStatus(
-                        new StatusModifyAttribute(belongTo, character, StatusType.DEBUFF, StatusForm.ZHUANG_TAI) {
-                            @Override
-                            public boolean isAffectAttribute(Attribute attribute) {
-                                return attribute == Attribute.SPEED;
-                            }
-
-                            @Override
-                            public double getInfluence(Attribute attribute) {
-                                return -20;
-                            }
-                        });
                 StatusTZZPoisoning.addTZZPoisoning(belongTo, character, 1);
                 if (RateController.otherWhether(SkillName + "击退" + character.name + "行动条",
                         "击退", belongTo.bp.calc, 33
@@ -67,9 +56,43 @@ class Skill4 extends Skill {
                 }
             }
 
+            interactive.effect(this, list, 100, true, StatusTZZReduceSpeed.getSupplier());
             interactive.effect(this, list, 20, true, StatusBind.getSupplier(1));
         });
 
         return Optional.empty();
+    }
+
+    static class StatusTZZReduceSpeed extends Status implements AttributeModifier, Displayable {
+        private static final String StatusName = "减速";
+
+        private StatusTZZReduceSpeed(Character from, Character belongTo) {
+            super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
+        }
+
+        static StatusSupplier getSupplier() {
+            return new StatusSupplier(StatusName, StatusTZZReduceSpeed.class,
+                    (from, to) -> {
+                        if (to.getStatus(StatusTZZReduceSpeed.class).isEmpty()) {
+                            to.addStatus(new StatusTZZReduceSpeed(from, to));
+                        }
+                    }
+            );
+        }
+
+        @Override
+        public boolean isAffectAttribute(Attribute attribute) {
+            return attribute == Attribute.SPEED;
+        }
+
+        @Override
+        public double getInfluence(Attribute attribute) {
+            return -20;
+        }
+
+        @Override
+        public String getDisplayText() {
+            return StatusName;
+        }
     }
 }

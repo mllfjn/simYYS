@@ -58,10 +58,13 @@ public class CaoRen extends CharacterSummonBase {
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
             if (param instanceof ParamAfterAttack pa) {
                 double number = pa.attackInfo.getTraceableNumber().getNumber();
-                from.doInteractive(interactive ->
-                        interactive.attack(
-                                AttackInfo.createChuanDaoAttack(from, skill, bind, (c1, c2) -> number)
-                        )
+                from.doInteractive(interactive -> {
+                            interactive.attack(
+                                    AttackInfo.createChuanDaoAttack(from, skill, bind,
+                                            (c1, c2) -> number)
+                            );
+                            skill.useDone();
+                        }
                 );
             }
             return false;
@@ -76,7 +79,7 @@ public class CaoRen extends CharacterSummonBase {
 
         @Override
         public void beforeDelete() {
-            belongTo.bp.removeCharacter(belongTo);
+            belongTo.die();
         }
     }
 }
