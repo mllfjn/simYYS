@@ -11,7 +11,7 @@ public class StatusChenLun extends Status implements CrowdControl, InfluenceDama
     private final int level;
 
     private StatusChenLun(Character from, Character belongTo, int level) {
-        super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
+        super(from, belongTo, StatusType.DEBUFF, StatusForm.YIN_JI);
         this.level = level;
         setDurationType(StatusDurationType.CHI_XU, 1);
     }

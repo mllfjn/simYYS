@@ -28,6 +28,9 @@ public class SerializableItems implements Serializable {
     // 保存的概率
     private double currentRate;
 
+    // 上一步中有多少个回合
+    public int roundInLastStep = 0;
+
     public SerializableItems() {
         teamPane[0] = new TeamPane();
         teamPane[1] = new TeamPane();

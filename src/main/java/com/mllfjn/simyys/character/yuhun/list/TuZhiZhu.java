@@ -47,31 +47,33 @@ public class TuZhiZhu extends YuHun implements YuHunUnfullMark {
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
             if (trigger == Trigger.CAUSE_ATTACK && param instanceof ParamCauseAttack pca) {
-                if (causeSkill == null) {
-                    causeSkill = pca.getAttackInfo().getSkill();
-                    causeSkill.addSkillEndListener(() -> {
-                        for (Map.Entry<Character, Double> entry : map.entrySet()) {
-                            StatusTuZhiZhu.enable(belongTo, entry.getKey(), 0.1 * entry.getValue());
-                        }
-                        TuZhiZhu.this.yuHunEffect();
-                        map.clear();
-                        causeSkill = null;
-                    });
-                }
-                AttackInfo attackInfo = pca.getAttackInfo();
-                Character target = attackInfo.getTarget();
-                // 对怪物造成伤害时
-                if (!target.isMob()) {
-                    return false;
-                }
+                if (pca.getAttackInfo().isCalYuHun()) {
+                    if (causeSkill == null) {
+                        causeSkill = pca.getAttackInfo().getSkill();
+                        causeSkill.addSkillEndListener(() -> {
+                            for (Map.Entry<Character, Double> entry : map.entrySet()) {
+                                StatusTuZhiZhu.enable(belongTo, entry.getKey(), 0.1 * entry.getValue());
+                            }
+                            TuZhiZhu.this.yuHunEffect();
+                            map.clear();
+                            causeSkill = null;
+                        });
+                    }
+                    AttackInfo attackInfo = pca.getAttackInfo();
+                    Character target = attackInfo.getTarget();
+                    // 对怪物造成伤害时
+                    if (!target.isMob()) {
+                        return false;
+                    }
 
-                // 如果没有实际造成伤害，则返回
-                double number = attackInfo.getTraceableNumber().getNumber();
-                if (number <= 0) {
-                    return false;
-                }
+                    // 如果没有实际造成伤害，则返回
+                    double number = attackInfo.getTraceableNumber().getNumber();
+                    if (number <= 0) {
+                        return false;
+                    }
 
-                map.put(target, map.getOrDefault(target, 0.0) + number);
+                    map.put(target, map.getOrDefault(target, 0.0) + number);
+                }
             }
             return false;
         }

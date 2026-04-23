@@ -193,7 +193,7 @@ class Skill2 extends Skill {
         }
 
         private void attack() {
-            skill.useWithoutCost(bp);
+            skill.useWithoutCost();
         }
 
         @Override

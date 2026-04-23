@@ -3,7 +3,7 @@ package com.mllfjn.simyys.character.list.mob.multiplayer;
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
 public class DisplayDamageRecord extends Status implements StatusRunnable, InfoDisplay {
@@ -24,7 +24,7 @@ public class DisplayDamageRecord extends Status implements StatusRunnable, InfoD
 
     @Override
     public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-        if (param instanceof ParamAfterAttack paa) {
+        if (param instanceof ParamAttackInfo paa) {
             addDamage(paa.attackInfo.getTraceableNumber().getNumber());
         }
         return false;

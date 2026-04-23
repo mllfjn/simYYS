@@ -30,6 +30,7 @@ public class CharacterFinder {
         this.owner = owner;
         this.bp = owner.bp;
 
+        // TODO 可以优化成从teamPane的characters中取
         stream = bp.situation.characters.stream();
 
         if (!forceGetList) {

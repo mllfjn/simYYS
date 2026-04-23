@@ -6,8 +6,7 @@ import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.Trigger;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAddCrowdControl;
-import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
-import com.mllfjn.simyys.character.status.triggerParam.ParamCauseAttack;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.yuhun.YuHunAfterCauseAttack;
 import com.mllfjn.simyys.character.yuhun.YuHunAttack;
 import com.mllfjn.simyys.character.yuhun.YuHunHitFeedBack;
@@ -204,6 +203,8 @@ public class Interactive {
             }
         }
 
+        target.statusRun(Trigger.BEING_ATTACKED, new ParamAttackInfo(attackInfo));
+
         // 被攻击者身上状态类影响
         for (Status status : target.getStatuses()) {
             if (status instanceof InfluenceDamageBeingAttack sid) {
@@ -242,10 +243,10 @@ public class Interactive {
         }
 
         // 触发攻击的目标身上的状态
-        target.statusRun(Trigger.AFTER_ATTACK, new ParamAfterAttack(attackInfo));
+        target.statusRun(Trigger.AFTER_ATTACK, new ParamAttackInfo(attackInfo));
 
         // 触发攻击者身上的攻击监听
-        owner.statusRun(Trigger.CAUSE_ATTACK, new ParamCauseAttack(attackInfo));
+        owner.statusRun(Trigger.CAUSE_ATTACK, new ParamAttackInfo(attackInfo));
     }
 
     public HealInfo healTypical(Skill skill, Character target, int multiplier) {

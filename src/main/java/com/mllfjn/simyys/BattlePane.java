@@ -13,6 +13,8 @@ import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.ratecontroller.RateCalc;
 import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
 import com.mllfjn.simyys.collections.SerializableObservableList;
+import com.mllfjn.simyys.starter.CharacterNameAndTeam;
+import com.mllfjn.simyys.starter.Prediction;
 import com.mllfjn.simyys.utils.SerializableConsumer;
 import com.mllfjn.simyys.utils.Utils;
 import javafx.beans.binding.DoubleBinding;
@@ -61,12 +63,16 @@ public class BattlePane {
     // 战斗开始时事件列表，用于先机
     private List<Runnable> battleStartEventList = new ArrayList<>();
 
+    // 行动顺序记录
+    private final SerializableObservableList<CharacterNameAndTeam> actionOrder = new SerializableObservableList<>();
 
-    public BattlePane(Scene scene, Pane stageRoot, Runnable back, SerializableObservableList<PropertiesHolder> list) {
+
+    public BattlePane(Scene scene, Pane stageRoot, Runnable back,
+                      SerializableObservableList<PropertiesHolder> list, Prediction prediction) {
         this.list = list;
         stageRoot.getChildren().set(0, root);
 
-        setupUI(back, scene);
+        setupUI(back, scene, prediction);
         init();
         repaint();
     }
@@ -78,14 +84,14 @@ public class BattlePane {
         init();
     }
 
-    public void predictionShow(Stage stage, Runnable back) {
+    public void predictionShow(Stage stage, Runnable back, Prediction prediction) {
         Scene scene = new Scene(root);
         stage.setScene(scene);
-        setupUI(back, scene);
+        setupUI(back, scene, prediction);
         repaint();
     }
 
-    private void setupUI(Runnable back, Scene scene) {
+    private void setupUI(Runnable back, Scene scene, Prediction prediction) {
         // 右边是主操作区
         // 主体偏上是行动条，点击切换模式
         // 右下角是控制区
@@ -107,7 +113,7 @@ public class BattlePane {
         // 控制区
         BorderPane right = new BorderPane();
         right.setTop(actionBar);
-        right.setBottom(configureControlPane(back, scene));
+        right.setBottom(configureControlPane(back, scene, prediction));
         root.setRight(right);
         configureActionBar();
         reloadTeamPane();
@@ -186,7 +192,7 @@ public class BattlePane {
         situation.addProgress(team);
     }
 
-    private GridPane configureControlPane(Runnable back, Scene scene) {
+    private GridPane configureControlPane(Runnable back, Scene scene, Prediction prediction) {
         /*控制区
         控制区的内容
         1、概率控制模式的开关
@@ -197,14 +203,21 @@ public class BattlePane {
         Button prevBtn = new Button("上一个(Q)");
         Button nextBtn = new Button("下一个(E)");
         Button backBtn = new Button("返回(B)");
+        Button savePredictionBtn = new Button("保存预测顺序");
         prevBtn.setOnAction(event -> prev());
         nextBtn.setOnAction(event -> {
             next(false);
             repaint();
         });
+        savePredictionBtn.setOnAction(event -> {
+            prediction.predictionOrder = actionOrder;
+            prediction.copyToClipboard();
+        });
+
         prevBtn.setPrefSize(100, 25);
         nextBtn.setPrefSize(100, 25);
         backBtn.setPrefSize(100, 25);
+        savePredictionBtn.setPrefSize(100, 25);
 
         CustomTextField round = new CustomTextField();
         Button skip = new Button("跳过回合(S)");
@@ -239,7 +252,6 @@ public class BattlePane {
         skip.setPrefSize(100, 25);
 
 
-
         GridPane controller = new GridPane();
         controller.setPadding(new Insets(0, 0, 50, 0)); // 底部留空
 
@@ -250,6 +262,7 @@ public class BattlePane {
         controller.add(round, 0, 2);
         controller.add(skip, 1, 2);
         controller.add(backBtn, 0, 3);
+        controller.add(savePredictionBtn, 1, 3);
 
         return controller;
     }
@@ -275,8 +288,12 @@ public class BattlePane {
             }
         }
 
-        situation.characterActing = getNextOrder();
-        situation.characterActing.timesToAct++;
+
+        Character characterActing = getNextOrder();
+        situation.characterActing = characterActing;
+        characterActing.timesToAct++;
+        characterActing.forceSetLocation(0);
+        actionOrder.add(new CharacterNameAndTeam(characterActing.name, characterActing.team));
 
         // 战斗开始
         for (Runnable runnable : battleStartEventList) {
@@ -287,12 +304,12 @@ public class BattlePane {
         situation.teamPane[0].calHuoLing();
         situation.teamPane[1].calHuoLing();
 
-        situation.characterActing.beforeRound();
-        situation.characterActing.setLockSkillAndAuto();
+        characterActing.beforeRound();
+        characterActing.setLockSkillAndAuto();
 
         interactive.display();
-        situation.teamPane[situation.characterActing.team].totalActTimes++;
-        log.characterAct(situation.characterActing, 1);
+        situation.teamPane[characterActing.team].totalActTimes++;
+        log.characterAct(characterActing, 1);
         log.next();
     }
 
@@ -380,6 +397,9 @@ public class BattlePane {
 
     private void prev() {
         if (!recorder.isEmpty()) {
+
+            actionOrder.subList(actionOrder.size() - situation.roundInLastStep, actionOrder.size()).clear();
+
             try (ByteArrayInputStream bis = new ByteArrayInputStream(recorder.pop());
                  ObjectInputStream ois = new ObjectInputStream(bis)
             ) {
@@ -410,29 +430,34 @@ public class BattlePane {
             situation.setCurrentRate(calc.getCurrentRate());
             oos.writeObject(situation);
             recorder.push(bos.toByteArray());
+            situation.roundInLastStep = 0;
         } catch (IOException e) {
             Utils.throwException("保存时出错", e);
         }
 
 
+        Character characterActing = situation.characterActing;
         do {
             // 如果skip为真,当前行动角色跳过
             // 但是后续的其他角色不跳过
             if (!skip) {
-                situation.characterActing.round();
+                characterActing.round();
             }
             skip = false;
 
-            situation.characterActing.afterRound();
+            characterActing.afterRound();
+            // 这俩职责重复，将来合并
             // 行动结束事件
-            onTrigger(new EventActionDone(situation.characterActing));
+            onTrigger(new EventActionDone(characterActing));
             // 回合结束事件
-            onTrigger(new EventRoundDone(situation.characterActing));
+            onTrigger(new EventRoundDone(characterActing));
             getNextActor();
+            characterActing = situation.characterActing;
             interactive.display();
-            situation.teamPane[situation.characterActing.team].totalActTimes++;
-            log.characterAct(situation.characterActing, situation.teamPane[situation.characterActing.team].totalActTimes);
-        } while (situation.characterActing.isUncontrollable());
+            situation.teamPane[characterActing.team].totalActTimes++;
+            situation.roundInLastStep++;
+            log.characterAct(characterActing, situation.teamPane[characterActing.team].totalActTimes);
+        } while (characterActing.isUncontrollable());
 
         log.next();
     }
@@ -444,28 +469,29 @@ public class BattlePane {
 
     private void getNextActor() {
         // 如果有时之隙新回合,先时之隙,否则看一般获得新回合,最后跑条
-        situation.characterActing = situation.sZXNewRoundCharacter().orElseGet(() -> {
+        Character characterActing = situation.sZXNewRoundCharacter().orElseGet(() -> {
             Character newRoundCharacter = situation.newRoundCharacter().orElseGet(this::getNextOrder);
             // 这部分不在时之隙新回合生效
-            newRoundCharacter.resetLocation();
+            newRoundCharacter.forceSetLocation(0);
             newRoundCharacter.beforeRound();
             return newRoundCharacter;
         });
-        situation.characterActing.timesToAct++;
-        situation.characterActing.refreshSkills();
-        situation.characterActing.setLockSkillAndAuto();
+        situation.characterActing = characterActing;
+        characterActing.timesToAct++;
+        characterActing.refreshSkills();
+        characterActing.setLockSkillAndAuto();
+
+        actionOrder.add(new CharacterNameAndTeam(characterActing.name, characterActing.team));
     }
 
     private Character getNextOrder() {
         List<Character> characters = situation.characters;
         int indexMin = -1;
         double ttaMin = Double.MAX_VALUE;
-        double[] locations = new double[characters.size()];
         double[] speeds = new double[characters.size()];
         for (int i = 0; i < characters.size(); i++) {
-            locations[i] = characters.get(i).getLocation();
             speeds[i] = characters.get(i).getSpeed();
-            double ttaNext = Character.getTTA(100 - locations[i], speeds[i]);
+            double ttaNext = Character.getTTA(100 - characters.get(i).getLocationWhenGettingOrder(), speeds[i]);
             if (ttaNext < ttaMin) {
                 ttaMin = ttaNext;
                 indexMin = i;
@@ -474,9 +500,7 @@ public class BattlePane {
 
         if (ttaMin > 0) {
             for (int i = 0; i < characters.size(); i++) {
-                if (i != indexMin) {
-                    characters.get(i).setLocation(locations[i] + speeds[i] * ttaMin);
-                }
+                characters.get(i).setLocation(characters.get(i).getLocation() + speeds[i] * ttaMin);
             }
         }
 
@@ -507,6 +531,7 @@ public class BattlePane {
 
     public void removeCharacterWithoutTrigger(Character character) {
         situation.characters.remove(character);
+        situation.teamPane[character.team].removeCharacter(character);
     }
 
     public void addActionListener(Character character, BattleActionListener listener) {

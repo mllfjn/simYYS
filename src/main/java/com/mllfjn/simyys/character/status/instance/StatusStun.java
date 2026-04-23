@@ -8,7 +8,7 @@ public class StatusStun extends Status implements CrowdControl, Displayable {
     private static final String StatusName = "眩晕";
 
     public StatusStun(Character from, Character belongTo, int duration) {
-        super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
+        super(from, belongTo, StatusType.DEBUFF, StatusForm.YIN_JI);
 
         setDurationType(StatusDurationType.CHI_XU, duration);
     }

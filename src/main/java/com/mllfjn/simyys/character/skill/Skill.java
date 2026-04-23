@@ -66,7 +66,7 @@ public abstract class Skill implements Serializable {
     }
 
     public void use(BattlePane bp) {
-        useBase(bp, true);
+        useBase(true);
     }
 
     public void useDone() {
@@ -84,12 +84,14 @@ public abstract class Skill implements Serializable {
         return cost;
     }
 
-    public void useWithoutCost(BattlePane bp) {
-        useBase(bp, false);
+    public void useWithoutCost() {
+        useBase(false);
     }
 
-    protected void useBase(BattlePane bp, boolean isCost) {
+    protected void useBase(boolean isCost) {
         belongTo.statusRun(Trigger.WILL_USE_SKILL, null);
+
+        BattlePane bp = belongTo.bp;
 
         if (isCost) {
             int finalCost = getCostResult().getFinalCost();
@@ -158,7 +160,7 @@ public abstract class Skill implements Serializable {
     public String toString() {
         String name = getName();
         return switch (skillID) {
-            case 0 -> name;
+            case -1, 0 -> name;
             case 1 -> SKILL_LABEL[0] + "·" + name;
             default -> "妖术" + SKILL_LABEL[skillID - 1] + "·" + name;
         };

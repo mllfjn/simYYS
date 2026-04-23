@@ -11,6 +11,8 @@ import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
@@ -19,7 +21,9 @@ import javafx.stage.Stage;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -49,21 +53,27 @@ public class Prediction implements Serializable {
         });
 
         customListView.setDefaultControlButtons(
-                e -> showAddStage(customListView, items, stage, new AtomicInteger(predictionOrder.size())));
+                e -> showAddStage(customListView, items, stage,
+                        new AtomicInteger(predictionOrder.size() - 1))
+        );
 
         customListView.addControlButton("从当前位置开始添加", e -> showAddStage(customListView, items, stage
                 , new AtomicInteger(customListView.getListView().getSelectionModel().getSelectedIndex())), 1);
 
+        customListView.addControlButton("复制到剪贴板", event -> copyToClipboard());
+
         ownerScene.getRoot().setMouseTransparent(true);
         stage.setOnCloseRequest(event -> ownerScene.getRoot().setMouseTransparent(false));
-        Initializer.installScale(stage, customListView, 900, 600);
+        Initializer.installScale(stage, customListView, 600, 600);
         stage.showAndWait();
     }
 
-    private void showAddStage(ListViewWithBasicController<CharacterNameAndTeam> customListView
-            , SerializableObservableList<PropertiesHolder> items, Stage stage, AtomicInteger startIndex) {
+    private void showAddStage(ListViewWithBasicController<CharacterNameAndTeam> customListView,
+                              SerializableObservableList<PropertiesHolder> items, Stage stage, AtomicInteger startIndex) {
         Set<CharacterNameAndTeam> set = getUsedCharacterName(items);
         if (set == null) return;
+
+        final int width = 100;
 
         FlowPane fp0 = new FlowPane();
         FlowPane fp1 = new FlowPane();
@@ -78,7 +88,7 @@ public class Prediction implements Serializable {
                 customListView.getListView().scrollTo(startIndex.get());
                 customListView.getListView().getSelectionModel().select(startIndex.get());
             });
-            button.setPrefWidth(75);
+            button.setPrefWidth(width);
 
             if (team == 0) {
                 fp0.getChildren().add(button);
@@ -94,7 +104,7 @@ public class Prediction implements Serializable {
             customListView.getListView().scrollTo(startIndex.get());
             customListView.getListView().getSelectionModel().select(startIndex.get());
         });
-        btnNot.setPrefWidth(75);
+        btnNot.setPrefWidth(width);
 
         GridPane gp = new GridPane();
         gp.add(new Text("特殊"), 0, 0);
@@ -114,7 +124,7 @@ public class Prediction implements Serializable {
         addStage.initModality(Modality.APPLICATION_MODAL);
         addStage.initOwner(stage);
 
-        Initializer.installScale(addStage, gp, 500, 600);
+        Initializer.installScale(addStage, gp, 600, 600);
 
         addStage.showAndWait();
     }
@@ -141,7 +151,7 @@ public class Prediction implements Serializable {
                 Utils.error("不符合预期!\n" +
                                 "第" + (i + 1) + "个角色\n预测为:队伍" + preTeam + "-" + preName
                                 + "\n实际为:队伍" + real.team + "-" + real.name
-                        , "跳转至不符合位置", () -> battlePane.predictionShow(stage, back));
+                        , "跳转至不符合位置", () -> battlePane.predictionShow(stage, back, this));
                 return;
             }
             battlePane.next(false);
@@ -162,4 +172,27 @@ public class Prediction implements Serializable {
         return set;
     }
 
+    public void copyToClipboard() {
+        StringBuilder sb = new StringBuilder("<html><body><table><tr><td>行动单位</td><td>行动次数</td></tr>");
+
+        Map<CharacterNameAndTeam, Integer> map = new HashMap<>();
+
+        for (CharacterNameAndTeam characterNameAndTeam : predictionOrder) {
+            int times = map.getOrDefault(characterNameAndTeam, 0);
+            times++;
+            map.put(characterNameAndTeam, times);
+            sb.append("<tr><td style=\"color:#");
+            sb.append(characterNameAndTeam.team() == 0 ? "0070C0" : "FF0000").append(";\">");
+            sb.append(characterNameAndTeam.name()).append("</td><td>");
+            sb.append(times).append("</td>");
+            sb.append("</tr>");
+        }
+        sb.append("</table></body></html>");
+
+
+        Clipboard clipboard = Clipboard.getSystemClipboard();
+        ClipboardContent content = new ClipboardContent();
+        content.putHtml(sb.toString());
+        clipboard.setContent(content);
+    }
 }

@@ -133,7 +133,7 @@ class Skill2 extends PassiveSkill {
                             multiplier += 23;
                         }
                     }
-                    Skill2.this.useDone();
+                    Skill2.this.skill.useDone();
                 });
 
                 if (skill3 != null && getLevel() >= 5) {

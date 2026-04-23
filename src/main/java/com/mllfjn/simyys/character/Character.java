@@ -21,7 +21,7 @@ import com.mllfjn.simyys.character.status.determinant.RejectAllStatuses;
 import com.mllfjn.simyys.character.status.instance.StatusBind;
 import com.mllfjn.simyys.character.status.instance.StatusConfusion;
 import com.mllfjn.simyys.character.status.instance.StatusPoisoning;
-import com.mllfjn.simyys.character.status.triggerParam.ParamBeforeAttack;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.ParamLocationChange;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.character.yuhun.YuHun;
@@ -345,9 +345,11 @@ public abstract class Character implements Serializable {
     }
 
     public void setHp(double num) {
-        this.hp = Math.min(maxHp, num);
-        statusRun(Trigger.HP_CHANGE, null);
-        bp.onTrigger(new EventHpChange(this));
+        if (this.hp != num) {
+            this.hp = Math.min(maxHp, num);
+            statusRun(Trigger.HP_CHANGE, null);
+            bp.onTrigger(new EventHpChange(this));
+        }
     }
 
     public void setHpWithoutTrigger(double num) {
@@ -355,13 +357,22 @@ public abstract class Character implements Serializable {
     }
 
     public void setLockSkill(int i) {
-        getSkill(i).ifPresent(skill -> {
+        boolean changed = false;
+        Optional<Skill> os = getSkill(i);
+        if (os.isPresent()) {
+            Skill skill = os.get();
             if (!(skill instanceof PassiveSkill)) {
                 lockSkill = i;
+                changed = true;
             }
-        });
+        } else if (skills.size() > i) {
+            lockSkill = i;
+            changed = true;
+        }
 
-        doIfCharacterIconExist(CharacterIcon::selectLockSkill);
+        if (changed) {
+            doIfCharacterIconExist(CharacterIcon::selectLockSkill);
+        }
     }
 
     public int getLockSkill() {
@@ -398,6 +409,11 @@ public abstract class Character implements Serializable {
         return location;
     }
 
+    // 好像只有猫川用得到这个
+    public double getLocationWhenGettingOrder() {
+        return location;
+    }
+
     public void setLocation(double newLocation) {
         if (newLocation != location) {
             statusRun(Trigger.LOCATION_CHANGE, new ParamLocationChange(location, newLocation));
@@ -405,8 +421,8 @@ public abstract class Character implements Serializable {
         }
     }
 
-    public void resetLocation() {
-        this.location = 0;
+    public void forceSetLocation(double newLocation) {
+        this.location = newLocation;
     }
 
     public void beforeRound() {
@@ -644,7 +660,7 @@ public abstract class Character implements Serializable {
     }
 
     public void beHurt(AttackInfo attackInfo) {
-        statusRun(Trigger.BEFORE_ATTACK, new ParamBeforeAttack(attackInfo));
+        statusRun(Trigger.BEFORE_ATTACK, new ParamAttackInfo(attackInfo));
 
         double damage = attackInfo.getTraceableNumber().getNumber();
         if (damage > 0) {
@@ -702,15 +718,47 @@ public abstract class Character implements Serializable {
         }
 
         List<Status> tobeDelete = RateController
-                .choose(name + "驱散减益状态,目前里面会有一些显示不正常的东西,以后再修", debuffs,
-                        status -> {
-                            if (status instanceof Displayable d) {
-                                return d.getDisplayText();
-                            } else {
-                                return status.getClass().getName();
-                            }
-                        }, bp.calc, count);
+                .choose(name + "驱散减益状态", debuffs, Status::toString, bp.calc, count);
 
+        for (Status status : tobeDelete) {
+            status.delete();
+        }
+    }
+
+    public void dispelDeBuffPrioritizeCrowdControl(int count) {
+        List<Status> debuffs = new ArrayList<>();
+        List<Status> crowdControl = new ArrayList<>();
+
+        for (Status status : statuses) {
+            if (status.statusType == StatusType.DEBUFF && status.statusForm == StatusForm.ZHUANG_TAI) {
+                if (status instanceof CrowdControl) {
+                    crowdControl.add(status);
+                } else {
+                    debuffs.add(status);
+                }
+            }
+        }
+
+        int remainingCount = count;
+        if (!crowdControl.isEmpty()) {
+            if (crowdControl.size() <= count) {
+                crowdControl.forEach(Status::delete);
+                if (crowdControl.size() == count) {
+                    return;
+                } else {
+                    remainingCount = count - crowdControl.size();
+                }
+            } else {
+                for (Status status : RateController
+                        .choose(name + "驱散控制效果", crowdControl, Status::toString, bp.calc, count)) {
+                    status.delete();
+                }
+                return;
+            }
+        }
+
+        List<Status> tobeDelete = RateController
+                .choose(name + "驱散减益状态", debuffs, Status::toString, bp.calc, remainingCount);
         for (Status status : tobeDelete) {
             status.delete();
         }
@@ -726,14 +774,7 @@ public abstract class Character implements Serializable {
         }
 
         List<Status> tobeDelete = RateController
-                .choose(name + "驱散增益状态,目前里面会有一些显示不正常的东西,以后再修", buffs,
-                        status -> {
-                            if (status instanceof Displayable d) {
-                                return d.getDisplayText();
-                            } else {
-                                return status.getClass().getName();
-                            }
-                        }, bp.calc, count);
+                .choose(name + "驱散增益状态", buffs, Status::toString, bp.calc, count);
 
         for (Status status : tobeDelete) {
             status.delete();

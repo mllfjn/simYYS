@@ -31,7 +31,7 @@ class Skill2 extends Skill {
         super(belongTo, level, 2, 0, 2);
         this.skill3Level = skill3Level;
 
-        belongTo.bp.atBattleStart(() -> useWithoutCost(belongTo.bp));
+        belongTo.bp.atBattleStart(() -> useWithoutCost());
     }
 
     public void reduceCost() {

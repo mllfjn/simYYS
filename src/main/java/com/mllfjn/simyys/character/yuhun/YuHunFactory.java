@@ -71,6 +71,7 @@ public class YuHunFactory {
         yuHunMap.put(RiNvSiShi.YuHunName, RiNvSiShi.class);
         yuHunMap.put(FengHaiTu.YuHunName, FengHaiTu.class);
         yuHunMap.put(YingShengChong.YuHunName, YingShengChong.class);
+        yuHunMap.put(YeHuangHun.YuHunName, YeHuangHun.class);
     }
 
     public static Image getImage(String name) {

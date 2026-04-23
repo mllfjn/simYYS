@@ -207,7 +207,7 @@ class Skill2 extends Skill {
 
         @Override
         public String getDisplayText() {
-            return StatusName;
+            return StatusName + getDuration();
         }
     }
 

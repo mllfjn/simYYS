@@ -20,11 +20,16 @@ public abstract class Status implements Serializable {
         this.statusForm = statusForm;
     }
 
-    public void setDurationType(StatusDurationType settleType, int duration) {
-        /*if (settleType == StatusDurationType.WEI_CHI) {
-            from.removeMaintainedStatus(this);
-        }*/
+    @Override
+    public String toString() {
+        if (this instanceof Displayable d) {
+            return d.getDisplayText();
+        } else {
+            return getClass().getSimpleName();
+        }
+    }
 
+    public void setDurationType(StatusDurationType settleType, int duration) {
         this.durationType = settleType;
         this.duration = duration;
 
@@ -42,9 +47,6 @@ public abstract class Status implements Serializable {
     }
 
     public void setDuration(int num) {
-        /*if (durationType == StatusDurationType.NONE) {
-            throw new RuntimeException("给无持续判定的状态设置持续回合");
-        }*/
         duration = num;
     }
 
@@ -53,11 +55,11 @@ public abstract class Status implements Serializable {
         belongTo.getStatuses().remove(this);
 
         // 这里不能直接在维持列表中删除,因为可能会从维持列表中遍历并调用delete方法,如果后续有需要维持状态主动删除,需要修改
-        // 不行真的不行
         /*// 不记得上面的注释是什么意思了，先写，出了问题再改
         if (durationType == StatusDurationType.WEI_CHI) {
             from.removeMaintainedStatus(this);
         }*/
+        // 不行真的不行
     }
 
     public void beforeDelete() {}

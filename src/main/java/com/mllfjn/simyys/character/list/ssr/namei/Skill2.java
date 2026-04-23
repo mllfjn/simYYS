@@ -53,7 +53,7 @@ class Skill2 extends Skill {
 
     public void useFront(BattlePane bp) {
         useFront = true;
-        this.useWithoutCost(bp);
+        this.useWithoutCost();
         useFront = false;
     }
     @Override

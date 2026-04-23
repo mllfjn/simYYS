@@ -52,7 +52,8 @@ public record StringGroup(String label, String... values) implements Serializabl
                     DiZhenNian.YuHunName,
                     ShenQiLou.YuHunName,
                     HuangKuLou.YuHunName,
-                    LongChe.YuHunName
+                    LongChe.YuHunName,
+                    YeHuangHun.YuHunName
             ),
     };
 }

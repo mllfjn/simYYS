@@ -53,7 +53,7 @@ public class DuoLuoZhiJian extends CharacterSummonBase {
 
     @Override
     public void round() {
-        skill.useWithoutCost(bp);
+        skill.useWithoutCost();
     }
 
     @Override

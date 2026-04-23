@@ -6,7 +6,7 @@ import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamageBeingAttack;
-import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.AttackType;
@@ -41,7 +41,7 @@ class StatusPiCaoRouHou extends Status implements StatusRunnable, Displayable {
 
     @Override
     public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-        if (param instanceof ParamAfterAttack paa) {
+        if (param instanceof ParamAttackInfo paa) {
             double number = paa.attackInfo.getTraceableNumber().getNumber();
             if (number > breakDamage) {
                 stack--;

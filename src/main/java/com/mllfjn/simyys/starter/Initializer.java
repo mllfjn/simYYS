@@ -84,7 +84,6 @@ public class Initializer extends Application {
         borderPane.addControlButton("清空", e -> {
             items.clear();
             prediction.predictionOrder.clear();
-            // TODO 还要清空红绿标和锁技能
         });
 
         borderPane.addControlButton("设置预计顺序", e -> prediction.showPrediction(scene, items));
@@ -178,7 +177,8 @@ public class Initializer extends Application {
                         stageRoot.getChildren().set(0, borderPane);
                         stage.setTitle("配置式神");
                     },
-                    items
+                    items,
+                    prediction
             );
             stage.setTitle("战斗中");
         });

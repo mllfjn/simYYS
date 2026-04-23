@@ -25,7 +25,7 @@ class Skill2 extends Skill {
     public Skill2(Character belongTo, int level) {
         super(belongTo, level, 0, 0, 2);
         if (level >= 5) {
-            belongTo.bp.atBattleStart(() -> useWithoutCost(belongTo.bp));
+            belongTo.bp.atBattleStart(() -> useWithoutCost());
         }
     }
 

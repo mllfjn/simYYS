@@ -190,6 +190,9 @@ public class RateController implements Serializable {
     }
 
     public static boolean otherWhether(String title, String event, RateCalc calc, double rate) {
+        if (rate >= 100) {
+            return true;
+        }
         AtomicBoolean result = new AtomicBoolean();
         whetherOrNot(title, event, List.of(event), item -> item, calc, calc::isControlWhetherOther
                 , s -> rate, (i, b) -> result.set(b));

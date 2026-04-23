@@ -7,7 +7,7 @@ import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamageBeingAttack;
-import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.*;
 
@@ -167,7 +167,7 @@ class Skill3 extends Skill {
 
             @Override
             public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-                if (param instanceof ParamAfterAttack pa) {
+                if (param instanceof ParamAttackInfo pa) {
                     InteractiveInfo info = pa.attackInfo;
                     if (info.getAttacker().team != belongTo.team) {
                         statusYXM.add(info.getTraceableNumber().getNumber() * 0.2);

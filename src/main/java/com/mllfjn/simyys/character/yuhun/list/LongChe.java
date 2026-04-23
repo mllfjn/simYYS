@@ -4,7 +4,7 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunSealResponse;
@@ -50,7 +50,7 @@ public class LongChe extends YuHun implements YuHunUnfullMark, YuHunSealResponse
 
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            if (param instanceof ParamAfterAttack paa && paa.attackInfo.getAttacker().isMob()) {
+            if (param instanceof ParamAttackInfo paa && paa.attackInfo.getAttacker().isMob()) {
                 if (RateController.yuHun(belongTo, LongChe.this, 50)) {
                     causeSkill = paa.attackInfo.getSkill();
                     LongChe.this.yuHunEffect();
