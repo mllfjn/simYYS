@@ -1,12 +1,14 @@
 package com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.citiao;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
+import com.mllfjn.simyys.character.status.AttributeModifier;
+import com.mllfjn.simyys.character.status.Status;
+import com.mllfjn.simyys.character.status.StatusForm;
+import com.mllfjn.simyys.character.status.StatusType;
+import com.mllfjn.simyys.character.status.determinant.InfluenceDamageBeingAttack;
 import com.mllfjn.simyys.interactive.AttackInfo;
+import com.mllfjn.simyys.interactive.InteractiveInfo;
 import com.mllfjn.simyys.interactive.AttackType;
 
 public class CiTiao2YiSui {
@@ -16,7 +18,7 @@ public class CiTiao2YiSui {
         character.addStatus(new StatusYiSui(character));
     }
 
-    static class StatusYiSui extends Status implements AttributeModifier, StatusRunnable {
+    static class StatusYiSui extends Status implements AttributeModifier, InfluenceDamageBeingAttack {
         // 自身降低35%的防御
         public StatusYiSui(Character character) {
             super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
@@ -33,18 +35,11 @@ public class CiTiao2YiSui {
         }
 
         @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.BEING_ATTACKED;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
+        public void doInfluenceBeingAttack(AttackInfo attackInfo) {
             // 首领受到的间接伤害降低99%
             if (attackInfo.getAttackType() == AttackType.JIAN_JIE) {
                 attackInfo.getTraceableNumber().mul(0.01, CiTiaoName);
             }
-            return false;
         }
     }
 }

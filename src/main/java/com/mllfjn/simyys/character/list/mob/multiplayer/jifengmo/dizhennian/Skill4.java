@@ -5,7 +5,7 @@ import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.InteractiveInfo;
 
@@ -67,7 +67,7 @@ class Skill4 extends Skill {
             if (trigger == Trigger.AFTER_ROUND) {
                 selfDuration--;
                 return selfDuration == 0;
-            } else if (trigger == Trigger.AFTER_ATTACK && param instanceof ParamAttackInfo paa) {
+            } else if (trigger == Trigger.AFTER_ATTACK && param instanceof ParamAfterAttack paa) {
                 InteractiveInfo info = paa.attackInfo;
                 Character attacker = info.getAttacker();
                 map.put(attacker

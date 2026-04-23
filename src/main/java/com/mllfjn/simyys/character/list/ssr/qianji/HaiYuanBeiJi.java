@@ -10,7 +10,7 @@ import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.determinant.IgnoreDebuff;
 import com.mllfjn.simyys.battleevent.EventUseGuiHuo;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamageBeingAttack;
-import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.InteractiveInfo;
@@ -110,7 +110,7 @@ class HaiYuanBeiJi extends CharacterSummonBase {
 
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            if (param instanceof ParamAttackInfo paa) {
+            if (param instanceof ParamAfterAttack paa) {
                 InteractiveInfo interactiveInfo = paa.attackInfo;
                 double number = interactiveInfo.getTraceableNumber().getNumber();
                 if (number > 0) {

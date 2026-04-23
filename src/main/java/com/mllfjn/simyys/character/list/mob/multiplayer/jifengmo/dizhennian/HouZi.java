@@ -8,7 +8,7 @@ import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill1PuGongBase;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
-import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.Interactive;
@@ -158,8 +158,8 @@ public class HouZi extends CharacterSummonBase {
 
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            if (param instanceof ParamAttackInfo paa) {
-                double number = paa.getAttackInfo().getTraceableNumber().getNumber();
+            if (param instanceof ParamAfterAttack paa) {
+                double number = paa.attackInfo.getTraceableNumber().getNumber();
                 damage += number;
                 ((HouZi) belongTo).owner.getInfoDisplay().addDamage(number);
             }

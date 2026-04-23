@@ -5,7 +5,7 @@ import com.mllfjn.simyys.battleevent.BattleActionListener;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
+import com.mllfjn.simyys.character.status.triggerParam.ParamBeforeAttack;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunSealResponse;
@@ -59,7 +59,7 @@ public class FengHaiTu extends YuHun implements YuHunSealResponse {
 
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            if (param instanceof ParamAttackInfo pba) {
+            if (param instanceof ParamBeforeAttack pba) {
                 belongTo.getStatus(StatusHaiTuShouHu.class)
                         .orElseGet(() -> {
                             StatusHaiTuShouHu status = new StatusHaiTuShouHu(from, belongTo);

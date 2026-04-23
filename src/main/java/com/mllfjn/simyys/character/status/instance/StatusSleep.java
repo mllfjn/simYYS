@@ -4,7 +4,7 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.StatusRunnable;
-import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
 // TODO 无法动作和受到伤害时自动移除效果没有写
@@ -30,7 +30,7 @@ public class StatusSleep extends Status implements Displayable, CrowdControl, St
 
     @Override
     public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-        if (param instanceof ParamAttackInfo pa) {
+        if (param instanceof ParamAfterAttack pa) {
             return pa.attackInfo.getTraceableNumber().getNumber() > 0;
         }
         return false;
