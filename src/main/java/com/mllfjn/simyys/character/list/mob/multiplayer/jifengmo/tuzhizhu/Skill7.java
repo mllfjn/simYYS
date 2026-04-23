@@ -1,12 +1,11 @@
 package com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.tuzhizhu;
 
+import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.PassiveSkillCanNotSeal;
-import com.mllfjn.simyys.character.status.Status;
-import com.mllfjn.simyys.character.status.StatusForm;
-import com.mllfjn.simyys.character.status.StatusType;
-import com.mllfjn.simyys.character.status.determinant.InfluenceDamageBeingAttack;
-import com.mllfjn.simyys.interactive.AttackInfo;
+import com.mllfjn.simyys.character.status.*;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
+import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
 class Skill7 extends PassiveSkillCanNotSeal {
     private static final String SkillName = "坚韧";
@@ -44,14 +43,21 @@ class Skill7 extends PassiveSkillCanNotSeal {
         return SkillName;
     }
 
-    static class StatusTZZJRReduceDamage extends Status implements InfluenceDamageBeingAttack {
+    static class StatusTZZJRReduceDamage extends Status implements StatusRunnable {
         public StatusTZZJRReduceDamage(Character character) {
             super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
         }
 
         @Override
-        public void doInfluenceBeingAttack(AttackInfo attackInfo) {
-            attackInfo.getTraceableNumber().mul(0.3, SkillName);
+        public boolean runnable(Trigger trigger) {
+            return trigger == Trigger.BEING_ATTACKED;
+        }
+
+        @Override
+        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
+            ((ParamAttackInfo) param).getAttackInfo().getTraceableNumber().mul(0.3, SkillName);
+
+            return false;
         }
     }
 }

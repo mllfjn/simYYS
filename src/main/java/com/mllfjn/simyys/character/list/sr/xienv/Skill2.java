@@ -7,7 +7,7 @@ import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.triggerParam.ParamCauseAttack;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.InteractiveInfo;
 
@@ -72,8 +72,8 @@ class Skill2 extends PassiveSkill {
 
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            if (param instanceof ParamCauseAttack pca) {
-                InteractiveInfo info = pca.getAttackInfo();
+            if (trigger == Trigger.CAUSE_ATTACK) {
+                InteractiveInfo info = ((ParamAttackInfo) param).getAttackInfo();
                 Skill skill = info.getSkill();
                 if (skill == StatusXieDu.SKILL
                         && !info.isCancel()

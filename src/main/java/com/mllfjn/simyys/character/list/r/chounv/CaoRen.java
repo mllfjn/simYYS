@@ -5,7 +5,7 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.CharacterSummonBase;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 
@@ -56,8 +56,8 @@ public class CaoRen extends CharacterSummonBase {
 
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            if (param instanceof ParamAfterAttack pa) {
-                double number = pa.attackInfo.getTraceableNumber().getNumber();
+            if (trigger == Trigger.AFTER_ATTACK) {
+                double number = ((ParamAttackInfo) param).getAttackInfo().getTraceableNumber().getNumber();
                 from.doInteractive(interactive -> {
                             interactive.attack(
                                     AttackInfo.createChuanDaoAttack(from, skill, bind,

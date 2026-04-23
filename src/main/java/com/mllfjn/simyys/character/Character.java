@@ -21,7 +21,7 @@ import com.mllfjn.simyys.character.status.determinant.RejectAllStatuses;
 import com.mllfjn.simyys.character.status.instance.StatusBind;
 import com.mllfjn.simyys.character.status.instance.StatusConfusion;
 import com.mllfjn.simyys.character.status.instance.StatusPoisoning;
-import com.mllfjn.simyys.character.status.triggerParam.ParamBeforeAttack;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.ParamLocationChange;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.character.yuhun.YuHun;
@@ -660,7 +660,7 @@ public abstract class Character implements Serializable {
     }
 
     public void beHurt(AttackInfo attackInfo) {
-        statusRun(Trigger.BEFORE_ATTACK, new ParamBeforeAttack(attackInfo));
+        statusRun(Trigger.BEFORE_ATTACK, new ParamAttackInfo(attackInfo));
 
         double damage = attackInfo.getTraceableNumber().getNumber();
         if (damage > 0) {

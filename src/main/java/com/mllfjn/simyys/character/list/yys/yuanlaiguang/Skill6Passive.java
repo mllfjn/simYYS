@@ -7,8 +7,9 @@ import com.mllfjn.simyys.character.status.Displayable;
 import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.StatusShield;
 import com.mllfjn.simyys.character.status.Trigger;
-import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
+import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.InteractiveInfo;
 
 class Skill6Passive extends PassiveSkillCanNotSeal {
@@ -88,10 +89,10 @@ class Skill6Passive extends PassiveSkillCanNotSeal {
                 reset();
             } else if (trigger == Trigger.AFTER_ATTACK) {
                 belongTo.getSkill(7).ifPresent(skill -> {
-                    InteractiveInfo interactiveInfo = ((ParamAfterAttack) param).attackInfo;
+                    AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
                     // 鬼兵部附身的目标受到攻击但未受到伤害时，鬼兵部劈斩目标来源
-                    if (interactiveInfo.getTraceableNumber().getNumber() == 0) {
-                        ((Skill7Passive) skill).piZhan(interactiveInfo.getAttacker());
+                    if (attackInfo.getTraceableNumber().getNumber() == 0) {
+                        ((Skill7Passive) skill).piZhan(attackInfo.getAttacker());
                     }
                 });
             }

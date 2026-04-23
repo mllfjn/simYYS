@@ -8,8 +8,9 @@ import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.character.status.StatusForm;
 import com.mllfjn.simyys.character.status.StatusType;
 import com.mllfjn.simyys.character.status.Trigger;
-import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
+import com.mllfjn.simyys.interactive.AttackInfo;
 
 class SkillPassive2 extends PassiveSkillCanNotSeal {
     private static final String SkillName = "蜃气升腾";
@@ -38,9 +39,10 @@ class SkillPassive2 extends PassiveSkillCanNotSeal {
 
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            if (param instanceof ParamAfterAttack pa) {
-                double number = pa.attackInfo.getTraceableNumber().getNumber();
-                if (!pa.attackInfo.isCrit() && number > 0) {
+            if (trigger == Trigger.AFTER_ATTACK) {
+                AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
+                double number = attackInfo.getTraceableNumber().getNumber();
+                if (!attackInfo.isCrit() && number > 0) {
                     // 蜃气楼每受到3次非暴击伤害，获得[蜃雾笼罩]
                     count++;
                     if (count == 3) {

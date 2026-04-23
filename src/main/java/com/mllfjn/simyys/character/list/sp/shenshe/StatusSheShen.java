@@ -1,18 +1,20 @@
 package com.mllfjn.simyys.character.list.sp.shenshe;
 
+import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
+import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.character.status.determinant.IgnoreChangeMaxHp;
 import com.mllfjn.simyys.character.status.determinant.IgnoreDebuff;
-import com.mllfjn.simyys.character.status.determinant.InfluenceDamageBeingAttack;
 import com.mllfjn.simyys.character.status.determinant.PreventDie;
 import com.mllfjn.simyys.battleevent.EventActionDone;
 
 // 无法改变生命上限,免疫减益和 TODO 放逐
-public class StatusSheShen extends Status implements IgnoreChangeMaxHp, IgnoreDebuff, PreventDie, InfluenceDamageBeingAttack, Displayable {
+public class StatusSheShen extends Status implements IgnoreChangeMaxHp, IgnoreDebuff, PreventDie, StatusRunnable, Displayable {
     private static final String text = "蛇神";
     // 变身前的血量和上限
     private final double originalMaxHp;
@@ -72,15 +74,23 @@ public class StatusSheShen extends Status implements IgnoreChangeMaxHp, IgnoreDe
     }
 
     @Override
-    public void doInfluenceBeingAttack(AttackInfo attackInfo) {
-        if (level >= 3 && attackInfo.getAttackType() == AttackType.QUN_TI) {
-            attackInfo.getTraceableNumber().mul(0.7, text);
-        }
+    public String getDisplayText() {
+        return text;
     }
 
     @Override
-    public String getDisplayText() {
-        return text;
+    public boolean runnable(Trigger trigger) {
+        return level >= 3 && trigger == Trigger.BEING_ATTACKED;
+    }
+
+    @Override
+    public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
+        AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
+        if (attackInfo.getAttackType() == AttackType.QUN_TI) {
+            attackInfo.getTraceableNumber().mul(0.7, text);
+        }
+
+        return false;
     }
 
     static class StatusSheShenSpeed extends Status implements AttributeModifier {

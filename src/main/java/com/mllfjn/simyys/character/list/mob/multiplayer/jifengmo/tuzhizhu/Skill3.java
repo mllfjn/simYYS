@@ -5,7 +5,6 @@ import com.mllfjn.simyys.battleevent.EventRoundDone;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.PassiveSkillCanNotSeal;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.ratecontroller.RateController;
 
@@ -45,7 +44,7 @@ class Skill3 extends PassiveSkillCanNotSeal {
 
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            if (param instanceof ParamAfterAttack) {
+            if (trigger == Trigger.AFTER_ATTACK) {
                 if (RateController.otherWhether(SkillName, "使用", bp.calc, 35)) {
                     use = true;
                     belongTo.bp.addActionListener(belongTo, event -> {

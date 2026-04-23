@@ -6,8 +6,7 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.determinant.InfluenceDamageBeingAttack;
-import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.*;
 
@@ -167,8 +166,8 @@ class Skill3 extends Skill {
 
             @Override
             public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-                if (param instanceof ParamAfterAttack pa) {
-                    InteractiveInfo info = pa.attackInfo;
+                if (trigger == Trigger.AFTER_ATTACK) {
+                    InteractiveInfo info = ((ParamAttackInfo) param).getAttackInfo();
                     if (info.getAttacker().team != belongTo.team) {
                         statusYXM.add(info.getTraceableNumber().getNumber() * 0.2);
                     }
@@ -198,7 +197,7 @@ class Skill3 extends Skill {
             }
         }
 
-        static class StatusYXMReduceDamageListener extends Status implements InfluenceDamageBeingAttack {
+        static class StatusYXMReduceDamageListener extends Status implements StatusRunnable {
             private final StatusYiXianMu statusYXM;
 
             public StatusYXMReduceDamageListener(Character character, StatusYiXianMu statusYXM) {
@@ -207,13 +206,19 @@ class Skill3 extends Skill {
             }
 
             @Override
-            public void doInfluenceBeingAttack(AttackInfo attackInfo) {
+            public boolean runnable(Trigger trigger) {
+                return trigger == Trigger.BEING_ATTACKED;
+            }
+
+            @Override
+            public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
                 // lv4-受到伤害时,将此伤害的30%印刻于一线目中并减免
-                TraceableNumber traceableNumber = attackInfo.getTraceableNumber();
+                TraceableNumber traceableNumber = ((ParamAttackInfo) param).getAttackInfo().getTraceableNumber();
                 double number = traceableNumber.getNumber() * 0.3;
 
                 traceableNumber.mul(0.7, StatusYiXianMu.StatusName);
                 statusYXM.add(number);
+                return false;
             }
         }
     }

@@ -6,7 +6,7 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.StatusRunnable;
-import com.mllfjn.simyys.character.status.triggerParam.ParamCauseAttack;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunUnfullMark;
@@ -46,10 +46,11 @@ public class TuZhiZhu extends YuHun implements YuHunUnfullMark {
 
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            if (trigger == Trigger.CAUSE_ATTACK && param instanceof ParamCauseAttack pca) {
-                if (pca.getAttackInfo().isCalYuHun()) {
+            if (trigger == Trigger.CAUSE_ATTACK) {
+                AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
+                if (attackInfo.isCalYuHun()) {
                     if (causeSkill == null) {
-                        causeSkill = pca.getAttackInfo().getSkill();
+                        causeSkill = attackInfo.getSkill();
                         causeSkill.addSkillEndListener(() -> {
                             for (Map.Entry<Character, Double> entry : map.entrySet()) {
                                 StatusTuZhiZhu.enable(belongTo, entry.getKey(), 0.1 * entry.getValue());
@@ -59,7 +60,6 @@ public class TuZhiZhu extends YuHun implements YuHunUnfullMark {
                             causeSkill = null;
                         });
                     }
-                    AttackInfo attackInfo = pca.getAttackInfo();
                     Character target = attackInfo.getTarget();
                     // 对怪物造成伤害时
                     if (!target.isMob()) {

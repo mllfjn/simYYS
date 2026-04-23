@@ -4,11 +4,12 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunSealResponse;
 import com.mllfjn.simyys.character.yuhun.YuHunUnfullMark;
+import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.ratecontroller.RateController;
 
 public class LongChe extends YuHun implements YuHunUnfullMark, YuHunSealResponse {
@@ -50,13 +51,17 @@ public class LongChe extends YuHun implements YuHunUnfullMark, YuHunSealResponse
 
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            if (param instanceof ParamAfterAttack paa && paa.attackInfo.getAttacker().isMob()) {
-                if (RateController.yuHun(belongTo, LongChe.this, 50)) {
-                    causeSkill = paa.attackInfo.getSkill();
-                    LongChe.this.yuHunEffect();
-                    belongTo.doInteractive(interactive -> interactive.increaseLocation(belongTo, 30));
-                    causeSkill.addSkillEndListener(() -> causeSkill = null);
+            if (trigger == Trigger.AFTER_ATTACK) {
+                AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
+                if (attackInfo.getAttacker().isMob()) {
+                    if (RateController.yuHun(belongTo, LongChe.this, 50)) {
+                        causeSkill = attackInfo.getSkill();
+                        LongChe.this.yuHunEffect();
+                        belongTo.doInteractive(interactive -> interactive.increaseLocation(belongTo, 30));
+                        causeSkill.addSkillEndListener(() -> causeSkill = null);
+                    }
                 }
+
             }
             return false;
         }

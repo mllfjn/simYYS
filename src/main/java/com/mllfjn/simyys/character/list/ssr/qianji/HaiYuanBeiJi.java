@@ -9,11 +9,9 @@ import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.determinant.IgnoreDebuff;
 import com.mllfjn.simyys.battleevent.EventUseGuiHuo;
-import com.mllfjn.simyys.character.status.determinant.InfluenceDamageBeingAttack;
-import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
-import com.mllfjn.simyys.interactive.InteractiveInfo;
 
 import java.util.List;
 
@@ -85,15 +83,21 @@ class HaiYuanBeiJi extends CharacterSummonBase {
         return true;
     }
 
-    static class StatusJianShang extends Status implements InfluenceDamageBeingAttack {
+    static class StatusJianShang extends Status implements StatusRunnable {
 
         public StatusJianShang(Character character) {
             super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
         }
 
         @Override
-        public void doInfluenceBeingAttack(AttackInfo attackInfo) {
-            attackInfo.getTraceableNumber().mul(0.7, "千姬减伤");
+        public boolean runnable(Trigger trigger) {
+            return trigger == Trigger.BEING_ATTACKED;
+        }
+
+        @Override
+        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
+            ((ParamAttackInfo) param).getAttackInfo().getTraceableNumber().mul(0.7, "千姬减伤");
+            return false;
         }
     }
 
@@ -110,9 +114,9 @@ class HaiYuanBeiJi extends CharacterSummonBase {
 
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            if (param instanceof ParamAfterAttack paa) {
-                InteractiveInfo interactiveInfo = paa.attackInfo;
-                double number = interactiveInfo.getTraceableNumber().getNumber();
+            if (trigger == Trigger.AFTER_ATTACK) {
+                AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
+                double number = attackInfo.getTraceableNumber().getNumber();
                 if (number > 0) {
                     from.doInteractive(interactive ->
                             interactive.recovery(skill, belongTo, number * 0.3));

@@ -7,7 +7,7 @@ import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.StatusRunnable;
-import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.InteractiveInfo;
@@ -86,8 +86,8 @@ public class CiTiao1QiaoJin {
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
             // 己方（指玩家，在这里是对面的人）普攻时，会造成40%溅射伤害
-            if (param instanceof ParamAfterAttack pa) {
-                InteractiveInfo interactiveInfo = pa.attackInfo;
+            if (trigger == Trigger.AFTER_ATTACK) {
+                InteractiveInfo interactiveInfo = ((ParamAttackInfo) param).getAttackInfo();
                 Character attacker = interactiveInfo.getAttacker();
                 Skill skill = interactiveInfo.getSkill();
                 if (skill.getSkillID() == 1

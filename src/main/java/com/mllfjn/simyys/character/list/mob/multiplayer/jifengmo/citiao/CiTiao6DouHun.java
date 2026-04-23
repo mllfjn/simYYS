@@ -1,13 +1,12 @@
 package com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.citiao;
 
+import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
-import com.mllfjn.simyys.character.status.AttributeModifier;
-import com.mllfjn.simyys.character.status.Status;
-import com.mllfjn.simyys.character.status.StatusForm;
-import com.mllfjn.simyys.character.status.StatusType;
-import com.mllfjn.simyys.character.status.determinant.InfluenceDamageBeingAttack;
+import com.mllfjn.simyys.character.status.*;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
+import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 
 public class CiTiao6DouHun {
@@ -23,18 +22,26 @@ public class CiTiao6DouHun {
         });
     }
 
-    static class StatusDHJianShang extends Status implements InfluenceDamageBeingAttack {
+    static class StatusDHJianShang extends Status implements StatusRunnable {
 
         public StatusDHJianShang(Character character) {
             super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
         }
 
         @Override
-        public void doInfluenceBeingAttack(AttackInfo attackInfo) {
+        public boolean runnable(Trigger trigger) {
+            return trigger == Trigger.BEING_ATTACKED;
+        }
+
+        @Override
+        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
+            AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
             if (!attackInfo.isCrit()) {
                 // 首领受到非暴击伤害降低80%
                 attackInfo.getTraceableNumber().mul(0.2, CiTiaoName);
             }
+
+            return false;
         }
     }
 

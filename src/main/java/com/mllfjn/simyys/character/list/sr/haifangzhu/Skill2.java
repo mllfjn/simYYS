@@ -7,8 +7,9 @@ import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.triggerParam.ParamCauseAttack;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
+import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.HealInfo;
 
 import java.util.List;
@@ -52,8 +53,9 @@ class Skill2 extends PassiveSkill {
 
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            if (param instanceof ParamCauseAttack pca) {
-                Skill skill = pca.getAttackInfo().getSkill();
+            if (trigger == Trigger.CAUSE_ATTACK) {
+                AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
+                Skill skill = attackInfo.getSkill();
                 if (skill instanceof Skill1 || skill instanceof Skill3) {
                     Character target = new CharacterFinder(belongTo)
                             .filterTeammate()
@@ -62,7 +64,7 @@ class Skill2 extends PassiveSkill {
                             interactive.heal(Skill2.this, List.of(target),
                                     (c) -> HealInfo.createHeal(belongTo, Skill2.this, target,
                                             (c1, c2) ->
-                                                    pca.getAttackInfo().getTraceableNumber().getNumber() * decay
+                                                    attackInfo.getTraceableNumber().getNumber() * decay
                                     )
                             )
                     );

@@ -5,11 +5,10 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.PassiveSkillCanNotSeal;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.determinant.InfluenceDamageBeingAttack;
 import com.mllfjn.simyys.character.status.determinant.PreventDie;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAddCrowdControl;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
-import com.mllfjn.simyys.interactive.AttackInfo;
 
 class Skill8 extends PassiveSkillCanNotSeal {
     static final String SkillName = "余音入梦";
@@ -58,7 +57,7 @@ class Skill8 extends PassiveSkillCanNotSeal {
             return SkillName;
         }
 
-        static class StatusDeadLine extends Status implements StatusRunnable, InfluenceDamageBeingAttack {
+        static class StatusDeadLine extends Status implements StatusRunnable {
 
             public StatusDeadLine(Character character) {
                 super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
@@ -76,20 +75,17 @@ class Skill8 extends PassiveSkillCanNotSeal {
 
             @Override
             public boolean runnable(Trigger trigger) {
-                return trigger == Trigger.ADDING_CROWD_CONTROL;
+                return trigger == Trigger.ADDING_CROWD_CONTROL || trigger == Trigger.BEING_ATTACKED;
             }
 
             @Override
             public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
                 if (param instanceof ParamAddCrowdControl pac) {
                     pac.getEffectInfo().setCancel(true);
+                } else {
+                    ((ParamAttackInfo) param).getAttackInfo().setCancel(true);
                 }
                 return false;
-            }
-
-            @Override
-            public void doInfluenceBeingAttack(AttackInfo attackInfo) {
-                attackInfo.setCancel(true);
             }
         }
     }

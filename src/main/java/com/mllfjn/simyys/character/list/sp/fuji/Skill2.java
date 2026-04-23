@@ -7,10 +7,9 @@ import com.mllfjn.simyys.character.CharacterSummonBase;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.determinant.InfluenceDamageBeingAttack;
 import com.mllfjn.simyys.character.status.instance.StatusCanNotChoose;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
-import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.InteractiveInfo;
 
@@ -79,7 +78,7 @@ class Skill2 extends Skill {
         return Optional.of(target);
     }
 
-    static class StatusYuan extends Status implements Displayable, AttributeModifier, InfluenceDamageBeingAttack {
+    static class StatusYuan extends Status implements Displayable, AttributeModifier, StatusRunnable {
         private static final String StatusName = "怨";
 
         private boolean isCounting = false;
@@ -107,17 +106,23 @@ class Skill2 extends Skill {
         }
 
         @Override
-        public void doInfluenceBeingAttack(AttackInfo attackInfo) {
-            double hpPercentCeil = Math.ceil(Attribute.HP_PERCENT.getGetter().apply(belongTo));
-            if (hpPercentCeil == 100) {
-                return;
-            }
-            attackInfo.getTraceableNumber().mul((1 + 0.01 * (100 - hpPercentCeil)), StatusName);
+        public String getDisplayText() {
+            return StatusName;
         }
 
         @Override
-        public String getDisplayText() {
-            return StatusName;
+        public boolean runnable(Trigger trigger) {
+            return trigger == Trigger.BEING_ATTACKED;
+        }
+
+        @Override
+        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
+            double hpPercentCeil = Math.ceil(Attribute.HP_PERCENT.getGetter().apply(belongTo));
+            if (hpPercentCeil <= 100) {
+                ((ParamAttackInfo) param).getAttackInfo().getTraceableNumber()
+                        .mul((1 + 0.01 * (100 - hpPercentCeil)), StatusName);
+            }
+            return false;
         }
     }
 
@@ -203,14 +208,20 @@ class Skill2 extends Skill {
             }
         }
 
-        static class StatusLv4ReduceDamage extends Status implements InfluenceDamageBeingAttack {
+        static class StatusLv4ReduceDamage extends Status implements StatusRunnable {
             public StatusLv4ReduceDamage(Character from, Character belongTo) {
                 super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
             }
 
             @Override
-            public void doInfluenceBeingAttack(AttackInfo attackInfo) {
-                attackInfo.getTraceableNumber().mul(0.6, CharacterName);
+            public boolean runnable(Trigger trigger) {
+                return trigger == Trigger.BEING_ATTACKED;
+            }
+
+            @Override
+            public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
+                ((ParamAttackInfo) param).getAttackInfo().getTraceableNumber().mul(0.6, CharacterName);
+                return false;
             }
         }
 

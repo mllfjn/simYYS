@@ -5,9 +5,9 @@ import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
-import com.mllfjn.simyys.interactive.InteractiveInfo;
+import com.mllfjn.simyys.interactive.AttackInfo;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -67,11 +67,11 @@ class Skill4 extends Skill {
             if (trigger == Trigger.AFTER_ROUND) {
                 selfDuration--;
                 return selfDuration == 0;
-            } else if (trigger == Trigger.AFTER_ATTACK && param instanceof ParamAfterAttack paa) {
-                InteractiveInfo info = paa.attackInfo;
-                Character attacker = info.getAttacker();
+            } else if (trigger == Trigger.AFTER_ATTACK) {
+                AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
+                Character attacker = attackInfo.getAttacker();
                 map.put(attacker
-                        , map.getOrDefault(attacker, 0.0) + info.getTraceableNumber().getNumber());
+                        , map.getOrDefault(attacker, 0.0) + attackInfo.getTraceableNumber().getNumber());
             }
             return false;
         }

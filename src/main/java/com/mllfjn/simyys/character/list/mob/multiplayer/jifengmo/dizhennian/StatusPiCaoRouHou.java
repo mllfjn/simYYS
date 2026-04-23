@@ -5,8 +5,7 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.determinant.InfluenceDamageBeingAttack;
-import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.AttackType;
@@ -41,8 +40,8 @@ class StatusPiCaoRouHou extends Status implements StatusRunnable, Displayable {
 
     @Override
     public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-        if (param instanceof ParamAfterAttack paa) {
-            double number = paa.attackInfo.getTraceableNumber().getNumber();
+        if (trigger == Trigger.AFTER_ATTACK) {
+            double number = ((ParamAttackInfo) param).getAttackInfo().getTraceableNumber().getNumber();
             if (number > breakDamage) {
                 stack--;
                 return stack == 0;
@@ -65,16 +64,24 @@ class StatusPiCaoRouHou extends Status implements StatusRunnable, Displayable {
         enemyYYS.doInteractive(interactive -> interactive.attack(attackInfo));
     }
 
-    static class StatusPiCaoRouHouReduceDamage extends Status implements InfluenceDamageBeingAttack {
+    static class StatusPiCaoRouHouReduceDamage extends Status implements StatusRunnable {
         public StatusPiCaoRouHouReduceDamage(Character from, Character belongTo) {
             super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
         }
 
         @Override
-        public void doInfluenceBeingAttack(AttackInfo attackInfo) {
+        public boolean runnable(Trigger trigger) {
+            return trigger == Trigger.BEING_ATTACKED;
+        }
+
+        @Override
+        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
+            AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
             if (attackInfo.getAttackType() != AttackType.ZHEN_SHI) {
                 attackInfo.getTraceableNumber().mul(0.3, StatusPiCaoRouHou.StatusName);
             }
+
+            return false;
         }
     }
 }

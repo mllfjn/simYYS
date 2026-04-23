@@ -10,8 +10,7 @@ import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.determinant.IgnoreDebuff;
-import com.mllfjn.simyys.character.status.determinant.InfluenceDamageBeingAttack;
-import com.mllfjn.simyys.character.status.triggerParam.ParamCauseAttack;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.AttackType;
@@ -25,7 +24,7 @@ class Skill2 extends Skill {
     public Skill2(Character belongTo, int level) {
         super(belongTo, level, 0, 0, 2);
         if (level >= 5) {
-            belongTo.bp.atBattleStart(() -> useWithoutCost());
+            belongTo.bp.atBattleStart(this::useWithoutCost);
         }
     }
 
@@ -64,7 +63,7 @@ class Skill2 extends Skill {
         return Optional.empty();
     }
 
-    class StatusYuHun extends Status implements AttributeModifier, Displayable, InfluenceDamageBeingAttack {
+    class StatusYuHun extends Status implements AttributeModifier, Displayable, StatusRunnable {
         private static final String StatusName = "驭魂";
 
         private final BattleActionListener listener;
@@ -153,10 +152,18 @@ class Skill2 extends Skill {
         }
 
         @Override
-        public void doInfluenceBeingAttack(AttackInfo attackInfo) {
-            if (reduceDamage && attackInfo.getAttackType() == AttackType.DAN_TI) {
+        public boolean runnable(Trigger trigger) {
+            return reduceDamage && trigger == Trigger.BEING_ATTACKED;
+        }
+
+        @Override
+        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
+            AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
+            if (attackInfo.getAttackType() == AttackType.DAN_TI) {
                 attackInfo.getTraceableNumber().mul(0.5, StatusName);
             }
+
+            return false;
         }
 
         static class StatusLuWanUseSkillListener extends Status implements StatusRunnable {
@@ -179,7 +186,7 @@ class Skill2 extends Skill {
     }
 
     class StatusGuiHai extends Status
-            implements AttributeModifier, IgnoreDebuff, InfluenceDamageBeingAttack, StatusRunnable {
+            implements AttributeModifier, IgnoreDebuff, StatusRunnable {
         private static final String StatusName = "归骸形态";
 
         public StatusGuiHai(Character character) {
@@ -197,22 +204,20 @@ class Skill2 extends Skill {
         }
 
         @Override
-        public void doInfluenceBeingAttack(AttackInfo attackInfo) {
-            attackInfo.getTraceableNumber().mul(0.5, StatusName);
-        }
-
-        @Override
         public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.CAUSE_ATTACK;
+            return trigger == Trigger.CAUSE_ATTACK || trigger == Trigger.BEING_ATTACKED;
         }
 
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            if (param instanceof ParamCauseAttack pca) {
-                double number = pca.getAttackInfo().getTraceableNumber().getNumber();
+            AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
+            if (trigger == Trigger.CAUSE_ATTACK) {
+                double number = attackInfo.getTraceableNumber().getNumber();
                 belongTo.doInteractive(interactive ->
                         interactive.recovery(Skill2.this, belongTo, number * 0.12)
                 );
+            } else {
+                attackInfo.getTraceableNumber().mul(0.5, StatusName);
             }
             return false;
         }

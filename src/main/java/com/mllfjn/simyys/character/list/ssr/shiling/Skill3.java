@@ -7,10 +7,9 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.determinant.InfluenceDamageBeingAttack;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
 import com.mllfjn.simyys.character.status.instance.StatusBiHu;
-import com.mllfjn.simyys.character.status.triggerParam.ParamCauseAttack;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 
@@ -69,7 +68,7 @@ class Skill3 extends Skill {
     }
 
     static class StatusYongCan extends Status implements Displayable, StatusRunnable
-            , InfluenceDamageWhenAttack, InfluenceDamageBeingAttack {
+            , InfluenceDamageWhenAttack {
         private static final String StatusName = "用餐";
 
         private final int level;
@@ -111,7 +110,8 @@ class Skill3 extends Skill {
         @Override
         public boolean runnable(Trigger trigger) {
             return (belongTo.isInRound() && trigger == Trigger.CAUSE_ATTACK)
-                    || trigger == Trigger.AFTER_ROUND;
+                    || trigger == Trigger.AFTER_ROUND
+                    || trigger == Trigger.BEING_ATTACKED;
         }
 
         @Override
@@ -119,9 +119,10 @@ class Skill3 extends Skill {
             if (trigger == Trigger.AFTER_ROUND) {
                 eat();
                 return true;
-            }
-            if (trigger == Trigger.CAUSE_ATTACK && param instanceof ParamCauseAttack pca) {
-                xiangShiCount += pca.getAttackInfo().getTraceableNumber().getNumber();
+            } else if (trigger == Trigger.CAUSE_ATTACK) {
+                xiangShiCount += ((ParamAttackInfo) param).getAttackInfo().getTraceableNumber().getNumber();
+            } else {
+                ((ParamAttackInfo) param).getAttackInfo().getTraceableNumber().mul(0.6, StatusName);
             }
             return false;
         }
@@ -131,11 +132,6 @@ class Skill3 extends Skill {
             if (belongTo.isInRound()) {
                 attackInfo.getTraceableNumber().mul(0.7, StatusName);
             }
-        }
-
-        @Override
-        public void doInfluenceBeingAttack(AttackInfo attackInfo) {
-            attackInfo.getTraceableNumber().mul(0.6, StatusName);
         }
 
         static class StatusBaoShiBiHu extends StatusBiHu {

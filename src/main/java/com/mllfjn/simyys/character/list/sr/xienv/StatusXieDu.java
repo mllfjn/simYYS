@@ -7,7 +7,7 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.AttackType;
@@ -72,17 +72,20 @@ class StatusXieDu extends Status implements Displayable, AttributeModifier, Stat
     public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
         if (trigger == Trigger.AFTER_ROUND_FIRST) {
             setOff();
-        } else if (param instanceof ParamAfterAttack paa && paa.attackInfo.getAttackType() == AttackType.JIAN_JIE) {
-            if (receivedDamage == 0) {
-                from.bp.addActionListener(from, event -> {
-                    if (event instanceof EventRoundDone) {
-                        jianShe();
-                        return true;
-                    }
-                    return false;
-                });
+        } else {
+            AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
+            if (attackInfo.getAttackType() == AttackType.JIAN_JIE) {
+                if (receivedDamage == 0) {
+                    from.bp.addActionListener(from, event -> {
+                        if (event instanceof EventRoundDone) {
+                            jianShe();
+                            return true;
+                        }
+                        return false;
+                    });
+                }
+                receivedDamage += attackInfo.getTraceableNumber().getNumber();
             }
-            receivedDamage += paa.attackInfo.getTraceableNumber().getNumber();
         }
         return false;
     }

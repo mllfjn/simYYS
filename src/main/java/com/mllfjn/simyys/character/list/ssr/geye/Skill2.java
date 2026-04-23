@@ -33,7 +33,7 @@ class Skill2 extends Skill {
 
     @Override
     public Optional<Character> usePrivate(BattlePane bp) {
-        return Optional.of();
+        return Optional.empty();
     }
 
 }

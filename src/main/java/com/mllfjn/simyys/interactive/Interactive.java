@@ -6,8 +6,7 @@ import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.Trigger;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAddCrowdControl;
-import com.mllfjn.simyys.character.status.triggerParam.ParamAfterAttack;
-import com.mllfjn.simyys.character.status.triggerParam.ParamCauseAttack;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.yuhun.YuHunAfterCauseAttack;
 import com.mllfjn.simyys.character.yuhun.YuHunAttack;
 import com.mllfjn.simyys.character.yuhun.YuHunHitFeedBack;
@@ -18,7 +17,6 @@ import com.mllfjn.simyys.ratecontroller.RateController;
 import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.character.status.determinant.IgnoreActionDecrease;
 import com.mllfjn.simyys.character.status.determinant.IgnoreActionIncrease;
-import com.mllfjn.simyys.character.status.determinant.InfluenceDamageBeingAttack;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -205,11 +203,7 @@ public class Interactive {
         }
 
         // 被攻击者身上状态类影响
-        for (Status status : target.getStatuses()) {
-            if (status instanceof InfluenceDamageBeingAttack sid) {
-                sid.doInfluenceBeingAttack(attackInfo);
-            }
-        }
+        target.statusRun(Trigger.BEING_ATTACKED, new ParamAttackInfo(attackInfo));
 
         // 部分造成伤害时生效的御魂(破势狂骨等)
         if (traceableNumber.getNumber() > 0 && attackInfo.isCalYuHun()) {
@@ -242,10 +236,10 @@ public class Interactive {
         }
 
         // 触发攻击的目标身上的状态
-        target.statusRun(Trigger.AFTER_ATTACK, new ParamAfterAttack(attackInfo));
+        target.statusRun(Trigger.AFTER_ATTACK, new ParamAttackInfo(attackInfo));
 
         // 触发攻击者身上的攻击监听
-        owner.statusRun(Trigger.CAUSE_ATTACK, new ParamCauseAttack(attackInfo));
+        owner.statusRun(Trigger.CAUSE_ATTACK, new ParamAttackInfo(attackInfo));
     }
 
     public HealInfo healTypical(Skill skill, Character target, int multiplier) {
