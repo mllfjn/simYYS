@@ -12,8 +12,16 @@ import java.util.PriorityQueue;
 class Skill3 extends Skill {
     private static final String SkillName = "归源术";
 
+    private int initTeammateCount;
+
     public Skill3(Character belongTo, int level) {
         super(belongTo, level, 0, 0, 3);
+        belongTo.bp.atBattleStart(() -> {
+            initTeammateCount =
+                    new CharacterFinder(belongTo, true)
+                            .filterTeammate()
+                            .getList().size();
+        });
     }
 
     @Override
@@ -58,7 +66,7 @@ class Skill3 extends Skill {
         }
 
         // 大妖姿态
-        StatusDaYao.install(belongTo, actualTarget);
+        StatusDaYao.install(belongTo, actualTarget, initTeammateCount);
         belongTo.getInteractive().getNewRound(belongTo);
 
         return Optional.empty();

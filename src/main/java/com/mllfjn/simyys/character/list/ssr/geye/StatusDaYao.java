@@ -16,7 +16,7 @@ class StatusDaYao extends Status implements Displayable, StatusRunnable, Prevent
     // 受到致命伤害,在下一次行动结束时回到普通形态
     private boolean die = false;
 
-    private StatusDaYao(GeYe character) {
+    private StatusDaYao(GeYe character, int initTeammateCount) {
         super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
 
         originalMaxHp = character.getMaxHp();
@@ -24,14 +24,14 @@ class StatusDaYao extends Status implements Displayable, StatusRunnable, Prevent
 
         removeOtherStatus();
         character.removeSkill(4);
-        character.addSkill(new Skill4Special(character));
+        character.addSkill(new Skill4Special(character, initTeammateCount));
     }
 
-    static void install(GeYe character, int newStack) {
+    static void install(GeYe character, int newStack, int initTeammateCount) {
         character.getStatus(StatusDaYao.class).ifPresentOrElse(
                 status -> status.stack = newStack,
                 () -> {
-                    StatusDaYao status = new StatusDaYao(character);
+                    StatusDaYao status = new StatusDaYao(character, initTeammateCount);
                     status.stack = newStack;
                     character.addStatus(status);
                 }

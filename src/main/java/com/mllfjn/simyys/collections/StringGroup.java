@@ -20,7 +20,8 @@ public record StringGroup(String label, String... values) implements Serializabl
     public final static StringGroup[] YU_HUN = new StringGroup[]{
             new StringGroup("攻击两件套",
                     KuangGu.YuHunName,
-                    LunRuDao.YuHunName
+                    LunRuDao.YuHunName,
+                    YinNian.YuHunName
             ),
             new StringGroup("暴击两件套",
                     QingNvFang.YuHunName,

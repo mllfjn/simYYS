@@ -163,12 +163,6 @@ public class CharacterIcon implements Serializable {
         status.setFont(Font.font(10));
         status.setWrapText(true);
 
-        // 头像以上部分组装
-        top = new VBox(autoTo, status);
-        top.setAlignment(Pos.BOTTOM_CENTER);
-
-        // 中间区域-----------------------------------
-
         // 生命
         healthBar = new ProgressBar();
         healthBar.setMaxWidth(MAX_WIDTH);
@@ -183,6 +177,14 @@ public class CharacterIcon implements Serializable {
         shieldBar.setStyle("-fx-accent: lightblue");
         shieldBar.setMaxWidth(MAX_WIDTH);
 
+        // 头像以上部分组装
+        top = new VBox(autoTo, status, healthBar, shieldBar);
+        top.setAlignment(Pos.BOTTOM_CENTER);
+
+        // 中间区域-----------------------------------
+
+
+
         // 头像
         imagePane = new AnchorPane();
         Node image = CharacterFactory.getImageWithStroke(character.name, CharacterFactory.ImageSize.CHARACTER_ICON_IMAGE, Color.ORANGE, 5);
@@ -194,6 +196,10 @@ public class CharacterIcon implements Serializable {
 
         yuHunIcon = new ImageView[4];
 
+        // 中间区域组装
+        center = new VBox(imagePane);
+
+        // 底部区域,显示属性
         // 技能选择
         ObservableList<Skill> skills = character.getReadOnlySkillList();
         skillBox = new ComboBox<>(skills);
@@ -204,11 +210,7 @@ public class CharacterIcon implements Serializable {
         skillBox.setCellFactory(skillCellFactory);
         skillBox.setMaxWidth(MAX_WIDTH);
 
-        // 中间区域组装
-        center = new VBox(healthBar, shieldBar, imagePane, skillBox);
-
-        // 底部区域,显示属性
-        bottom = new VBox();
+        bottom = new VBox(skillBox);
         Menu menuSetAttributeVisible = new Menu("显示属性");
         for (MemoryLabel memoryLabel : memoryLabels) {
             memoryLabel.reset(menuSetAttributeVisible);
@@ -364,12 +366,6 @@ public class CharacterIcon implements Serializable {
                 }
             }
         }
-    }
-
-    public void setVisualEffect(Consumer<Node> consumer) {
-        consumer.accept(top);
-        consumer.accept(center);
-        consumer.accept(bottom);
     }
 
     public void setVisualEffectTop(Consumer<Node> consumer) {

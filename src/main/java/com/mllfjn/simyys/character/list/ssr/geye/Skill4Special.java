@@ -12,10 +12,13 @@ import java.util.Optional;
 
 class Skill4Special extends Skill {
     private static final String SkillName = "终式·破空";
-    private static final int[] additionalMultiplier = new int[]{100, 200, 360};
+    private static final double[] coefficient = new double[]{0, 2, 3, 4.6};
 
-    public Skill4Special(Character belongTo) {
+    private final int initTeammateCount;
+
+    public Skill4Special(Character belongTo, int initTeammateCount) {
         super(belongTo, -1, 3, 0, 4);
+        this.initTeammateCount = initTeammateCount;
     }
 
     @Override
@@ -23,10 +26,10 @@ class Skill4Special extends Skill {
         return """
                 √\t恢复自身初始攻击100%的生命
                 √\t攻击敌方全体3次,每次造成攻击300%伤害,伤害平均分配给敌方全体;
-                \t\t这里是按照把伤害系数平均分配写的
-                \t每幻化1名式神,末次伤害分别提升100%、200%、360%.
-                \t\t提升代指不明确,按增加系数写的
-                \t敌方人数每比友方初始人数减少1人,伤害衰减12%
+                √\t每幻化1名式神,末次伤害分别提升100%、200%、360%.
+                √\t敌方人数每比友方初始人数减少1人,伤害衰减12%
+                
+                \t\t平均分配、提升伤害、伤害衰减作用方式未测试，这里按照更改伤害系数写的
                 """;
     }
 
@@ -51,15 +54,18 @@ class Skill4Special extends Skill {
 
         // 前两次固定系数
         int multiplier = 300 / enemyCount;
+        if (enemyCount < initTeammateCount) {
+            multiplier = (int) (multiplier * (1 - (initTeammateCount - enemyCount) * 0.12));
+        }
+
         for (int i = 0; i < 2; i++) {
             interactive.attackTypical(this, list, multiplier, AttackType.QUN_TI);
         }
 
         // 第三次
-        int thirdMultiplier = (
-                300
-                        + additionalMultiplier[belongTo.getStatus(StatusDaYao.class).orElseThrow().getStack()]
-        ) / enemyCount;
+        int thirdMultiplier = (int) (
+                multiplier * coefficient[belongTo.getStatus(StatusDaYao.class).orElseThrow().getStack()]
+        );
 
         interactive.attackTypical(this, list, thirdMultiplier, AttackType.QUN_TI);
 
