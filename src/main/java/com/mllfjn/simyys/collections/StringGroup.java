@@ -38,7 +38,8 @@ public record StringGroup(String label, String... values) implements Serializabl
                     DiaoPingHuo.YuHunName
             ),
             new StringGroup("生命两件套",
-                    TuFo.YuHunName
+                    TuFo.YuHunName,
+                    ELou.YuHunName
             ),
             new StringGroup("防御两件套",
                     HuoZhiChe.YuHunName,
