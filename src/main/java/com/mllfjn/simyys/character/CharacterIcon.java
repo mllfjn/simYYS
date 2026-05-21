@@ -31,6 +31,7 @@ import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.StringJoiner;
+import java.util.function.Consumer;
 
 public class CharacterIcon implements Serializable {
     public static final double MAX_WIDTH = CharacterFactory.ImageSize.CHARACTER_ICON_IMAGE.size * 1.1;
@@ -363,6 +364,24 @@ public class CharacterIcon implements Serializable {
                 }
             }
         }
+    }
+
+    public void setVisualEffect(Consumer<Node> consumer) {
+        consumer.accept(top);
+        consumer.accept(center);
+        consumer.accept(bottom);
+    }
+
+    public void setVisualEffectTop(Consumer<Node> consumer) {
+        consumer.accept(top);
+    }
+
+    public void setVisualEffectCenter(Consumer<Node> consumer) {
+        consumer.accept(center);
+    }
+
+    public void setVisualEffectBottom(Consumer<Node> consumer) {
+        consumer.accept(bottom);
     }
 
     private ImageView getImagePosition(int index) {

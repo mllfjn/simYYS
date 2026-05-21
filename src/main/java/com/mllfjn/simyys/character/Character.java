@@ -850,10 +850,11 @@ public abstract class Character implements Serializable {
     public <T extends Status> Optional<T> addStatus(T newStatus) {
         // 拒绝添加所有状态:堕落之剑和青女房
         for (Status status : getStatuses()) {
-            if (status instanceof RejectAllStatuses
-                    || (newStatus.statusType == StatusType.DEBUFF
-                    && newStatus.statusForm == StatusForm.ZHUANG_TAI
-                    && status instanceof IgnoreDebuff)
+            if (status instanceof RejectAllStatuses ||
+                    (newStatus.statusType == StatusType.DEBUFF
+//                    && newStatus.statusForm == StatusForm.ZHUANG_TAI
+                            && status instanceof IgnoreDebuff id && id.ignoreDebuffEffective()
+                    )
             ) {
                 return Optional.empty();
             }
@@ -970,7 +971,7 @@ public abstract class Character implements Serializable {
 
     public void beforeDie(InteractiveInfo interactiveInfo, double excessDamage) {
         for (Status status : getStatuses()) {
-            if (status instanceof PreventDie pd && pd.effective()) {
+            if (status instanceof PreventDie pd && pd.preventDieEffective()) {
                 pd.preventDie(excessDamage);
                 interactiveInfo.getTraceableNumber().addTrace("(" + pd.getName() + "免死生效)");
                 interactiveInfo.setCancel(true);

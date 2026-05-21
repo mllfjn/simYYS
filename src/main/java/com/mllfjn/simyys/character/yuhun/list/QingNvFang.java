@@ -36,7 +36,7 @@ public class QingNvFang extends YuHun {
         }
 
         @Override
-        public boolean effective() {
+        public boolean preventDieEffective() {
             return !belongTo.isYuHunSeal();
         }
 

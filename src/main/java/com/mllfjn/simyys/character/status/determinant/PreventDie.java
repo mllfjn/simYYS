@@ -1,7 +1,7 @@
 package com.mllfjn.simyys.character.status.determinant;
 
 public interface PreventDie {
-    default boolean effective() {
+    default boolean preventDieEffective() {
         return true;
     }
 

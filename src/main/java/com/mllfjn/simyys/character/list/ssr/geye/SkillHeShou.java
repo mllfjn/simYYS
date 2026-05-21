@@ -9,8 +9,14 @@ import java.util.Optional;
 class SkillHeShou extends Skill {
     private static final String SkillName = "合守";
 
-    public SkillHeShou(Character belongTo) {
+    private final GeYe geYe;
+    private final boolean isIncreaseSpeed;
+
+    SkillHeShou(GeYe geYe, Character belongTo, boolean isIncreaseSpeed) {
         super(belongTo, -1, 0, 0, -1);
+
+        this.geYe = geYe;
+        this.isIncreaseSpeed = isIncreaseSpeed;
     }
 
     @Override
@@ -20,6 +26,7 @@ class SkillHeShou extends Skill {
 
     @Override
     public Optional<Character> usePrivate(BattlePane bp) {
+        StatusHZBH.addStack(geYe, getBelongTo(), 3, isIncreaseSpeed);
         return Optional.empty();
     }
 }

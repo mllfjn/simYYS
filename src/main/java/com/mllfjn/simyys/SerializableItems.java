@@ -105,6 +105,22 @@ public class SerializableItems implements Serializable {
         teamPane[character.team].addCharacter(character);
     }
 
+    /**
+     * 仅向角色列表中添加角色，不进行其余操作
+     */
+    public void addToList(Character character) {
+        characters.add(character);
+        teamPane[character.team].addToList(character);
+    }
+
+    /**
+     * 仅从角色列表中移除角色，不进行其余操作
+     */
+    public void removeFromList(Character character) {
+        characters.remove(character);
+        teamPane[character.team].removeFromList(character);
+    }
+
     public void setAuto(Character characterSelected, FlagChangeInfo.FlagType flagType) {
         // CS是需要设置红绿标的目标
         // 如果flagType是绿标,那么给CS所在的队伍设置绿标,CS本人设置绿标

@@ -88,15 +88,11 @@ public class TeamPane implements Serializable {
         characters.add(character);
         if (center != null) {
             CharacterIcon characterIcon = character.getCharacterIcon();
-//            int index = ;
             center.addColumn(center.getColumnCount(),
                     characterIcon.getTop(),
                     characterIcon.getCenter(),
                     characterIcon.getBottom()
             );
-//            center.add(characterIcon.getTop(), index, 0);
-//            center.add(characterIcon.getCenter(), index, 1);
-//            center.add(characterIcon.getBottom(), index, 2);
         }
         if (mobTeam && !character.isMob() && !character.isSummon()) {
             guiHuo = new GuiHuo(2);
@@ -121,6 +117,20 @@ public class TeamPane implements Serializable {
                 autos[i] = null;
             }
         }
+    }
+
+    /**
+     * 仅向角色列表中添加角色，不进行其余操作
+     */
+    public void addToList(Character character) {
+        characters.add(character);
+    }
+
+    /**
+     * 仅从角色列表中移除角色，不进行其余操作
+     */
+    public void removeFromList(Character character) {
+        characters.remove(character);
     }
 
     public List<Character> getCharacters() {

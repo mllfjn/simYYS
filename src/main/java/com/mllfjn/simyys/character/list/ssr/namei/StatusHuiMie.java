@@ -39,7 +39,7 @@ public class StatusHuiMie extends Status implements Displayable, StatusRunnable,
         // 毁灭6
         sb.append(text).append(stack);
         // 免死生效
-        if (effective()) {
+        if (preventDieEffective()) {
             sb.append(Displayable.DELIMITER).append("金盾");
         }
 
@@ -93,7 +93,7 @@ public class StatusHuiMie extends Status implements Displayable, StatusRunnable,
     }
 
     @Override
-    public boolean effective() {
+    public boolean preventDieEffective() {
         // 只有那美自身在场时可以触发
         return canTrigger && from.alive;
     }
