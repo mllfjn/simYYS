@@ -318,20 +318,6 @@ public class BattlePane {
         onTrigger(new EventAddCharacter(character));
     }
 
-    /**
-     * 仅向角色列表中添加角色，不进行其余操作
-     */
-    public void addToList(Character character) {
-        situation.addToList(character);
-    }
-
-    /**
-     * 仅从角色列表中移除角色，不进行其余操作
-     */
-    public void removeFromList(Character character) {
-        situation.removeFromList(character);
-    }
-
     private List<Character> getCharactersByLocation() {
         return situation.characters.stream().sorted((o1, o2) -> {
             if (o1.getLocation() > o2.getLocation()) {

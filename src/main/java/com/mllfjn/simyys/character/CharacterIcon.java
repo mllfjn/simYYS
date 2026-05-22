@@ -12,6 +12,7 @@ import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.character.status.StatusShield;
 import com.mllfjn.simyys.customnode.CustomInputMenuItem;
 import com.mllfjn.simyys.utils.DecimalFormatUtil;
+import com.mllfjn.simyys.utils.SerializableConsumer;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -31,7 +32,6 @@ import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.StringJoiner;
-import java.util.function.Consumer;
 
 public class CharacterIcon implements Serializable {
     public static final double MAX_WIDTH = CharacterFactory.ImageSize.CHARACTER_ICON_IMAGE.size * 1.1;
@@ -91,6 +91,11 @@ public class CharacterIcon implements Serializable {
     private transient VBox center;
     // 头像以下，显示当前属性
     private transient VBox bottom;
+
+    // 视觉效果
+    private SerializableConsumer<Node> visualEffectTop;
+    private SerializableConsumer<Node> visualEffectCenter;
+    private SerializableConsumer<Node> visualEffectBottom;
 
     // 状态栏
     private transient Label status;
@@ -180,9 +185,11 @@ public class CharacterIcon implements Serializable {
         // 头像以上部分组装
         top = new VBox(autoTo, status, healthBar, shieldBar);
         top.setAlignment(Pos.BOTTOM_CENTER);
+        if (visualEffectTop != null) {
+            visualEffectTop.accept(top);
+        }
 
         // 中间区域-----------------------------------
-
 
 
         // 头像
@@ -198,6 +205,9 @@ public class CharacterIcon implements Serializable {
 
         // 中间区域组装
         center = new VBox(imagePane);
+        if (visualEffectCenter != null) {
+            visualEffectCenter.accept(center);
+        }
 
         // 底部区域,显示属性
         // 技能选择
@@ -247,6 +257,9 @@ public class CharacterIcon implements Serializable {
         bottom.setOnContextMenuRequested(event ->
                 menu.show(bottom, event.getScreenX(), event.getScreenY())
         );
+        if (visualEffectBottom != null) {
+            visualEffectBottom.accept(bottom);
+        }
     }
 
     public VBox getTop() {
@@ -368,16 +381,19 @@ public class CharacterIcon implements Serializable {
         }
     }
 
-    public void setVisualEffectTop(Consumer<Node> consumer) {
+    public void setVisualEffectTop(SerializableConsumer<Node> consumer) {
         consumer.accept(top);
+        visualEffectTop = consumer;
     }
 
-    public void setVisualEffectCenter(Consumer<Node> consumer) {
+    public void setVisualEffectCenter(SerializableConsumer<Node> consumer) {
         consumer.accept(center);
+        visualEffectCenter = consumer;
     }
 
-    public void setVisualEffectBottom(Consumer<Node> consumer) {
+    public void setVisualEffectBottom(SerializableConsumer<Node> consumer) {
         consumer.accept(bottom);
+        visualEffectBottom = consumer;
     }
 
     private ImageView getImagePosition(int index) {
