@@ -6,18 +6,18 @@ import com.mllfjn.simyys.character.status.AttributeModifier;
 import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.character.status.StatusForm;
 import com.mllfjn.simyys.character.status.StatusType;
-import com.mllfjn.simyys.character.status.instance.StatusCanNotChoose;
+import com.mllfjn.simyys.character.status.instance.StatusUnselectable;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.Color;
 
-class StatusHuanHua extends StatusCanNotChoose {
+class StatusHuanHua extends StatusUnselectable {
 
     StatusHuanHua(Character from, Character belongTo) {
         super(from, belongTo);
         StatusHHSpeed.addStack(from);
 
-        belongTo.bp.removeFromList(belongTo);
+        belongTo.bp.situation.canNotChangeLocation(belongTo);
         belongTo.doIfCharacterIconExist(characterIcon -> {
             // 隐去状态栏(top)和属性栏(bottom)
             characterIcon.setVisualEffectTop(node -> node.setVisible(false));
@@ -40,7 +40,7 @@ class StatusHuanHua extends StatusCanNotChoose {
 
     @Override
     public void beforeDelete() {
-        belongTo.bp.addToList(belongTo);
+        belongTo.bp.situation.canChangeLocation(belongTo);
         belongTo.doIfCharacterIconExist(characterIcon -> {
             characterIcon.setVisualEffectTop(node -> node.setVisible(true));
             characterIcon.setVisualEffectBottom(node -> node.setVisible(true));

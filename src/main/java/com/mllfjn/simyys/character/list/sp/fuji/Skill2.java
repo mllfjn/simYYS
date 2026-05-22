@@ -7,7 +7,7 @@ import com.mllfjn.simyys.character.CharacterSummonBase;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.instance.StatusCanNotChoose;
+import com.mllfjn.simyys.character.status.instance.StatusUnselectable;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackType;
@@ -145,7 +145,7 @@ class Skill2 extends Skill {
                 summon.die();
             }
 
-            addStatus(new StatusCanNotChoose(this, this));
+            addStatus(new StatusUnselectable(this, this));
 
             setInitBaseAttack(owner.getInitBaseAttack());
             setInitAdditionAttack(owner.getInitAdditionAttack());

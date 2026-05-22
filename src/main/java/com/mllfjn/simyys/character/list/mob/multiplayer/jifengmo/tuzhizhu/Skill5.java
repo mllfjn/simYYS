@@ -5,7 +5,7 @@ import com.mllfjn.simyys.character.CharacterSummonBase;
 import com.mllfjn.simyys.character.list.mob.multiplayer.ClearHpHandler;
 import com.mllfjn.simyys.character.skill.PassiveSkillCanNotSeal;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.instance.StatusCanNotChoose;
+import com.mllfjn.simyys.character.status.instance.StatusUnselectable;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 
@@ -133,7 +133,7 @@ class Skill5 extends PassiveSkillCanNotSeal {
         characterQian.forceSetMaxHp(9999999999L, true);
 
         belongTo.bp.atBattleStart(() -> {
-            belongTo.addStatus(new StatusCanNotChoose(belongTo, belongTo));
+            belongTo.addStatus(new StatusUnselectable(belongTo, belongTo));
             belongTo.bp.addCharacter(characterTui);
             belongTo.bp.addCharacter(characterBei);
             belongTo.bp.addCharacter(characterQian);
@@ -156,7 +156,7 @@ class Skill5 extends PassiveSkillCanNotSeal {
     void partDie() {
         if (count == 1) {
             TuZhiZhu belongTo = (TuZhiZhu) getBelongTo();
-            belongTo.removeStatus(StatusCanNotChoose.class);
+            belongTo.removeStatus(StatusUnselectable.class);
             belongTo.canChangeStage = true;
 
             return;

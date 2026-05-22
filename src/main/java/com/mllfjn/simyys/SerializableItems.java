@@ -11,6 +11,10 @@ import java.util.*;
 public class SerializableItems implements Serializable {
     // 角色列表
     public final List<Character> characters = new ArrayList<>();
+    // 行动条改变参与单位
+    private final List<Character> charactersChangeLocation = new ArrayList<>();
+    // 目标选取参与单位
+    private final List<Character> charactersSelectable = new ArrayList<>();
     // 死亡角色列表
     public final List<Character> deadCharacters = new ArrayList<>();
     // 当前行动角色
@@ -91,6 +95,8 @@ public class SerializableItems implements Serializable {
 
     public void removeCharacter(Character character) {
         characters.remove(character);
+        charactersChangeLocation.remove(character);
+        charactersSelectable.remove(character);
         deadCharacters.add(character);
 
         for (TeamPane teamPane : teamPane) {
@@ -102,7 +108,33 @@ public class SerializableItems implements Serializable {
 
     public void addCharacter(Character character) {
         characters.add(character);
+        charactersChangeLocation.add(character);
+        charactersSelectable.add(character);
         teamPane[character.team].addCharacter(character);
+    }
+
+    public List<Character> getCharactersChangeLocation() {
+        return charactersChangeLocation;
+    }
+
+    public void canNotChangeLocation(Character character) {
+        charactersChangeLocation.remove(character);
+    }
+
+    public void canChangeLocation(Character character) {
+        charactersChangeLocation.add(character);
+    }
+
+    public List<Character> getCharactersSelectable() {
+        return charactersSelectable;
+    }
+
+    public void unSelectable(Character character) {
+        charactersSelectable.remove(character);
+    }
+
+    public void selectable(Character character) {
+        charactersSelectable.add(character);
     }
 
     public void setAuto(Character characterSelected, FlagChangeInfo.FlagType flagType) {

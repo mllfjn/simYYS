@@ -10,7 +10,7 @@ import com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.citiao.CiTiao6D
 import com.mllfjn.simyys.character.propertygetter.*;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.instance.StatusCanNotChoose;
+import com.mllfjn.simyys.character.status.instance.StatusUnselectable;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
 import java.util.List;
@@ -79,7 +79,7 @@ public class DiZhenNian extends CharacterJiFengMoBase {
             // 召唤一个猴子
             this.bp.addCharacter(new HouZi(this));
             // 自己进入无法选中状态
-            addStatus(new StatusCanNotChoose(this, this));
+            addStatus(new StatusUnselectable(this, this));
             // 如果在凝视立即吐出光球
             getStatus(Skill4.StatusNingShiRecordDamage.class)
                     .ifPresent(Skill4.StatusNingShiRecordDamage::delete);
@@ -92,7 +92,7 @@ public class DiZhenNian extends CharacterJiFengMoBase {
 
     void houZiDie() {
         // 自己回到可选中状态
-        removeStatus(StatusCanNotChoose.class);
+        removeStatus(StatusUnselectable.class);
         // 凝视变为光球后下一回合立即释放
         beforeHouZi = false;
         canNingShi = true;

@@ -4,7 +4,6 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.propertygetter.FlagChangeInfo;
-import com.mllfjn.simyys.character.status.instance.StatusCanNotChoose;
 import com.mllfjn.simyys.ratecontroller.RateController;
 
 import java.util.ArrayList;
@@ -32,10 +31,11 @@ public class CharacterFinder {
         this.bp = owner.bp;
 
         // TODO 可以优化成从teamPane的characters中取
-        stream = bp.situation.characters.stream();
 
-        if (!forceGetList) {
-            stream = stream.filter(character -> !character.isHaveStatus(StatusCanNotChoose.class));
+        if (forceGetList) {
+            stream = bp.situation.characters.stream();
+        } else {
+            stream = bp.situation.getCharactersSelectable().stream();
         }
     }
 

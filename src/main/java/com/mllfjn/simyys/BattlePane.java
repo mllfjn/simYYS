@@ -319,7 +319,7 @@ public class BattlePane {
     }
 
     private List<Character> getCharactersByLocation() {
-        return situation.characters.stream().sorted((o1, o2) -> {
+        return situation.getCharactersChangeLocation().stream().sorted((o1, o2) -> {
             if (o1.getLocation() > o2.getLocation()) {
                 return -1;
             } else if (o1.getLocation() < o2.getLocation()) {
@@ -330,7 +330,7 @@ public class BattlePane {
 
     private List<Character> getCharactersByActionSort() {
         List<Character> rt = new ArrayList<>();
-        List<Character> list = situation.characters;
+        List<Character> list = situation.getCharactersChangeLocation();
         int size = list.size();
         double[] distance = new double[size];
         double[] speed = new double[size];
@@ -485,7 +485,7 @@ public class BattlePane {
     }
 
     private Character getNextOrder() {
-        List<Character> characters = situation.characters;
+        List<Character> characters = situation.getCharactersChangeLocation();
         int indexMin = -1;
         double ttaMin = Double.MAX_VALUE;
         double[] speeds = new double[characters.size()];

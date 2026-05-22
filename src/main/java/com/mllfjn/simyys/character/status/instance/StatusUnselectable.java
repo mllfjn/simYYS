@@ -8,32 +8,32 @@ import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.character.status.StatusForm;
 import com.mllfjn.simyys.character.status.StatusType;
 
-import java.util.List;
-
 
 /**
  * 拥有该状态的单位不可被选中,但可以正常跑行动条
  */
-public class StatusCanNotChoose extends Status implements Displayable {
-    public StatusCanNotChoose(Character from, Character belongTo) {
+public class StatusUnselectable extends Status implements Displayable {
+    public StatusUnselectable(Character from, Character belongTo) {
         super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
+        belongTo.bp.situation.unSelectable(belongTo);
 
-        List<Character> teammates = new CharacterFinder(belongTo)
+        Character caoRen = new CharacterFinder(belongTo)
                 .filterTeammate()
-                .getList();
+                .filter(character -> character instanceof CaoRen cr && cr.getBind() == belongTo)
+                .getFirst();
 
-        for (Character teammate : teammates) {
-            if (teammate instanceof CaoRen cr && cr.getBind() == belongTo) {
-                cr.die();
-                break;
-            }
+        if (caoRen != null) {
+            caoRen.die();
         }
-
-
     }
 
     @Override
     public String getDisplayText() {
         return "无法选中";
+    }
+
+    @Override
+    public void beforeDelete() {
+        belongTo.bp.situation.selectable(belongTo);
     }
 }
