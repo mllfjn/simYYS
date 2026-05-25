@@ -25,14 +25,25 @@ public class TengYuanDaoZhang extends Character {
     private final StatusLvYin statusLvYin;
 
     @Override
+    protected boolean useSkillAuto() {
+        if (getLvYin().getStack() >= 10) {
+            if (tryUseSkill(5)) {
+                return true;
+            }
+
+        }
+        return tryUseSkill(4);
+    }
+
+    @Override
     public PropertiesMap getProperties() {
         PropertiesMap map = super.getProperties();
 
         ((PropertyInput) map.get(PropertyKey.GENERAL_SPEED_KEY)).setValue("142");
-        ((PropertyInput) map.get(PropertyKey.GENERAL_YU_HUN_ATTACK_KEY)).setValue("5568");
-        ((PropertyInput) map.get(PropertyKey.GENERAL_HP_KEY)).setValue("20826");
+        ((PropertyInput) map.get(PropertyKey.GENERAL_YU_HUN_ATTACK_KEY)).setValue("3126");
+        ((PropertyInput) map.get(PropertyKey.GENERAL_HP_KEY)).setValue("27140");
         ((PropertyInput) map.get(PropertyKey.GENERAL_DEFENSE_KEY)).setValue("806");
-        ((PropertyInput) map.get(PropertyKey.GENERAL_CRIT_RATE_KEY)).setValue("20");
+        ((PropertyInput) map.get(PropertyKey.GENERAL_CRIT_RATE_KEY)).setValue("0");
         ((PropertyInput) map.get(PropertyKey.GENERAL_CRIT_POWER_KEY)).setValue("150");
         ((PropertyInput) map.get(PropertyKey.GENERAL_EFFECT_HIT_RATE_KEY)).setValue("0");
         ((PropertyInput) map.get(PropertyKey.GENERAL_EFFECT_RESIST_RATE_KEY)).setValue("0");

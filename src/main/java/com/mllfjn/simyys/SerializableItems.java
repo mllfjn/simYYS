@@ -4,6 +4,7 @@ import com.mllfjn.simyys.battleevent.BattleActionListener;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.propertygetter.FlagChangeInfo;
 import com.mllfjn.simyys.character.status.Trigger;
+import com.mllfjn.simyys.character.status.instance.StatusUnselectable;
 import com.mllfjn.simyys.collections.SafeList;
 
 import java.io.Serializable;
@@ -112,7 +113,9 @@ public class SerializableItems implements Serializable {
     public void addCharacter(Character character) {
         characters.add(character);
         charactersChangeLocation.add(character);
-        charactersSelectable.add(character);
+        if (!character.isHaveStatus(StatusUnselectable.class)) {
+            charactersSelectable.add(character);
+        }
         teamPane[character.team].addCharacter(character);
     }
 

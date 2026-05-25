@@ -6,6 +6,7 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.list.sr.yaoqin.YaoQin;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
+import com.mllfjn.simyys.character.skill.Skill1PuGongBase;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.instance.StatusUnselectable;
 import com.mllfjn.simyys.character.status.instance.StatusRejectAllStatusesInstance;
@@ -24,9 +25,11 @@ class SpecialYaoQin extends YaoQin {
 
         skill1Level = 5;
         fillSkills();
+        removeSkill(1);
         removeSkill(2);
         removeSkill(3);
 
+        addSkill(new SpecialYaoQinSkill1(this));
         addSkill(new SpecialYaoQinSkill2(this));
         addStatus(new StatusUnselectable(this, this));
         addStatus(new StatusRejectAllStatusesInstance(this));
@@ -99,6 +102,19 @@ class SpecialYaoQin extends YaoQin {
             public String getDisplayText() {
                 return "妖琴攻击" + getDuration();
             }
+        }
+    }
+
+    static class SpecialYaoQinSkill1 extends Skill1PuGongBase {
+        private static final String SkillName = "惊弦";
+
+        public SpecialYaoQinSkill1(Character belongTo) {
+            super(belongTo, 1);
+        }
+
+        @Override
+        public String getName() {
+            return SkillName;
         }
     }
 }

@@ -530,8 +530,7 @@ public class BattlePane {
     }
 
     public void removeCharacterWithoutTrigger(Character character) {
-        situation.characters.remove(character);
-        situation.teamPane[character.team].removeCharacter(character);
+        situation.removeCharacter(character);
     }
 
     public void addActionListener(Character character, BattleActionListener listener) {

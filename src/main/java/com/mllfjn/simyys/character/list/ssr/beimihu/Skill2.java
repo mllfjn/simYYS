@@ -34,6 +34,7 @@ class Skill2 extends Skill {
             belongTo.bp.atBattleStart(() -> {
                 Character target = new CharacterFinder(belongTo)
                         .filterTeammate()
+                        .filterShiShen()
                         .get(Attribute.ATTACK, CharacterFinder.Criteria.MAX);
                 StatusShiZhiHui.get(belongTo, target, 1, level);
             });

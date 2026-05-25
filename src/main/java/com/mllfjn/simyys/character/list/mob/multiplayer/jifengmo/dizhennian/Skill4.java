@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.Optional;
 
 class Skill4 extends Skill {
-    private static final String SkillName = "凝视";
+    private static final String SkillName = "鲶之凝视";
 
     private final Skill2 skillGuangQiu;
 
@@ -70,8 +70,8 @@ class Skill4 extends Skill {
             } else if (trigger == Trigger.AFTER_ATTACK) {
                 AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
                 Character attacker = attackInfo.getAttacker();
-                map.put(attacker
-                        , map.getOrDefault(attacker, 0.0) + attackInfo.getTraceableNumber().getNumber());
+                map.put(attacker,
+                        map.getOrDefault(attacker, 0.0) + attackInfo.getTraceableNumber().getNumber());
             }
             return false;
         }
