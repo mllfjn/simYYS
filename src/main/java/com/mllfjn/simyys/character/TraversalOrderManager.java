@@ -5,6 +5,7 @@ import com.mllfjn.simyys.character.status.AttributeModifier;
 import com.mllfjn.simyys.character.status.ConditionalReduceCost;
 import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.character.yuhun.list.YiNianHuo;
+import com.mllfjn.simyys.interactive.AttackType;
 
 import java.util.Comparator;
 import java.util.List;
@@ -21,17 +22,35 @@ public class TraversalOrderManager {
     public static double getAttribute(Attribute attribute, double base, List<Status> statuses) {
         for (Status status : statuses) {
             if (status instanceof AttributeModifier a && a.isAffectAttribute(attribute)) {
-                base += a.getInfluence(attribute);
+                base += a.getInfluence(attribute, null);
             }
         }
         return base < 0 ? 0 : base;
+    }
+
+    public static double getActualDefense(Character attacker, Character target, AttackType attackType) {
+        double defense = target.getInitDefense();
+        AttributeModifier.StatusModifyParam param = new AttributeModifier.StatusModifyParam(target, attackType);
+        for (Status status : target.getStatuses()) {
+            if (status instanceof AttributeModifier a && a.isAffectAttribute(Attribute.DEFENCE)) {
+                defense += a.getInfluence(Attribute.DEFENCE, param);
+            }
+        }
+
+        for (Status status : attacker.getStatuses()) {
+            if (status instanceof AttributeModifier a && a.isAffectAttribute(Attribute.IGNORE_DEFENCE)) {
+                defense -= a.getInfluence(Attribute.IGNORE_DEFENCE, param);
+            }
+        }
+
+        return defense < 0 ? 0 : defense;
     }
 
     public static double getProbabilityAtLeastOne(Attribute attribute, List<Status> statuses) {
         double noEventProbability = 100;
         for (Status status : statuses) {
             if (status instanceof AttributeModifier am && am.isAffectAttribute(attribute)) {
-                noEventProbability *= (100 - am.getInfluence(attribute)) / 100;
+                noEventProbability *= (100 - am.getInfluence(attribute, null)) / 100;
             }
         }
         return 100 - noEventProbability;

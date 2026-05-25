@@ -31,7 +31,7 @@ class StatusShenLi extends Status implements AttributeModifier, Displayable {
     }
 
     @Override
-    public double getInfluence(Attribute attribute) {
+    public double getInfluence(Attribute attribute, StatusModifyParam param) {
         return stack * 20;
     }
 

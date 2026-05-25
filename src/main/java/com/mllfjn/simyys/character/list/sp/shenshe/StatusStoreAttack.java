@@ -32,7 +32,7 @@ public class StatusStoreAttack extends Status implements AttributeModifier {
     }
 
     @Override
-    public double getInfluence(Attribute attribute) {
+    public double getInfluence(Attribute attribute, StatusModifyParam param) {
         // 每被吸一次减少6%
         return belongTo.getInitAttack() * -0.06 * stack;
     }

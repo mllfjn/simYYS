@@ -1,6 +1,7 @@
 package com.mllfjn.simyys.interactive;
 
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.TraversalOrderManager;
 import com.mllfjn.simyys.character.skill.Skill;
 
 import java.util.function.BiFunction;
@@ -55,8 +56,12 @@ public class AttackInfo extends InteractiveInfo {
         AttackInfo attackInfo = new AttackInfo(attacker, skill, target, AttackType.JIAN_JIE, basicNumber);
 
         attackInfo.calYuHun = false;
-        if (target.getDefenceForJianJieShangHai() - target.getIgnoreDefense() <= 0) {
+
+        // 防御为0必定暴击
+        if (TraversalOrderManager.getActualDefense(attacker, target, AttackType.JIAN_JIE) == 0) {
             attackInfo.setCrit(true);
+            // 防御为0就可以跳过防御了
+            attackInfo.setCalDefence(false);
         }
 
         return attackInfo;

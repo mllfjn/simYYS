@@ -186,7 +186,7 @@ class StatusQianJiZengShang extends Status implements AttributeModifier, Display
     }
 
     @Override
-    public double getInfluence(Attribute attribute) {
+    public double getInfluence(Attribute attribute, StatusModifyParam param) {
         return stack * 15;
     }
 

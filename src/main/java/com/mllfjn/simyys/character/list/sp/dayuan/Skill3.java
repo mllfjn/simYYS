@@ -163,7 +163,10 @@ class Skill3 extends Skill {
         }
 
         @Override
-        public double getInfluence(Attribute attribute) {
+        public double getInfluence(Attribute attribute, StatusModifyParam param) {
+            if (from != belongTo) {
+                return from.getCritPower() * 0.4;
+            }
             counting = true;
             double rt = from.getCritPower() * 0.4;
             counting = false;

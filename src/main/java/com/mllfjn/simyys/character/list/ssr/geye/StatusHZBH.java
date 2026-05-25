@@ -99,7 +99,7 @@ class StatusHZBH extends Status implements StatusRunnable, Displayable {
         }
 
         @Override
-        public double getInfluence(Attribute attribute) {
+        public double getInfluence(Attribute attribute, StatusModifyParam param) {
             return 75 * stack;
         }
     }

@@ -143,7 +143,7 @@ public class CiTiao1QiaoJin {
         }
 
         @Override
-        public double getInfluence(Attribute attribute) {
+        public double getInfluence(Attribute attribute, StatusModifyParam param) {
             // 全队受到的伤害降低5%
             return stack * 5;
         }

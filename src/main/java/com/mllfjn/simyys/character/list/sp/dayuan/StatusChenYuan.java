@@ -31,7 +31,7 @@ class StatusChi extends Status implements StatusRunnable, Displayable {
 
     @Override
     public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-        // 回合后立即获得1个回合,且
+        // 回合后立即获得1个回合
         if (trigger == Trigger.AFTER_ROUND) {
             // 无法连续触发此效果
             if (!belongTo.isHaveStatus(StatusChiNewRound.class)) {
@@ -141,7 +141,7 @@ class StatusQingJianShang extends Status implements AttributeModifier {
     }
 
     @Override
-    public double getInfluence(Attribute attribute) {
+    public double getInfluence(Attribute attribute, StatusModifyParam param) {
         return 50;
     }
 

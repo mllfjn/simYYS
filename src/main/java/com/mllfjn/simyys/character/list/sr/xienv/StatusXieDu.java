@@ -53,7 +53,7 @@ class StatusXieDu extends Status implements Displayable, AttributeModifier, Stat
     }
 
     @Override
-    public double getInfluence(Attribute attribute) {
+    public double getInfluence(Attribute attribute, StatusModifyParam param) {
         return -stack * 80;
     }
 

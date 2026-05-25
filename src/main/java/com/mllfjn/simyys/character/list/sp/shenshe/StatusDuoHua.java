@@ -22,7 +22,7 @@ public class StatusDuoHua extends Status implements Displayable, StatusRunnable,
     }
 
     @Override
-    public double getInfluence(Attribute attribute) {
+    public double getInfluence(Attribute attribute, StatusModifyParam param) {
         return belongTo.getInitSpeed() * 0.4;
     }
 

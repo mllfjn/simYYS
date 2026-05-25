@@ -88,7 +88,7 @@ class Skill3 extends Skill {
         }
 
         @Override
-        public double getInfluence(Attribute attribute) {
+        public double getInfluence(Attribute attribute, StatusModifyParam param) {
             return -belongTo.getInitAttack() * ratio;
         }
 
@@ -122,7 +122,7 @@ class Skill3 extends Skill {
         }
 
         @Override
-        public double getInfluence(Attribute attribute) {
+        public double getInfluence(Attribute attribute, StatusModifyParam param) {
             return -belongTo.getInitDefense() * ratio;
         }
 

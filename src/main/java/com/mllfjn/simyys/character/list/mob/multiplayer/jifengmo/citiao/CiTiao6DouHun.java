@@ -57,7 +57,7 @@ public class CiTiao6DouHun {
         }
 
         @Override
-        public double getInfluence(Attribute attribute) {
+        public double getInfluence(Attribute attribute, StatusModifyParam param) {
             // 己方暴击伤害最高的单位获得40%攻击甲醇
             return belongTo.getInitBaseAttack() * 0.4;
         }

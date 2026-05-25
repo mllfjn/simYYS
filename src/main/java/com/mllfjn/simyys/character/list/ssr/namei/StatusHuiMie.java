@@ -71,7 +71,7 @@ public class StatusHuiMie extends Status implements Displayable, StatusRunnable,
     }
 
     @Override
-    public double getInfluence(Attribute attribute) {
+    public double getInfluence(Attribute attribute, StatusModifyParam param) {
         if (attribute == Attribute.DEFENCE) {
             return (1 - stack) * 100; // 降低防御(stack - 1) * 100，这里算的是+防御，所以负的
         }
@@ -127,8 +127,8 @@ public class StatusHuiMie extends Status implements Displayable, StatusRunnable,
         }
 
         @Override
-        public double getInfluence(Attribute attribute) {
-            return huiMie.getInfluence(Attribute.IGNORE_DEFENCE);
+        public double getInfluence(Attribute attribute, StatusModifyParam param) {
+            return huiMie.getInfluence(Attribute.IGNORE_DEFENCE, null);
         }
     }
 }

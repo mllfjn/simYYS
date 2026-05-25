@@ -78,7 +78,7 @@ class StatusHuanHua extends StatusUnselectable {
         }
 
         @Override
-        public double getInfluence(Attribute attribute) {
+        public double getInfluence(Attribute attribute, StatusModifyParam param) {
             return belongTo.getInitSpeed() * 0.15 * stack;
         }
     }

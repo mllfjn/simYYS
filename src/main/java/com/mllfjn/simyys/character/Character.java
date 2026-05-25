@@ -168,18 +168,6 @@ public abstract class Character implements Serializable {
         return TraversalOrderManager.getAttribute(Attribute.DEFENCE, defence, statuses);
     }
 
-    public double getDefenceForJianJieShangHai() {
-        double defence = this.defence;
-        for (Status status : statuses) {
-            if (status instanceof AttributeModifier am && am.isAffectAttribute(Attribute.DEFENCE)) {
-                defence += am.getInfluence(Attribute.DEFENCE);
-            } else if (status instanceof StatusPoisoning sp) {
-                defence += sp.getDefenseForJianJieShangHai();
-            }
-        }
-        return Math.max(0, defence);
-    }
-
     public double getCritRate() {
         return TraversalOrderManager.getAttribute(Attribute.CRIT_RATE, critRate, statuses);
     }
@@ -432,6 +420,7 @@ public abstract class Character implements Serializable {
         if (oStatus.isPresent()) {
             StatusShiZhiHui status = oStatus.get();
             status.transform();
+            statusRun(Trigger.OUT_ROUND_ACTION, null);
             return;
         }
 
@@ -529,6 +518,8 @@ public abstract class Character implements Serializable {
                 break;
             }
         }
+
+        statusRun(Trigger.AFTER_ACTION, null);
 
         // 时之隙跳过回合后结算
         Optional<StatusShiZhiXi> oStatus = getStatus(StatusShiZhiXi.class);

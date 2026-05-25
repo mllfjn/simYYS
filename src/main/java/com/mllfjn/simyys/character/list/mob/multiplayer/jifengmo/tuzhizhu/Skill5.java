@@ -41,7 +41,7 @@ class Skill5 extends PassiveSkillCanNotSeal {
                             }
 
                             @Override
-                            public double getInfluence(Attribute attribute) {
+                            public double getInfluence(Attribute attribute, StatusModifyParam param) {
                                 return -50;
                             }
                         });
@@ -71,7 +71,7 @@ class Skill5 extends PassiveSkillCanNotSeal {
                             }
 
                             @Override
-                            public double getInfluence(Attribute attribute) {
+                            public double getInfluence(Attribute attribute, StatusModifyParam param) {
                                 return belongTo.getInitDefense() * -0.3;
                             }
                         });
@@ -100,7 +100,7 @@ class Skill5 extends PassiveSkillCanNotSeal {
                             }
 
                             @Override
-                            public double getInfluence(Attribute attribute) {
+                            public double getInfluence(Attribute attribute, StatusModifyParam param) {
                                 return belongTo.getInitAttack() * -0.3;
                             }
                         });

@@ -121,7 +121,7 @@ class Skill4 extends Skill {
             }
 
             @Override
-            public double getInfluence(Attribute attribute) {
+            public double getInfluence(Attribute attribute, StatusModifyParam param) {
                 return -belongTo.getInitDefense();
             }
 

@@ -32,7 +32,7 @@ class StatusBuff extends Status implements Displayable, AttributeModifier {
     }
 
     @Override
-    public double getInfluence(Attribute attribute) {
+    public double getInfluence(Attribute attribute, StatusModifyParam param) {
         double rtValue = buffType.attribute == Attribute.ATTACK ? belongTo.getInitBaseAttack() : 100;
         if (getDuration() == 0) {
             rtValue /= 2;

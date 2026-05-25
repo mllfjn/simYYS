@@ -4,6 +4,8 @@ public enum Trigger {
     BEFORE_ROUND, // 回合前
     AFTER_ROUND_FIRST, // 回合后,最早执行,适用于伤害
     AFTER_ROUND, // 回合后
+    OUT_ROUND_ACTION, // 回合外行动开始
+    AFTER_ACTION, // 行动后(包括回合外行动)
     BEFORE_ATTACK, // 遭到攻击前，比如奉海图
     AFTER_ATTACK, // 遭到攻击
     MAKING_CROWD_CONTROL, // 要对其他角色造成控制时

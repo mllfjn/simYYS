@@ -167,7 +167,7 @@ class Skill2 extends PassiveSkill {
         }
 
         @Override
-        public double getInfluence(Attribute attribute) {
+        public double getInfluence(Attribute attribute, StatusModifyParam param) {
             return 100;
         }
     }
@@ -192,7 +192,7 @@ class Skill2 extends PassiveSkill {
         }
 
         @Override
-        public double getInfluence(Attribute attribute) {
+        public double getInfluence(Attribute attribute, StatusModifyParam param) {
             return 100;
         }
     }
@@ -223,7 +223,7 @@ class Skill2 extends PassiveSkill {
         }
 
         @Override
-        public double getInfluence(Attribute attribute) {
+        public double getInfluence(Attribute attribute, StatusModifyParam param) {
             return 160;
         }
     }

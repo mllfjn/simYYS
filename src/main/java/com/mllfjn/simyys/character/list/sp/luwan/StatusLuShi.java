@@ -30,7 +30,7 @@ class StatusLuShi extends Status implements AttributeModifier, Displayable, Stat
     }
 
     @Override
-    public double getInfluence(Attribute attribute) {
+    public double getInfluence(Attribute attribute, StatusModifyParam param) {
         isCounting = true;
         double attack = belongTo.getAttack();
         isCounting = false;
@@ -68,7 +68,7 @@ class StatusLuShi extends Status implements AttributeModifier, Displayable, Stat
         }
 
         @Override
-        public double getInfluence(Attribute attribute) {
+        public double getInfluence(Attribute attribute, StatusModifyParam param) {
             isCounting = true;
             double speed = belongTo.getSpeed();
             isCounting = false;

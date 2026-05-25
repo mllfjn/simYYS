@@ -16,12 +16,10 @@ class Skill3 extends Skill {
 
     public Skill3(Character belongTo, int level) {
         super(belongTo, level, 0, 0, 3);
-        belongTo.bp.atBattleStart(() -> {
-            initTeammateCount =
-                    new CharacterFinder(belongTo, true)
-                            .filterTeammate()
-                            .getList().size();
-        });
+        belongTo.bp.atBattleStart(
+                () -> initTeammateCount = new CharacterFinder(belongTo, true)
+                        .filterTeammate()
+                        .getList().size());
     }
 
     @Override

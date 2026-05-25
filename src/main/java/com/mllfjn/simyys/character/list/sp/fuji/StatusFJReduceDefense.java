@@ -35,7 +35,7 @@ class StatusFJReduceDefense extends Status implements AttributeModifier, Display
     }
 
     @Override
-    public double getInfluence(Attribute attribute) {
+    public double getInfluence(Attribute attribute, StatusModifyParam param) {
         return -defensePerStack * stack;
     }
 

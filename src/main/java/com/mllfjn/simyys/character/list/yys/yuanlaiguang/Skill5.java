@@ -75,7 +75,7 @@ class Skill5 extends Skill {
         }
 
         @Override
-        public double getInfluence(Attribute attribute) {
+        public double getInfluence(Attribute attribute, StatusModifyParam param) {
             return num;
         }
     }
@@ -94,7 +94,7 @@ class Skill5 extends Skill {
         }
 
         @Override
-        public double getInfluence(Attribute attribute) {
+        public double getInfluence(Attribute attribute, StatusModifyParam param) {
             return num;
         }
     }

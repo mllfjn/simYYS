@@ -127,7 +127,7 @@ class Skill2 extends Skill {
         }
 
         @Override
-        public double getInfluence(Attribute attribute) {
+        public double getInfluence(Attribute attribute, StatusModifyParam param) {
             // 每张使自身攻击时无视50点防御
             return 50 * stack;
         }

@@ -11,7 +11,6 @@ import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
 import com.mllfjn.simyys.character.status.triggerParam.ParamUseSkill;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
-import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.interactive.InteractiveInfo;
 import com.mllfjn.simyys.ratecontroller.RateController;
@@ -121,7 +120,7 @@ class Skill3 extends Skill {
         }
 
         @Override
-        public double getInfluence(Attribute attribute) {
+        public double getInfluence(Attribute attribute, StatusModifyParam param) {
             return skill.critPower;
         }
 

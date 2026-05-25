@@ -3,6 +3,7 @@ package com.mllfjn.simyys;
 import com.mllfjn.simyys.battleevent.BattleActionListener;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.propertygetter.FlagChangeInfo;
+import com.mllfjn.simyys.character.status.Trigger;
 import com.mllfjn.simyys.collections.SafeList;
 
 import java.io.Serializable;
@@ -55,7 +56,9 @@ public class SerializableItems implements Serializable {
     public Optional<Character> sZXNewRoundCharacter() {
         // 获得时之隙的单位
         if (!sZXNewRound.isEmpty()) {
-            return Optional.of(sZXNewRound.pop());
+            Character pop = sZXNewRound.pop();
+            pop.statusRun(Trigger.OUT_ROUND_ACTION, null);
+            return Optional.of(pop);
         }
 
         return Optional.empty();

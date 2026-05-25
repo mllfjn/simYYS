@@ -92,7 +92,7 @@ class Skill2 extends PassiveSkill {
         }
 
         @Override
-        public double getInfluence(Attribute attribute) {
+        public double getInfluence(Attribute attribute, StatusModifyParam param) {
             if (from == belongTo) {
                 return 40;
             } else {

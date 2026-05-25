@@ -89,7 +89,7 @@ class Skill7 extends PassiveSkillCanNotSeal {
         }
 
         @Override
-        public double getInfluence(Attribute attribute) {
+        public double getInfluence(Attribute attribute, StatusModifyParam param) {
             if (attribute == Attribute.ZENG_SHANG) {
                 return zengShang;
             }

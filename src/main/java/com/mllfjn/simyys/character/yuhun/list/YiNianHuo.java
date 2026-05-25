@@ -51,7 +51,7 @@ public class YiNianHuo extends YuHun implements YuHunSealResponse {
         }
 
         @Override
-        public double getInfluence(Attribute attribute) {
+        public double getInfluence(Attribute attribute, StatusModifyParam param) {
             return stack * 15;
         }
 

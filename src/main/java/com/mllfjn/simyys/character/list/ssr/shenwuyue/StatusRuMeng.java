@@ -50,7 +50,7 @@ public class StatusRuMeng extends Status implements Displayable, ConditionalRedu
     }
 
     @Override
-    public double getInfluence(Attribute attribute) {
+    public double getInfluence(Attribute attribute, StatusModifyParam param) {
         return 20;
     }
 }

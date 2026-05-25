@@ -28,7 +28,7 @@ public class CiTiao2YiSui {
         }
 
         @Override
-        public double getInfluence(Attribute attribute) {
+        public double getInfluence(Attribute attribute, StatusModifyParam param) {
             return -0.35 * belongTo.getInitDefense();
         }
 

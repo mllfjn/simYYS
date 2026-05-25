@@ -105,7 +105,7 @@ public class StatusSheShen extends Status implements IgnoreChangeMaxHp, IgnoreDe
         }
 
         @Override
-        public double getInfluence(Attribute attribute) {
+        public double getInfluence(Attribute attribute, StatusModifyParam param) {
             return 100;
         }
     }

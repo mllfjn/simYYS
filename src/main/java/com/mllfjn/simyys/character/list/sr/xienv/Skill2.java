@@ -111,7 +111,7 @@ class Skill2 extends PassiveSkill {
         }
 
         @Override
-        public double getInfluence(Attribute attribute) {
+        public double getInfluence(Attribute attribute, StatusModifyParam param) {
             StatusXieDu xieDu = ((XieNv) belongTo).getXieDu();
             if (xieDu != null) {
                 return belongTo.getInitAttack() * 0.2 * xieDu.getStack();

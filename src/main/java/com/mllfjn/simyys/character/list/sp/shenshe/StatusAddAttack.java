@@ -30,7 +30,7 @@ class StatusAddAttack extends Status implements AttributeModifier {
     }
 
     @Override
-    public double getInfluence(Attribute attribute) {
+    public double getInfluence(Attribute attribute, StatusModifyParam param) {
         // 总值不超过自身初始攻击100%
         return Math.min(attack, belongTo.getInitAttack());
     }

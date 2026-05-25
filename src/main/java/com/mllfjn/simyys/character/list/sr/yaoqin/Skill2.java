@@ -71,7 +71,7 @@ class Skill2 extends Skill {
         }
 
         @Override
-        public double getInfluence(Attribute attribute) {
+        public double getInfluence(Attribute attribute, StatusModifyParam param) {
             return num;
         }
     }

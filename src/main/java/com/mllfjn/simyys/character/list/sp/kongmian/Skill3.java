@@ -141,7 +141,7 @@ class Skill3 extends Skill {
         }
 
         @Override
-        public double getInfluence(Attribute attribute) {
+        public double getInfluence(Attribute attribute, StatusModifyParam param) {
             // 降低目标20%防御
             return -belongTo.getInitDefense() * 0.2;
         }

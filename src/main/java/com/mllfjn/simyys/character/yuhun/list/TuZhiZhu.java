@@ -145,7 +145,7 @@ public class TuZhiZhu extends YuHun implements YuHunUnfullMark {
         }
 
         @Override
-        public double getInfluence(Attribute attribute) {
+        public double getInfluence(Attribute attribute, StatusModifyParam param) {
             return -belongTo.getInitSpeed() * 0.1 * count;
         }
 

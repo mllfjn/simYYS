@@ -102,7 +102,7 @@ class StatusNaMeiSpeed extends Status implements AttributeModifier {
     }
 
     @Override
-    public double getInfluence(Attribute attribute) {
+    public double getInfluence(Attribute attribute, StatusModifyParam param) {
         return belongTo.getInitSpeed() * 0.5;
     }
 }
@@ -119,7 +119,7 @@ class StatusNaMeiCritPower extends Status implements AttributeModifier {
     }
 
     @Override
-    public double getInfluence(Attribute attribute) {
+    public double getInfluence(Attribute attribute, StatusModifyParam param) {
         // 这里没测试是加50还是50%
         return 50;
     }

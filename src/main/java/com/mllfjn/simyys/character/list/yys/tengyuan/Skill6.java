@@ -113,7 +113,7 @@ class Skill6 extends PassiveSkillCanNotSeal {
         }
 
         @Override
-        public double getInfluence(Attribute attribute) {
+        public double getInfluence(Attribute attribute, StatusModifyParam param) {
             return speedPerStack * stack;
         }
     }
@@ -149,7 +149,7 @@ class Skill6 extends PassiveSkillCanNotSeal {
         }
 
         @Override
-        public double getInfluence(Attribute attribute) {
+        public double getInfluence(Attribute attribute, StatusModifyParam param) {
             return critPowerPerStack * stack;
         }
     }

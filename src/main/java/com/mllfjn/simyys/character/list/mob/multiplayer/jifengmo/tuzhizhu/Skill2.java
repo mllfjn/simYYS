@@ -38,7 +38,7 @@ class Skill2 extends PassiveSkillCanNotSeal {
         }
 
         @Override
-        public double getInfluence(Attribute attribute) {
+        public double getInfluence(Attribute attribute, StatusModifyParam param) {
             return stack * 0.08 * belongTo.getInitAttack();
         }
 

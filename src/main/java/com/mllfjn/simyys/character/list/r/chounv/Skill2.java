@@ -53,7 +53,7 @@ class Skill2 extends PassiveSkill {
 
         @Override
         public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.AFTER_ROUND;
+            return trigger == Trigger.AFTER_ACTION;
         }
 
         @Override
@@ -97,7 +97,7 @@ class Skill2 extends PassiveSkill {
         }
 
         @Override
-        public double getInfluence(Attribute attribute) {
+        public double getInfluence(Attribute attribute, StatusModifyParam param) {
             return yiShang;
         }
 

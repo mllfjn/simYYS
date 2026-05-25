@@ -43,7 +43,7 @@ public class StatusDiaoLing extends Status implements Displayable, AttributeModi
     }
 
     @Override
-    public double getInfluence(Attribute attribute) {
+    public double getInfluence(Attribute attribute, StatusModifyParam param) {
         return -100;
     }
 

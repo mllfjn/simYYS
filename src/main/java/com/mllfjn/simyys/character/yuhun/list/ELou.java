@@ -55,7 +55,7 @@ public class ELou extends YuHun implements YuHunSealResponse {
         }
 
         @Override
-        public double getInfluence(Attribute attribute) {
+        public double getInfluence(Attribute attribute, StatusModifyParam param) {
             return 80;
         }
 

@@ -93,7 +93,7 @@ public class TuFo extends YuHun implements YuHunSealResponse {
         }
 
         @Override
-        public double getInfluence(Attribute attribute) {
+        public double getInfluence(Attribute attribute, StatusModifyParam param) {
             if (from == belongTo) {
                 return 30;
             } else {

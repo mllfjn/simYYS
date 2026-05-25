@@ -4,8 +4,6 @@ import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
 
-import java.util.Optional;
-
 class StatusYuanYou extends Status implements AttributeModifier, Displayable {
     private static final String StatusName = "愿佑";
 
@@ -27,7 +25,7 @@ class StatusYuanYou extends Status implements AttributeModifier, Displayable {
     }
 
     @Override
-    public double getInfluence(Attribute attribute) {
+    public double getInfluence(Attribute attribute, StatusModifyParam param) {
         if (attribute == Attribute.CRIT_POWER) {
             return Math.min(120, from.getCritPower() * 0.3);
         } else {

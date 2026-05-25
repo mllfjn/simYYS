@@ -64,7 +64,7 @@ public class DiZhenNian extends YuHun implements YuHunUnfullMark, YuHunSealRespo
         }
 
         @Override
-        public double getInfluence(Attribute attribute) {
+        public double getInfluence(Attribute attribute, StatusModifyParam param) {
             // 战斗开始时,获得60%减伤,每次受到伤害,将6%减伤转化为提升1.5%伤害,单次攻击内最多触发1次
             // 用stack表示触发次数
             // 减伤的数值就是 60 - 6 * stack

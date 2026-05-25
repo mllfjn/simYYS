@@ -91,7 +91,7 @@ class SpecialYaoQin extends YaoQin {
             }
 
             @Override
-            public double getInfluence(Attribute attribute) {
+            public double getInfluence(Attribute attribute, StatusModifyParam param) {
                 return belongTo.getInitBaseAttack();
             }
 

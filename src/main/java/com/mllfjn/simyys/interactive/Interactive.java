@@ -2,6 +2,7 @@ package com.mllfjn.simyys.interactive;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.TraversalOrderManager;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.Trigger;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
@@ -155,14 +156,9 @@ public class Interactive {
 
         // 防御
         if (attackInfo.isCalDefence()) {
-            double defense;
-            if (attackInfo.getAttackType() == AttackType.JIAN_JIE) {
-                defense = target.getDefenceForJianJieShangHai();
-            } else {
-                defense = target.getDefence();
-            }
-            double realDefense = Math.max(0, defense - owner.getIgnoreDefense());
-            traceableNumber.mul(300.0 / (300 + realDefense), (int) realDefense + "防御");
+            double defense = TraversalOrderManager
+                    .getActualDefense(attackInfo.getAttacker(), target, attackInfo.getAttackType());
+            traceableNumber.mul(300.0 / (300 + defense), (int) defense + "防御");
         }
 
         // 一般增伤乘区

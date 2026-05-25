@@ -42,7 +42,7 @@ class Skill1 extends Skill1PuGongBase {
         }
 
         @Override
-        public double getInfluence(Attribute attribute) {
+        public double getInfluence(Attribute attribute, StatusModifyParam param) {
             return 20;
         }
 

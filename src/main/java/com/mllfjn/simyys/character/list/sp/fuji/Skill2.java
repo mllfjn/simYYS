@@ -93,7 +93,7 @@ class Skill2 extends Skill {
         }
 
         @Override
-        public double getInfluence(Attribute attribute) {
+        public double getInfluence(Attribute attribute, StatusModifyParam param) {
             double hpPercentCeil = Math.ceil(Attribute.HP_PERCENT.getGetter().apply(belongTo));
             if (hpPercentCeil == 100) {
                 return 0;
