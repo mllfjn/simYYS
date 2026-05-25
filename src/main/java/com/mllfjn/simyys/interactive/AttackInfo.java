@@ -35,7 +35,7 @@ public class AttackInfo extends InteractiveInfo {
         return attackInfo;
     }
 
-    // 真实伤害:无视防御,不会暴击(没写,但是无视增伤,减伤和御魂)
+    // 真实伤害:无视防御,不会暴击(没写,但是无视增伤,减伤)
     public static AttackInfo createRealAttack(Character attacker, Skill skill, Character target
             , BiFunction<Character, Character, Double> basicNumber) {
         AttackInfo attackInfo = new AttackInfo(attacker, skill, target, AttackType.ZHEN_SHI, basicNumber);
@@ -44,7 +44,6 @@ public class AttackInfo extends InteractiveInfo {
         attackInfo.canCrit = false;
         attackInfo.calZengShang = false;
         attackInfo.calYiShang = false;
-        attackInfo.calYuHun = false;
 
         return attackInfo;
     }
