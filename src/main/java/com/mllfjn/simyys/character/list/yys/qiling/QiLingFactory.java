@@ -11,7 +11,8 @@ public class QiLingFactory {
     public static final StringGroup[] QI_LING = new StringGroup[]{new StringGroup("契灵",
             QiLingHuoLing.QiLingName,
             QiLingZhenMuShou.QiLingName,
-            QiLingTiHun.QiLingName
+            QiLingTiHun.QiLingName,
+            QiLingYueMoTu.QiLingName
     )};
 
     public static void addQiLing(PropertiesMap map, Character character) {
@@ -27,6 +28,7 @@ public class QiLingFactory {
             case QiLingHuoLing.QiLingName -> QiLingHuoLing.install(character);
             case QiLingZhenMuShou.QiLingName -> QiLingZhenMuShou.install(character);
             case QiLingTiHun.QiLingName -> QiLingTiHun.install(character);
+            case QiLingYueMoTu.QiLingName -> QiLingYueMoTu.install(character);
         }
     }
 

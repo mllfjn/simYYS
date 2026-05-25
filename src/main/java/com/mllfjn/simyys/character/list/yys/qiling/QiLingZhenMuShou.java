@@ -12,7 +12,7 @@ import java.util.List;
 class QiLingZhenMuShou {
     static final String QiLingName = "镇墓兽";
 
-    public static void install(Character character) {
+    static void install(Character character) {
         character.addStatus(new StatusQLZMUListener(character));
     }
 
