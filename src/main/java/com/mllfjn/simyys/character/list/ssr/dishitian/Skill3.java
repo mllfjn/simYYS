@@ -24,7 +24,7 @@ class Skill3 extends Skill {
         return """
                 √\t攻击敌方全体,造成攻击138, 145, 152, 159伤害,并为自身和另一生命比例最低的友方恢复攻击100%的生命
                 \t\t懒得测试了,这个"另一"是不是强制排除自身,目前按排除写的
-                √\t回合内释放时,对被施加金莲的敌方额外造成2次伤害
+                √\t(觉醒)回合内释放时,对被施加金莲的敌方额外造成2次伤害
                 \tlv5-施加的金莲消失时,驱散或解除自身控制效果,免消耗释放1次不触发敌方全体御魂即被动,但伤害和恢复降低40%.(对怪物不生效)
                 """;
     }
@@ -41,7 +41,7 @@ class Skill3 extends Skill {
         List<Character> list = new CharacterFinder(belongTo)
                 .filterEnemy()
                 .getList();
-        if (belongTo.isInRound()) {
+        if (belongTo.awakening && belongTo.isInRound()) {
             StatusJinLian jinLian = belongTo.getJinLian();
             if (jinLian != null) {
                 for (int i = 0; i < 2; i++) {
