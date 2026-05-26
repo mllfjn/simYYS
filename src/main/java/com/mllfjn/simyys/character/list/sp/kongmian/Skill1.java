@@ -15,7 +15,7 @@ class Skill1 extends Skill1PuGongBase {
     @Override
     public void usePrivate(Interactive interactive, Character target) {
         AttackInfo info = AttackInfo.createJianJieAttack(getBelongTo(), this, target
-                , (from, to) -> from.getAttack());
+                , getBelongTo().getAttack());
         info.setMultiplier(multiplierGeneral[getLevel()]);
         interactive.attack(info);
     }

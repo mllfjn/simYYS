@@ -1,16 +1,10 @@
 package com.mllfjn.simyys.character.list.ssr.xunxiangxing;
 
 import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.battleevent.BattleActionListener;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
-import com.mllfjn.simyys.interactive.AttackInfo;
-import com.mllfjn.simyys.ratecontroller.RateController;
 
-import java.util.List;
 import java.util.Optional;
 
 class Skill2 extends Skill {
@@ -30,13 +24,13 @@ class Skill2 extends Skill {
                 √\t\t在明香境中,除自身外非召唤物友方回合结束后,寻香行获得1层心香
                 √\t\t寻香行攻击敌方时有40%基础概率附加缚魂香
                 √\t\t且敌方防御每比寻香行低1%,寻香行造成的伤害提升1%
-                \tlv2-释放3时,维持效果增加1回合
+                √\tlv2-释放3时,维持效果增加1回合
                 √\tlv3-缚魂香每层降低敌方防御10%
                 √\tlv4-消耗鬼火减少1点
                 √\tlv5-先机:释放2
                 
-                \t缚魂香:每次获得时永久降低携带者5%基础防御,此效果可叠加5层
-                \t\t累计3层时,消耗当前层数转化成失神并对敌方目标造成攻击231%间接伤害
+                √\t缚魂香:每次获得时永久降低携带者5%基础防御,此效果可叠加5层
+                √\t\t累计3层时,消耗当前层数转化成失神并对敌方目标造成攻击231%间接伤害
                 """;
     }
 

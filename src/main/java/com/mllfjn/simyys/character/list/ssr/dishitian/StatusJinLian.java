@@ -48,8 +48,7 @@ class StatusJinLianForMob extends StatusJinLian implements StatusRunnable {
                 number += from.getAttack() * 0.7;
             }
             double finalNumber = number;
-            AttackInfo attackInfo = AttackInfo
-                    .createRealAttack(from, skill2, belongTo, (c1, c2) -> finalNumber);
+            AttackInfo attackInfo = AttackInfo.createRealAttack(from, skill2, belongTo, finalNumber);
             attackInfo.setCalYuHun(false);
             from.doInteractive(interactive -> interactive.attack(attackInfo));
         }

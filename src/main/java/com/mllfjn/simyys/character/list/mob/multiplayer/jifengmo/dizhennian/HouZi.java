@@ -110,9 +110,7 @@ public class HouZi extends CharacterSummonBase {
 
         @Override
         public void usePrivate(Interactive interactive, Character target) {
-            interactive.attack(AttackInfo.createRealAttack(getBelongTo(), this, target,
-                    (c1, c2) -> 5000.0)
-            );
+            interactive.attack(AttackInfo.createRealAttack(getBelongTo(), this, target, 5000));
             interactive.increaseLocation(getBelongTo(), 10);
         }
     }

@@ -2,10 +2,22 @@ package com.mllfjn.simyys.character.list.ssr.xunxiangxing;
 
 import com.mllfjn.simyys.character.CharacterShiShenBase;
 
+import java.util.Optional;
+
 public class XunXiangXing extends CharacterShiShenBase {
     public static final String CharacterName = "寻香行";
 
     private Skill2 skill2;
+
+    @Override
+    protected boolean useSkillAuto() {
+        Optional<StatusHuanJing> oStatus = getStatus(StatusHuanJing.class);
+        if (oStatus.isPresent()) {
+            return tryUseSkill(3);
+        } else {
+            return tryUseSkill(2);
+        }
+    }
 
     double getPercent() {
         return skill2Level >= 3 ? 0.1 : 0.05;

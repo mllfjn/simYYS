@@ -14,7 +14,7 @@ class StatusFuHunXiang extends Status implements Displayable, AttributeModifier 
     private int defenseStack = 1;
     private int damageStack = 1;
 
-    public StatusFuHunXiang(Character from, Character belongTo) {
+    private StatusFuHunXiang(Character from, Character belongTo) {
         super(from, belongTo, StatusType.DEBUFF, StatusForm.YIN_JI);
         XunXiangXing xxx = (XunXiangXing) from;
         skill2 = xxx.getSkill2();
@@ -22,13 +22,15 @@ class StatusFuHunXiang extends Status implements Displayable, AttributeModifier 
     }
 
     static StatusSupplier getSupplier() {
-        return new StatusSupplier(StatusName, StatusFuHunXiang.class, (from, to) -> {
-            to.getStatus(StatusFuHunXiang.class)
-                    .ifPresentOrElse(
-                            StatusFuHunXiang::addStack,
-                            () -> to.addStatus(new StatusFuHunXiang(from, to))
-                    );
-        });
+        return new StatusSupplier(StatusName, StatusFuHunXiang.class, StatusFuHunXiang::addStack);
+    }
+
+    static void addStack(Character from, Character belongTo) {
+        belongTo.getStatus(StatusFuHunXiang.class)
+                .ifPresentOrElse(
+                        StatusFuHunXiang::addStack,
+                        () -> belongTo.addStatus(new StatusFuHunXiang(from, belongTo))
+                );
     }
 
     private void addStack() {
@@ -39,8 +41,9 @@ class StatusFuHunXiang extends Status implements Displayable, AttributeModifier 
         if (damageStack == 2) {
             damageStack = 0;
             StatusShiShen.install(from, belongTo);
-            AttackInfo.createJianJieAttack(from, skill2, belongTo, (c1, c2) ->)
-            from.bp.interactive.attack();
+            AttackInfo attackInfo = AttackInfo.createJianJieAttack(from, skill2, belongTo, from.getAttack());
+            attackInfo.setMultiplier(231);
+            from.bp.interactive.attack(attackInfo);
         } else {
             damageStack++;
         }

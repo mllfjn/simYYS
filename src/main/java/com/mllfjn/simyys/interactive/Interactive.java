@@ -306,7 +306,7 @@ public class Interactive {
     }
 
     public void recovery(Skill skill, Character target, double num) {
-        HealInfo healInfo = HealInfo.createRecovery(owner, skill, target, (c1, c2) -> num);
+        HealInfo healInfo = HealInfo.createRecovery(owner, skill, target, num);
         TraceableNumber traceableNumber = healInfo.getTraceableNumber();
 
         target.recovery(num);

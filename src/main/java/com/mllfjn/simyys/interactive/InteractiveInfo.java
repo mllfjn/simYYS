@@ -3,8 +3,6 @@ package com.mllfjn.simyys.interactive;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
 
-import java.util.function.BiFunction;
-
 public abstract class InteractiveInfo {
     // 发起者
     private final Character attacker;
@@ -26,14 +24,13 @@ public abstract class InteractiveInfo {
     // 是否被取消
     private boolean cancel = false;
 
-    public InteractiveInfo(Character attacker, Skill skill, Character target
-            , BiFunction<Character, Character, Double> basicNumber) {
+    public InteractiveInfo(Character attacker, Skill skill, Character target, double basicNumber) {
         this.attacker = attacker;
         this.skill = skill;
         this.target = target;
 
         traceableNumber = new TraceableNumber(attacker.name, skill.getName());
-        traceableNumber.add(basicNumber.apply(attacker, target), "基础数值");
+        traceableNumber.add(basicNumber, "基础数值");
     }
 
     public TraceableNumber getTraceableNumber() {

@@ -62,7 +62,7 @@ public class DiaoPingHuo extends YuHun implements YuHunSealResponse {
                     .get(Attribute.HP_PERCENT, CharacterFinder.Criteria.MIN);
             belongTo.doInteractive(interactive -> interactive.heal(skill, List.of(target)
                     , (c) -> HealInfo.createHeal(belongTo, skill, c
-                            , (c1, c2) -> belongTo.getDefence() * 7)));
+                            , belongTo.getDefence() * 7)));
             return false;
         }
     }

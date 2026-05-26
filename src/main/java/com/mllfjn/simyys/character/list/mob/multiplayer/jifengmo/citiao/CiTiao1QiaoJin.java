@@ -106,7 +106,7 @@ public class CiTiao1QiaoJin {
                     attacker.doInteractive(interactive -> {
                         for (Character target : targets) {
                             interactive.attack(AttackInfo.createRealAttack(attacker
-                                    , SKILL, target, (c1, c2) -> number * 0.4));
+                                    , SKILL, target, number * 0.4));
                         }
                         SKILL.useDone();
                     });

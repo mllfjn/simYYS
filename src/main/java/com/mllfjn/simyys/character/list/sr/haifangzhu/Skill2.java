@@ -62,10 +62,10 @@ class Skill2 extends PassiveSkill {
                             .get(Attribute.HP_PERCENT, CharacterFinder.Criteria.MIN);
                     belongTo.doInteractive(interactive ->
                             interactive.heal(Skill2.this, List.of(target),
-                                    (c) -> HealInfo.createHeal(belongTo, Skill2.this, target,
-                                            (c1, c2) ->
+                                    (c) ->
+                                            HealInfo.createHeal(belongTo, Skill2.this, target,
                                                     attackInfo.getTraceableNumber().getNumber() * decay
-                                    )
+                                            )
                             )
                     );
 

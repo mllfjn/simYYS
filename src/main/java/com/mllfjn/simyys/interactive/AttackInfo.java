@@ -4,8 +4,6 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.TraversalOrderManager;
 import com.mllfjn.simyys.character.skill.Skill;
 
-import java.util.function.BiFunction;
-
 public class AttackInfo extends InteractiveInfo {
     private final AttackType attackType;
     // 计算防御
@@ -20,8 +18,7 @@ public class AttackInfo extends InteractiveInfo {
     // 伤害上限
     private double limit = 10000000;
 
-    private AttackInfo(Character attacker, Skill skill, Character target, AttackType attackType,
-                       BiFunction<Character, Character, Double> basicNumber) {
+    private AttackInfo(Character attacker, Skill skill, Character target, AttackType attackType, double basicNumber) {
         super(attacker, skill, target, basicNumber);
         this.attackType = attackType;
     }
@@ -29,15 +26,13 @@ public class AttackInfo extends InteractiveInfo {
     // 基本伤害类型
     public static AttackInfo createTypicalAttack(Character attacker, Skill skill, Character target,
                                                  int multiplier, AttackType attackType) {
-        AttackInfo attackInfo = new AttackInfo(attacker, skill, target, attackType,
-                (from, to) -> from.getAttack());
+        AttackInfo attackInfo = new AttackInfo(attacker, skill, target, attackType, attacker.getAttack());
         attackInfo.multiplier = multiplier;
         return attackInfo;
     }
 
     // 真实伤害:无视防御,不会暴击(没写,但是无视增伤,减伤)
-    public static AttackInfo createRealAttack(Character attacker, Skill skill, Character target
-            , BiFunction<Character, Character, Double> basicNumber) {
+    public static AttackInfo createRealAttack(Character attacker, Skill skill, Character target, double basicNumber) {
         AttackInfo attackInfo = new AttackInfo(attacker, skill, target, AttackType.ZHEN_SHI, basicNumber);
 
         attackInfo.calDefence = false;
@@ -50,8 +45,9 @@ public class AttackInfo extends InteractiveInfo {
 
     // 间接伤害:不会触发御魂效果,TODO 无法被分担
     // 对防御为0的敌人必定暴击
-    public static AttackInfo createJianJieAttack(Character attacker, Skill skill, Character target
-            , BiFunction<Character, Character, Double> basicNumber) {
+    public static AttackInfo createJianJieAttack(Character attacker, Skill skill, Character target,
+                                                 double basicNumber
+    ) {
         AttackInfo attackInfo = new AttackInfo(attacker, skill, target, AttackType.JIAN_JIE, basicNumber);
 
         attackInfo.calYuHun = false;
@@ -68,8 +64,7 @@ public class AttackInfo extends InteractiveInfo {
 
     // 传导伤害:不会暴击,不触发御魂TODO薙魂
     // 没写，但是不吃防御、增伤、易伤
-    public static AttackInfo createChuanDaoAttack(Character attacker, Skill skill, Character target
-            , BiFunction<Character, Character, Double> basicNumber) {
+    public static AttackInfo createChuanDaoAttack(Character attacker, Skill skill, Character target, double basicNumber) {
         AttackInfo attackInfo = new AttackInfo(attacker, skill, target, AttackType.CHUAN_DAO, basicNumber);
 
         attackInfo.canCrit = false;

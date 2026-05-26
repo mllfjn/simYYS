@@ -11,6 +11,7 @@ import com.mllfjn.simyys.interactive.AttackInfo;
 class StatusHuanJing extends Status implements Displayable, InfluenceDamageWhenAttack {
     private static final String StatusName = "明香境";
 
+    private final boolean isAwakening;
     private final Skill2 skill2;
     private final BattleActionListener listener;
 
@@ -24,6 +25,7 @@ class StatusHuanJing extends Status implements Displayable, InfluenceDamageWhenA
                 c.addStatus(new StatusAfterRound(character, c));
             }
         });
+        isAwakening = ((XunXiangXing) character).awakening;
     }
 
     @Override
@@ -67,8 +69,12 @@ class StatusHuanJing extends Status implements Displayable, InfluenceDamageWhenA
                 attackInfo.getTraceableNumber().mul(1 + (0.01 * percent), StatusName);
             }
             // 由于是攻击时,interactive一定是belongTo的
-            belongTo.bp.interactive.
-                    effect(skill2, target, 40, true, StatusFuHunXiang.getSupplier());
+            if (isAwakening && attackInfo.getSkill() instanceof Skill3) {
+                StatusFuHunXiang.addStack(belongTo, target);
+            } else {
+                belongTo.bp.interactive.
+                        effect(skill2, target, 40, true, StatusFuHunXiang.getSupplier());
+            }
         }
     }
 

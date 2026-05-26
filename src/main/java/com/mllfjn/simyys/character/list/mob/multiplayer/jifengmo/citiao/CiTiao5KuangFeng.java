@@ -40,7 +40,6 @@ public class CiTiao5KuangFeng {
                 if (attacker.isInRound() && !(interactiveInfo.getSkill() instanceof SkillKF)) {
                     belongTo.doInteractive(interactive -> interactive
                             .attack(AttackInfo.createRealAttack(attacker, SkillKFInstance, belongTo,
-                                    (c1, c2) ->
                                             interactiveInfo.getTraceableNumber().getNumber() * 0.2)));
                 }
             }

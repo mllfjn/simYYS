@@ -206,8 +206,7 @@ class Skill3 extends Skill {
 
             belongTo.doInteractive(interactive -> {
                 for (Character target : targets) {
-                    AttackInfo attackInfo = AttackInfo.createRealAttack(belongTo, skill, target
-                            , (c1, c2) -> numForeach);
+                    AttackInfo attackInfo = AttackInfo.createRealAttack(belongTo, skill, target, numForeach);
                     attackInfo.setLimit(limit);
 
                     oStatus.ifPresent(status ->
@@ -216,8 +215,7 @@ class Skill3 extends Skill {
                     interactive.attack(attackInfo);
 
                     if (extraDamage) {
-                        AttackInfo extraInfo = AttackInfo.createRealAttack(belongTo, skill, target
-                                , (c1, c2) -> extra);
+                        AttackInfo extraInfo = AttackInfo.createRealAttack(belongTo, skill, target, extra);
                         interactive.attack(extraInfo);
                     }
                 }

@@ -34,8 +34,7 @@ class StatusXieDu extends Status implements Displayable, AttributeModifier, Stat
     }
 
     public void setOff() {
-        AttackInfo info = AttackInfo.createJianJieAttack(from, SKILL, belongTo,
-                (owner, target) -> from.getAttack());
+        AttackInfo info = AttackInfo.createJianJieAttack(from, SKILL, belongTo, from.getAttack());
         info.setMultiplier(multiplier);
         from.doInteractive(interactive -> interactive.attack(info));
         if (stack < 5) {
@@ -99,12 +98,7 @@ class StatusXieDu extends Status implements Displayable, AttributeModifier, Stat
         from.doInteractive(interactive -> {
             double limit = from.getAttack() * 8;
             interactive.attack(SKILL, list, (target) -> {
-                AttackInfo attackInfo = AttackInfo.createJianJieAttack(
-                        from,
-                        SKILL,
-                        target,
-                        (from, to) -> average
-                );
+                AttackInfo attackInfo = AttackInfo.createJianJieAttack(from, SKILL, target, average);
                 attackInfo.setLimit(limit);
                 return attackInfo;
             });

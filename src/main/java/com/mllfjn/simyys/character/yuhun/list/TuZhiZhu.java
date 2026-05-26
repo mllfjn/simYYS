@@ -80,6 +80,7 @@ public class TuZhiZhu extends YuHun implements YuHunUnfullMark {
     }
 
     static class StatusTuZhiZhu extends Status implements Displayable, StatusRunnable, AttributeModifier {
+        private final Skill skill = Skill.getInstance(TuZhiZhu.YuHunName);
         private final TuZhiZhuRecord[] records = new TuZhiZhuRecord[3];
         private int count = 0;
 
@@ -129,11 +130,7 @@ public class TuZhiZhu extends YuHun implements YuHunUnfullMark {
                     break;
                 }
                 record.from.doInteractive(interactive ->
-                        interactive.attack(AttackInfo
-                                .createJianJieAttack(record.from, Skill.getInstance(TuZhiZhu.YuHunName), belongTo,
-                                        (owner, target) -> record.num
-                                )
-                        )
+                        interactive.attack(AttackInfo.createJianJieAttack(record.from, skill, belongTo, record.num))
                 );
             }
             return true;

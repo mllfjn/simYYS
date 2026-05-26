@@ -131,7 +131,7 @@ class QiLingTiHun {
             public void preventDie(double excessDamage) {
                 StatusQLTHListener.this.takeEffect();
                 belongTo.setHp(belongTo.getMaxHp() * 0.2);
-                from.beHurt(AttackInfo.createRealAttack(from, SKILL, from, (c1, c2) -> excessDamage));
+                from.beHurt(AttackInfo.createRealAttack(from, SKILL, from, excessDamage));
             }
 
             @Override

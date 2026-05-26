@@ -59,10 +59,7 @@ public class CaoRen extends CharacterSummonBase {
             if (trigger == Trigger.AFTER_ATTACK) {
                 double number = ((ParamAttackInfo) param).getAttackInfo().getTraceableNumber().getNumber();
                 from.doInteractive(interactive -> {
-                            interactive.attack(
-                                    AttackInfo.createChuanDaoAttack(from, skill, bind,
-                                            (c1, c2) -> number)
-                            );
+                    interactive.attack(AttackInfo.createChuanDaoAttack(from, skill, bind, number));
                             skill.useDone();
                         }
                 );

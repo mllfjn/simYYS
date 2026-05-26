@@ -25,7 +25,7 @@ class StatusYuanHuo extends Status implements StatusRunnable {
     public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
         from.doInteractive(interactive -> {
             AttackInfo attackInfo = AttackInfo
-                    .createJianJieAttack(from, SKILL, belongTo, (c1, c2) -> from.getAttack());
+                    .createJianJieAttack(from, SKILL, belongTo, from.getAttack());
             attackInfo.setMultiplier(99);
             interactive.attack(attackInfo);
             SKILL.useDone();

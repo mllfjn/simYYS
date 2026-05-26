@@ -25,8 +25,7 @@ class Skill2 extends Skill {
                     // 已经有了虚弱状态
                     int duration = statusDebuff.getDuration();
                     AttackInfo info = AttackInfo
-                            .createRealAttack(target, this, target
-                                    , (c1, c2) -> duration * 0.3 * target.getMaxHp());
+                            .createRealAttack(target, this, target, duration * 0.3 * target.getMaxHp());
                     info.setCanThroughShield(true);
                     target.doInteractive(interactive -> interactive.attack(info));
                     // 红凝
