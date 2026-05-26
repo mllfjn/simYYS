@@ -4,11 +4,14 @@ import com.mllfjn.simyys.battleevent.*;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.CharacterFactory;
 import com.mllfjn.simyys.character.PropertyKey;
+import com.mllfjn.simyys.character.list.sp.yinfan.StatusYuanLi;
+import com.mllfjn.simyys.character.list.ssr.xunxiangxing.StatusShiShen;
+import com.mllfjn.simyys.character.status.Status;
+import com.mllfjn.simyys.character.yuhun.list.youchizi.StatusYCZ;
 import com.mllfjn.simyys.collections.SafeList;
 import com.mllfjn.simyys.customnode.CustomTextField;
 import com.mllfjn.simyys.customnode.TextFlowLog;
 import com.mllfjn.simyys.guihuo.MobGuiHuo;
-import com.mllfjn.simyys.guihuo.SubstituteProvider;
 import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.ratecontroller.RateCalc;
 import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
@@ -148,8 +151,12 @@ public class BattlePane {
         }
     }
 
-    public void setSubstituteProvider(int team, SubstituteProvider substituteProvider) {
-        situation.teamPane[team].setSubstituteProvider(substituteProvider);
+    public void setYuanLi(int team, StatusYuanLi statusYuanLi) {
+        situation.teamPane[team].setYuanLi(statusYuanLi);
+    }
+
+    public void setYCZ(int team, StatusYCZ statusYCZ) {
+        situation.teamPane[team].setYCZ(statusYCZ);
     }
 
     public Label requestInfoDisplayLabel() {
@@ -504,7 +511,16 @@ public class BattlePane {
             }
         }
 
-        return characters.get(indexMin);
+        Character character = characters.get(indexMin);
+        for (Status status : character.getStatuses()) {
+            if (status instanceof StatusShiShen) {
+                status.delete();
+                character.forceSetLocation(0);
+                return getNextOrder();
+            }
+        }
+
+        return character;
     }
 
     public Character getCharacterActing() {

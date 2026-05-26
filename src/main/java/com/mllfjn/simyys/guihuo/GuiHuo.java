@@ -3,6 +3,8 @@ package com.mllfjn.simyys.guihuo;
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.battleevent.EventUseGuiHuo;
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.list.sp.yinfan.StatusYuanLi;
+import com.mllfjn.simyys.character.yuhun.list.youchizi.StatusYCZ;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -18,7 +20,8 @@ public class GuiHuo implements Serializable {
     private int progress;
     private transient Label guiHuoDisplay;
 
-    private SubstituteProvider substituteProvider;
+    private StatusYuanLi yuanLi;
+    private StatusYCZ ycz;
 
     public GuiHuo(int startWith) {
         now = startWith;
@@ -39,12 +42,21 @@ public class GuiHuo implements Serializable {
             return true;
         }
 
-        // 鬼火不够时如果没有替代鬼火的话返回false
-        if (substituteProvider == null) {
-            return false;
+        // 鬼火不够时检查替代鬼火
+        int needUse = num - now;
+        // 愿力
+        if (yuanLi != null) {
+            needUse -= yuanLi.maxUse();
+            if (needUse <= 0) {
+                return true;
+            }
         }
 
-        return substituteProvider.canUse(num - now);
+        if (ycz != null) {
+            return ycz.maxUse() >= needUse;
+        }
+
+        return false;
     }
 
     public void useGuiHuo(BattlePane bp, Character character, int num) {
@@ -54,7 +66,7 @@ public class GuiHuo implements Serializable {
             bp.onTrigger(new EventUseGuiHuo(character.team, num));
         } else {
             int useGuiHuo = now;
-            int rest = num - now;
+            int needUse = num - now;
             now = 0;
 
             if (useGuiHuo > 0) {
@@ -62,19 +74,18 @@ public class GuiHuo implements Serializable {
                 bp.onTrigger(new EventUseGuiHuo(character.team, useGuiHuo));
             }
 
-            substituteProvider.use(rest);
-            bp.interactive.guiHuo(character, -rest, substituteProvider.getSubstituteProviderName());
+            if (yuanLi != null) {
+                int useYuanLi = Math.min(needUse, yuanLi.maxUse());
+                needUse -= useYuanLi;
+                yuanLi.use(useYuanLi);
+                bp.interactive.guiHuo(character, -useYuanLi, StatusYuanLi.StatusName);
+            }
+
+            if (needUse > 0) {
+                ycz.use(needUse);
+            }
+
         }
-        /*now -= num;
-        int realUsed;
-        if (now < 0) {
-            int rest = -now;
-            now = 0;
-            substituteProvider.use(rest);
-            realUsed = rest;
-        } else {
-            realUsed = num;
-        }*/
         repaint();
     }
 
@@ -91,8 +102,8 @@ public class GuiHuo implements Serializable {
     }
 
     public void gainGuiHuo(int num, boolean isFromYuHun) {
-        if (substituteProvider != null) {
-            num = substituteProvider.getGuiHuo(num, isFromYuHun);
+        if (yuanLi != null) {
+            num = yuanLi.getGuiHuo(num, isFromYuHun);
         }
 
         if (num != 0) {
@@ -119,7 +130,11 @@ public class GuiHuo implements Serializable {
         }
     }
 
-    public void setSubstituteProvider(SubstituteProvider substituteProvider) {
-        this.substituteProvider = substituteProvider;
+    public void setYuanLi(StatusYuanLi yuanLi) {
+        this.yuanLi = yuanLi;
+    }
+
+    public void setYCZ(StatusYCZ ycz) {
+        this.ycz = ycz;
     }
 }

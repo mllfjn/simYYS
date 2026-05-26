@@ -3,6 +3,7 @@ module com.mllfjn.simyys {
     requires javafx.base;
     requires javafx.graphics;
     requires static org.jetbrains.annotations;
+    requires com.mllfjn.simyys;
 
     opens com.mllfjn.simyys to javafx.fxml;
 
@@ -30,4 +31,7 @@ module com.mllfjn.simyys {
     exports com.mllfjn.simyys.character.yuhun.list;
     opens com.mllfjn.simyys.character.yuhun.list to javafx.fxml;
     exports com.mllfjn.simyys.character.list.mob.multiplayer;
+    exports com.mllfjn.simyys.character.list.sp.yinfan;
+    exports com.mllfjn.simyys.character.yuhun.list.youchizi;
+    opens com.mllfjn.simyys.character.yuhun.list.youchizi to javafx.fxml;
 }

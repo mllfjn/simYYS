@@ -2,6 +2,7 @@ package com.mllfjn.simyys.collections;
 
 import com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.citiao.*;
 import com.mllfjn.simyys.character.yuhun.list.*;
+import com.mllfjn.simyys.character.yuhun.list.youchizi.YouChiZi;
 
 import java.io.Serializable;
 
@@ -33,7 +34,8 @@ public record StringGroup(String label, String... values) implements Serializabl
             new StringGroup("命中两件套",
                     HuoLing.YuHunName,
                     YuanXingSi.YuHunName,
-                    YiNianHuo.YuHunName
+                    YiNianHuo.YuHunName,
+                    YouChiZi.YuHunName
             ),
             new StringGroup("抵抗两件套",
                     DiaoPingHuo.YuHunName

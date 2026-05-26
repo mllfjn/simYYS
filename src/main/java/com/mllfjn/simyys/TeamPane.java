@@ -2,11 +2,12 @@ package com.mllfjn.simyys;
 
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.CharacterIcon;
+import com.mllfjn.simyys.character.list.sp.yinfan.StatusYuanLi;
 import com.mllfjn.simyys.character.propertygetter.FlagChangeInfo;
 import com.mllfjn.simyys.character.yuhun.list.HuoLing;
 import com.mllfjn.simyys.character.yuhun.YuHun;
+import com.mllfjn.simyys.character.yuhun.list.youchizi.StatusYCZ;
 import com.mllfjn.simyys.guihuo.GuiHuo;
-import com.mllfjn.simyys.guihuo.SubstituteProvider;
 import javafx.geometry.Pos;
 import javafx.scene.layout.*;
 
@@ -129,8 +130,12 @@ public class TeamPane implements Serializable {
         }
     }
 
-    public void setSubstituteProvider(SubstituteProvider substituteProvider) {
-        guiHuo.setSubstituteProvider(substituteProvider);
+    public void setYuanLi(StatusYuanLi statusYuanLi) {
+        guiHuo.setYuanLi(statusYuanLi);
+    }
+
+    public void setYCZ(StatusYCZ statusYCZ) {
+        guiHuo.setYCZ(statusYCZ);
     }
 
     public boolean canUseGuiHuo(int num) {

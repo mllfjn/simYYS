@@ -2,6 +2,7 @@ package com.mllfjn.simyys.character.yuhun;
 
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.yuhun.list.*;
+import com.mllfjn.simyys.character.yuhun.list.youchizi.YouChiZi;
 import com.mllfjn.simyys.utils.PicUtil;
 import com.mllfjn.simyys.utils.Utils;
 import javafx.scene.image.Image;
@@ -74,6 +75,7 @@ public class YuHunFactory {
         yuHunMap.put(YeHuangHun.YuHunName, YeHuangHun.class);
         yuHunMap.put(ELou.YuHunName, ELou.class);
         yuHunMap.put(YinNian.YuHunName, YinNian.class);
+        yuHunMap.put(YouChiZi.YuHunName, YouChiZi.class);
     }
 
     public static Image getImage(String name) {
