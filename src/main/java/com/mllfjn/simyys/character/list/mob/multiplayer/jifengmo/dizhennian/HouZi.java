@@ -4,11 +4,11 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.CharacterSummonBase;
 import com.mllfjn.simyys.character.list.mob.multiplayer.ClearHpHandler;
+import com.mllfjn.simyys.character.list.mob.multiplayer.StatusRecordDamage;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill1PuGongBase;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
-import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.Interactive;
@@ -70,7 +70,7 @@ public class HouZi extends CharacterSummonBase {
         double bonus = 1;
         Optional<StatusDamageRecord> oStatus = getStatus(StatusDamageRecord.class);
         if (oStatus.isPresent()) {
-            bonus += ((int) (oStatus.get().getDamage() / 1000000)) * 0.01;
+            bonus += ((int) (oStatus.get().getHouZiDamage() / 1000000)) * 0.01;
         }
 
         // 移除拉条踢一次的效果，添加增伤
@@ -138,30 +138,21 @@ public class HouZi extends CharacterSummonBase {
         }
     }
 
-    static class StatusDamageRecord extends Status implements StatusRunnable {
-        private double damage;
+    static class StatusDamageRecord extends StatusRecordDamage {
+        private double houZiDamage;
 
         public StatusDamageRecord(Character character) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
+            super(character);
         }
 
-        public double getDamage() {
-            return damage;
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.AFTER_ATTACK;
+        public double getHouZiDamage() {
+            return houZiDamage;
         }
 
         @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            if (trigger == Trigger.AFTER_ATTACK) {
-                double number = ((ParamAttackInfo) param).getAttackInfo().getTraceableNumber().getNumber();
-                damage += number;
-                ((HouZi) belongTo).owner.getInfoDisplay().addDamage(number);
-            }
-            return false;
+        protected void addDamage(double damage) {
+            houZiDamage += damage;
+            ((HouZi) belongTo).owner.getInfoDisplay().addDamage(damage);
         }
     }
 

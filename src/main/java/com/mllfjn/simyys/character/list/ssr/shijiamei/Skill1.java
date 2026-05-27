@@ -5,7 +5,7 @@ import com.mllfjn.simyys.character.skill.Skill1PuGongBase;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
 
-public class Skill1 extends Skill1PuGongBase {
+class Skill1 extends Skill1PuGongBase {
     private static final String SkillName = "是身如幻";
     private static final int[] multiplier = new int[]{0, 100, 105, 110, 115, 120};
 

@@ -1,33 +1,18 @@
 package com.mllfjn.simyys.character.list.mob.multiplayer;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
-public class DisplayDamageRecord extends Status implements StatusRunnable, InfoDisplay {
+public class DisplayDamageRecord extends StatusRecordDamage implements InfoDisplay {
     private double totalDamage;
 
     public DisplayDamageRecord(Character character) {
-        super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
+        super(character);
     }
 
+    @Override
     public void addDamage(double damage) {
         this.totalDamage += damage;
-    }
-
-    @Override
-    public boolean runnable(Trigger trigger) {
-        return trigger == Trigger.AFTER_ATTACK;
-    }
-
-    @Override
-    public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-        if (trigger == Trigger.AFTER_ATTACK) {
-            addDamage(((ParamAttackInfo) param).getAttackInfo().getTraceableNumber().getNumber());
-        }
-        return false;
     }
 
     @Override

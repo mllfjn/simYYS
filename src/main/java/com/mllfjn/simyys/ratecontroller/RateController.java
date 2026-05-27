@@ -148,7 +148,6 @@ public class RateController implements Serializable {
         return list.get(random.nextInt(list.size()));
     }
 
-    // 该方法会影响原列表
     public static <T> List<T> choose(String title, List<T> list, Function<T, String> stringGetter
             , RateCalc calc, int count) {
         if (list.size() <= count) {
@@ -160,10 +159,6 @@ public class RateController implements Serializable {
         if (calc.isControlChoose()) {
             ChooseController<T> chooseController = new ChooseController<>(title + "选取", list, stringGetter, count);
             resultList = chooseController.getResultList();
-            if (resultList.size() == count) {
-                return resultList;
-            }
-            needToAdd = count - resultList.size();
 
             // 计算C(list.size(), resultList.size)的概率
             int n = resultList.size();
@@ -177,14 +172,22 @@ public class RateController implements Serializable {
                 }
                 calc.change(1.0 / combination);
             }
+
+            if (resultList.size() == count) {
+                return resultList;
+            }
+
+            needToAdd = count - resultList.size();
+
         } else {
             needToAdd = count;
             resultList = new ArrayList<>();
         }
 
-        list.removeAll(resultList);
+        ArrayList<T> copy = new ArrayList<>(list);
+        copy.removeAll(resultList);
         for (int i = 0; i < needToAdd; i++) {
-            resultList.add(list.get(random.nextInt(list.size())));
+            resultList.add(copy.remove(random.nextInt(copy.size())));
         }
         return resultList;
     }
