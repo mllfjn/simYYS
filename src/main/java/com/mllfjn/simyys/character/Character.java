@@ -230,9 +230,15 @@ public abstract class Character implements Serializable {
         return isMob;
     }
 
-    public void setMob(int initGuiHuo, int max) {
+    public void setMob(int now, int max) {
         isMob = true;
-        addStatus(new MobGuiHuo(this, initGuiHuo, max));
+        getStatus(MobGuiHuo.class).ifPresentOrElse(
+                status -> {
+                    status.setGuiHuo(now);
+                    status.setMax(max);
+                },
+                () -> addStatus(new MobGuiHuo(this, now, max))
+        );
     }
 
     public boolean isShiShen() {
@@ -562,6 +568,9 @@ public abstract class Character implements Serializable {
             if (skill.getSkillID() == skillID) {
                 return Optional.of(skill);
             }
+        }
+        if (skills.size() > skillID) {
+            return Optional.of(skills.get(skillID));
         }
         return Optional.empty();
     }

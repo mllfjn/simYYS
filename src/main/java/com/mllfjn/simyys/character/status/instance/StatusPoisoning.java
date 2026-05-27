@@ -38,8 +38,12 @@ public class StatusPoisoning extends Status implements Displayable, AttributeMod
     public double getInfluence(Attribute attribute, StatusModifyParam param) {
         if (attribute == Attribute.SPEED) {
             return -0.1 * belongTo.getInitSpeed();
-        } else if (param.attackType() == AttackType.JIAN_JIE) {
-            return -10 * stack;
+        } else {
+            if (param == null) {
+                return 0;
+            } else if (param.attackType() == AttackType.JIAN_JIE) {
+                return -10 * stack;
+            }
         }
 
         return 0;

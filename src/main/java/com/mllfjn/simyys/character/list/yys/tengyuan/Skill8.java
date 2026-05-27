@@ -57,11 +57,12 @@ class Skill8 extends PassiveSkillCanNotSeal {
             return SkillName;
         }
 
-        static class StatusDeadLine extends Status implements StatusRunnable {
+        static class StatusDeadLine extends Status implements StatusRunnable, Displayable {
+            private static final String StatusName = "梦境意识";
 
             public StatusDeadLine(Character character) {
                 super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-                int duration = new CharacterFinder(character)
+                int duration = new CharacterFinder(character, true)
                         .filterTeammate()
                         .filterShiShen()
                         .getCount();
@@ -86,6 +87,11 @@ class Skill8 extends PassiveSkillCanNotSeal {
                     ((ParamAttackInfo) param).getAttackInfo().setCancel(true);
                 }
                 return false;
+            }
+
+            @Override
+            public String getDisplayText() {
+                return StatusName + getDuration();
             }
         }
     }

@@ -8,7 +8,7 @@ import com.mllfjn.simyys.character.status.Trigger;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
 public class MobGuiHuo extends Status implements StatusRunnable, Displayable {
-    private final int max;
+    private int max;
     private int now;
 
     public MobGuiHuo(Character belongTo, int initGuiHuo, int max) {
@@ -25,6 +25,14 @@ public class MobGuiHuo extends Status implements StatusRunnable, Displayable {
     }
     public static void mobGainGuiHuo(Character character, int num) {
         character.getStatus(MobGuiHuo.class).orElseThrow().gainGuiHuo(num);
+    }
+
+    public void setGuiHuo(int num) {
+        now = num;
+    }
+
+    public void setMax(int num) {
+        max = num;
     }
 
     private boolean canUse(int num) {

@@ -1,7 +1,9 @@
 package com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.huangkulou;
 
+import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.list.mob.multiplayer.MultiStageManager;
 import com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.CharacterJiFengMoBase;
+import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
 import com.mllfjn.simyys.character.status.instance.StatusUnselectable;
 
 
@@ -29,6 +31,12 @@ public class HuangKuLou extends CharacterJiFengMoBase {
             skill5.summonNormal();
             setHpWithoutTrigger(getMaxHp() * 0.25);
         });
+    }
+
+    @Override
+    public void init(PropertiesHolder propertiesHolder, BattlePane bp) {
+        super.init(propertiesHolder, bp);
+        setMob(2, 2);
     }
 
     @Override

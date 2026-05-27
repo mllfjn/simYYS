@@ -9,6 +9,7 @@ import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.interactive.StatusSupplier;
+import com.mllfjn.simyys.ratecontroller.RateController;
 
 import java.util.List;
 import java.util.Optional;
@@ -38,7 +39,18 @@ class Skill3 extends Skill {
         interactive.attackTypical(this, targets, 100, AttackType.QUN_TI);
         interactive.attackTypical(this, targets, 100, AttackType.QUN_TI);
 
-        // TODO 当场上有部下时,邀战所有部下
+        // 当场上有部下时,邀战所有部下
+        List<Character> bx = new CharacterFinder(belongTo)
+                .filterTeammate()
+                .filter(c -> c instanceof Skill5.CharacterBX)
+                .getList();
+        if (!bx.isEmpty()) {
+            for (Character character : bx) {
+                character.xieZhan(this, RateController
+                        .choose(character.name + "攻击目标", targets, Character::getName, bp.calc)
+                );
+            }
+        }
         return Optional.empty();
     }
 

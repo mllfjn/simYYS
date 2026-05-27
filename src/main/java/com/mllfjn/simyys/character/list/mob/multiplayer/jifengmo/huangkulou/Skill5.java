@@ -108,6 +108,12 @@ class Skill5 extends PassiveSkillCanNotSeal {
             setInitSpeed(100);
             setInitBaseAttack(2000);
             setMob(1, 1);
+
+            fillSkills();
+        }
+
+        @Override
+        protected void addOwnSkills() {
             addSkill(new Skill1PuGongBase(this, 1) {
                 @Override
                 public String getName() {

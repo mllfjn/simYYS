@@ -7,6 +7,7 @@ import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.instance.StatusStun;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
+import com.mllfjn.simyys.ratecontroller.RateController;
 
 import java.util.List;
 import java.util.Optional;
@@ -34,7 +35,18 @@ class Skill4 extends Skill {
         interactive.attackTypical(this, targets, 150, AttackType.QUN_TI);
         // 并附带20%的概率眩晕玩家
         interactive.effect(this, targets, 20, true, StatusStun.getSupplier(1));
-        // TODO 当场上有部下时,邀战所有部下
+        // 当场上有部下时,邀战所有部下
+        List<Character> bx = new CharacterFinder(belongTo)
+                .filterTeammate()
+                .filter(c -> c instanceof Skill5.CharacterBX)
+                .getList();
+        if (!bx.isEmpty()) {
+            for (Character character : bx) {
+                character.xieZhan(this, RateController
+                        .choose(character.name + "攻击目标", targets, Character::getName, bp.calc)
+                );
+            }
+        }
         return Optional.empty();
     }
 }
