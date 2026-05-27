@@ -87,21 +87,41 @@ class StatusHZBH extends Status implements StatusRunnable, Displayable {
 
         private int stack = 1;
 
-        private StatusHZBHSpeed(Character character) {
+        private StatusHZBHSpeed(Character character, int duration) {
             super(character, character, StatusType.BUFF, StatusForm.ZHUANG_TAI);
-            int duration = character.isInRound() ? 2 : 1;
             setDurationType(StatusDurationType.CHI_XU, duration);
         }
 
         static void addStack(Character character) {
-            character.getStatus(StatusHZBHSpeed.class).ifPresentOrElse(
+            int shouldDuration = character.isInRound() ? 2 : 1;
+            StatusHZBHSpeed statusHZBHSpeed = null;
+            int stackNow = 0;
+            for (Status status : character.getStatuses()) {
+                if (status instanceof StatusHZBHSpeed s) {
+                    stackNow += s.stack;
+                    if (stackNow == 3) {
+                        return;
+                    }
+                    if (status.getDuration() == shouldDuration) {
+                        statusHZBHSpeed = s;
+                    }
+                }
+            }
+
+            if (statusHZBHSpeed != null) {
+                statusHZBHSpeed.stack++;
+            } else {
+                character.addStatus(new StatusHZBHSpeed(character, shouldDuration));
+            }
+
+            /*character.getStatus(StatusHZBHSpeed.class).ifPresentOrElse(
                     statusHZBHSpeed -> {
                         if (statusHZBHSpeed.stack < 3) {
                             statusHZBHSpeed.stack++;
                         }
                     },
                     () -> character.addStatus(new StatusHZBHSpeed(character))
-            );
+            );*/
         }
 
         @Override

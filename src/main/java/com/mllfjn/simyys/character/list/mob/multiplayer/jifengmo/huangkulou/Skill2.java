@@ -175,7 +175,7 @@ class Skill2 extends Skill {
         @Override
         public double getInfluence(Attribute attribute, StatusModifyParam param) {
             // 不知道降多少随便填的
-            return -30;
+            return -20;
         }
     }
 
@@ -208,7 +208,7 @@ class Skill2 extends Skill {
         @Override
         public double getInfluence(Attribute attribute, StatusModifyParam param) {
             // 不知道降多少随便填的
-            return belongTo.getInitAttack() * -0.3;
+            return belongTo.getInitAttack() * -0.2;
         }
 
         @Override
@@ -246,7 +246,8 @@ class Skill2 extends Skill {
         @Override
         public double getInfluence(Attribute attribute, StatusModifyParam param) {
             // 不知道降多少随便填的
-            return belongTo.getInitSpeed() * -0.3;
+//            return belongTo.getInitSpeed() * -0.2;
+            return -30;
         }
 
         @Override

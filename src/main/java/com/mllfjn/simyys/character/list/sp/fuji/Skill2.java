@@ -155,8 +155,9 @@ class Skill2 extends Skill {
             setInitAdditionAttack(owner.getInitAdditionAttack());
             setInitCritRate(owner.getInitCritRate());
             setInitCritPower(owner.getInitCritPower());
-            setInitSpeed(owner.getInitSpeed());
-            forceSetMaxHp(100, true);
+//            setInitSpeed(owner.getInitSpeed());
+            setInitSpeed(owner.getSpeed());
+            forceSetMaxHp(999, true);
 
             final boolean isLv2 = level >= 2;
 
