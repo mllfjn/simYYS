@@ -6,18 +6,19 @@ import com.mllfjn.simyys.character.status.AttributeModifier;
 import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.character.status.StatusForm;
 import com.mllfjn.simyys.character.status.StatusType;
-import com.mllfjn.simyys.character.status.instance.StatusUnselectable;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.Color;
 
-class StatusHuanHua extends StatusUnselectable {
+class StatusHuanHua extends Status {
 
     StatusHuanHua(Character from, Character belongTo) {
-        super(from, belongTo);
+        super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
         StatusHHSpeed.addStack(from);
 
         belongTo.bp.situation.canNotChangeLocation(belongTo);
+        belongTo.bp.situation.unSelectable(belongTo);
+
         belongTo.doIfCharacterIconExist(characterIcon -> {
             // 隐去状态栏(top)和属性栏(bottom)
             characterIcon.setVisualEffectTop(node -> node.setVisible(false));
@@ -28,7 +29,7 @@ class StatusHuanHua extends StatusUnselectable {
                 node.setOpacity(0.6);
 
                 DropShadow glow = new DropShadow();
-                glow.setColor(Color.PURPLE);
+                glow.setColor(Color.BLUE);
                 glow.setRadius(20);
                 glow.setSpread(0.3);
                 glow.setBlurType(BlurType.GAUSSIAN);
@@ -41,6 +42,10 @@ class StatusHuanHua extends StatusUnselectable {
     @Override
     public void beforeDelete() {
         belongTo.bp.situation.canChangeLocation(belongTo);
+        belongTo.bp.situation.selectable(belongTo);
+
+        StatusHHSpeed.removeStack(from);
+
         belongTo.doIfCharacterIconExist(characterIcon -> {
             characterIcon.setVisualEffectTop(node -> node.setVisible(true));
             characterIcon.setVisualEffectBottom(node -> node.setVisible(true));
@@ -50,11 +55,6 @@ class StatusHuanHua extends StatusUnselectable {
                 node.setOpacity(1);
             });
         });
-    }
-
-    @Override
-    public String getDisplayText() {
-        return "幻化";
     }
 
     static class StatusHHSpeed extends Status implements AttributeModifier {
@@ -70,6 +70,11 @@ class StatusHuanHua extends StatusUnselectable {
                             status -> status.stack++,
                             () -> character.addStatus(new StatusHHSpeed(character))
                     );
+        }
+
+        static void removeStack(Character character) {
+            character.getStatus(StatusHHSpeed.class)
+                    .ifPresent(status -> status.stack--);
         }
 
         @Override

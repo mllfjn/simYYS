@@ -201,6 +201,10 @@ public class Interactive {
         // 被攻击者身上状态类影响
         target.statusRun(Trigger.BEING_ATTACKED, new ParamAttackInfo(attackInfo));
 
+        if (attackInfo.isCancel()) {
+            return;
+        }
+
         // 部分造成伤害时生效的御魂(破势狂骨等)
         if (traceableNumber.getNumber() > 0 && attackInfo.isCalYuHun()) {
             owner.forEachYuHun(yuHun -> {

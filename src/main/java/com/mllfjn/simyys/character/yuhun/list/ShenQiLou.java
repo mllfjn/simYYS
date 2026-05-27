@@ -1,8 +1,10 @@
 package com.mllfjn.simyys.character.yuhun.list;
 
+import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.instance.StatusBiHu;
+import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunUnfullMark;
 
@@ -21,36 +23,47 @@ public class ShenQiLou extends YuHun implements YuHunUnfullMark {
         // 与怪物的战斗开始时，获得庇护
         character.bp.atBattleStart(() -> {
             if (character.bp.isMobBattle(character)) {
-                if (character.getStatus(StatusBiHuSQL.class).isEmpty()) {
-                    character.addStatus(new StatusBiHuSQL(character));
-                }
+                character.addStatus(new StatusBiHuSQL(character));
             }
         });
     }
 
 
     static class StatusBiHuSQL extends StatusBiHu {
+        private boolean isEffective = true;
+        private int cooling = 0;
 
         public StatusBiHuSQL(Character character) {
             super(character, character);
         }
 
         @Override
-        public void beforeDelete() {
-            belongTo.addStatus(new StatusSQLListener(belongTo));
-        }
-    }
-
-    static class StatusSQLListener extends Status {
-
-        public StatusSQLListener(Character character) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-            setDurationType(StatusDurationType.CHI_XU, 5);
+        public boolean runnable(Trigger trigger) {
+            if (isEffective) {
+                return super.runnable(trigger);
+            } else {
+                return trigger == Trigger.AFTER_ROUND;
+            }
         }
 
         @Override
-        public void beforeDelete() {
-            belongTo.addStatus(new StatusBiHuSQL(belongTo));
+        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
+            if (isEffective) {
+                return super.run(trigger, bp, param);
+            } else {
+                if (cooling == 1) {
+                    isEffective = true;
+                } else {
+                    cooling--;
+                }
+                return false;
+            }
+        }
+
+        @Override
+        protected void used() {
+            isEffective = false;
+            cooling = 5;
         }
     }
 }

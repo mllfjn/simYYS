@@ -12,11 +12,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TextFlowLog extends ScrollPane {
+    private static final String DIVIDER = "------------------------------\n";
+    private static final int MAX_SHOWN_ROUND = 99;
+
     private final TextFlow textFlow = new TextFlow();
     private final boolean[] shownTypes = new boolean[TextType.values().length];
-    private List<CustomText> currentList = new ArrayList<>();
     private final List<List<CustomText>> totalList = new ArrayList<>();
-    private static final String DIVIDER = "------------------------------\n";
+
+    private List<CustomText> currentList = new ArrayList<>();
 
     public TextFlowLog() {
         super();
@@ -95,6 +98,10 @@ public class TextFlowLog extends ScrollPane {
 
     public void next() {
         currentList = new ArrayList<>();
+        if (totalList.size() > MAX_SHOWN_ROUND) {
+            textFlow.getChildren().removeAll(totalList.get(0));
+            totalList.remove(0);
+        }
         totalList.add(currentList);
     }
 

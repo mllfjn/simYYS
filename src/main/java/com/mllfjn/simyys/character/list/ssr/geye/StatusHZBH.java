@@ -3,6 +3,7 @@ package com.mllfjn.simyys.character.list.ssr.geye;
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAddCrowdControl;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
@@ -12,6 +13,8 @@ class StatusHZBH extends Status implements StatusRunnable, Displayable {
     private static final String StatusName = "狐族庇护";
 
     private int stack;
+
+    private boolean continueEffective;
 
     private StatusHZBH(Character from, Character belongTo, int stack) {
         super(from, belongTo, StatusType.BUFF, StatusForm.YIN_JI);
@@ -54,16 +57,29 @@ class StatusHZBH extends Status implements StatusRunnable, Displayable {
     public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
         if (param instanceof ParamAttackInfo pai) {
             pai.getAttackInfo().setCancel(true);
+            if (!continueEffective) {
+                setContinueEffective(pai.getAttackInfo().getSkill());
+            }
         } else {
-            ((ParamAddCrowdControl) param).getEffectInfo().setCancel(true);
+            ParamAddCrowdControl pac = (ParamAddCrowdControl) param;
+            pac.getEffectInfo().setCancel(true);
+            if (!continueEffective) {
+                setContinueEffective(pac.getEffectInfo().getSkill());
+            }
         }
+        return false;
+    }
 
-        if (stack > 1) {
-            stack--;
-            return false;
-        } else {
-            return true;
-        }
+    private void setContinueEffective(Skill skill) {
+        continueEffective = true;
+        skill.addSkillEndListener(() -> {
+            if (stack > 1) {
+                stack--;
+            } else {
+                delete();
+            }
+            continueEffective = false;
+        });
     }
 
     static class StatusHZBHSpeed extends Status implements Displayable, AttributeModifier {

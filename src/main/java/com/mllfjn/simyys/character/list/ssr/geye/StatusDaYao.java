@@ -2,40 +2,61 @@ package com.mllfjn.simyys.character.list.ssr.geye;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.battleevent.EventActionDone;
+import com.mllfjn.simyys.character.Attribute;
+import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.determinant.IgnoreDebuff;
 import com.mllfjn.simyys.character.status.determinant.PreventDie;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
-class StatusDaYao extends Status implements Displayable, StatusRunnable, PreventDie, IgnoreDebuff {
+import java.util.List;
+
+class StatusDaYao extends Status implements Displayable, StatusRunnable, PreventDie, IgnoreDebuff, AttributeModifier {
     private static final String StatusName = "大妖姿态";
 
     private final double originalMaxHp;
+    private final List<Character> huanHuaList;
 
-    private int stack;
+    private final boolean isIncreaseAttack;
+    private final boolean isIncreaseDefense;
+    private final boolean isIncreaseCritPower;
+
+    private final int stack;
     // 受到致命伤害,在下一次行动结束时回到普通形态
     private boolean die = false;
 
-    private StatusDaYao(GeYe character, int initTeammateCount) {
+    private StatusDaYao(GeYe character, int initTeammateCount, List<Character> huanHuaList, int skillLevel) {
         super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
+        this.huanHuaList = huanHuaList;
+
+        isIncreaseAttack = skillLevel >= 3;
+        isIncreaseDefense = skillLevel >= 4;
+        isIncreaseCritPower = skillLevel >= 5;
+
+        stack = huanHuaList.size();
 
         originalMaxHp = character.getMaxHp();
-        character.setMaxHp(character.getInitAttack() * 2.25, true);
+        double baseMaxHp = character.getInitAttack() * 2.25;
+        if (skillLevel >= 2) {
+            baseMaxHp += originalMaxHp * 0.2 * stack;
+        }
+        character.setMaxHp(baseMaxHp, true);
 
         removeOtherStatus();
         character.removeSkill(4);
         character.addSkill(new Skill4Special(character, initTeammateCount));
     }
 
-    static void install(GeYe character, int newStack, int initTeammateCount) {
-        character.getStatus(StatusDaYao.class).ifPresentOrElse(
+    static void install(GeYe character, int initTeammateCount, List<Character> huanHuaList, int skillLevel) {
+        character.addStatus(new StatusDaYao(character, initTeammateCount, huanHuaList, skillLevel));
+        /*character.getStatus(StatusDaYao.class).ifPresentOrElse(
                 status -> status.stack = newStack,
                 () -> {
                     StatusDaYao status = new StatusDaYao(character, initTeammateCount);
                     status.stack = newStack;
                     character.addStatus(status);
                 }
-        );
+        );*/
     }
 
     private void removeOtherStatus() {
@@ -58,6 +79,9 @@ class StatusDaYao extends Status implements Displayable, StatusRunnable, Prevent
         belongTo.setMaxHp(originalMaxHp, true);
         belongTo.removeSkill(4);
         belongTo.addSkill(new Skill4(belongTo, ((GeYe) belongTo).skill3Level));
+        for (Character character : huanHuaList) {
+            character.removeStatus(StatusHuanHua.class);
+        }
     }
 
     @Override
@@ -95,5 +119,23 @@ class StatusDaYao extends Status implements Displayable, StatusRunnable, Prevent
     @Override
     public String getName() {
         return StatusName;
+    }
+
+    @Override
+    public boolean isAffectAttribute(Attribute attribute) {
+        return isIncreaseAttack && attribute == Attribute.ATTACK
+                || isIncreaseDefense && attribute == Attribute.DEFENCE
+                || isIncreaseCritPower && attribute == Attribute.CRIT_POWER;
+    }
+
+    @Override
+    public double getInfluence(Attribute attribute, StatusModifyParam param) {
+        if (attribute == Attribute.ATTACK) {
+            return belongTo.getInitAttack() * stack * 0.2;
+        } else if (attribute == Attribute.DEFENCE) {
+            return belongTo.getInitDefense() * stack * 0.2;
+        } else {
+            return 20 * stack;
+        }
     }
 }

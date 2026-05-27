@@ -69,6 +69,11 @@ public abstract class Skill1PuGongBase extends Skill {
 
         usePrivate(belongTo.getInteractive(), target);
 
+        useOver(target);
+    }
+
+    public void useOver(Character target) {
+        Character belongTo = getBelongTo();
         // 消息记录
         log(target);
 

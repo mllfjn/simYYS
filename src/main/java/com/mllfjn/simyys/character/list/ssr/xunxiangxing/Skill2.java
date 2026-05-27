@@ -2,9 +2,12 @@ package com.mllfjn.simyys.character.list.ssr.xunxiangxing;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
+import com.mllfjn.simyys.interactive.AttackInfo;
 
+import java.util.List;
 import java.util.Optional;
 
 class Skill2 extends Skill {
@@ -49,18 +52,39 @@ class Skill2 extends Skill {
     static class StatusXinXiang extends Status implements Displayable {
         private static final String StatusName = "心香";
 
+        private final Skill2 skill2;
+
         private int stack;
 
-        public StatusXinXiang(Character character) {
+        public StatusXinXiang(Character character, Skill2 skill2) {
             super(character, character, StatusType.BUFF, StatusForm.YIN_JI);
+            this.skill2 = skill2;
         }
 
-        static void addStack(Character character) {
+        static void addStack(Character character, Skill2 skill2) {
             character.getStatus(StatusXinXiang.class)
                     .ifPresentOrElse(
-                            status -> status.stack++,
-                            () -> character.addStatus(new StatusXinXiang(character))
+                            StatusXinXiang::addStack,
+                            () -> character.addStatus(new StatusXinXiang(character, skill2))
                     );
+        }
+
+        void addStack() {
+            if (stack == 4) {
+                List<Character> list = new CharacterFinder(belongTo)
+                        .filterEnemy()
+                        .getList();
+                belongTo.doInteractive(interactive -> interactive.attack(skill2, list, c -> {
+                    AttackInfo attackInfo = AttackInfo
+                            .createJianJieAttack(belongTo, skill2, c, belongTo.getAttack());
+                    attackInfo.setMultiplier(43);
+                    return attackInfo;
+                }));
+                skill2.useDone();
+                stack = 0;
+            } else {
+                stack++;
+            }
         }
 
         @Override

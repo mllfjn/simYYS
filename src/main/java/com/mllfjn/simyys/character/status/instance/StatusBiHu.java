@@ -34,11 +34,15 @@ public class StatusBiHu extends Status implements StatusRunnable, Displayable {
                 effectInfo.setCancel(true);
                 if (skill == null) {
                     skill = fromSkill;
-                    fromSkill.addSkillEndListener(this::delete);
+                    fromSkill.addSkillEndListener(this::used);
                 }
             }
         }
         return false;
+    }
+
+    protected void used() {
+        delete();
     }
 
     @Override

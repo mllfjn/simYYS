@@ -20,8 +20,12 @@ import java.util.Optional;
 class Skill2 extends Skill {
     private static final String SkillName = "毒雾冲击";
 
+    private final StatusDWCount statusDWCount;
+
     public Skill2(Character belongTo) {
         super(belongTo, 0, 0, 4, 2);
+        statusDWCount = new StatusDWCount(belongTo, this);
+        belongTo.addStatus(statusDWCount);
     }
 
     @Override
@@ -55,6 +59,8 @@ class Skill2 extends Skill {
         // 25%概率附加1回合的混乱效果
         interactive.effect(this, targets, 25, true
                 , StatusConfusion.getSupplier(1));
+
+        statusDWCount.setOff();
 
         return Optional.empty();
     }

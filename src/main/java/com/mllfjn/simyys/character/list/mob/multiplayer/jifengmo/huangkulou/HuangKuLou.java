@@ -14,12 +14,15 @@ public class HuangKuLou extends CharacterJiFengMoBase {
 
     @Override
     protected boolean useSkillAuto() {
-        return tryUseSkill(2) || tryUseSkill(3) || tryUseSkill(4) || tryUseSkill(1);
+        return tryUseSkill(2) // 毒雾
+                || tryUseSkill(3) // 刀剑
+                || tryUseSkill(4) // 花海
+                || tryUseSkill(6); // 刀锋
     }
 
     @Override
     protected void addOwnSkills() {
-        addSkill(new Skill1(this));
+        addSkill(new Skill6(this));
         addSkill(new Skill2(this));
         addSkill(new Skill3(this));
         addSkill(new Skill4(this));

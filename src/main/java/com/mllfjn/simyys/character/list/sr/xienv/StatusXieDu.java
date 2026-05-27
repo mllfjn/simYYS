@@ -36,6 +36,9 @@ class StatusXieDu extends Status implements Displayable, AttributeModifier, Stat
     public void setOff() {
         AttackInfo info = AttackInfo.createJianJieAttack(from, SKILL, belongTo, from.getAttack());
         info.setMultiplier(multiplier);
+        if (!from.alive) {
+            from.reset(belongTo.bp);
+        }
         from.doInteractive(interactive -> interactive.attack(info));
         if (stack < 5) {
             stack++;

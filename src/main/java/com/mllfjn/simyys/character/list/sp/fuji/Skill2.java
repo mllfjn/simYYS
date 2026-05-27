@@ -69,6 +69,10 @@ class Skill2 extends Skill {
         // 召唤蛇灵
         CharacterSheLing sheLing = new CharacterSheLing(belongTo, target, getLevel());
         bp.addCharacter(sheLing);
+        // 隐去状态栏(top)
+        sheLing.doIfCharacterIconExist(characterIcon ->
+                characterIcon.setVisualEffectTop(node -> node.setVisible(false))
+        );
 
         if (getLevel() >= 3) {
             sheLing.attack();

@@ -653,6 +653,10 @@ public abstract class Character implements Serializable {
     public void beHurt(AttackInfo attackInfo) {
         statusRun(Trigger.BEFORE_ATTACK, new ParamAttackInfo(attackInfo));
 
+        if (attackInfo.isCancel()) {
+            return;
+        }
+
         double damage = attackInfo.getTraceableNumber().getNumber();
         if (damage > 0) {
             // 如果剩余血量比伤害小,进入死亡判定
@@ -843,7 +847,7 @@ public abstract class Character implements Serializable {
         for (Status status : getStatuses()) {
             if (status instanceof RejectAllStatuses ||
                     (newStatus.statusType == StatusType.DEBUFF
-//                    && newStatus.statusForm == StatusForm.ZHUANG_TAI
+                            && newStatus.statusForm == StatusForm.ZHUANG_TAI
                             && status instanceof IgnoreDebuff id && id.ignoreDebuffEffective()
                     )
             ) {

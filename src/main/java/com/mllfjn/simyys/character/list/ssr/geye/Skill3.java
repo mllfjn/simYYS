@@ -6,6 +6,8 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.PriorityQueue;
 
@@ -27,13 +29,19 @@ class Skill3 extends Skill {
         return """
                 √\t选择友方式神,移除其所有减益,使其进入幻化效果
                 √\t与之合体为大妖姿态并获得新回合
-                \t或选择友方式神解除幻化效果(未完成)
+                \t或选择友方式神解除幻化效果(未完成,目前只能固定幻化攻击最高的至多3个单位)
+                √\tlv2-每幻化1名式神,提升大妖姿态20%生命
+                \tlv3-每幻化1名式神,提升大妖姿态20%攻击
+                \tlv4-每幻化1名式神,提升大妖姿态20%防御
+                \tlv5-每幻化1名式神,提升大妖姿态20%爆伤
                 """;
     }
 
     @Override
     public boolean canUse(BattlePane bp) {
-        return getBelongTo().isHaveStatus(StatusJiuWei.class) && super.canUse(bp);
+        return getBelongTo().isHaveStatus(StatusJiuWei.class)
+                && !getBelongTo().isHaveStatus(StatusDaYao.class)
+                && super.canUse(bp);
     }
 
     @Override
@@ -47,7 +55,7 @@ class Skill3 extends Skill {
 
         // 幻化友方
         int maxTarget = belongTo.getStatus(StatusJiuWei.class).orElseThrow().getStack();
-        int actualTarget = 0;
+        List<Character> huanHuaList = new ArrayList<>(3);
         PriorityQueue<Character> priorityQueue = new CharacterFinder(belongTo)
                 .filterTeammate()
                 .filterSelf()
@@ -58,13 +66,13 @@ class Skill3 extends Skill {
             if (next == null) {
                 break;
             }
-            actualTarget++;
+            huanHuaList.add(next);
             next.removeAllDeBuff();
             next.addStatus(new StatusHuanHua(belongTo, next));
         }
 
         // 大妖姿态
-        StatusDaYao.install(belongTo, actualTarget, initTeammateCount);
+        StatusDaYao.install(belongTo, initTeammateCount, huanHuaList, getLevel());
         belongTo.getInteractive().getNewRound(belongTo);
 
         return Optional.empty();

@@ -66,7 +66,7 @@ class StatusFuHunXiang extends Status implements Displayable, AttributeModifier 
 
     @Override
     public double getInfluence(Attribute attribute, StatusModifyParam param) {
-        return defenseStack * percent * belongTo.getInitDefense();
+        return -defenseStack * percent * belongTo.getInitDefense();
     }
 
 }

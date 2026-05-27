@@ -79,7 +79,7 @@ class StatusHuanJing extends Status implements Displayable, InfluenceDamageWhenA
     }
 
     // 该状态在友方身上，回合结束后寻香行获得1层心香
-    static class StatusAfterRound extends Status implements StatusRunnable {
+    class StatusAfterRound extends Status implements StatusRunnable {
         public StatusAfterRound(Character from, Character belongTo) {
             super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
         }
@@ -91,7 +91,7 @@ class StatusHuanJing extends Status implements Displayable, InfluenceDamageWhenA
 
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            Skill2.StatusXinXiang.addStack(from);
+            Skill2.StatusXinXiang.addStack(from, StatusHuanJing.this.skill2);
             return false;
         }
     }

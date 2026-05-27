@@ -7,7 +7,8 @@ public enum Trigger {
     OUT_ROUND_ACTION, // 回合外行动开始
     AFTER_ACTION, // 行动后(包括回合外行动)
     BEFORE_ATTACK, // 遭到攻击前，比如奉海图
-    AFTER_ATTACK, // 遭到攻击
+    BEING_ATTACKED, // 被攻击时 (出伤害之前)
+    AFTER_ATTACK, // 遭到攻击 (有伤害) 其实这两分的不是很开 以后再改
     MAKING_CROWD_CONTROL, // 要对其他角色造成控制时
     ADDING_CROWD_CONTROL, // 要被控制时
     CAUSE_ATTACK, // 造成伤害时
@@ -19,5 +20,4 @@ public enum Trigger {
     //    AFTER_HEAL, // 被治疗后
     HP_CHANGE, // 生命值改变，发生在受到伤害且打破护盾，失去生命，受到治疗和恢复并且不是满血
     DIE, // 死亡后
-    BEING_ATTACKED, // 被攻击时
 }

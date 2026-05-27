@@ -67,7 +67,7 @@ class Skill2 extends PassiveSkill {
 
         @Override
         public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.CAUSE_ATTACK;
+            return trigger == Trigger.CAUSE_ATTACK && belongTo.alive;
         }
 
         @Override
