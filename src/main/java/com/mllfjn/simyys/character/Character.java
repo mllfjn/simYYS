@@ -352,21 +352,13 @@ public abstract class Character implements Serializable {
     }
 
     public void setLockSkill(int i) {
-        boolean changed = false;
         Optional<Skill> os = getSkill(i);
         if (os.isPresent()) {
             Skill skill = os.get();
             if (!(skill instanceof PassiveSkill)) {
                 lockSkill = i;
-                changed = true;
+                doIfCharacterIconExist(ci -> ci.selectLockSkill(skill));
             }
-        } else if (skills.size() > i) {
-            lockSkill = i;
-            changed = true;
-        }
-
-        if (changed) {
-            doIfCharacterIconExist(CharacterIcon::selectLockSkill);
         }
     }
 
@@ -570,6 +562,9 @@ public abstract class Character implements Serializable {
     public Optional<Skill> getSkill(int skillID) {
         for (Skill skill : skills) {
             if (skill.getSkillID() == skillID) {
+                if (skill instanceof PassiveSkill) {
+                    break;
+                }
                 return Optional.of(skill);
             }
         }

@@ -6,10 +6,7 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.propertygetter.FlagChangeInfo;
 import com.mllfjn.simyys.ratecontroller.RateController;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.PriorityQueue;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -136,8 +133,8 @@ public class CharacterFinder {
         return stream.collect(Collectors.toCollection(ArrayList::new));
     }
 
-    public Stream<Character> getStream() {
-        return stream;
+    public Optional<Character> max(Comparator<Character> comparator) {
+        return stream.max(comparator);
     }
 
     public PriorityQueue<Character> getPriorityQueue(Attribute attribute, Criteria criteria) {

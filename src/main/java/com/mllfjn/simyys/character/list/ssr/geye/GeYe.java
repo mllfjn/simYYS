@@ -43,7 +43,9 @@ public class GeYe extends CharacterShiShenBase {
     protected void addOwnSkills() {
         addSkill(new Skill1(this, skill1Level));
         addSkill(new Skill2(this, skill2Level));
-        addSkill(new Skill3(this, skill2Level));
+        Skill3 skill3 = new Skill3(this, skill2Level);
+        addSkill(skill3);
         addSkill(new Skill4(this, skill3Level));
+        addSkill(new Skill3Special_or_Skill5(this, skill2Level, skill3));
     }
 }

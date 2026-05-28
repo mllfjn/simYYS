@@ -9,64 +9,78 @@ import com.mllfjn.simyys.character.status.determinant.IgnoreDebuff;
 import com.mllfjn.simyys.character.status.determinant.PreventDie;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
+import java.util.ArrayList;
 import java.util.List;
 
 class StatusDaYao extends Status implements Displayable, StatusRunnable, PreventDie, IgnoreDebuff, AttributeModifier {
     private static final String StatusName = "大妖姿态";
 
     private final double originalMaxHp;
-    private final List<Character> huanHuaList;
+    private final List<Character> huanHuaList = new ArrayList<>(3);
 
+    private final boolean isIncreaseMaxHP;
     private final boolean isIncreaseAttack;
     private final boolean isIncreaseDefense;
     private final boolean isIncreaseCritPower;
 
-    private final int stack;
     // 受到致命伤害,在下一次行动结束时回到普通形态
     private boolean die = false;
 
-    private StatusDaYao(GeYe character, int initTeammateCount, List<Character> huanHuaList, int skillLevel) {
+    StatusDaYao(GeYe character, int initTeammateCount, int skillLevel) {
         super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-        this.huanHuaList = huanHuaList;
 
+        isIncreaseMaxHP = skillLevel >= 2;
         isIncreaseAttack = skillLevel >= 3;
         isIncreaseDefense = skillLevel >= 4;
         isIncreaseCritPower = skillLevel >= 5;
 
-        stack = huanHuaList.size();
-
         originalMaxHp = character.getMaxHp();
-        double baseMaxHp = character.getInitAttack() * 2.25;
-        if (skillLevel >= 2) {
-            baseMaxHp += originalMaxHp * 0.2 * stack;
-        }
-        character.setMaxHp(baseMaxHp, true);
 
-        removeOtherStatus();
         character.removeSkill(4);
-        character.addSkill(new Skill4Special(character, initTeammateCount));
+        character.addSkill(new Skill4Special(character, initTeammateCount), true);
+
+        if (!huanHuaList.isEmpty()) {
+            for (Character next : huanHuaList) {
+                next.removeAllDeBuff();
+                next.addStatus(new StatusHuanHua(belongTo, next));
+            }
+            changeDone();
+        }
     }
 
-    static void install(GeYe character, int initTeammateCount, List<Character> huanHuaList, int skillLevel) {
-        character.addStatus(new StatusDaYao(character, initTeammateCount, huanHuaList, skillLevel));
-        /*character.getStatus(StatusDaYao.class).ifPresentOrElse(
-                status -> status.stack = newStack,
-                () -> {
-                    StatusDaYao status = new StatusDaYao(character, initTeammateCount);
-                    status.stack = newStack;
-                    character.addStatus(status);
-                }
-        );*/
+    List<Character> getHuanHuaList() {
+        return huanHuaList;
     }
 
-    private void removeOtherStatus() {
-        belongTo.getStatuses().removeIf(status ->
-                (status.statusForm == StatusForm.ZHUANG_TAI || status.statusForm == StatusForm.YIN_JI)
-                        && !(status instanceof StatusJiuWei));
+    void addHuanHua(Character add) {
+        huanHuaList.add(add);
+        add.removeAllDeBuff();
+        add.addStatus(new StatusHuanHua(belongTo, add));
+    }
+
+    void removeHuanHua(Character remove) {
+        huanHuaList.remove(remove);
+        remove.removeStatus(StatusHuanHua.class);
+    }
+
+    void changeDone() {
+        if (huanHuaList.isEmpty()) {
+            delete();
+        } else {
+            belongTo.getStatuses().removeIf(status ->
+                    (status.statusForm == StatusForm.ZHUANG_TAI || status.statusForm == StatusForm.YIN_JI)
+                            && !(status instanceof StatusJiuWei));
+
+            double baseMaxHp = belongTo.getInitAttack() * 2.25;
+            if (isIncreaseMaxHP) {
+                baseMaxHp += originalMaxHp * 0.2 * getStack();
+            }
+            belongTo.setMaxHp(baseMaxHp, true);
+        }
     }
 
     int getStack() {
-        return stack;
+        return huanHuaList.size();
     }
 
     @Override
@@ -86,7 +100,7 @@ class StatusDaYao extends Status implements Displayable, StatusRunnable, Prevent
 
     @Override
     public String getDisplayText() {
-        return StatusName + stack;
+        return StatusName + getStack();
     }
 
     @Override
@@ -97,7 +111,7 @@ class StatusDaYao extends Status implements Displayable, StatusRunnable, Prevent
     @Override
     public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
         if (trigger == Trigger.BEFORE_ROUND) {
-            belongTo.bp.gainGuiHuo(belongTo, stack);
+            belongTo.bp.gainGuiHuo(belongTo, getStack());
         }
         return false;
     }
@@ -131,11 +145,11 @@ class StatusDaYao extends Status implements Displayable, StatusRunnable, Prevent
     @Override
     public double getInfluence(Attribute attribute, StatusModifyParam param) {
         if (attribute == Attribute.ATTACK) {
-            return belongTo.getInitAttack() * stack * 0.2;
+            return belongTo.getInitAttack() * getStack() * 0.2;
         } else if (attribute == Attribute.DEFENCE) {
-            return belongTo.getInitDefense() * stack * 0.2;
+            return belongTo.getInitDefense() * getStack() * 0.2;
         } else {
-            return 20 * stack;
+            return 20 * getStack();
         }
     }
 }

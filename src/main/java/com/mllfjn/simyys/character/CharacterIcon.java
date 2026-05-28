@@ -303,6 +303,13 @@ public class CharacterIcon implements Serializable {
         );
     }
 
+    public void selectLockSkill(Skill skill) {
+        if (skill == null) {
+            return;
+        }
+        skillBox.getSelectionModel().select(skill);
+    }
+
     public void update() {
         refreshProperties();
         refreshStatusLabel();

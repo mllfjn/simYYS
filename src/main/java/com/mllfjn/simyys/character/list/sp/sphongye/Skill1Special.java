@@ -38,7 +38,6 @@ class Skill1Special extends Skill1PuGongBase {
             Optional<Character> oTarget = new CharacterFinder(belongTo)
                     .filterEnemy()
                     .filter(character -> character != temp)
-                    .getStream()
                     .max(comparator);
             if (oTarget.isEmpty()) {
                 return;
