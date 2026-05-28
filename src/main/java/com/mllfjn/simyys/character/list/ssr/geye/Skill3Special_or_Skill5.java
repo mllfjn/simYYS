@@ -4,6 +4,7 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
+import com.mllfjn.simyys.character.status.Status;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -25,7 +26,15 @@ class Skill3Special_or_Skill5 extends Skill {
 
     @Override
     public boolean canUse(BattlePane bp) {
-        return getBelongTo().isHaveStatus(StatusJiuWei.class) && super.canUse(bp);
+        boolean isHaveJiuWei = false;
+        for (Status status : getBelongTo().getStatuses()) {
+            if (status instanceof StatusUsedSkill3Mark) {
+                return false;
+            } else if (status instanceof StatusJiuWei) {
+                isHaveJiuWei = true;
+            }
+        }
+        return isHaveJiuWei && super.canUse(bp);
     }
 
     @Override
@@ -104,6 +113,8 @@ class Skill3Special_or_Skill5 extends Skill {
 
         // 获得新回合
         belongTo.getInteractive().getNewRound(belongTo);
+        // 刚用过不能再次用,考虑到变身会清除所有印记,应该不用考虑时之晖
+        belongTo.addStatus(new StatusUsedSkill3Mark(belongTo));
 
         return Optional.empty();
     }

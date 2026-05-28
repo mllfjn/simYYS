@@ -130,12 +130,8 @@ public class TeamPane implements Serializable {
         }
     }
 
-    public void setYuanLi(StatusYuanLi statusYuanLi) {
-        guiHuo.setYuanLi(statusYuanLi);
-    }
-
-    public void setYCZ(StatusYCZ statusYCZ) {
-        guiHuo.setYCZ(statusYCZ);
+    public GuiHuo getGuiHuoInstance() {
+        return guiHuo;
     }
 
     public boolean canUseGuiHuo(int num) {

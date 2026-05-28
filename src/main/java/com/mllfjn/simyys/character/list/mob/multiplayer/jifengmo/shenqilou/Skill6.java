@@ -10,11 +10,11 @@ import com.mllfjn.simyys.character.status.StatusType;
 import com.mllfjn.simyys.character.status.Trigger;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
-class SkillPassive1 extends PassiveSkillCanNotSeal {
+class Skill6 extends PassiveSkillCanNotSeal {
     private static final String SkillName = "蜃雾笼罩";
 
-    public SkillPassive1(Character belongTo) {
-        super(belongTo, 0, 5);
+    public Skill6(Character belongTo) {
+        super(belongTo, 0, 6);
         belongTo.addStatus(new StatusAfterRound(belongTo));
     }
 

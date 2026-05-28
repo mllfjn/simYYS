@@ -19,7 +19,7 @@ public class StatusYCZ extends Status implements Displayable {
                 c.addStatus(new StatusYCZDefense(character, c));
             }
         });
-        character.bp.setYCZ(character.team, this);
+        character.bp.getGuiHuoInstance(character.team).setYCZ(this);
     }
 
     public void use(int usedCount) {
@@ -31,7 +31,7 @@ public class StatusYCZ extends Status implements Displayable {
                 character.removeStatus(StatusYCZDefense.class);
             }
             belongTo.bp.removeActionListener(belongTo, listener);
-            belongTo.bp.setYCZ(belongTo.team, null);
+            belongTo.bp.getGuiHuoInstance(belongTo.team).setYCZ(null);
             delete();
         } else {
             stack -= usedCount;

@@ -11,6 +11,7 @@ import com.mllfjn.simyys.character.yuhun.list.youchizi.StatusYCZ;
 import com.mllfjn.simyys.collections.SafeList;
 import com.mllfjn.simyys.customnode.CustomTextField;
 import com.mllfjn.simyys.customnode.TextFlowLog;
+import com.mllfjn.simyys.guihuo.GuiHuo;
 import com.mllfjn.simyys.guihuo.MobGuiHuo;
 import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.ratecontroller.RateCalc;
@@ -151,12 +152,8 @@ public class BattlePane {
         }
     }
 
-    public void setYuanLi(int team, StatusYuanLi statusYuanLi) {
-        situation.teamPane[team].setYuanLi(statusYuanLi);
-    }
-
-    public void setYCZ(int team, StatusYCZ statusYCZ) {
-        situation.teamPane[team].setYCZ(statusYCZ);
+    public GuiHuo getGuiHuoInstance(int team) {
+        return situation.teamPane[team].getGuiHuoInstance();
     }
 
     public Label requestInfoDisplayLabel() {

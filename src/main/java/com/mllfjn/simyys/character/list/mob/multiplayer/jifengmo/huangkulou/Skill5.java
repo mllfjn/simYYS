@@ -5,6 +5,7 @@ import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.CharacterSummonBase;
 import com.mllfjn.simyys.character.list.mob.multiplayer.ClearHpHandler;
+import com.mllfjn.simyys.character.list.mob.multiplayer.DisplayDamageRecord;
 import com.mllfjn.simyys.character.list.mob.multiplayer.StatusRecordDamage;
 import com.mllfjn.simyys.character.skill.PassiveSkillCanNotSeal;
 import com.mllfjn.simyys.character.skill.Skill1PuGongBase;
@@ -53,7 +54,7 @@ class Skill5 extends PassiveSkillCanNotSeal {
     }
 
     void summonSpecial() {
-        Character huangKuLou = getBelongTo();
+        HuangKuLou huangKuLou = ((HuangKuLou) getBelongTo());
         StatusHKLZHBuff statusHKLZHBuff = new StatusHKLZHBuff(huangKuLou, 2);
         huangKuLou.addStatus(statusHKLZHBuff);
         BattlePane bp = huangKuLou.bp;
@@ -71,7 +72,7 @@ class Skill5 extends PassiveSkillCanNotSeal {
 
         for (CharacterBX character : charactersTrue) {
             character.setStatusHKLZHBuff(statusHKLZHBuff);
-            character.addStatus(new StatusHKLRecordDamage(huangKuLou));
+            character.addStatus(new StatusHKLRecordDamage(character, huangKuLou.getInfoDisplay()));
         }
     }
 
@@ -81,13 +82,16 @@ class Skill5 extends PassiveSkillCanNotSeal {
     }
 
     static class StatusHKLRecordDamage extends StatusRecordDamage implements Displayable {
-        public StatusHKLRecordDamage(Character character) {
+        private final DisplayDamageRecord infoDisplay;
+
+        public StatusHKLRecordDamage(Character character, DisplayDamageRecord infoDisplay) {
             super(character);
+            this.infoDisplay = infoDisplay;
         }
 
         @Override
         protected void addDamage(double damage) {
-            ((HuangKuLou) belongTo).getInfoDisplay().addDamage(damage);
+            infoDisplay.addDamage(damage);
         }
 
         @Override

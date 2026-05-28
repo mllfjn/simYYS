@@ -12,11 +12,11 @@ import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 
-class SkillPassive2 extends PassiveSkillCanNotSeal {
+class Skill7 extends PassiveSkillCanNotSeal {
     private static final String SkillName = "蜃气升腾";
 
-    public SkillPassive2(Character belongTo) {
-        super(belongTo, 0, 6);
+    public Skill7(Character belongTo) {
+        super(belongTo, 0, 7);
         belongTo.addStatus(new StatusBeAttack(belongTo));
     }
 

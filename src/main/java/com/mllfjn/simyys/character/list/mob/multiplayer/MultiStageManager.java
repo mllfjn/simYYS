@@ -42,23 +42,17 @@ public class MultiStageManager implements Serializable {
             MenuItem itemAfter = new MenuItem("该回合行动后切换阶段");
 
             itemSkip.setOnAction(event -> {
-                // 不会出现为空的情况
-                if (!stageQueue.isEmpty()) {
-                    stageQueue.poll().run();
-                    character.bp.skipCharacterAct();
-                }
+                character.bp.skipCharacterAct();
+                changeStage();
             });
 
             itemAfter.setOnAction(event ->
                     character.bp.addActionListener(character, e -> {
                         prepareChangeStage = true;
                         if (e instanceof EventActionDone) {
-                            // 不会出现为空的情况
-                            if (!stageQueue.isEmpty()) {
-                                stageQueue.poll().run();
-                                prepareChangeStage = false;
-                                return true;
-                            }
+                            changeStage();
+                            prepareChangeStage = false;
+                            return true;
                         }
                         return false;
                     })
@@ -67,6 +61,12 @@ public class MultiStageManager implements Serializable {
             contextMenu = new ContextMenu(itemSkip, itemAfter);
         }
         return contextMenu;
+    }
+
+    public void changeStage() {
+        if (!stageQueue.isEmpty()) {
+            stageQueue.poll().run();
+        }
     }
 
     public void addStage(SerializableRunnable stage) {

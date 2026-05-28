@@ -9,7 +9,6 @@ import com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.citiao.CiTiaoMa
 import com.mllfjn.simyys.character.propertygetter.*;
 import com.mllfjn.simyys.character.status.instance.StatusBoss;
 import com.mllfjn.simyys.collections.StringGroup;
-import com.mllfjn.simyys.guihuo.MobGuiHuo;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 

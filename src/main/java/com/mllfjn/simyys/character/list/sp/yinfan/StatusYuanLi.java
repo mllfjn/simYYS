@@ -16,7 +16,7 @@ public class StatusYuanLi extends Status implements Displayable {
         super(character, character, StatusType.GENERAL, StatusForm.YIN_JI);
         this.skill2Level = skill2Level;
         this.skill3Level = skill3Level;
-        character.bp.setYuanLi(character.team, this);
+        character.bp.getGuiHuoInstance(character.team).setYuanLi(this);
     }
 
     public static void addYuanLi(com.mllfjn.simyys.character.Character character, int num, int skill2Level, int skill3Level) {
@@ -27,6 +27,11 @@ public class StatusYuanLi extends Status implements Displayable {
         });
 
         status.stack = Math.min(8, status.stack + num);
+    }
+
+    @Override
+    public void beforeDelete() {
+        belongTo.bp.getGuiHuoInstance(belongTo.team).setYuanLi(null);
     }
 
     @Override

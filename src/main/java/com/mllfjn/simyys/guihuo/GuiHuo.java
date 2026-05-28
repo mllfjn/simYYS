@@ -137,4 +137,8 @@ public class GuiHuo implements Serializable {
     public void setYCZ(StatusYCZ ycz) {
         this.ycz = ycz;
     }
+
+    public void fullyCharge() {
+        now = max;
+    }
 }

@@ -291,27 +291,27 @@ public abstract class Character implements Serializable {
     }
 
 
-    protected void setInitBaseAttack(double baseAttack) {
+    public void setInitBaseAttack(double baseAttack) {
         this.baseAttack = baseAttack;
     }
 
-    protected void setInitAdditionAttack(double additionAttack) {
+    public void setInitAdditionAttack(double additionAttack) {
         this.additionAttack = additionAttack;
     }
 
-    protected void setInitDefense(double defense) {
+    public void setInitDefense(double defense) {
         this.defence = defense;
     }
 
-    protected void setInitCritRate(double critRate) {
+    public void setInitCritRate(double critRate) {
         this.critRate = critRate;
     }
 
-    protected void setInitCritPower(double critPower) {
+    public void setInitCritPower(double critPower) {
         this.critPower = critPower;
     }
 
-    protected void setInitSpeed(double speed) {
+    public void setInitSpeed(double speed) {
         this.speed = speed;
     }
 

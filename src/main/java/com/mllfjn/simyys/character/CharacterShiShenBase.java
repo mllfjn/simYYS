@@ -5,9 +5,9 @@ import com.mllfjn.simyys.character.propertygetter.*;
 import com.mllfjn.simyys.collections.StringGroup;
 
 public abstract class CharacterShiShenBase extends Character {
-    public int skill1Level;
-    public int skill2Level;
-    public int skill3Level;
+    public int skill1Level = 1;
+    public int skill2Level = 1;
+    public int skill3Level = 1;
     public boolean awakening;
     @Override
     public PropertiesMap getProperties() {
