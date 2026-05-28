@@ -374,11 +374,8 @@ public class Interactive {
             sb.append("(实际提前").append((int) (100 - location)).append("%)");
         }
 
-        target.setLocation(Math.min(100, location + increase));
+        target.setLocation(Math.min(100, location + increase), true);
         increaseLog.add(sb.toString());
-
-        // 拉条事件
-        target.statusRun(Trigger.INCREASE_LOCATION, null);
     }
 
     public void decreaseLocation(Character target, double decrease) {
@@ -397,7 +394,7 @@ public class Interactive {
             sb.append("(实际推后").append((int) location).append("%)");
         }
 
-        target.setLocation(Math.max(0, location - decrease));
+        target.setLocation(Math.max(0, location - decrease), false);
         increaseLog.add(sb.toString());
     }
 

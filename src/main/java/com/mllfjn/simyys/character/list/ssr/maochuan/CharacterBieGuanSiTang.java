@@ -30,7 +30,6 @@ class CharacterBieGuanSiTang extends CharacterSummonBase {
         this.skill2 = skill2;
 
         maoChuan.setBieGuanSiTang(this);
-        forceSetLocation(70);
         forceSetMaxHp(5.5 * maoChuan.getAttack(), true);
         setInitDefense(maoChuan.getDefence());
 
@@ -41,6 +40,10 @@ class CharacterBieGuanSiTang extends CharacterSummonBase {
         });
 
         addStatus(new StatusBoss(this));
+
+        // 行动条固定在70
+        forceSetLocation(70);
+        bp.situation.canNotChangeLocation(this);
     }
 
     private void wenQuanLiaoYu(Character target, Interactive interactive) {
@@ -75,11 +78,6 @@ class CharacterBieGuanSiTang extends CharacterSummonBase {
                 wenQuanLiaoYu(character);
             }
         });
-    }
-
-    @Override
-    public void setLocation(double newLocation) {
-        // 固定在行动条70
     }
 
     @Override

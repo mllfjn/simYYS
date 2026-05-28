@@ -53,8 +53,8 @@ class Skill3 extends Skill {
             belongTo.getInteractive().getNewRound(target);
         } else {
             // 与阴阳师战斗时,交换神乐与目标的行动条位置
-            belongTo.setLocation(target.getLocation());
-            target.setLocation(100);
+            belongTo.setLocation(target.getLocation(), false);
+            target.setLocation(100, false);
         }
 
         return Optional.of(target);

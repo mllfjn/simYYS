@@ -9,6 +9,7 @@ import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill1PuGongBase;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
+import com.mllfjn.simyys.character.status.triggerParam.ParamLocationChange;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.Interactive;
@@ -123,17 +124,19 @@ public class HouZi extends CharacterSummonBase {
 
         @Override
         public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.INCREASE_LOCATION;
+            return trigger == Trigger.LOCATION_CHANGE;
         }
 
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            from.doInteractive(interactive ->
-                    from.getPuGong().ifPresent(skill1 -> {
-                        skill1.usePrivate(interactive, belongTo);
-                        skill1.log(belongTo);
-                    })
-            );
+            if (((ParamLocationChange) param).isFromIncrease) {
+                from.doInteractive(interactive ->
+                        from.getPuGong().ifPresent(skill1 -> {
+                            skill1.usePrivate(interactive, belongTo);
+                            skill1.log(belongTo);
+                        })
+                );
+            }
             return false;
         }
     }

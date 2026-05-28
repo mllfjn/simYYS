@@ -23,6 +23,7 @@ import com.mllfjn.simyys.character.status.instance.StatusConfusion;
 import com.mllfjn.simyys.character.status.instance.StatusPoisoning;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.ParamLocationChange;
+import com.mllfjn.simyys.character.status.triggerParam.ParamStatus;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunFactory;
@@ -408,10 +409,13 @@ public abstract class Character implements Serializable {
         return location;
     }
 
-    public void setLocation(double newLocation) {
+    public void setLocation(double newLocation, boolean isFromIncrease) {
         if (newLocation != location) {
-            statusRun(Trigger.LOCATION_CHANGE, new ParamLocationChange(location, newLocation));
-            this.location = newLocation;
+            ParamLocationChange paramLocationChange = new ParamLocationChange(location, newLocation, isFromIncrease);
+            statusRun(Trigger.LOCATION_CHANGE, paramLocationChange);
+            if (!paramLocationChange.isCanceled()) {
+                this.location = paramLocationChange.newLocation;
+            }
         }
     }
 
@@ -865,6 +869,10 @@ public abstract class Character implements Serializable {
         }
 
         statuses.add(newStatus);
+        if (newStatus.statusType == StatusType.DEBUFF) {
+            statusRun(Trigger.ADDING_DEBUFF, new ParamStatus(newStatus));
+        }
+
         return Optional.of(newStatus);
     }
 

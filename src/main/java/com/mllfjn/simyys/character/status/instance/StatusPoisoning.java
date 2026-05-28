@@ -51,6 +51,6 @@ public class StatusPoisoning extends Status implements Displayable, AttributeMod
 
     @Override
     public String getDisplayText() {
-        return StatusName + getDuration();
+        return StatusName + stack + "-" + getDuration();
     }
 }

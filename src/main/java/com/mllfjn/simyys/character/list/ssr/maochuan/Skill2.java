@@ -75,7 +75,7 @@ class Skill2 extends PassiveSkill {
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
             if (param instanceof ParamLocationChange plc) {
                 // 如果经过了70
-                if (plc.oldLocation < 70 && plc.newLocation >= 70) {
+                if (plc.oldLocation < 70 && plc.newLocation >= 70 || plc.oldLocation >= 70 && plc.newLocation < 70) {
                     ((MaoChuan) from).getBieGuanSiTang().wenQuanLiaoYu(belongTo);
                 }
             }

@@ -136,6 +136,10 @@ public class CharacterFinder {
         return stream.collect(Collectors.toCollection(ArrayList::new));
     }
 
+    public Stream<Character> getStream() {
+        return stream;
+    }
+
     public PriorityQueue<Character> getPriorityQueue(Attribute attribute, Criteria criteria) {
         Comparator<Character> comparator = Comparator.comparing(attribute.getGetter());
         return stream.collect(Collectors.toCollection(() -> new PriorityQueue<>(

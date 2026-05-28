@@ -507,7 +507,9 @@ public class BattlePane {
 
         if (ttaMin > 0) {
             for (int i = 0; i < characters.size(); i++) {
-                characters.get(i).setLocation(characters.get(i).getLocation() + speeds[i] * ttaMin);
+                characters.get(i).setLocation(characters.get(i).getLocation() + speeds[i] * ttaMin,
+                        false
+                );
             }
         }
 

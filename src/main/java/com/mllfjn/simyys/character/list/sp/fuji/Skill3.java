@@ -5,6 +5,9 @@ import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
+import com.mllfjn.simyys.character.status.*;
+import com.mllfjn.simyys.character.status.triggerParam.ParamLocationChange;
+import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
 
@@ -21,11 +24,10 @@ class Skill3 extends Skill {
     @Override
     public String getSkillDesc() {
         return """
-                √\t攻击目标3次,每次造成攻击70%伤害
-                \t\t并附加1层瞳蛊,维持1回合
+                √\t攻击目标3次,每次造成攻击70%伤害并附加1层瞳蛊,维持1回合
                 \t蛇灵返回后,技能替换为[爱怨灼身]
                 √\tlv2-每次造成攻击85%伤害
-                \tlv3-瞳蛊可在目标受到行动条增加效果时触发,消耗1层使其无效
+                √\tlv3-瞳蛊可在目标受到行动条增加效果时触发,消耗1层使其无效
                 √\tlv4-每次造成攻击100%伤害
                 \tlv5-瞳蛊触发时,降低目标8%最大生命值上限(每次不超过攻击的1200%,最多降低至20%)
                 \t瞳蛊:减益,印记.受到治疗效果时触发,消耗1层使其无效,上限3层
@@ -48,7 +50,57 @@ class Skill3 extends Skill {
         for (int i = 0; i < 3; i++) {
             interactive.attackTypical(this, target, multiplier[getLevel()], AttackType.DAN_TI);
             belongTo.attack(target);
+            StatusTongGu.addStack(belongTo, target, getLevel() >= 3);
         }
         return Optional.of(target);
+    }
+
+    static class StatusTongGu extends Status implements Displayable, StatusRunnable {
+        private static final String StatusName = "瞳蛊";
+
+        private final boolean prohibitIncrease;
+
+        private int stack = 1;
+
+        private StatusTongGu(Character from, Character belongTo, boolean prohibitIncrease) {
+            super(from, belongTo, StatusType.DEBUFF, StatusForm.YIN_JI);
+            this.prohibitIncrease = prohibitIncrease;
+            setDurationType(StatusDurationType.WEI_CHI, 1);
+        }
+
+        static void addStack(Character from, Character belongTo, boolean prohibitIncrease) {
+            belongTo.getStatus(StatusTongGu.class)
+                    .ifPresentOrElse(
+                            StatusTongGu::addStack,
+                            () -> belongTo.addStatus(new StatusTongGu(from, belongTo, prohibitIncrease))
+                    );
+        }
+
+        void addStack() {
+            if (stack < 3) {
+                stack++;
+            }
+        }
+
+        @Override
+        public String getDisplayText() {
+            return StatusName + stack;
+        }
+
+        @Override
+        public boolean runnable(Trigger trigger) {
+            return prohibitIncrease && trigger == Trigger.LOCATION_CHANGE;
+        }
+
+        @Override
+        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
+            if (trigger == Trigger.LOCATION_CHANGE) {
+                ParamLocationChange plc = (ParamLocationChange) param;
+                if (plc.isFromIncrease) {
+                    plc.cancel();
+                }
+            }
+            return false;
+        }
     }
 }
