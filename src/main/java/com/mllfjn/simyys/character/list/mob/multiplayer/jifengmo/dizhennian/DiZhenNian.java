@@ -1,6 +1,8 @@
 package com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.dizhennian;
 
 import com.mllfjn.simyys.BattlePane;
+import com.mllfjn.simyys.battleevent.BattleActionListener;
+import com.mllfjn.simyys.battleevent.BattleEvent;
 import com.mllfjn.simyys.battleevent.EventActionDone;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.PropertyKey;
@@ -129,13 +131,16 @@ public class DiZhenNian extends CharacterJiFengMoBase {
                 character.die();
             }
 
-            bp.addActionListener(this, event -> {
-                if (event instanceof EventActionDone) {
-                    canNingShi = true;
-                    getSkill(4).ifPresent(skill -> skill.use(bp));
-                    return true;
+            bp.addActionListener(new BattleActionListener(this) {
+                @Override
+                public boolean onBattleAction(BattleEvent event) {
+                    if (event instanceof EventActionDone) {
+                        canNingShi = true;
+                        getSkill(4).ifPresent(skill -> skill.use(bp));
+                        return true;
+                    }
+                    return false;
                 }
-                return false;
             });
         }
     }

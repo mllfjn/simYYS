@@ -30,7 +30,7 @@ public class SerializableItems implements Serializable {
     // 队伍面板，负责显示头像和管理鬼火条
     public final TeamPane[] teamPane = new TeamPane[2];
     // 全局监听器,可用于幻境,结界
-    public final Map<Character, SafeList<BattleActionListener>> listenerMap = new HashMap<>();
+    public final SafeList<BattleActionListener> listeners = new SafeList<>();
     // 保存的概率
     private double currentRate;
 
@@ -107,7 +107,8 @@ public class SerializableItems implements Serializable {
             teamPane.removeCharacter(character);
         }
 
-        listenerMap.remove(character);
+
+        listeners.removeIf(listener -> listener.fromCharacter == character);
     }
 
     public void addCharacter(Character character) {

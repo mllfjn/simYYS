@@ -2,7 +2,8 @@ package com.mllfjn.simyys.character.list.yys.yuanlaiguang;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.battleevent.BattleActionListener;
-import com.mllfjn.simyys.battleevent.EventRoundDone;
+import com.mllfjn.simyys.battleevent.BattleEvent;
+import com.mllfjn.simyys.battleevent.EventActionDone;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.PassiveSkillCanNotSeal;
@@ -55,33 +56,39 @@ class Skill7Passive extends PassiveSkillCanNotSeal {
         Optional<StatusEvolution> status = belongTo.getStatus(StatusEvolution.class);
         // 需要满足条件:等级大于等于3,存在进化,进化次数大于等于3,才可以攻击全体
         if (level >= 3 && status.isPresent() && status.get().getCount() >= 3) {
-            listener = event -> {
-                if (event instanceof EventRoundDone) {
-                    List<Character> targets = new CharacterFinder(belongTo)
-                            .filterEnemy()
-                            .getList();
-                    belongTo.doInteractive(interactive ->
-                            interactive.attackTypical(Skill7Passive.this, targets, mul, AttackType.QUN_TI));
-                    listener = null;
-                    belongTo.bp.log.addSkill(sb.toString());
-                    return true;
+            listener = new BattleActionListener(belongTo) {
+                @Override
+                public boolean onBattleAction(BattleEvent event) {
+                    if (event instanceof EventActionDone) {
+                        List<Character> targets = new CharacterFinder(belongTo)
+                                .filterEnemy()
+                                .getList();
+                        belongTo.doInteractive(interactive ->
+                                interactive.attackTypical(Skill7Passive.this, targets, mul, AttackType.QUN_TI));
+                        listener = null;
+                        belongTo.bp.log.addSkill(sb.toString());
+                        return true;
+                    }
+                    return false;
                 }
-                return false;
             };
         } else {
             sb.append("对").append(target.name);
-            listener = event -> {
-                if (event instanceof EventRoundDone) {
-                    belongTo.doInteractive(interactive ->
-                            interactive.attackTypical(Skill7Passive.this, target, mul, AttackType.DAN_TI));
-                    listener = null;
-                    belongTo.bp.log.addSkill(sb.toString());
-                    return true;
+            listener = new BattleActionListener(belongTo) {
+                @Override
+                public boolean onBattleAction(BattleEvent event) {
+                    if (event instanceof EventActionDone) {
+                        belongTo.doInteractive(interactive ->
+                                interactive.attackTypical(Skill7Passive.this, target, mul, AttackType.DAN_TI));
+                        listener = null;
+                        belongTo.bp.log.addSkill(sb.toString());
+                        return true;
+                    }
+                    return false;
                 }
-                return false;
             };
         }
-        belongTo.bp.addActionListener(belongTo, listener);
+        belongTo.bp.addActionListener(listener);
 
         sb.append("使用了").append(getName());
 

@@ -1,7 +1,9 @@
 package com.mllfjn.simyys.character.list.sr.xienv;
 
 import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.battleevent.EventRoundDone;
+import com.mllfjn.simyys.battleevent.BattleActionListener;
+import com.mllfjn.simyys.battleevent.BattleEvent;
+import com.mllfjn.simyys.battleevent.EventActionDone;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
@@ -78,12 +80,15 @@ class StatusXieDu extends Status implements Displayable, AttributeModifier, Stat
             AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
             if (attackInfo.getAttackType() == AttackType.JIAN_JIE) {
                 if (receivedDamage == 0) {
-                    from.bp.addActionListener(from, event -> {
-                        if (event instanceof EventRoundDone) {
-                            jianShe();
-                            return true;
+                    from.bp.addActionListener(new BattleActionListener(from) {
+                        @Override
+                        public boolean onBattleAction(BattleEvent event) {
+                            if (event instanceof EventActionDone) {
+                                jianShe();
+                                return true;
+                            }
+                            return false;
                         }
-                        return false;
                     });
                 }
                 receivedDamage += attackInfo.getTraceableNumber().getNumber();

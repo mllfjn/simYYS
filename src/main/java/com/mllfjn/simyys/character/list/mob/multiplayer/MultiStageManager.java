@@ -1,5 +1,7 @@
 package com.mllfjn.simyys.character.list.mob.multiplayer;
 
+import com.mllfjn.simyys.battleevent.BattleActionListener;
+import com.mllfjn.simyys.battleevent.BattleEvent;
 import com.mllfjn.simyys.battleevent.EventActionDone;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.instance.StatusDieHandler;
@@ -124,13 +126,16 @@ public class MultiStageManager implements Serializable {
 
             itemAfter.setOnAction(event -> {
                         prepareChangeStage = true;
-                        character.bp.addActionListener(character, e -> {
-                            if (e instanceof EventActionDone) {
-                                changeStage();
-                                prepareChangeStage = false;
-                                return true;
-                            }
-                            return false;
+                character.bp.addActionListener(new BattleActionListener(character) {
+                    @Override
+                    public boolean onBattleAction(BattleEvent event) {
+                        if (event instanceof EventActionDone) {
+                            changeStage();
+                            prepareChangeStage = false;
+                            return true;
+                        }
+                        return false;
+                    }
                         });
                     }
 

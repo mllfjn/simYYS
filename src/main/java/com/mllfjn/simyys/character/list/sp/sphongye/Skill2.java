@@ -2,7 +2,8 @@ package com.mllfjn.simyys.character.list.sp.sphongye;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.battleevent.BattleActionListener;
-import com.mllfjn.simyys.battleevent.EventRoundDone;
+import com.mllfjn.simyys.battleevent.BattleEvent;
+import com.mllfjn.simyys.battleevent.EventActionDone;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.status.*;
@@ -34,12 +35,15 @@ class Skill2 extends PassiveSkill {
                     c.addStatus(new StatusLocationChangeListener(belongTo, c));
                 }
             });
-            listener = event -> {
-                if (event instanceof EventRoundDone) {
-                    canAddStackWhenTeammateBeingAttack = true;
-                    return true;
-                } else {
-                    return false;
+            listener = new BattleActionListener(belongTo) {
+                @Override
+                public boolean onBattleAction(BattleEvent event) {
+                    if (event instanceof EventActionDone) {
+                        canAddStackWhenTeammateBeingAttack = true;
+                        return true;
+                    } else {
+                        return false;
+                    }
                 }
             };
         }
@@ -51,7 +55,7 @@ class Skill2 extends PassiveSkill {
 
     private void addStackWhenTeammateBeingAttack() {
         canAddStackWhenTeammateBeingAttack = false;
-        getBelongTo().bp.addActionListener(getBelongTo(), listener);
+        getBelongTo().bp.addActionListener(listener);
     }
 
     @Override

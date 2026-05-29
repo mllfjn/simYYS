@@ -13,7 +13,6 @@ record CharacterMirror(ShenQiLou shenQiLou, Character existCharacter) implements
         newCharacter.name = existCharacter.name;
         newCharacter.team = shenQiLou.team;
         newCharacter.setMaxHp(99999999, true);
-        newCharacter.setMob(3, 3);
         newCharacter.setInitDefense(704);
         newCharacter.setInitSpeed(existCharacter.getInitSpeed());
         newCharacter.setInitBaseAttack(existCharacter.getInitBaseAttack());
@@ -21,6 +20,11 @@ record CharacterMirror(ShenQiLou shenQiLou, Character existCharacter) implements
         newCharacter.setInitCritRate(existCharacter.getInitCritRate());
         newCharacter.setInitCritPower(existCharacter.getInitCritPower());
         newCharacter.fillSkills();
+
+        // 有可能有1,2,3火,有的会普攻有的放技能,看不懂 先这么写不管了
+        newCharacter.setMob(1, 1);
+        newCharacter.setLockSkill(1);
+
         return newCharacter;
     }
 }

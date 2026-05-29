@@ -1,5 +1,7 @@
 package com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.huangkulou;
 
+import com.mllfjn.simyys.battleevent.BattleActionListener;
+import com.mllfjn.simyys.battleevent.BattleEvent;
 import com.mllfjn.simyys.battleevent.EventActionDone;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
@@ -26,23 +28,26 @@ class StatusDWCount extends Status implements AttributeModifier {
         super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
         check();
 
-        belongTo.bp.addActionListener(belongTo, event -> {
-            if (event instanceof EventActionDone) {
-                check();
-                if (setOff) {
-                    belongTo.doInteractive(interactive -> {
-                        List<Character> list = new CharacterFinder(belongTo)
-                                .filterEnemy()
-                                .getList();
-                        interactive.attack(skill2, list,
-                                c -> AttackInfo
-                                        .createRealAttack(belongTo, skill2, c, count * 3000)
-                        );
-                    });
-                    setOff = false;
+        belongTo.bp.addActionListener(new BattleActionListener(belongTo) {
+            @Override
+            public boolean onBattleAction(BattleEvent event) {
+                if (event instanceof EventActionDone) {
+                    check();
+                    if (setOff) {
+                        belongTo.doInteractive(interactive -> {
+                            List<Character> list = new CharacterFinder(belongTo)
+                                    .filterEnemy()
+                                    .getList();
+                            interactive.attack(skill2, list,
+                                    c -> AttackInfo
+                                            .createRealAttack(belongTo, skill2, c, count * 3000)
+                            );
+                        });
+                        setOff = false;
+                    }
                 }
+                return false;
             }
-            return false;
         });
     }
 

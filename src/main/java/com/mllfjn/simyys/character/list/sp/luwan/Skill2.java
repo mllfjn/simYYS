@@ -2,6 +2,7 @@ package com.mllfjn.simyys.character.list.sp.luwan;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.battleevent.BattleActionListener;
+import com.mllfjn.simyys.battleevent.BattleEvent;
 import com.mllfjn.simyys.battleevent.EventActionDone;
 import com.mllfjn.simyys.battleevent.EventCharacterDie;
 import com.mllfjn.simyys.character.Attribute;
@@ -80,19 +81,22 @@ class Skill2 extends Skill {
             reduceDamage = level >= 2;
             setDurationType(StatusDurationType.WEI_CHI, duration);
 
-            listener = event -> {
-                if (!listenerType && event instanceof EventActionDone) {
-                    transform();
-                    return true;
-                } else if (listenerType && event instanceof EventCharacterDie) {
-                    if (level >= 3) {
-                        belongTo.doInteractive(interactive ->
-                                interactive.recovery(Skill2.this, belongTo, belongTo.getMaxHp() * 0.3)
-                        );
+            listener = new BattleActionListener(character) {
+                @Override
+                public boolean onBattleAction(BattleEvent event) {
+                    if (!listenerType && event instanceof EventActionDone) {
+                        transform();
+                        return true;
+                    } else if (listenerType && event instanceof EventCharacterDie) {
+                        if (level >= 3) {
+                            belongTo.doInteractive(interactive ->
+                                    interactive.recovery(Skill2.this, belongTo, belongTo.getMaxHp() * 0.3)
+                            );
+                        }
+                        check();
                     }
-                    check();
+                    return false;
                 }
-                return false;
             };
 
             everyone = belongTo.bp.forEveryone(belongTo, c -> {
@@ -101,7 +105,7 @@ class Skill2 extends Skill {
                 }
             });
 
-            character.bp.addActionListener(character, listener);
+            character.bp.addActionListener(listener);
         }
 
         private void transform() {
@@ -125,8 +129,8 @@ class Skill2 extends Skill {
 
         @Override
         public void beforeDelete() {
-            belongTo.bp.removeActionListener(belongTo, listener);
-            belongTo.bp.removeActionListener(belongTo, everyone);
+            belongTo.bp.removeActionListener(listener);
+            belongTo.bp.removeActionListener(everyone);
             List<Character> list = new CharacterFinder(belongTo, true)
                     .filterTeammate()
                     .filterSelf()

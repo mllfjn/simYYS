@@ -1,6 +1,8 @@
 package com.mllfjn.simyys.character.list.sp.kongmian;
 
 import com.mllfjn.simyys.BattlePane;
+import com.mllfjn.simyys.battleevent.BattleActionListener;
+import com.mllfjn.simyys.battleevent.BattleEvent;
 import com.mllfjn.simyys.battleevent.EventCharacterDie;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
@@ -43,17 +45,19 @@ class Skill2 extends Skill {
             max = sum * 40;
         });
 
-        belongTo.bp.addActionListener(belongTo, event -> {
-            // 非召唤物的目标阵亡时,凝聚其灵魂化作未面
-            if (event instanceof EventCharacterDie ecd) {
-                Character characterDie = ecd.getCharacter();
-                if (!characterDie.isSummon()) {
-                    return StatusWeiMian.addStack(belongTo);
+        belongTo.bp.addActionListener(new BattleActionListener(belongTo) {
+            @Override
+            public boolean onBattleAction(BattleEvent event) {
+                // 非召唤物的目标阵亡时,凝聚其灵魂化作未面
+                if (event instanceof EventCharacterDie ecd) {
+                    Character characterDie = ecd.getCharacter();
+                    if (!characterDie.isSummon()) {
+                        return StatusWeiMian.addStack(belongTo);
+                    }
                 }
+                return false;
             }
-            return false;
         });
-
 
         // lv4-若直到下回合开始时未获得未面,则下回合结束时获得1张未面
         if (level >= 4) {

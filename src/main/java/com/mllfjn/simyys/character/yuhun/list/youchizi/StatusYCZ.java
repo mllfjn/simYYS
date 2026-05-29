@@ -30,7 +30,7 @@ public class StatusYCZ extends Status implements Displayable {
             for (Character character : list) {
                 character.removeStatus(StatusYCZDefense.class);
             }
-            belongTo.bp.removeActionListener(belongTo, listener);
+            belongTo.bp.removeActionListener(listener);
             belongTo.bp.getGuiHuoInstance(belongTo.team).setYCZ(null);
             delete();
         } else {

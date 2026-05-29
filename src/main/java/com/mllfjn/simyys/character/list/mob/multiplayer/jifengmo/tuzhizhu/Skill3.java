@@ -1,7 +1,9 @@
 package com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.tuzhizhu;
 
 import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.battleevent.EventRoundDone;
+import com.mllfjn.simyys.battleevent.BattleActionListener;
+import com.mllfjn.simyys.battleevent.BattleEvent;
+import com.mllfjn.simyys.battleevent.EventActionDone;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.PassiveSkillCanNotSeal;
 import com.mllfjn.simyys.character.status.*;
@@ -47,13 +49,16 @@ class Skill3 extends PassiveSkillCanNotSeal {
             if (trigger == Trigger.AFTER_ATTACK) {
                 if (RateController.otherWhether(SkillName, "使用", bp.calc, 35)) {
                     use = true;
-                    belongTo.bp.addActionListener(belongTo, event -> {
-                        if (event instanceof EventRoundDone) {
-                            Skill3.this.skill4.useWithoutCost();
-                            use = false;
-                            return true;
+                    belongTo.bp.addActionListener(new BattleActionListener(belongTo) {
+                        @Override
+                        public boolean onBattleAction(BattleEvent event) {
+                            if (event instanceof EventActionDone) {
+                                Skill3.this.skill4.useWithoutCost();
+                                use = false;
+                                return true;
+                            }
+                            return false;
                         }
-                        return false;
                     });
                 }
             }

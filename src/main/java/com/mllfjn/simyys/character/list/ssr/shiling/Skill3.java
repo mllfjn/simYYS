@@ -1,7 +1,9 @@
 package com.mllfjn.simyys.character.list.ssr.shiling;
 
 import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.battleevent.EventRoundDone;
+import com.mllfjn.simyys.battleevent.BattleActionListener;
+import com.mllfjn.simyys.battleevent.BattleEvent;
+import com.mllfjn.simyys.battleevent.EventActionDone;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
@@ -172,19 +174,22 @@ class Skill3 extends Skill {
 
             Skill2.StatusBaoShiAttack.addStack(from);
 
-            belongTo.bp.addActionListener(belongTo, event -> {
-                if (event instanceof EventRoundDone) {
-                    if (round > 0) {
-                        round--;
-                    }
+            belongTo.bp.addActionListener(new BattleActionListener(belongTo) {
+                @Override
+                public boolean onBattleAction(BattleEvent event) {
+                    if (event instanceof EventActionDone) {
+                        if (round > 0) {
+                            round--;
+                        }
 
-                    if (round == 0 && !belongTo.isUnderCrowdControl()) {
-                        delete();
-                        xiangShi();
-                        return true;
+                        if (round == 0 && !belongTo.isUnderCrowdControl()) {
+                            delete();
+                            xiangShi();
+                            return true;
+                        }
                     }
+                    return false;
                 }
-                return false;
             });
         }
 

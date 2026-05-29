@@ -6,7 +6,6 @@ import com.mllfjn.simyys.character.CharacterFactory;
 import com.mllfjn.simyys.character.PropertyKey;
 import com.mllfjn.simyys.character.list.ssr.xunxiangxing.StatusShiShen;
 import com.mllfjn.simyys.character.status.Status;
-import com.mllfjn.simyys.collections.SafeList;
 import com.mllfjn.simyys.customnode.CustomTextField;
 import com.mllfjn.simyys.customnode.TextFlowLog;
 import com.mllfjn.simyys.guihuo.GuiHuo;
@@ -445,11 +444,8 @@ public class BattlePane {
             skip = false;
 
             characterActing.afterRound();
-            // 这俩职责重复，将来合并
             // 行动结束事件
             onTrigger(new EventActionDone(characterActing));
-            // 回合结束事件
-            onTrigger(new EventRoundDone(characterActing));
             getNextActor();
             characterActing = situation.characterActing;
             interactive.display();
@@ -543,26 +539,23 @@ public class BattlePane {
         situation.removeCharacter(character);
     }
 
-    public void addActionListener(Character character, BattleActionListener listener) {
-        if (character.alive) {
-            situation.listenerMap.computeIfAbsent(character, k -> new SafeList<>()).add(listener);
+    public void addActionListener(BattleActionListener listener) {
+        if (listener.fromCharacter.alive) {
+            situation.listeners.add(listener);
         }
     }
 
-    public void removeActionListener(Character character, BattleActionListener listener) {
-        situation.listenerMap.get(character).safeRemove(listener);
+    public void removeActionListener(BattleActionListener listener) {
+        situation.listeners.remove(listener);
     }
 
     public void onTrigger(BattleEvent event) {
-        for (SafeList<BattleActionListener> list : situation.listenerMap.values()) {
-            for (BattleActionListener battleActionListener : list) {
-                if (battleActionListener.onBattleAction(event)) {
-                    list.safeRemove(battleActionListener);
-                }
+        for (BattleActionListener listener : situation.listeners) {
+            if (listener.onBattleAction(event)) {
+                situation.listeners.remove(listener);
             }
-            list.endIterator();
-//            list.removeIf(listener -> listener.onBattleAction(event));
         }
+        situation.listeners.endIterator();
     }
 
     public void atBattleStart(Runnable runnable) {
@@ -578,13 +571,8 @@ public class BattlePane {
             action.accept(character);
         }
 
-        BattleActionListener listener = event -> {
-            if (event instanceof EventAddCharacter eac) {
-                action.accept(eac.getCharacter());
-            }
-            return false;
-        };
-        addActionListener(owner, listener);
+        BattleActionListener listener = new BattleActionListenerWrapper(owner, action);
+        addActionListener(listener);
         return listener;
     }
 

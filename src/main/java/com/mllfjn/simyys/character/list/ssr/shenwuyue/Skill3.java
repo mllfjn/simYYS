@@ -107,7 +107,7 @@ class Skill3 extends Skill {
                 }
             }
 
-            belongTo.bp.removeActionListener(belongTo, listener);
+            belongTo.bp.removeActionListener(listener);
         }
     }
 

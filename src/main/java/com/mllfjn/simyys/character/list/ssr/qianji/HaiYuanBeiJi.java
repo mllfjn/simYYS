@@ -1,6 +1,8 @@
 package com.mllfjn.simyys.character.list.ssr.qianji;
 
 import com.mllfjn.simyys.BattlePane;
+import com.mllfjn.simyys.battleevent.BattleActionListener;
+import com.mllfjn.simyys.battleevent.BattleEvent;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.CharacterSummonBase;
@@ -52,11 +54,14 @@ class HaiYuanBeiJi extends CharacterSummonBase {
                 c.addStatus(new StatusRecovery(this, c));
             }
         });
-        bp.addActionListener(this, event -> {
-            if (event instanceof EventUseGuiHuo eg && eg.getTeam() == team) {
-                chaoSheng.addStack(eg.getNum());
+        bp.addActionListener(new BattleActionListener(this) {
+            @Override
+            public boolean onBattleAction(BattleEvent event) {
+                if (event instanceof EventUseGuiHuo eg && eg.getTeam() == team) {
+                    chaoSheng.addStack(eg.getNum());
+                }
+                return false;
             }
-            return false;
         });
 
         // lv2-海原贝戟在场时,千姬和海原贝戟受到的伤害降低30%

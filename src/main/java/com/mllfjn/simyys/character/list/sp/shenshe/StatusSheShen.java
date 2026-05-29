@@ -1,6 +1,8 @@
 package com.mllfjn.simyys.character.list.sp.shenshe;
 
 import com.mllfjn.simyys.BattlePane;
+import com.mllfjn.simyys.battleevent.BattleActionListener;
+import com.mllfjn.simyys.battleevent.BattleEvent;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
@@ -46,16 +48,19 @@ public class StatusSheShen extends Status implements IgnoreChangeMaxHp, IgnoreDe
     @Override
     public void preventDie(double excessDamage) {
         if (!die) {
-            belongTo.bp.addActionListener(belongTo, event -> {
-                if (event instanceof EventActionDone) {
-                    backToNormal();
-                    // lv4-蛇神被击败时,自身提升100点速度,持续1个回合
-                    if (level >= 4) {
-                        belongTo.addStatus(new StatusSheShenSpeed(belongTo));
+            belongTo.bp.addActionListener(new BattleActionListener(belongTo) {
+                @Override
+                public boolean onBattleAction(BattleEvent event) {
+                    if (event instanceof EventActionDone) {
+                        backToNormal();
+                        // lv4-蛇神被击败时,自身提升100点速度,持续1个回合
+                        if (level >= 4) {
+                            belongTo.addStatus(new StatusSheShenSpeed(belongTo));
+                        }
+                        return true;
                     }
-                    return true;
+                    return false;
                 }
-                return false;
             });
             die = true;
         }

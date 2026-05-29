@@ -47,7 +47,7 @@ class Skill2 extends PassiveSkill {
     @Override
     protected void disable() {
         if (listener != null) {
-            getBelongTo().bp.removeActionListener(getBelongTo(), listener);
+            getBelongTo().bp.removeActionListener(listener);
             listener = null;
             for (Character character : getBelongTo().bp.situation.teamPane[getBelongTo().team].characters) {
                 character.removeStatus(StatusPassByListener.class);

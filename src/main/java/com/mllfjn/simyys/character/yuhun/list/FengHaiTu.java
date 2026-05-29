@@ -35,7 +35,7 @@ public class FengHaiTu extends YuHun implements YuHunSealResponse {
     @Override
     public void disable() {
         if (listener != null) {
-            character.bp.removeActionListener(character, listener);
+            character.bp.removeActionListener(listener);
             List<Character> list = new CharacterFinder(character, true)
                     .filterTeammate()
                     .getList();

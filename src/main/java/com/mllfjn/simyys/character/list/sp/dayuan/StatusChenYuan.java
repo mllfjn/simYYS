@@ -1,7 +1,9 @@
 package com.mllfjn.simyys.character.list.sp.dayuan;
 
 import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.battleevent.EventRoundDone;
+import com.mllfjn.simyys.battleevent.BattleActionListener;
+import com.mllfjn.simyys.battleevent.BattleEvent;
+import com.mllfjn.simyys.battleevent.EventActionDone;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
@@ -39,12 +41,15 @@ class StatusChi extends Status implements StatusRunnable, Displayable {
                 belongTo.doInteractive(interactive -> interactive.getNewRound(belongTo));
 //                belongTo.addStatus(new StatusChiNewRound((DaYuan) from, belongTo));
 
-                belongTo.bp.addActionListener(belongTo, event -> {
-                    if (event instanceof EventRoundDone) {
-                        belongTo.addStatus(new StatusChiNewRound((DaYuan) from, belongTo));
-                        return true;
+                belongTo.bp.addActionListener(new BattleActionListener(belongTo) {
+                    @Override
+                    public boolean onBattleAction(BattleEvent event) {
+                        if (event instanceof EventActionDone) {
+                            belongTo.addStatus(new StatusChiNewRound((DaYuan) from, belongTo));
+                            return true;
+                        }
+                        return false;
                     }
-                    return false;
                 });
 
             }

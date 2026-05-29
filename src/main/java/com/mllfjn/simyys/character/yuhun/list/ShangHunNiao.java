@@ -1,5 +1,6 @@
 package com.mllfjn.simyys.character.yuhun.list;
 
+import com.mllfjn.simyys.battleevent.BattleEvent;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
@@ -11,21 +12,26 @@ import com.mllfjn.simyys.battleevent.EventCharacterDie;
 
 public class ShangHunNiao extends YuHun implements YuHunSealResponse {
     public static final String YuHunName = "伤魂鸟";
-    private final BattleActionListener listener;
+    private BattleActionListener listener;
 
-    public ShangHunNiao() {
-        listener = event -> {
-            // 任意非怪物目标死亡时,治疗生命上限20%的生命
-            if (event instanceof EventCharacterDie ed && !ed.getCharacter().isMob()) {
-                Character belongTo = getBelongTo();
-                belongTo.doInteractive(
-                        interactive -> interactive.healTypical(Skill.getInstance(YuHunName), belongTo, 20));
-                // 并提升20%伤害
-                StatusShangHunNiao.addStack(belongTo);
+    @Override
+    public void init(Character character, boolean isInit) {
+        super.init(character, isInit);
 
-                yuHunEffect();
+        listener = new BattleActionListener(character) {
+            @Override
+            public boolean onBattleAction(BattleEvent event) {
+                if (event instanceof EventCharacterDie ed && !ed.getCharacter().isMob()) {
+                    Character belongTo = getBelongTo();
+                    belongTo.doInteractive(
+                            interactive -> interactive.healTypical(Skill.getInstance(YuHunName), belongTo, 20));
+                    // 并提升20%伤害
+                    StatusShangHunNiao.addStack(belongTo);
+
+                    yuHunEffect();
+                }
+                return false;
             }
-            return false;
         };
     }
 
@@ -36,12 +42,12 @@ public class ShangHunNiao extends YuHun implements YuHunSealResponse {
 
     @Override
     public void enable() {
-        getBelongTo().bp.addActionListener(getBelongTo(), listener);
+        getBelongTo().bp.addActionListener(listener);
     }
 
     @Override
     public void disable() {
-        getBelongTo().bp.removeActionListener(getBelongTo(), listener);
+        getBelongTo().bp.removeActionListener(listener);
     }
 
 

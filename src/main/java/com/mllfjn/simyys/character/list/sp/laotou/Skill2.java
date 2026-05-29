@@ -1,11 +1,12 @@
 package com.mllfjn.simyys.character.list.sp.laotou;
 
 import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.battleevent.EventRoundDone;
+import com.mllfjn.simyys.battleevent.BattleActionListener;
+import com.mllfjn.simyys.battleevent.BattleEvent;
+import com.mllfjn.simyys.battleevent.EventActionDone;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
-import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.character.status.StatusForm;
@@ -14,7 +15,6 @@ import com.mllfjn.simyys.character.status.Trigger;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
 import java.util.List;
-import java.util.Optional;
 
 class Skill2 extends PassiveSkill {
     private static final String SkillName = "洪福降临";
@@ -104,12 +104,15 @@ class Skill2 extends PassiveSkill {
 
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            belongTo.bp.addActionListener(belongTo, event -> {
-                if (event instanceof EventRoundDone) {
-                    belongTo.addStatus(new StatusDaDun(belongTo, levelGZ4));
-                    return true;
+            belongTo.bp.addActionListener(new BattleActionListener(belongTo) {
+                @Override
+                public boolean onBattleAction(BattleEvent event) {
+                    if (event instanceof EventActionDone) {
+                        belongTo.addStatus(new StatusDaDun(belongTo, levelGZ4));
+                        return true;
+                    }
+                    return false;
                 }
-                return false;
             });
             return true;
         }

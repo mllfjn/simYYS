@@ -65,7 +65,7 @@ class StatusLinYin extends Status implements StatusRunnable, Displayable, Attrib
         belongTo.removeSkill(1);
         belongTo.addSkill(new Skill1(belongTo, ((SPHongYe) belongTo).skill1Level), true);
 
-        belongTo.bp.removeActionListener(belongTo, listener);
+        belongTo.bp.removeActionListener(listener);
         List<Character> list = new CharacterFinder(belongTo, true)
                 .filterTeammate()
                 .getList();

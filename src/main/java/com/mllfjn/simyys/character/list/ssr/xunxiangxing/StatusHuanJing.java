@@ -30,7 +30,7 @@ class StatusHuanJing extends Status implements Displayable, InfluenceDamageWhenA
 
     @Override
     public void beforeDelete() {
-        belongTo.bp.removeActionListener(belongTo, listener);
+        belongTo.bp.removeActionListener(listener);
         for (Character c : belongTo.bp.situation.characters) {
             if (c.team == belongTo.team && !c.isSummon() && c != belongTo) {
                 c.removeStatus(StatusAfterRound.class);

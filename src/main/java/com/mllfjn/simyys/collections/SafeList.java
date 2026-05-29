@@ -2,57 +2,94 @@ package com.mllfjn.simyys.collections;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.function.Predicate;
 
-public class SafeList<E> extends ArrayList<E> {
-    private int count;
-
+public class SafeList<E> implements Iterable<E>, Serializable {
+    private final ArrayList<E> list = new ArrayList<>();
     private final Set<E> added = new HashSet<>();
     private final Set<E> removed = new HashSet<>();
 
-    @Override
+    private int count;
+
     public @NotNull Iterator<E> iterator() {
         count++;
-        return super.iterator();
+        return new SafeIterator(list.iterator());
     }
 
     public void endIterator() {
         count--;
         if (count == 0) {
             if (!removed.isEmpty()) {
-                super.removeAll(removed);
+                list.removeAll(removed);
                 removed.clear();
             }
             if (!added.isEmpty()) {
-                super.addAll(added);
+                list.addAll(added);
                 added.clear();
             }
         }
     }
 
-    @Override
-    public boolean remove(Object o) {
-        throw new UnsupportedOperationException();
-    }
-
-    public void safeRemove(E o) {
+    public void remove(E o) {
         if (count == 0) {
-            super.remove(o);
+            list.remove(o);
         } else {
             removed.add(o);
         }
     }
 
-    @Override
-    public boolean add(E e) {
+    public void add(E e) {
         if (count == 0) {
-            super.add(e);
+            list.add(e);
         } else {
             added.add(e);
         }
-        return false;
+    }
+
+    public void removeIf(Predicate<E> predicate) {
+        if (count == 0) {
+            list.removeIf(predicate);
+        } else {
+            for (E e : list) {
+                if (predicate.test(e)) {
+                    removed.add(e);
+                }
+            }
+        }
+    }
+
+    private class SafeIterator implements Iterator<E> {
+        private final Iterator<E> it;
+
+        private E current;
+
+        SafeIterator(Iterator<E> it) {
+            this.it = it;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return it.hasNext();
+        }
+
+        @Override
+        public E next() {
+            current = it.next();
+            return current;
+        }
+
+        @Override
+        public void remove() {
+            if (count == 0) {
+                it.remove();
+            } else {
+                removed.add(current);
+            }
+        }
     }
 }

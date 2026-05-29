@@ -1,7 +1,9 @@
 package com.mllfjn.simyys.character.list.ssr.qianji;
 
 import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.battleevent.EventRoundDone;
+import com.mllfjn.simyys.battleevent.BattleActionListener;
+import com.mllfjn.simyys.battleevent.BattleEvent;
+import com.mllfjn.simyys.battleevent.EventActionDone;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
@@ -19,14 +21,17 @@ class Skill2 extends Skill {
         super(belongTo, level, 2, 0, 2);
 
         // 非召唤物的敌方回合结束后,千姬增加10%的行动条
-        belongTo.bp.addActionListener(belongTo, event -> {
-            if (event instanceof EventRoundDone erd
-                    && !erd.getCharacter().isSummon() // 非召唤物
-                    && erd.getCharacter().team != belongTo.team // 敌方
-            ) {
-                belongTo.doInteractive(interactive -> interactive.increaseLocation(belongTo, 10));
+        belongTo.bp.addActionListener(new BattleActionListener(belongTo) {
+            @Override
+            public boolean onBattleAction(BattleEvent event) {
+                if (event instanceof EventActionDone erd
+                        && !erd.getCharacter().isSummon() // 非召唤物
+                        && erd.getCharacter().team != belongTo.team // 敌方
+                ) {
+                    belongTo.doInteractive(interactive -> interactive.increaseLocation(belongTo, 10));
+                }
+                return false;
             }
-            return false;
         });
     }
 

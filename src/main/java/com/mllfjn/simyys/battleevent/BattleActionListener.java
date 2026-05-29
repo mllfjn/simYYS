@@ -1,11 +1,18 @@
 package com.mllfjn.simyys.battleevent;
 
+import com.mllfjn.simyys.character.Character;
+
 import java.io.Serializable;
 
-public interface BattleActionListener extends Serializable {
+public abstract class BattleActionListener implements Serializable {
+    public final Character fromCharacter;
+
+    public BattleActionListener(Character fromCharacter) {
+        this.fromCharacter = fromCharacter;
+    }
+
     /**
-     *
-     * @return return true if this event should be removed after use
+     * @return return true if this listener should be removed after invoke
      */
-    boolean onBattleAction(BattleEvent event);
+    public abstract boolean onBattleAction(BattleEvent event);
 }

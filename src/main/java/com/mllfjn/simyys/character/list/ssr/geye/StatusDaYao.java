@@ -1,6 +1,8 @@
 package com.mllfjn.simyys.character.list.ssr.geye;
 
 import com.mllfjn.simyys.BattlePane;
+import com.mllfjn.simyys.battleevent.BattleActionListener;
+import com.mllfjn.simyys.battleevent.BattleEvent;
 import com.mllfjn.simyys.battleevent.EventActionDone;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
@@ -119,12 +121,15 @@ class StatusDaYao extends Status implements Displayable, StatusRunnable, Prevent
     @Override
     public void preventDie(double excessDamage) {
         if (!die) {
-            belongTo.bp.addActionListener(belongTo, event -> {
-                if (event instanceof EventActionDone) {
-                    delete();
-                    return true;
+            belongTo.bp.addActionListener(new BattleActionListener(belongTo) {
+                @Override
+                public boolean onBattleAction(BattleEvent event) {
+                    if (event instanceof EventActionDone) {
+                        delete();
+                        return true;
+                    }
+                    return false;
                 }
-                return false;
             });
             die = true;
         }
