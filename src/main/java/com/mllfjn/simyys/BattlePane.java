@@ -31,7 +31,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
@@ -43,7 +42,7 @@ public class BattlePane {
     // 所有需要在返回上一步时恢复的内容封装在这里
     public SerializableItems situation = new SerializableItems();
     // 初始化属性列表
-    private final SerializableObservableList<PropertiesHolder> list;
+    private final SerializableObservableList<PropertiesHolder> PropertiesHolderList;
     // 概率控制模式
     public final RateCalc calc = new RateCalc();
     // 交互
@@ -70,8 +69,8 @@ public class BattlePane {
 
 
     public BattlePane(Scene scene, Pane stageRoot, Runnable back,
-                      SerializableObservableList<PropertiesHolder> list, Prediction prediction) {
-        this.list = list;
+                      SerializableObservableList<PropertiesHolder> PropertiesHolderList, Prediction prediction) {
+        this.PropertiesHolderList = PropertiesHolderList;
         stageRoot.getChildren().set(0, root);
 
         setupUI(back, scene, prediction);
@@ -80,8 +79,8 @@ public class BattlePane {
     }
 
     // 该构造方法用于预测模式
-    public BattlePane(SerializableObservableList<PropertiesHolder> list) {
-        this.list = list;
+    public BattlePane(SerializableObservableList<PropertiesHolder> PropertiesHolderList) {
+        this.PropertiesHolderList = PropertiesHolderList;
 
         init();
     }
@@ -283,7 +282,7 @@ public class BattlePane {
     }
 
     private void init() {
-        for (PropertiesHolder holder : list) {
+        for (PropertiesHolder holder : PropertiesHolderList) {
             int team = holder.propertiesMap.get(PropertyKey.GENERAL_TEAM_KEY).getInt();
             if (team == 0 || team == 1) {
                 CharacterFactory.getCharacter(holder, this).ifPresent(this::addCharacter);
@@ -360,20 +359,18 @@ public class BattlePane {
         double yOffset = 20;
         double layoutXBig = 40;
         double layoutXSmall = 62.5;
-        Color color = Color.ORANGE;
-        double strokeWidth = 3;
 
         actionBar.getChildren().clear();
 
         if (actionBarType == ActionBarType.SHUN_WEI) {
 
             List<Character> list = getCharactersByActionSort();
-            Node imageBig = CharacterFactory.getImageWithStroke(list.get(0).name, CharacterFactory.ImageSize.BIG, color, strokeWidth);
+            Node imageBig = CharacterFactory.getImageWithStroke(list.get(0), CharacterFactory.ImageSize.BIG, 3);
             imageBig.setLayoutY(yOffset + 8 * CharacterFactory.ImageSize.SMALL.size);
             imageBig.setLayoutX(layoutXBig);
             actionBar.getChildren().add(imageBig);
             for (int i = 1; i < 9; i++) {
-                Node imageSmall = CharacterFactory.getImageWithStroke(list.get(i).name, CharacterFactory.ImageSize.SMALL, color, strokeWidth);
+                Node imageSmall = CharacterFactory.getImageWithStroke(list.get(i), CharacterFactory.ImageSize.SMALL, 3);
                 imageSmall.setLayoutX(layoutXSmall);
                 imageSmall.setLayoutY(yOffset + (8 - i) * CharacterFactory.ImageSize.SMALL.size);
                 actionBar.getChildren().add(imageSmall);
@@ -382,7 +379,7 @@ public class BattlePane {
         } else if (actionBarType == ActionBarType.JIN_DU) {
             List<Character> list = getCharactersByLocation();
             for (int i = list.size() - 2; i >= 0; i--) {
-                Node imageSmall = CharacterFactory.getImageWithStroke(list.get(i).name, CharacterFactory.ImageSize.SMALL, color, strokeWidth);
+                Node imageSmall = CharacterFactory.getImageWithStroke(list.get(i), CharacterFactory.ImageSize.SMALL, 3);
                 // location在0的时候，y在0
                 // location在100的时候，y在small.size * 7.5
                 // y = location * small.size * 7.5 / 100
@@ -390,7 +387,7 @@ public class BattlePane {
                 imageSmall.setLayoutX(layoutXSmall);
                 actionBar.getChildren().add(imageSmall);
             }
-            Node imageBig = CharacterFactory.getImageWithStroke(list.get(list.size() - 1).name, CharacterFactory.ImageSize.BIG, color, strokeWidth);
+            Node imageBig = CharacterFactory.getImageWithStroke(list.get(list.size() - 1), CharacterFactory.ImageSize.BIG, 3);
             imageBig.setLayoutY(yOffset + 8 * CharacterFactory.ImageSize.SMALL.size);
             imageBig.setLayoutX(layoutXBig);
             actionBar.getChildren().add(imageBig);
@@ -547,7 +544,9 @@ public class BattlePane {
     }
 
     public void addActionListener(Character character, BattleActionListener listener) {
-        situation.listenerMap.computeIfAbsent(character, k -> new SafeList<>()).add(listener);
+        if (character.alive) {
+            situation.listenerMap.computeIfAbsent(character, k -> new SafeList<>()).add(listener);
+        }
     }
 
     public void removeActionListener(Character character, BattleActionListener listener) {

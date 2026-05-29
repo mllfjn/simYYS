@@ -144,6 +144,7 @@ class StatusChaoSheng extends Status implements Displayable, IgnoreDebuff {
         stack += count;
         while (stack >= 7) {
             stack -= 7;
+            belongTo.bp.gainGuiHuo(belongTo, 3);
             List<Character> teammate = new CharacterFinder(belongTo)
                     .filterTeammate()
                     .getList();

@@ -6,52 +6,38 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.battleevent.EventHpChange;
+import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
-import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 class Skill2 extends Skill {
     private static final String SkillName = "神赐之吻";
     private boolean useFront = false;
     private final boolean awakening;
 
-    // 1血增益
-    private final Set<Character> effectedCharacters = new HashSet<>();
     private int times = 3;
 
-    public Skill2(Character belongTo, boolean awakening, int level) {
-        super(belongTo, level, 2, 0, 2);
-        NaMei naMei = (NaMei) belongTo;
+    public Skill2(NaMei naMei, boolean awakening, int level) {
+        super(naMei, level, 2, 0, 2);
         this.awakening = awakening;
 
         // lv5-先机:对攻击攻击最高的友方式神无消耗释放神赐之吻(2)
         if (level >= 5) {
-            naMei.bp.atBattleStart(() -> useFront(naMei.bp));
+            naMei.bp.atBattleStart(this::useFront);
         }
 
         // lv2-当场上非召唤物友方目标首次剩余1点生命时，速度提升50%，持续2回合(每个目标至多生效1次,单次战斗累计至多生效3次)
         if (level >= 2) {
-            naMei.bp.addActionListener(naMei, event -> {
-                if (event instanceof EventHpChange ec) {
-                    if (!effectedCharacters.contains(ec.getCharacter()) && ec.getCharacter().getHp() == 1) {
-                        effectedCharacters.add(ec.getCharacter());
-                        ec.getCharacter().addStatus(new StatusNaMeiSpeed(naMei, ec.getCharacter()));
-                        // lv3-当场上非召唤物友方目标首次剩余1点生命时,暴击伤害提升50% 限制与lv2相同
-                        if (level >= 3) {
-                            ec.getCharacter().addStatus(new StatusNaMeiCritPower(naMei, ec.getCharacter()));
-                        }
-                        // 如果3次结束return true删除监听器
-                        return times-- == 0;
-                    }
+            naMei.bp.forEveryone(naMei, c -> {
+                if (c.team == naMei.team && !c.isSummon()) {
+                    c.addStatus(new StatusHpChangeListener(naMei, c, level >= 3));
                 }
-                return false;
             });
         }
     }
 
-    public void useFront(BattlePane bp) {
+    public void useFront() {
         useFront = true;
         this.useWithoutCost();
         useFront = false;
@@ -74,7 +60,7 @@ class Skill2 extends Skill {
         CharacterFinder characterFinder = new CharacterFinder(getBelongTo())
                 .filterTeammate()
                 .filterSelf();
-        // 先机时只能给攻击最高的友方式神,其他时候可以给除自身以外的任意友方包括阴阳师
+        // 先机时只能给攻击最高的友方式神,无视绿标,其他时候可以给除自身以外的任意友方包括阴阳师
         if (useFront) {
             characterFinder.filterYYS(false);
             return characterFinder.get(Attribute.ATTACK, CharacterFinder.Criteria.MAX);
@@ -87,40 +73,77 @@ class Skill2 extends Skill {
     public String getName() {
         return SkillName;
     }
-}
 
+    class StatusHpChangeListener extends Status implements StatusRunnable {
+        private final boolean increaseCritPower;
 
-class StatusNaMeiSpeed extends Status implements AttributeModifier {
-    public StatusNaMeiSpeed(NaMei from, Character belongTo) {
-        super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-        setDurationType(StatusDurationType.CHI_XU, 2);
+        public StatusHpChangeListener(Character from, Character belongTo, boolean increaseCritPower) {
+            super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
+            this.increaseCritPower = increaseCritPower;
+        }
+
+        @Override
+        public boolean runnable(Trigger trigger) {
+            return trigger == Trigger.HP_CHANGE;
+        }
+
+        @Override
+        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
+            if (belongTo.getHp() == 1) {
+                belongTo.addStatus(new StatusNaMeiSpeed(from, belongTo));
+                if (increaseCritPower) {
+                    belongTo.addStatus(new StatusNaMeiCritPower(from, belongTo));
+                }
+                if (Skill2.this.times == 1) {
+                    List<Character> list = new CharacterFinder(from, true)
+                            .filterTeammate()
+                            .filterSummon(false)
+                            .getList();
+                    for (Character character : list) {
+                        character.removeStatus(StatusHpChangeListener.class);
+                    }
+                    return false;
+                } else {
+                    Skill2.this.times--;
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 
-    @Override
-    public boolean isAffectAttribute(Attribute attribute) {
-        return attribute == Attribute.SPEED;
+    static class StatusNaMeiSpeed extends Status implements AttributeModifier {
+        public StatusNaMeiSpeed(Character from, Character belongTo) {
+            super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
+            setDurationType(StatusDurationType.CHI_XU, 2);
+        }
+
+        @Override
+        public boolean isAffectAttribute(Attribute attribute) {
+            return attribute == Attribute.SPEED;
+        }
+
+        @Override
+        public double getInfluence(Attribute attribute, StatusModifyParam param) {
+            return belongTo.getInitSpeed() * 0.5;
+        }
     }
 
-    @Override
-    public double getInfluence(Attribute attribute, StatusModifyParam param) {
-        return belongTo.getInitSpeed() * 0.5;
-    }
-}
+    static class StatusNaMeiCritPower extends Status implements AttributeModifier {
+        public StatusNaMeiCritPower(Character from, Character belongTo) {
+            super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
+            setDurationType(StatusDurationType.CHI_XU, 2);
+        }
 
-class StatusNaMeiCritPower extends Status implements AttributeModifier {
-    public StatusNaMeiCritPower(NaMei from, Character belongTo) {
-        super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-        setDurationType(StatusDurationType.CHI_XU, 2);
-    }
+        @Override
+        public boolean isAffectAttribute(Attribute attribute) {
+            return attribute == Attribute.CRIT_POWER;
+        }
 
-    @Override
-    public boolean isAffectAttribute(Attribute attribute) {
-        return attribute == Attribute.CRIT_POWER;
-    }
-
-    @Override
-    public double getInfluence(Attribute attribute, StatusModifyParam param) {
-        // 这里没测试是加50还是50%
-        return 50;
+        @Override
+        public double getInfluence(Attribute attribute, StatusModifyParam param) {
+            // 这里没测试是加50还是50%
+            return 50;
+        }
     }
 }

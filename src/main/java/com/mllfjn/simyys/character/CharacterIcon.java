@@ -194,7 +194,7 @@ public class CharacterIcon implements Serializable {
 
         // 头像
         imagePane = new AnchorPane();
-        Node image = CharacterFactory.getImageWithStroke(character.name, CharacterFactory.ImageSize.CHARACTER_ICON_IMAGE, Color.ORANGE, 5);
+        Node image = CharacterFactory.getImageWithStroke(character, CharacterFactory.ImageSize.CHARACTER_ICON_IMAGE, 5);
         image.setOnMouseClicked(this::onMouseClicked);
         StackPane icon = new StackPane(image);
         icon.setAlignment(Pos.CENTER);

@@ -35,7 +35,6 @@ import com.mllfjn.simyys.interactive.InteractiveInfo;
 import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.guihuo.MobGuiHuo;
 import com.mllfjn.simyys.collections.SerializableObservableList;
-import com.mllfjn.simyys.battleevent.EventHpChange;
 import com.mllfjn.simyys.ratecontroller.RateController;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -343,7 +342,6 @@ public abstract class Character implements Serializable {
         if (this.hp != num) {
             this.hp = Math.min(maxHp, num);
             statusRun(Trigger.HP_CHANGE, null);
-            bp.onTrigger(new EventHpChange(this));
         }
     }
 

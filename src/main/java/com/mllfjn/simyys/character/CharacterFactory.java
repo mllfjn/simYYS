@@ -39,7 +39,7 @@ import com.mllfjn.simyys.character.list.yys.shenle.ShenLe;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.paint.Paint;
+import javafx.scene.paint.Color;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -141,8 +141,13 @@ public class CharacterFactory {
         return new ImageView(image);
     }
 
-    public static Node getImageWithStroke(String name, ImageSize size, Paint color, double strokeWidth) {
-        return PicUtil.clipAndStroke((ImageView) getImage(name, size), size.size, color, strokeWidth);
+    public static Node getImageWithStroke(Character character, ImageSize size, double strokeWidth) {
+        return PicUtil.clipAndStroke(
+                (ImageView) getImage(character.name, size),
+                size.size,
+                character.team == 0 ? Color.ORANGE : Color.RED,
+                strokeWidth
+        );
     }
 
     public enum ImageSize {
