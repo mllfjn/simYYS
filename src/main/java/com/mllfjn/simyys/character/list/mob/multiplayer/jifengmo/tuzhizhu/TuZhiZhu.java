@@ -9,7 +9,7 @@ public class TuZhiZhu extends CharacterJiFengMoBase {
     Skill6 skill6;
 
     public TuZhiZhu() {
-        canChangeStage = false;
+        multiStageManager.setCanChangeStage(false);
     }
 
     @Override

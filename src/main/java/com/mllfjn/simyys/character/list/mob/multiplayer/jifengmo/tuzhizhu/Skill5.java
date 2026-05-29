@@ -157,7 +157,7 @@ class Skill5 extends PassiveSkillCanNotSeal {
         if (count == 1) {
             TuZhiZhu belongTo = (TuZhiZhu) getBelongTo();
             belongTo.removeStatus(StatusUnselectable.class);
-            belongTo.canChangeStage = true;
+            belongTo.multiStageManager.setCanChangeStage(true);
 
             return;
         }
