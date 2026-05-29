@@ -14,7 +14,6 @@ import com.mllfjn.simyys.customnode.CustomInputMenuItem;
 import com.mllfjn.simyys.utils.DecimalFormatUtil;
 import com.mllfjn.simyys.utils.SerializableConsumer;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -115,7 +114,7 @@ public class CharacterIcon implements Serializable {
     // 御魂显示
     private transient ImageView[] yuHunIcon;
     // 可选,右键时触发其他事件,比如极逢魔的转阶段,须佐的天威
-    private transient EventHandler<MouseEvent> eventHandler;
+    private EventHandlerContainer eventHandlerContainer;
     // 其他信息显示，比如极逢魔的伤害显示
     private transient Label infoDisplayLabel;
     private InfoDisplay infoDisplay;
@@ -134,8 +133,6 @@ public class CharacterIcon implements Serializable {
     }
 
     public void reset() {
-        setupUI();
-        setEventHandler(character.getEventHandler());
         setInfoDisplay(character.getInfoDisplay());
     }
 
@@ -263,26 +260,35 @@ public class CharacterIcon implements Serializable {
     }
 
     public VBox getTop() {
+        if (top == null) {
+            setupUI();
+        }
         return top;
     }
 
     public VBox getCenter() {
+        if (center == null) {
+            setupUI();
+        }
         return center;
     }
 
     public VBox getBottom() {
+        if (bottom == null) {
+            setupUI();
+        }
         return bottom;
     }
 
-    public void setEventHandler(EventHandler<MouseEvent> eventHandler) {
-        this.eventHandler = eventHandler;
+    public void setEventHandlerContainer(EventHandlerContainer eventHandlerContainer) {
+        this.eventHandlerContainer = eventHandlerContainer;
     }
 
     protected void onMouseClicked(MouseEvent event) {
-        if (event.getButton() == MouseButton.PRIMARY || eventHandler == null) {
+        if (event.getButton() == MouseButton.PRIMARY || eventHandlerContainer == null) {
             autoToMenu.show(center, event.getScreenX(), event.getScreenY());
         } else {
-            eventHandler.handle(event);
+            eventHandlerContainer.handle(event);
         }
     }
 

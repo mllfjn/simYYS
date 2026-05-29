@@ -2,6 +2,8 @@ package com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.shenqilou;
 
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.CharacterFactory;
+import com.mllfjn.simyys.character.list.mob.multiplayer.ClearHpHandler;
+import com.mllfjn.simyys.character.status.instance.StatusSealPassiveSkill;
 
 import java.io.Serializable;
 
@@ -19,11 +21,16 @@ record CharacterMirror(ShenQiLou shenQiLou, Character existCharacter) implements
         newCharacter.setInitAdditionAttack(existCharacter.getInitAdditionAttack());
         newCharacter.setInitCritRate(existCharacter.getInitCritRate());
         newCharacter.setInitCritPower(existCharacter.getInitCritPower());
+
+        // 镜像身上会跳出一个封印,好像是把被动封了
+        newCharacter.addStatus(new StatusSealPassiveSkill(shenQiLou, newCharacter));
         newCharacter.fillSkills();
 
         // 有可能有1,2,3火,有的会普攻有的放技能,看不懂 先这么写不管了
         newCharacter.setMob(1, 1);
         newCharacter.setLockSkill(1);
+
+        newCharacter.getCharacterIcon().setEventHandlerContainer(new ClearHpHandler(newCharacter));
 
         return newCharacter;
     }

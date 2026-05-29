@@ -28,16 +28,22 @@ class Skill2 extends PassiveSkill {
     private final Status listener;
     private final Skill skill;
 
+    private boolean useAtStart = true;
+
     public Skill2(Character belongTo, int level) {
         super(belongTo, level, 2);
         this.skill = Skill.getInstance(StatusXX.StatusName);
         listener = new StatusXXListener(belongTo, this);
-
-        belongTo.bp.atBattleStart(this::wakeUp);
     }
 
     @Override
     public void enable() {
+        if (useAtStart) {
+            getBelongTo().bp.atBattleStart(() -> {
+                wakeUp();
+                useAtStart = false;
+            });
+        }
         getBelongTo().addStatus(listener);
     }
 

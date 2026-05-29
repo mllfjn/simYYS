@@ -49,17 +49,6 @@ public class TuZhiZhu extends YuHun implements YuHunUnfullMark {
             if (trigger == Trigger.CAUSE_ATTACK) {
                 AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
                 if (attackInfo.isCalYuHun()) {
-                    if (causeSkill == null) {
-                        causeSkill = attackInfo.getSkill();
-                        causeSkill.addSkillEndListener(() -> {
-                            for (Map.Entry<Character, Double> entry : map.entrySet()) {
-                                StatusTuZhiZhu.enable(belongTo, entry.getKey(), 0.1 * entry.getValue());
-                            }
-                            TuZhiZhu.this.yuHunEffect();
-                            map.clear();
-                            causeSkill = null;
-                        });
-                    }
                     Character target = attackInfo.getTarget();
                     // 对怪物造成伤害时
                     if (!target.isMob()) {
@@ -70,6 +59,18 @@ public class TuZhiZhu extends YuHun implements YuHunUnfullMark {
                     double number = attackInfo.getTraceableNumber().getNumber();
                     if (number <= 0) {
                         return false;
+                    }
+
+                    if (causeSkill == null) {
+                        causeSkill = attackInfo.getSkill();
+                        causeSkill.addSkillEndListener(() -> {
+                            for (Map.Entry<Character, Double> entry : map.entrySet()) {
+                                StatusTuZhiZhu.enable(belongTo, entry.getKey(), 0.1 * entry.getValue());
+                            }
+                            TuZhiZhu.this.yuHunEffect();
+                            map.clear();
+                            causeSkill = null;
+                        });
                     }
 
                     map.put(target, map.getOrDefault(target, 0.0) + number);

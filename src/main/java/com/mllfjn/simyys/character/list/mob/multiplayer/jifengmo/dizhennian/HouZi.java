@@ -14,8 +14,6 @@ import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.ratecontroller.RateController;
-import javafx.event.EventHandler;
-import javafx.scene.input.MouseEvent;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,8 +22,6 @@ public class HouZi extends CharacterSummonBase {
     private static final String CharacterName = "猴子";
 
     private final DiZhenNian owner;
-
-    private final ClearHpHandler clearHpHandler = new ClearHpHandler(this);
 
     public HouZi(DiZhenNian owner) {
         super(owner.bp, CharacterName, owner.team);
@@ -46,11 +42,7 @@ public class HouZi extends CharacterSummonBase {
         });
 
         addStatus(new StatusDamageRecord(this));
-    }
-
-    @Override
-    protected EventHandler<MouseEvent> getEventHandler() {
-        return clearHpHandler.getEventHandler();
+        getCharacterIcon().setEventHandlerContainer(new ClearHpHandler(this));
     }
 
     @Override

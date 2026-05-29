@@ -6,8 +6,6 @@ import com.mllfjn.simyys.character.list.mob.multiplayer.ClearHpHandler;
 import com.mllfjn.simyys.character.skill.PassiveSkillCanNotSeal;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.instance.StatusUnselectable;
-import javafx.event.EventHandler;
-import javafx.scene.input.MouseEvent;
 
 class Skill5 extends PassiveSkillCanNotSeal {
     private static final String SkillName = "破损";
@@ -18,15 +16,9 @@ class Skill5 extends PassiveSkillCanNotSeal {
         super(belongTo, -1, 5);
 
         CharacterSummonBase characterTui = new CharacterSummonBase(belongTo.bp, "土蜘蛛-腿", belongTo.team) {
-            private final ClearHpHandler clearHpHandler = new ClearHpHandler(this);
-
             {
                 setInitDefense(686);
-            }
-
-            @Override
-            protected EventHandler<MouseEvent> getEventHandler() {
-                return clearHpHandler.getEventHandler();
+                getCharacterIcon().setEventHandlerContainer(new ClearHpHandler(this));
             }
 
             @Override
@@ -48,15 +40,9 @@ class Skill5 extends PassiveSkillCanNotSeal {
             }
         };
         CharacterSummonBase characterBei = new CharacterSummonBase(belongTo.bp, "土蜘蛛-背", belongTo.team) {
-            private final ClearHpHandler clearHpHandler = new ClearHpHandler(this);
-
             {
                 setInitDefense(774);
-            }
-
-            @Override
-            protected EventHandler<MouseEvent> getEventHandler() {
-                return clearHpHandler.getEventHandler();
+                getCharacterIcon().setEventHandlerContainer(new ClearHpHandler(this));
             }
 
             @Override
@@ -78,15 +64,9 @@ class Skill5 extends PassiveSkillCanNotSeal {
             }
         };
         CharacterSummonBase characterQian = new CharacterSummonBase(belongTo.bp, "土蜘蛛-钳", belongTo.team) {
-            private final ClearHpHandler clearHpHandler = new ClearHpHandler(this);
-
             {
                 setInitDefense(778);
-            }
-
-            @Override
-            protected EventHandler<MouseEvent> getEventHandler() {
-                return clearHpHandler.getEventHandler();
+                getCharacterIcon().setEventHandlerContainer(new ClearHpHandler(this));
             }
 
             @Override
@@ -110,13 +90,7 @@ class Skill5 extends PassiveSkillCanNotSeal {
                         {
                             skill7.tZZReduceEnable();
                             forceSetMaxHp(99999999, true);
-                        }
-
-                        private final ClearHpHandler clearHpHandler = new ClearHpHandler(this);
-
-                        @Override
-                        protected EventHandler<MouseEvent> getEventHandler() {
-                            return clearHpHandler.getEventHandler();
+                            getCharacterIcon().setEventHandlerContainer(new ClearHpHandler(this));
                         }
 
                         @Override

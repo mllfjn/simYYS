@@ -57,7 +57,7 @@ class Skill8 extends PassiveSkillCanNotSeal {
             return SkillName;
         }
 
-        static class StatusDeadLine extends Status implements StatusRunnable, Displayable {
+        static class StatusDeadLine extends Status implements StatusRunnable, Displayable, PreventDie {
             private static final String StatusName = "梦境意识";
 
             public StatusDeadLine(Character character) {
@@ -92,6 +92,16 @@ class Skill8 extends PassiveSkillCanNotSeal {
             @Override
             public String getDisplayText() {
                 return StatusName + getDuration();
+            }
+
+            @Override
+            public void preventDie(double excessDamage) {
+
+            }
+
+            @Override
+            public String getName() {
+                return StatusName;
             }
         }
     }

@@ -1,14 +1,12 @@
 package com.mllfjn.simyys.character.list.mob.multiplayer;
 
 import com.mllfjn.simyys.character.Character;
-import javafx.event.EventHandler;
+import com.mllfjn.simyys.character.EventHandlerContainer;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseEvent;
 
-import java.io.Serializable;
-
-public class ClearHpHandler implements Serializable {
+public class ClearHpHandler implements EventHandlerContainer {
     private final Character character;
 
     private transient ContextMenu contextMenu;
@@ -17,7 +15,14 @@ public class ClearHpHandler implements Serializable {
         this.character = character;
     }
 
-    public EventHandler<MouseEvent> getEventHandler() {
+    @Override
+    public void handle(MouseEvent event) {
+        if (character.getHp() > 0.01) {
+            getContextMenu().show(character.getCharacterIcon().getCenter(), event.getScreenX(), event.getScreenY());
+        }
+    }
+
+    private ContextMenu getContextMenu() {
         if (contextMenu == null) {
             MenuItem item = new MenuItem("承受下次攻击后死亡");
             item.setOnAction(event -> {
@@ -26,10 +31,6 @@ public class ClearHpHandler implements Serializable {
             });
             contextMenu = new ContextMenu(item);
         }
-        return event -> {
-            if (character.getHp() > 0.01) {
-                contextMenu.show(character.getCharacterIcon().getCenter(), event.getScreenX(), event.getScreenY());
-            }
-        };
+        return contextMenu;
     }
 }

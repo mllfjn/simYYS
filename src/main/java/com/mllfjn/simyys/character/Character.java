@@ -21,6 +21,7 @@ import com.mllfjn.simyys.character.status.determinant.RejectAllStatuses;
 import com.mllfjn.simyys.character.status.instance.StatusBind;
 import com.mllfjn.simyys.character.status.instance.StatusConfusion;
 import com.mllfjn.simyys.character.status.instance.StatusPoisoning;
+import com.mllfjn.simyys.character.status.instance.StatusSealPassiveSkill;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.ParamLocationChange;
 import com.mllfjn.simyys.character.status.triggerParam.ParamStatus;
@@ -629,7 +630,9 @@ public abstract class Character implements Serializable {
         }
 
         if (skill instanceof PassiveSkill ps) {
-            ps.enable();
+            if (!isHaveStatus(StatusSealPassiveSkill.class)) {
+                ps.enable();
+            }
         }
     }
 
@@ -827,10 +830,6 @@ public abstract class Character implements Serializable {
         }
     }
 
-    protected EventHandler<MouseEvent> getEventHandler() {
-        return null;
-    }
-
     protected InfoDisplay getInfoDisplay() {
         return null;
     }
@@ -975,13 +974,8 @@ public abstract class Character implements Serializable {
     }
 
     public void beforeDie(InteractiveInfo interactiveInfo, double excessDamage) {
-        for (Status status : getStatuses()) {
-            if (status instanceof PreventDie pd && pd.preventDieEffective()) {
-                pd.preventDie(excessDamage);
-                interactiveInfo.getTraceableNumber().addTrace("(" + pd.getName() + "免死生效)");
-                interactiveInfo.setCancel(true);
-                return;
-            }
+        if (TraversalOrderManager.preventDie(interactiveInfo, excessDamage, statuses)) {
+            return;
         }
 
         die();

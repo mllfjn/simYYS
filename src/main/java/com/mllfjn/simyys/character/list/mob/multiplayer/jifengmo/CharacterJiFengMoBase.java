@@ -9,8 +9,6 @@ import com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.citiao.CiTiaoMa
 import com.mllfjn.simyys.character.propertygetter.*;
 import com.mllfjn.simyys.character.status.instance.StatusBoss;
 import com.mllfjn.simyys.collections.StringGroup;
-import javafx.event.EventHandler;
-import javafx.scene.input.MouseEvent;
 
 public abstract class CharacterJiFengMoBase extends Character {
     public final MultiStageManager multiStageManager = new MultiStageManager(this);
@@ -49,16 +47,13 @@ public abstract class CharacterJiFengMoBase extends Character {
 
         // 添加伤害显示器
         addStatus(display);
+
+        getCharacterIcon().setEventHandlerContainer(multiStageManager);
     }
 
     @Override
     protected String getDefaultBaseAttack() {
         return "8000";
-    }
-
-    @Override
-    protected EventHandler<MouseEvent> getEventHandler() {
-        return multiStageManager.getEventHandler();
     }
 
     @Override

@@ -164,7 +164,11 @@ class Skill2 extends PassiveSkill {
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
             if (param instanceof ParamUseSkill pus) {
-                pus.getTarget().ifPresent(target -> from.xieZhan(pus.getSkill(), target));
+                pus.getTarget().ifPresent(target -> {
+                    if (target.team != belongTo.team) {
+                        from.xieZhan(pus.getSkill(), target);
+                    }
+                });
             }
             return false;
         }

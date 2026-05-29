@@ -11,8 +11,6 @@ import com.mllfjn.simyys.character.skill.PassiveSkillCanNotSeal;
 import com.mllfjn.simyys.character.skill.Skill1PuGongBase;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.ratecontroller.RateController;
-import javafx.event.EventHandler;
-import javafx.scene.input.MouseEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +61,7 @@ class Skill5 extends PassiveSkillCanNotSeal {
         ArrayList<CharacterBX> characters = new ArrayList<>();
         for (String name : Names) {
             CharacterBX characterBX = new CharacterBX(bp, name, team, 99999999);
-            characterBX.setClearHpHandler();
+            characterBX.getCharacterIcon().setEventHandlerContainer(new ClearHpHandler(characterBX));
             characters.add(characterBX);
             bp.addCharacter(characterBX);
         }
@@ -102,7 +100,6 @@ class Skill5 extends PassiveSkillCanNotSeal {
 
     static class CharacterBX extends CharacterSummonBase {
         private BXDieHandler statusHKLZHBuff;
-        private ClearHpHandler clearHpHandler;
 
         public CharacterBX(BattlePane bp, String name, int team, double hp) {
             super(bp, name, team);
@@ -128,18 +125,6 @@ class Skill5 extends PassiveSkillCanNotSeal {
 
         private void setStatusHKLZHBuff(BXDieHandler statusHKLZHBuff) {
             this.statusHKLZHBuff = statusHKLZHBuff;
-        }
-
-        private void setClearHpHandler() {
-            clearHpHandler = new ClearHpHandler(this);
-        }
-
-        @Override
-        protected EventHandler<MouseEvent> getEventHandler() {
-            if (clearHpHandler != null) {
-                return clearHpHandler.getEventHandler();
-            }
-            return null;
         }
 
         @Override

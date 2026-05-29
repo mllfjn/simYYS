@@ -79,9 +79,10 @@ class Skill3 extends Skill {
 
         // lv2-凋零命中时施加沉沦,持续1回合
         if (getLevel() >= 2) {
-            for (int i = 0; i < infos.length; i++) {
-                if (infos[i].isHit()) {
-                    interactive.effect(this, list.get(i), 100, false, StatusChenLun.getSupplier(getLevel()));
+            for (EffectInfo info : infos) {
+                if (info.isHit()) {
+                    info.getTarget().addStatus(new StatusChenLun(getBelongTo(), info.getTarget(), getLevel()));
+//                    interactive.effect(this, list.get(i), 100, false, StatusChenLun.getSupplier(getLevel()));
 //                    list.get(i).addStatus(new StatusChenLun(naMei, list.get(i), getLevel()));
                 }
             }

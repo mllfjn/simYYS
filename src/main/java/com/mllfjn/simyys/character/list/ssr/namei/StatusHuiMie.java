@@ -101,6 +101,7 @@ public class StatusHuiMie extends Status implements Displayable, StatusRunnable,
     @Override
     public void preventDie(double excessDamage) {
         canTrigger = false;
+        belongTo.setHp(1);
         times--;
     }
 

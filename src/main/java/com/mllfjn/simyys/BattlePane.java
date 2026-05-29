@@ -559,7 +559,11 @@ public class BattlePane {
     }
 
     public void atBattleStart(Runnable runnable) {
-        battleStartEventList.add(runnable);
+        if (battleStartEventList != null) {
+            battleStartEventList.add(runnable);
+        } else {
+            runnable.run();
+        }
     }
 
     public boolean isMobBattle(Character character) {

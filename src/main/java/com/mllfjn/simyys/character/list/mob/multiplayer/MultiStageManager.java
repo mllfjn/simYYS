@@ -4,6 +4,7 @@ import com.mllfjn.simyys.battleevent.BattleActionListener;
 import com.mllfjn.simyys.battleevent.BattleEvent;
 import com.mllfjn.simyys.battleevent.EventActionDone;
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.EventHandlerContainer;
 import com.mllfjn.simyys.character.status.instance.StatusDieHandler;
 import com.mllfjn.simyys.utils.SerializableConsumer;
 import com.mllfjn.simyys.utils.SerializableRunnable;
@@ -19,7 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-public class MultiStageManager implements Serializable {
+public class MultiStageManager implements Serializable, EventHandlerContainer {
     private final Queue<SerializableRunnable> stageQueue = new LinkedList<>();
     private final List<Character> summonList = new ArrayList<>(5);
     private final Character character;
@@ -106,22 +107,14 @@ public class MultiStageManager implements Serializable {
         needHandle = true;
     }
 
-    public EventHandler<MouseEvent> getEventHandler() {
-        return event -> {
-            if (!prepareChangeStage && !stageQueue.isEmpty() && canChangeStage) {
-                getContextMenu().show((Node) event.getSource(), event.getScreenX(), event.getScreenY());
-            }
-        };
-    }
-
     private ContextMenu getContextMenu() {
         if (contextMenu == null) {
             MenuItem itemSkip = new MenuItem("跳过当前回合切换阶段");
             MenuItem itemAfter = new MenuItem("该回合行动后切换阶段");
 
             itemSkip.setOnAction(event -> {
-                character.bp.skipCharacterAct();
                 changeStage();
+                character.bp.skipCharacterAct();
             });
 
             itemAfter.setOnAction(event -> {
@@ -144,5 +137,12 @@ public class MultiStageManager implements Serializable {
             contextMenu = new ContextMenu(itemSkip, itemAfter);
         }
         return contextMenu;
+    }
+
+    @Override
+    public void handle(MouseEvent event) {
+        if (!prepareChangeStage && !stageQueue.isEmpty() && canChangeStage) {
+            getContextMenu().show((Node) event.getSource(), event.getScreenX(), event.getScreenY());
+        }
     }
 }
