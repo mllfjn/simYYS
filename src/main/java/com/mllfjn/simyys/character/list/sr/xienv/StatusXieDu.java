@@ -13,6 +13,7 @@ import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.AttackType;
+import javafx.scene.paint.Color;
 
 import java.util.List;
 
@@ -64,6 +65,11 @@ class StatusXieDu extends Status implements Displayable, AttributeModifier, Stat
     @Override
     public String getDisplayText() {
         return StatusName + stack;
+    }
+
+    @Override
+    public Color getColor(StatusType type) {
+        return Color.PURPLE;
     }
 
     @Override

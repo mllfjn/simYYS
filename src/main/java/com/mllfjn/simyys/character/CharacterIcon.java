@@ -21,15 +21,16 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import javafx.util.Callback;
 
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Optional;
-import java.util.StringJoiner;
 
 public class CharacterIcon implements Serializable {
     public static final double MAX_WIDTH = CharacterFactory.ImageSize.CHARACTER_ICON_IMAGE.size * 1.1;
@@ -96,7 +97,7 @@ public class CharacterIcon implements Serializable {
     private SerializableConsumer<Node> visualEffectBottom;
 
     // 状态栏
-    private transient Label status;
+    private transient TextFlow statuses;
     // 生命条
     private transient ProgressBar healthBar;
     // 护盾条
@@ -159,10 +160,10 @@ public class CharacterIcon implements Serializable {
         autoToMenu = new ContextMenu(autoToGreen, autoToRed);
 
         // 状态栏
-        status = new Label();
-        status.setMaxWidth(MAX_WIDTH);
-        status.setFont(Font.font(10));
-        status.setWrapText(true);
+        statuses = new TextFlow();
+        statuses.setMaxWidth(MAX_WIDTH);
+//        status.setFont(Font.font(10));
+//        status.setWrapText(true);
 
         // 生命
         healthBar = new ProgressBar();
@@ -179,7 +180,7 @@ public class CharacterIcon implements Serializable {
         shieldBar.setMaxWidth(MAX_WIDTH);
 
         // 头像以上部分组装
-        top = new VBox(autoTo, status, healthBar, shieldBar);
+        top = new VBox(autoTo, statuses, healthBar, shieldBar);
         top.setAlignment(Pos.BOTTOM_CENTER);
         if (visualEffectTop != null) {
             visualEffectTop.accept(top);
@@ -345,16 +346,23 @@ public class CharacterIcon implements Serializable {
     }
 
     private void refreshStatusLabel() {
-        StringJoiner sj = new StringJoiner(Displayable.DELIMITER);
+        statuses.getChildren().clear();
+//        StringJoiner sj = new StringJoiner(Displayable.DELIMITER);
         for (Status status : character.getStatuses()) {
             if (status instanceof Displayable d) {
                 String text = d.getDisplayText();
                 if (text != null) {
-                    sj.add(text);
+//                    sj.add(text);
+                    Text t = new Text(text + Displayable.DELIMITER);
+                    Color color = d.getColor(status.statusType);
+                    if (color != null) {
+                        t.setFill(color);
+                    }
+                    statuses.getChildren().add(t);
                 }
             }
         }
-        this.status.setText(sj.toString());
+//        this.status.setText(sj.toString());
     }
 
     private void refreshProperties() {

@@ -17,14 +17,6 @@ class StatusChenLun extends Status implements CrowdControl, StatusRunnable, Disp
         setDurationType(StatusDurationType.CHI_XU, 1);
     }
 
-    /*public static StatusSupplier getSupplier(int level) {
-        return new StatusSupplier(text, StatusChenLun.class, (from, to) -> {
-            if (!to.isHaveStatus(StatusDiaoLing.class)) {
-                to.addStatus(new StatusChenLun(from, to, level));
-            }
-        });
-    }*/
-
     @Override
     public String getDisplayText() {
         return text;

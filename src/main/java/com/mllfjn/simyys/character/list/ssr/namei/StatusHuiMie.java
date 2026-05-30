@@ -8,6 +8,7 @@ import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.determinant.PreventDie;
 import com.mllfjn.simyys.character.status.Trigger;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
+import javafx.scene.paint.Color;
 
 public class StatusHuiMie extends Status implements Displayable, StatusRunnable, AttributeModifier, PreventDie {
     private static final String text = "毁灭";
@@ -103,6 +104,11 @@ public class StatusHuiMie extends Status implements Displayable, StatusRunnable,
         canTrigger = false;
         belongTo.setHp(1);
         times--;
+    }
+
+    @Override
+    public Color getColor(StatusType type) {
+        return GOOD_COLOR;
     }
 
     @Override

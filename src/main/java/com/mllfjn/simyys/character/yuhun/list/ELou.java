@@ -5,6 +5,7 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunSealResponse;
+import javafx.scene.paint.Color;
 
 public class ELou extends YuHun implements YuHunSealResponse {
     public static final String YuHunName = "恶楼";
@@ -55,6 +56,11 @@ public class ELou extends YuHun implements YuHunSealResponse {
         }
 
         @Override
+        public Color getColor(StatusType type) {
+            return GOOD_COLOR;
+        }
+
+        @Override
         public double getInfluence(Attribute attribute, StatusModifyParam param) {
             return 80;
         }
@@ -71,6 +77,11 @@ public class ELou extends YuHun implements YuHunSealResponse {
         private StatusELLock(Character character) {
             super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
             setDurationType(StatusDurationType.CHI_XU, 8);
+        }
+
+        @Override
+        public Color getColor(StatusType type) {
+            return Displayable.BAD_COLOR;
         }
 
         @Override
