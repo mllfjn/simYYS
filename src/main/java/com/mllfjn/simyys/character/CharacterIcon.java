@@ -153,10 +153,14 @@ public class CharacterIcon implements Serializable {
         MenuItem autoToGreen = new MenuItem(FlagChangeInfo.FlagType.GREEN.type);
         MenuItem autoToRed = new MenuItem(FlagChangeInfo.FlagType.RED.type);
 
-        autoToGreen.setOnAction(
-                e -> character.bp.situation.setAuto(character, FlagChangeInfo.FlagType.GREEN));
-        autoToRed.setOnAction(
-                e -> character.bp.situation.setAuto(character, FlagChangeInfo.FlagType.RED));
+        autoToGreen.setOnAction(e -> {
+            character.bp.situation.setAuto(character, FlagChangeInfo.FlagType.GREEN);
+            character.bp.characterSetFlag(FlagChangeInfo.FlagType.GREEN, character);
+        });
+        autoToRed.setOnAction(e -> {
+            character.bp.situation.setAuto(character, FlagChangeInfo.FlagType.RED);
+            character.bp.characterSetFlag(FlagChangeInfo.FlagType.RED, character);
+        });
         autoToMenu = new ContextMenu(autoToGreen, autoToRed);
 
         // 状态栏
@@ -211,9 +215,17 @@ public class CharacterIcon implements Serializable {
         ObservableList<Skill> skills = character.getReadOnlySkillList();
         skillBox = new ComboBox<>(skills);
         selectLockSkill();
-        skillBox.valueProperty().addListener((obs, old, val) ->
-                character.setLockSkill(val.getSkillID())
-        );
+        skillBox.valueProperty().addListener((obs, old, val) -> {
+            int skillID = val.getSkillID();
+            character.setLockSkill(skillID);
+
+            if (skillID == -1) {
+                skillID = skills.indexOf(val);
+            }
+
+            character.bp.characterSetLockSkill(character, skillID);
+
+        });
         skillBox.setCellFactory(skillCellFactory);
         skillBox.setMaxWidth(MAX_WIDTH);
 

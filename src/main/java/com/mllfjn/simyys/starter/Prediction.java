@@ -129,7 +129,9 @@ public class Prediction implements Serializable {
         addStage.showAndWait();
     }
 
-    public void check(SerializableObservableList<PropertiesHolder> items, Stage stage, Runnable back) {
+    public void check(SerializableObservableList<PropertiesHolder> items, Stage stage, Runnable back,
+                      Initializer initializer
+    ) {
         if (items.isEmpty()) {
             Utils.information("请先添加角色");
             return;
@@ -151,7 +153,7 @@ public class Prediction implements Serializable {
                 Utils.error("不符合预期!\n" +
                                 "第" + (i + 1) + "个角色\n预测为:队伍" + preTeam + "-" + preName
                                 + "\n实际为:队伍" + real.team + "-" + real.name
-                        , "跳转至不符合位置", () -> battlePane.predictionShow(stage, back, this));
+                        , "跳转至不符合位置", () -> battlePane.predictionShow(stage, back, initializer));
                 return;
             }
             battlePane.next(false);

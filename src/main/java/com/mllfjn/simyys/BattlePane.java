@@ -5,6 +5,7 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.CharacterFactory;
 import com.mllfjn.simyys.character.PropertyKey;
 import com.mllfjn.simyys.character.list.ssr.xunxiangxing.StatusShiShen;
+import com.mllfjn.simyys.character.propertygetter.FlagChangeInfo;
 import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.customnode.CustomTextField;
 import com.mllfjn.simyys.customnode.TextFlowLog;
@@ -14,8 +15,9 @@ import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.ratecontroller.RateCalc;
 import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
 import com.mllfjn.simyys.collections.SerializableObservableList;
+import com.mllfjn.simyys.starter.Initializer;
+import com.mllfjn.simyys.starter.LockSkillAndFlag;
 import com.mllfjn.simyys.starter.CharacterNameAndTeam;
-import com.mllfjn.simyys.starter.Prediction;
 import com.mllfjn.simyys.utils.SerializableConsumer;
 import com.mllfjn.simyys.utils.Utils;
 import javafx.beans.binding.DoubleBinding;
@@ -65,14 +67,17 @@ public class BattlePane {
 
     // 行动顺序记录
     private final SerializableObservableList<CharacterNameAndTeam> actionOrder = new SerializableObservableList<>();
+    // 锁定技能和红绿标情况
+    private final List<LockSkillAndFlag> lockSkillAndFlagList = new ArrayList<>();
+    private LockSkillAndFlag currentLockSkillAndFlag;
 
 
     public BattlePane(Scene scene, Pane stageRoot, Runnable back,
-                      SerializableObservableList<PropertiesHolder> PropertiesHolderList, Prediction prediction) {
+                      SerializableObservableList<PropertiesHolder> PropertiesHolderList, Initializer initializer) {
         this.PropertiesHolderList = PropertiesHolderList;
         stageRoot.getChildren().set(0, root);
 
-        setupUI(back, scene, prediction);
+        setupUI(back, scene, initializer);
         init();
         repaint();
     }
@@ -84,14 +89,14 @@ public class BattlePane {
         init();
     }
 
-    public void predictionShow(Stage stage, Runnable back, Prediction prediction) {
+    public void predictionShow(Stage stage, Runnable back, Initializer initializer) {
         Scene scene = new Scene(root);
         stage.setScene(scene);
-        setupUI(back, scene, prediction);
+        setupUI(back, scene, initializer);
         repaint();
     }
 
-    private void setupUI(Runnable back, Scene scene, Prediction prediction) {
+    private void setupUI(Runnable back, Scene scene, Initializer initializer) {
         // 右边是主操作区
         // 主体偏上是行动条，点击切换模式
         // 右下角是控制区
@@ -113,7 +118,7 @@ public class BattlePane {
         // 控制区
         BorderPane right = new BorderPane();
         right.setTop(actionBar);
-        right.setBottom(configureControlPane(back, scene, prediction));
+        right.setBottom(configureControlPane(back, scene, initializer));
         root.setRight(right);
         configureActionBar();
         reloadTeamPane();
@@ -192,7 +197,7 @@ public class BattlePane {
         situation.addProgress(team);
     }
 
-    private GridPane configureControlPane(Runnable back, Scene scene, Prediction prediction) {
+    private GridPane configureControlPane(Runnable back, Scene scene, Initializer initializer) {
         /*控制区
         控制区的内容
         1、概率控制模式的开关
@@ -204,20 +209,48 @@ public class BattlePane {
         Button nextBtn = new Button("下一个(E)");
         Button backBtn = new Button("返回(B)");
         Button savePredictionBtn = new Button("保存预测顺序");
+        Button saveLockSkillAndFlagBtn = new Button("技能和红绿标");
         prevBtn.setOnAction(event -> prev());
         nextBtn.setOnAction(event -> {
             next(false);
             repaint();
         });
         savePredictionBtn.setOnAction(event -> {
-            prediction.predictionOrder = actionOrder;
-            prediction.copyToClipboard();
+            initializer.prediction.predictionOrder = actionOrder;
+            initializer.prediction.copyToClipboard();
+        });
+        saveLockSkillAndFlagBtn.setOnAction(event -> {
+            for (LockSkillAndFlag lockSkillAndFlag : lockSkillAndFlagList) {
+                String name = lockSkillAndFlag.getCharacterName();
+                int team = lockSkillAndFlag.getTeam();
+                for (PropertiesHolder item : initializer.items) {
+                    if (item.name.equals(name)) {
+                        if (team == item.propertiesMap.get(PropertyKey.GENERAL_TEAM_KEY).getInt()) {
+                            int timesToAct = lockSkillAndFlag.getTimesToAct();
+                            int lockSkill = lockSkillAndFlag.getLockSkill();
+                            int flagTarget = lockSkillAndFlag.getFlagTarget();
+                            if (lockSkill != -1) {
+                                item.lockSkillMap.put(timesToAct, lockSkill);
+                            }
+
+                            if (flagTarget != -1) {
+                                item.flagChangeMap.put(
+                                        timesToAct,
+                                        new FlagChangeInfo(lockSkillAndFlag.getFlagType(), flagTarget + 1)
+                                );
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
         });
 
         prevBtn.setPrefSize(100, 25);
         nextBtn.setPrefSize(100, 25);
         backBtn.setPrefSize(100, 25);
         savePredictionBtn.setPrefSize(100, 25);
+        saveLockSkillAndFlagBtn.setPrefSize(100, 25);
 
         CustomTextField round = new CustomTextField();
         Button skip = new Button("跳过回合(S)");
@@ -261,8 +294,10 @@ public class BattlePane {
         controller.add(nextBtn, 1, 1);
         controller.add(round, 0, 2);
         controller.add(skip, 1, 2);
-        controller.add(backBtn, 0, 3);
-        controller.add(savePredictionBtn, 1, 3);
+        controller.add(savePredictionBtn, 0, 3);
+        controller.add(saveLockSkillAndFlagBtn, 1, 3);
+
+        controller.add(backBtn, 0, 4);
 
         return controller;
     }
@@ -294,6 +329,7 @@ public class BattlePane {
         characterActing.timesToAct++;
         characterActing.forceSetLocation(0);
         actionOrder.add(new CharacterNameAndTeam(characterActing.name, characterActing.team));
+        currentLockSkillAndFlag = new LockSkillAndFlag(characterActing);
 
         // 战斗开始
         for (Runnable runnable : battleStartEventList) {
@@ -454,6 +490,15 @@ public class BattlePane {
             log.characterAct(characterActing, situation.teamPane[characterActing.team].totalActTimes);
         } while (characterActing.isUncontrollable());
 
+        if (currentLockSkillAndFlag.getLockSkill() != -1
+                || currentLockSkillAndFlag.getFlagTarget() != -1
+        ) {
+            lockSkillAndFlagList.add(currentLockSkillAndFlag);
+            currentLockSkillAndFlag = new LockSkillAndFlag(situation.characterActing);
+        } else {
+            currentLockSkillAndFlag.setCharacter(situation.characterActing);
+        }
+
         log.next();
     }
 
@@ -564,6 +609,16 @@ public class BattlePane {
         } else {
             runnable.run();
         }
+    }
+
+    public void characterSetLockSkill(Character character, int lockSkill) {
+        if (character == situation.characterActing) {
+            currentLockSkillAndFlag.setLockSkill(lockSkill);
+        }
+    }
+
+    public void characterSetFlag(FlagChangeInfo.FlagType flagType, Character flagTarget) {
+        currentLockSkillAndFlag.setFlag(flagType, situation.teamPane[flagTarget.team].characters.indexOf(flagTarget));
     }
 
     public boolean isMobBattle(Character character) {

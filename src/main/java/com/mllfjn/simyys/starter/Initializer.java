@@ -23,8 +23,8 @@ import java.io.*;
 import java.util.*;
 
 public class Initializer extends Application {
-    private final SerializableObservableList<PropertiesHolder> items = new SerializableObservableList<>();
-    private final Prediction prediction = new Prediction();
+    public final SerializableObservableList<PropertiesHolder> items = new SerializableObservableList<>();
+    public final Prediction prediction = new Prediction();
 
     private SerializableObservableList<ExtraFlag> extraFlags = new SerializableObservableList<>();
     private SerializableObservableList<ExtraLockSkill> extraLockSkills = new SerializableObservableList<>();
@@ -88,7 +88,7 @@ public class Initializer extends Application {
 
         borderPane.addControlButton("设置预计顺序", e -> prediction.showPrediction(scene, items));
         borderPane.addControlButton("检查是否符合", e -> prediction.check(items
-                , stage, () -> stage.setScene(scene)), scene, KeyCode.C);
+                , stage, () -> stage.setScene(scene), this), scene, KeyCode.C);
 
         stage.setScene(scene);
         stage.setTitle("配置式神");
@@ -178,7 +178,7 @@ public class Initializer extends Application {
                         stage.setTitle("配置式神");
                     },
                     items,
-                    prediction
+                    this
             );
             stage.setTitle("战斗中");
         });

@@ -31,6 +31,7 @@ import java.util.Map;
 public class PropertiesHolder implements Serializable {
     @Serial
     private final static long serialVersionUID = 8684276067154875826L;
+
     public final String name;
     public final PropertiesMap propertiesMap;
     public final Map<Integer, Integer> lockSkillMap;
@@ -281,8 +282,6 @@ public class PropertiesHolder implements Serializable {
             gp.add(btnConfirm, 0, 2);
 
             gp.setPadding(new Insets(20));
-            /*gp.setHgap(10);
-            gp.setVgap(10);*/
             gp.setAlignment(Pos.CENTER);
 
 
