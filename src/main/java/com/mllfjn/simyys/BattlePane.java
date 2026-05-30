@@ -221,14 +221,17 @@ public class BattlePane {
         });
         saveLockSkillAndFlagBtn.setOnAction(event -> {
             for (LockSkillAndFlag lockSkillAndFlag : lockSkillAndFlagList) {
+                int lockSkill = lockSkillAndFlag.getLockSkill();
+                int flagTarget = lockSkillAndFlag.getFlagTarget();
+                if (lockSkill == -1 && flagTarget == -1) {
+                    continue;
+                }
                 String name = lockSkillAndFlag.getCharacterName();
                 int team = lockSkillAndFlag.getTeam();
                 for (PropertiesHolder item : initializer.items) {
                     if (item.name.equals(name)) {
                         if (team == item.propertiesMap.get(PropertyKey.GENERAL_TEAM_KEY).getInt()) {
                             int timesToAct = lockSkillAndFlag.getTimesToAct();
-                            int lockSkill = lockSkillAndFlag.getLockSkill();
-                            int flagTarget = lockSkillAndFlag.getFlagTarget();
                             if (lockSkill != -1) {
                                 item.lockSkillMap.put(timesToAct, lockSkill);
                             }
@@ -433,6 +436,7 @@ public class BattlePane {
         if (!recorder.isEmpty()) {
 
             actionOrder.subList(actionOrder.size() - situation.roundInLastStep, actionOrder.size()).clear();
+            currentLockSkillAndFlag = lockSkillAndFlagList.remove(lockSkillAndFlagList.size() - 1);
 
             try (ByteArrayInputStream bis = new ByteArrayInputStream(recorder.pop());
                  ObjectInputStream ois = new ObjectInputStream(bis)
@@ -490,14 +494,8 @@ public class BattlePane {
             log.characterAct(characterActing, situation.teamPane[characterActing.team].totalActTimes);
         } while (characterActing.isUncontrollable());
 
-        if (currentLockSkillAndFlag.getLockSkill() != -1
-                || currentLockSkillAndFlag.getFlagTarget() != -1
-        ) {
-            lockSkillAndFlagList.add(currentLockSkillAndFlag);
-            currentLockSkillAndFlag = new LockSkillAndFlag(situation.characterActing);
-        } else {
-            currentLockSkillAndFlag.setCharacter(situation.characterActing);
-        }
+        lockSkillAndFlagList.add(currentLockSkillAndFlag);
+        currentLockSkillAndFlag = new LockSkillAndFlag(situation.characterActing);
 
         log.next();
     }

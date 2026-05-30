@@ -4,14 +4,18 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.propertygetter.FlagChangeInfo;
 
 public class LockSkillAndFlag {
-    private Character character;
+    private final String name;
+    private final int team;
+    private final int timesToAct;
 
     private int lockSkill = -1;
     private FlagChangeInfo.FlagType flagType;
     private int flagTarget = -1;
 
     public LockSkillAndFlag(Character character) {
-        this.character = character;
+        this.name = character.name;
+        this.team = character.team;
+        this.timesToAct = character.timesToAct;
     }
 
     public void setLockSkill(int lockSkill) {
@@ -36,18 +40,14 @@ public class LockSkillAndFlag {
     }
 
     public String getCharacterName() {
-        return character.name;
+        return name;
     }
 
     public int getTeam() {
-        return character.team;
+        return team;
     }
 
     public int getTimesToAct() {
-        return character.timesToAct;
-    }
-
-    public void setCharacter(Character character) {
-        this.character = character;
+        return timesToAct;
     }
 }
