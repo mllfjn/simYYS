@@ -107,12 +107,12 @@ class StatusDaYao extends Status implements Displayable, StatusRunnable, Prevent
 
     @Override
     public boolean runnable(Trigger trigger) {
-        return trigger == Trigger.BEFORE_ROUND;
+        return trigger == Trigger.OUT_ROUND_ACTION;
     }
 
     @Override
     public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-        if (trigger == Trigger.BEFORE_ROUND) {
+        if (trigger == Trigger.OUT_ROUND_ACTION) {
             belongTo.bp.gainGuiHuo(belongTo, getStack());
         }
         return false;
