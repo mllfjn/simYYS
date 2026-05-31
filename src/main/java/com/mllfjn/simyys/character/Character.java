@@ -19,7 +19,6 @@ import com.mllfjn.simyys.character.status.determinant.IgnoreDebuff;
 import com.mllfjn.simyys.character.status.determinant.RejectAllStatuses;
 import com.mllfjn.simyys.character.status.instance.StatusBind;
 import com.mllfjn.simyys.character.status.instance.StatusConfusion;
-import com.mllfjn.simyys.character.status.instance.StatusSealPassiveSkill;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.ParamLocationChange;
 import com.mllfjn.simyys.character.status.triggerParam.ParamStatus;
@@ -65,6 +64,9 @@ public abstract class Character implements Serializable {
     private boolean isMob;
     private boolean isYYS;
     protected boolean isSummon;
+
+    // 被封印被动的次数
+    private int sealPassiveSkillCount = 0;
 
     private final SerializableObservableList<Skill> skills = new SerializableObservableList<>();
     protected Map<Integer, Integer> lockSkillMap;
@@ -626,9 +628,29 @@ public abstract class Character implements Serializable {
             skills.add(skill);
         }
 
-        if (skill instanceof PassiveSkill ps) {
-            if (!isHaveStatus(StatusSealPassiveSkill.class)) {
-                ps.enable();
+        if (sealPassiveSkillCount == 0 && skill instanceof PassiveSkill ps) {
+            ps.enable();
+        }
+    }
+
+    public void sealPassiveSkill() {
+        sealPassiveSkillCount++;
+        if (sealPassiveSkillCount == 1) {
+            for (Skill skill : skills) {
+                if (skill instanceof PassiveSkill ps) {
+                    ps.disable();
+                }
+            }
+        }
+    }
+
+    public void unsealPassiveSkill() {
+        sealPassiveSkillCount--;
+        if (sealPassiveSkillCount == 0 && alive) {
+            for (Skill skill : skills) {
+                if (skill instanceof PassiveSkill ps) {
+                    ps.enable();
+                }
             }
         }
     }

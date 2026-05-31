@@ -68,7 +68,7 @@ class Skill2 extends PassiveSkill {
     }
 
     @Override
-    protected void disable() {
+    public void disable() {
         if (listener != null) {
             List<Character> targets = new CharacterFinder(getBelongTo())
                     .filterTeammate()

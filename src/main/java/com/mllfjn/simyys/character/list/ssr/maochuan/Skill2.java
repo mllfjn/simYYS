@@ -45,7 +45,7 @@ class Skill2 extends PassiveSkill {
     }
 
     @Override
-    protected void disable() {
+    public void disable() {
         if (listener != null) {
             getBelongTo().bp.removeActionListener(listener);
             listener = null;

@@ -18,5 +18,5 @@ public abstract class PassiveSkill extends Skill {
 
     public abstract void enable();
 
-    protected abstract void disable();
+    public abstract void disable();
 }

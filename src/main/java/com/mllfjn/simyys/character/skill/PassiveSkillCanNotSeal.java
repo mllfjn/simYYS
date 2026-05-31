@@ -8,7 +8,7 @@ public abstract class PassiveSkillCanNotSeal extends PassiveSkill {
     }
 
     @Override
-    protected void disable() {
+    public void disable() {
 
     }
 

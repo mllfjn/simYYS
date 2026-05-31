@@ -8,5 +8,11 @@ import com.mllfjn.simyys.character.status.StatusType;
 public class StatusSealPassiveSkill extends Status {
     public StatusSealPassiveSkill(Character from, Character belongTo) {
         super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
+        belongTo.sealPassiveSkill();
+    }
+
+    @Override
+    public void beforeDelete() {
+        belongTo.unsealPassiveSkill();
     }
 }
