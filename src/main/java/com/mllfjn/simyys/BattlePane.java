@@ -55,6 +55,9 @@ public class BattlePane {
     private final VBox info = new VBox(log);
     // 战斗记录,用于撤销
     private final Stack<byte[]> recorder = new Stack<>();
+    // 回合外使用技能
+    // TODO 换成优先队列
+    private final List<Runnable> outRoundSkillList = new ArrayList<>();
     // 主界面
     private final BorderPane root = new BorderPane();
     // 行动条显示模式,初始为顺位
@@ -485,6 +488,11 @@ public class BattlePane {
             characterActing.afterRound();
             // 行动结束事件
             onTrigger(new EventActionDone(characterActing));
+            Iterator<Runnable> iterator = outRoundSkillList.iterator();
+            while (iterator.hasNext()) {
+                iterator.next().run();
+                iterator.remove();
+            }
             getNextActor();
             characterActing = situation.characterActing;
             interactive.display();
@@ -634,6 +642,10 @@ public class BattlePane {
 
     public boolean isMobBattle(Character character) {
         return situation.teamPane[1 - character.team].isMobTeam();
+    }
+
+    public void addOutRoundSkill(Runnable runnable) {
+        outRoundSkillList.add(runnable);
     }
 
     public BattleActionListener forEveryone(Character owner, SerializableConsumer<Character> action) {
