@@ -1,9 +1,9 @@
-package com.mllfjn.simyys.character.list.sr.qingji;
+package com.mllfjn.simyys.character.list.sr.luoxinfu;
 
 import com.mllfjn.simyys.character.CharacterShiShenBase;
 
-public class QingJi extends CharacterShiShenBase {
-    public static final String CharacterName = "清姬";
+public class LuoXinFu extends CharacterShiShenBase {
+    public static final String CharacterName = "络新妇";
 
     @Override
     protected boolean useSkillAuto() {
@@ -12,7 +12,7 @@ public class QingJi extends CharacterShiShenBase {
 
     @Override
     protected String getDefaultSkillLevel() {
-        return "615";
+        return "515";
     }
 
     @Override
@@ -22,7 +22,7 @@ public class QingJi extends CharacterShiShenBase {
 
     @Override
     protected String getDefaultBaseAttack() {
-        return "2412";
+        return "3216";
     }
 
     @Override

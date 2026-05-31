@@ -8,10 +8,12 @@ import java.util.Optional;
 public class ParamUseSkill extends TriggerParam {
     private final Skill skill;
     private final Character target;
+    private final int cost;
 
-    public ParamUseSkill(Skill skill, Character target) {
+    public ParamUseSkill(Skill skill, Character target, int cost) {
         this.skill = skill;
         this.target = target;
+        this.cost = cost;
     }
 
     public Skill getSkill() {
@@ -20,5 +22,9 @@ public class ParamUseSkill extends TriggerParam {
 
     public Optional<Character> getTarget() {
         return Optional.ofNullable(target);
+    }
+
+    public int getCost() {
+        return cost;
     }
 }

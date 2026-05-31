@@ -93,11 +93,12 @@ public abstract class Skill implements Serializable {
 
         BattlePane bp = belongTo.bp;
 
+        int cost = 0;
         if (isCost) {
-            int finalCost = getCostResult().getFinalCost();
+            cost = getCostResult().getFinalCost();
             costResult.reallyUse();
-            if (finalCost > 0) {
-                bp.useGuiHuo(getBelongTo(), finalCost);
+            if (cost > 0) {
+                bp.useGuiHuo(getBelongTo(), cost);
             }
         }
 
@@ -112,7 +113,7 @@ public abstract class Skill implements Serializable {
         log(target);
 
         // 释放完毕技能
-        belongTo.statusRun(Trigger.USED_SKILL, new ParamUseSkill(this, target));
+        belongTo.statusRun(Trigger.USED_SKILL, new ParamUseSkill(this, target, cost));
 
         useDone();
     }

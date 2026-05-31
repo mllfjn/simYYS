@@ -77,7 +77,7 @@ public abstract class Skill1PuGongBase extends Skill {
         // 消息记录
         log(target);
 
-        belongTo.statusRun(Trigger.USE_PU_GONG, new ParamUseSkill(this, target));
+        belongTo.statusRun(Trigger.USE_PU_GONG, new ParamUseSkill(this, target, 0));
 
         List<Character> list = new CharacterFinder(belongTo)
                 .filterTeammate()
