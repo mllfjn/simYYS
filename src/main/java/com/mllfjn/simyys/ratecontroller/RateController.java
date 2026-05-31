@@ -20,14 +20,14 @@ public class RateController implements Serializable {
 
     /**
      *
-     * @param title         标题栏文本
-     * @param event         事件名称
-     * @param targets       目标
-     * @param stringGetter  获取目标显示文本
-     * @param calc          总概率计算器
+     * @param title           标题栏文本
+     * @param event           事件名称
+     * @param targets         目标
+     * @param stringGetter    获取目标显示文本
+     * @param calc            总概率计算器
      * @param controlSupplier 概率控制获取
-     * @param rateGetter    获取概率
-     * @param resultHandler 结果处理
+     * @param rateGetter      获取概率
+     * @param resultHandler   结果处理
      */
     public static <T> void whetherOrNot(String title, String event, List<T> targets
             , Function<T, String> stringGetter, RateCalc calc, Supplier<Boolean> controlSupplier
@@ -95,19 +95,21 @@ public class RateController implements Serializable {
     }
 
     public static EffectInfo[] mingZhong(Skill skill, String statusName, Character owner, List<Character> targets
-            , int baseRate, boolean calHit, RateCalc calc) {
+            , int baseRate, int additionRate, boolean calHit, RateCalc calc) {
         EffectInfo[] infos = new EffectInfo[targets.size()];
         whetherOrNot("命中控制：" + owner.name + "-" + statusName, "命中"
                 , targets, Character::getName, calc, calc::isControlEffectHit
                 , character -> {
+                    double rate = additionRate;
                     if (calHit) {
-                        return baseRate * (100 + owner.getEffectHitRate()) / (100 + character.getEffectResistRate());
+                        rate += baseRate * (100 + owner.getEffectHitRate()) / (100 + character.getEffectResistRate());
                     } else {
-                        return (double) baseRate;
+                        rate += baseRate;
                     }
+                    return rate;
                 }
                 , (i, hit) -> {
-                    EffectInfo info = new EffectInfo(owner, targets.get(i), skill);
+                    EffectInfo info = new EffectInfo(targets.get(i), skill);
                     info.setHit(hit);
                     infos[i] = info;
                 });

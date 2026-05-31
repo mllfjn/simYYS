@@ -32,7 +32,7 @@ class Skill1 extends Skill1PuGongBase {
         interactive.attackTypical(this, target, multiplier, AttackType.DAN_TI);
 
         if (rate > 0) {
-            interactive.effect(this, target, rate, true, StatusLuan.getSupplier(num));
+            interactive.effect(this, target, rate, 0, true, StatusLuan.getSupplier(num));
         }
     }
 

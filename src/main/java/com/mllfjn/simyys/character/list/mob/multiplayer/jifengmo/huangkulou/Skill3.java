@@ -34,7 +34,7 @@ class Skill3 extends Skill {
                 .filterEnemy()
                 .getList();
         // 同时玩家有75%概率获得减防效果,两回合内减少50%防御
-        interactive.effect(this, targets, 75, true, StatusDefense.getSupplier());
+        interactive.effect(this, targets, 75, 0, true, StatusDefense.getSupplier());
         // 对所有玩家造成2段伤害
         interactive.attackTypical(this, targets, 100, AttackType.QUN_TI);
         interactive.attackTypical(this, targets, 100, AttackType.QUN_TI);

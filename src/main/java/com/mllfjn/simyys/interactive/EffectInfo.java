@@ -4,7 +4,6 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
 
 public class EffectInfo {
-    private final Character from;
     private final Character target;
     private final Skill skill;
 
@@ -12,8 +11,7 @@ public class EffectInfo {
 //    private boolean isResist;
 private boolean isCancel;
 
-    public EffectInfo(Character from, Character target, Skill skill) {
-        this.from = from;
+    public EffectInfo(Character target, Skill skill) {
         this.target = target;
         this.skill = skill;
     }

@@ -40,7 +40,7 @@ class Skill3 extends Skill {
 
         for (int i = 0; i < 3; i++) {
             interactive.attackTypical(this, list, multi, AttackType.QUN_TI);
-            EffectInfo[] effectInfos = interactive.effect(this, list, 100, true,
+            EffectInfo[] effectInfos = interactive.effect(this, list, 100, 0, true,
                     StatusPoisoning.getSupplier(3, 5)
             );
             for (EffectInfo effectInfo : effectInfos) {

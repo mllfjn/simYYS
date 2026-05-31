@@ -50,14 +50,14 @@ class Skill2 extends Skill {
         // 随后喷射毒雾，对全体敌方造成高额伤害，同时有100%概率附加3回合的毒伤、禁疗、抵抗降低、攻击降低和速度降低效果
         // 这里的五种效果是可以分别抵抗的
 
-        interactive.effect(this, targets, 100, true, StatusDuShang.getSupplier());
-        interactive.effect(this, targets, 100, true, StatusJinLiao.getSupplier());
-        interactive.effect(this, targets, 100, true, StatusResist.getSupplier());
-        interactive.effect(this, targets, 100, true, StatusAttack.getSupplier());
-        interactive.effect(this, targets, 100, true, StatusSpeed.getSupplier());
+        interactive.effect(this, targets, 100, 0, true, StatusDuShang.getSupplier());
+        interactive.effect(this, targets, 100, 0, true, StatusJinLiao.getSupplier());
+        interactive.effect(this, targets, 100, 0, true, StatusResist.getSupplier());
+        interactive.effect(this, targets, 100, 0, true, StatusAttack.getSupplier());
+        interactive.effect(this, targets, 100, 0, true, StatusSpeed.getSupplier());
 
         // 25%概率附加1回合的混乱效果
-        interactive.effect(this, targets, 25, true
+        interactive.effect(this, targets, 25, 0, true
                 , StatusConfusion.getSupplier(1));
 
         statusDWCount.setOff();

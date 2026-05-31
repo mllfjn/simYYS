@@ -320,21 +320,24 @@ public class Interactive {
                 , type, TextFlowLog.TextColor.HEAL, size));
     }
 
-    public EffectInfo[] effect(Skill skill, List<Character> targets, int baseRate, boolean calHit
+    public EffectInfo[] effect(Skill skill, List<Character> targets, int baseRate, int additionRate, boolean calHit
             , StatusSupplier statusSupplier) {
+        if (targets.isEmpty()) {
+            return null;
+        }
         EffectInfo[] infos = RateController
-                .mingZhong(skill, statusSupplier.getStatusName(), owner, targets, baseRate, calHit, bp.calc);
+                .mingZhong(skill, statusSupplier.getStatusName(), owner, targets, baseRate, additionRate, calHit, bp.calc);
         for (int i = 0; i < targets.size(); i++) {
             effectBase(infos[i], targets.get(i), statusSupplier);
         }
         return infos;
     }
 
-    public EffectInfo effect(Skill skill, Character target, int baseRate, boolean calHit
+    public EffectInfo effect(Skill skill, Character target, int baseRate, int additionRate, boolean calHit
             , StatusSupplier statusSupplier) {
 
         EffectInfo info = RateController
-                .mingZhong(skill, statusSupplier.getStatusName(), owner, List.of(target), baseRate, calHit, bp.calc)[0];
+                .mingZhong(skill, statusSupplier.getStatusName(), owner, List.of(target), baseRate, additionRate, calHit, bp.calc)[0];
 
         effectBase(info, target, statusSupplier);
         return info;

@@ -15,7 +15,7 @@ class Skill1 extends Skill1PuGongBase {
         // lv5-并有25%基础概率附加凋零,持续1回合
         // 没有测试是先上凋零还是先造成伤害,这里猜测是先凋零
         if (getLevel() >= 5) {
-            interactive.effect(this, target, 25, true, StatusDiaoLing.getSupplier(1));
+            interactive.effect(this, target, 25, 0, true, StatusDiaoLing.getSupplier(1));
         }
 
         // 造成攻击(系数)伤害

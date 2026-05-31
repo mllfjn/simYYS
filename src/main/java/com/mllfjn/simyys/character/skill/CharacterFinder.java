@@ -130,6 +130,7 @@ public class CharacterFinder {
     }
 
     public List<Character> getList() {
+        // TODO 应该给一个简单的方式直接选取友方或敌方,而不是走一遍stream
         return stream.collect(Collectors.toCollection(ArrayList::new));
     }
 

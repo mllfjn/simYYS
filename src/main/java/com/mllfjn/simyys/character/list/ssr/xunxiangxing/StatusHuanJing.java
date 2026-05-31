@@ -73,7 +73,7 @@ class StatusHuanJing extends Status implements Displayable, InfluenceDamageWhenA
                 StatusFuHunXiang.addStack(belongTo, target);
             } else {
                 belongTo.bp.interactive.
-                        effect(skill2, target, 40, true, StatusFuHunXiang.getSupplier());
+                        effect(skill2, target, 40, 0, true, StatusFuHunXiang.getSupplier());
             }
         }
     }
