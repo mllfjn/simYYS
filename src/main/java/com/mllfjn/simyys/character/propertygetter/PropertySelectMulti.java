@@ -4,7 +4,6 @@ import com.mllfjn.simyys.collections.StringGroup;
 import com.mllfjn.simyys.starter.Initializer;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -17,10 +16,11 @@ import javafx.stage.Window;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 import java.util.StringJoiner;
 
 public class PropertySelectMulti  extends PropertyRequire implements Serializable {
+    public static final String SPLIT_CHAR = ",";
+
     private String value;
     private final StringGroup[] options;
 
@@ -34,8 +34,8 @@ public class PropertySelectMulti  extends PropertyRequire implements Serializabl
             if (pm.value == null || pm.value.isEmpty()) {
                 return true;
             }
-            String[] values = pm.value.split(",");
-            StringJoiner sj = new StringJoiner(",");
+            String[] values = pm.value.split(SPLIT_CHAR);
+            StringJoiner sj = new StringJoiner(SPLIT_CHAR);
             boolean match = true;
             for (String newValue : values) {
                 if (contains(newValue)) {
@@ -91,7 +91,7 @@ public class PropertySelectMulti  extends PropertyRequire implements Serializabl
 
         List<String> currentValues = null;
         if (value != null && !value.isEmpty()) {
-            currentValues = List.of(value.split(","));
+            currentValues = List.of(value.split(SPLIT_CHAR));
         }
 
         CheckBox[][] cbs = new CheckBox[options.length][];
@@ -116,7 +116,7 @@ public class PropertySelectMulti  extends PropertyRequire implements Serializabl
 
         Button confirmBtn = new Button("确定");
         confirmBtn.setOnAction(e -> {
-            StringJoiner sj = new StringJoiner(",");
+            StringJoiner sj = new StringJoiner(SPLIT_CHAR);
             for (int i = 0; i < cbs.length; i++) {
                 for (int j = 0; j < cbs[i].length; j++) {
                     if (cbs[i][j].isSelected()) {

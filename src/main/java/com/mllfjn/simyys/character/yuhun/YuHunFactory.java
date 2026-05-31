@@ -79,6 +79,7 @@ public class YuHunFactory {
         yuHunMap.put(GongQian.YuHunName, GongQian.class);
         yuHunMap.put(NiePanZhiHuo.YuHunName, NiePanZhiHuo.class);
         yuHunMap.put(FuYi.YuHunName, FuYi.class);
+        yuHunMap.put(PoShi.YuHunName, PoShi.class);
 
     }
 

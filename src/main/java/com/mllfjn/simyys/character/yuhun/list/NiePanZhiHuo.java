@@ -35,7 +35,7 @@ public class NiePanZhiHuo extends YuHun implements YuHunSealResponse {
         getBelongTo().removeStatus(status);
     }
 
-    static class StatusNPListener extends Status implements StatusRunnable {
+    class StatusNPListener extends Status implements StatusRunnable {
         public StatusNPListener(Character character) {
             super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
         }
@@ -49,6 +49,7 @@ public class NiePanZhiHuo extends YuHun implements YuHunSealResponse {
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
             belongTo.doInteractive(interactive -> {
                 interactive.healTypical(skill, belongTo, 15);
+                yuHunEffect();
                 skill.useDone();
             });
             return false;

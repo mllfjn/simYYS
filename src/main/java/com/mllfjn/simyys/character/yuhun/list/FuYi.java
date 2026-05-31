@@ -36,7 +36,7 @@ public class FuYi extends YuHun implements YuHunSealResponse {
         getBelongTo().removeStatus(status);
     }
 
-    static class StatusFYListener extends Status implements StatusRunnable {
+    class StatusFYListener extends Status implements StatusRunnable {
         public StatusFYListener(Character character) {
             super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
         }
@@ -53,6 +53,7 @@ public class FuYi extends YuHun implements YuHunSealResponse {
                     interactive.recovery(skill, belongTo,
                             0.2 * pai.getAttackInfo().getTraceableNumber().getNumber()
                     );
+                    yuHunEffect();
                     skill.useDone();
                 });
             }
