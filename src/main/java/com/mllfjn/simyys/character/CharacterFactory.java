@@ -5,6 +5,7 @@ import com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.dizhennian.DiZh
 import com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.huangkulou.HuangKuLou;
 import com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.tuzhizhu.TuZhiZhu;
 import com.mllfjn.simyys.character.list.r.chounv.ChouNv;
+import com.mllfjn.simyys.character.list.r.shouwu.ShouWu;
 import com.mllfjn.simyys.character.list.sp.fuji.FuJi;
 import com.mllfjn.simyys.character.list.sp.laotou.LaoTou;
 import com.mllfjn.simyys.character.list.sp.luwan.LuWan;
@@ -98,6 +99,7 @@ public class CharacterFactory {
         Map<String, Class<? extends Character>> rMap = new LinkedHashMap<>();
         characterMap.put("R", rMap);
         rMap.put(ChouNv.CharacterName, ChouNv.class);
+        rMap.put(ShouWu.CharacterName, ShouWu.class);
 
         Map<String, Class<? extends Character>> mobMap = new LinkedHashMap<>();
         characterMap.put("怪物", mobMap);
