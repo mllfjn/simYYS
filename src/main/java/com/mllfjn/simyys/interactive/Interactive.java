@@ -330,13 +330,14 @@ public class Interactive {
         return infos;
     }
 
-    public void effect(Skill skill, Character target, int baseRate, boolean calHit
+    public EffectInfo effect(Skill skill, Character target, int baseRate, boolean calHit
             , StatusSupplier statusSupplier) {
 
         EffectInfo info = RateController
                 .mingZhong(skill, statusSupplier.getStatusName(), owner, List.of(target), baseRate, calHit, bp.calc)[0];
 
         effectBase(info, target, statusSupplier);
+        return info;
     }
 
     private void effectBase(EffectInfo effectInfo, Character target, StatusSupplier statusSupplier) {

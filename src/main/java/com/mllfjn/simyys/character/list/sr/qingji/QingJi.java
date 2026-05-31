@@ -22,6 +22,9 @@ public class QingJi extends CharacterShiShenBase {
 
     @Override
     protected void addOwnSkills() {
-
+        Skill2 skill2 = new Skill2(this);
+        addSkill(new Skill1(this, skill1Level, skill2));
+        addSkill(skill2);
+        addSkill(new Skill3(this, skill3Level, skill2));
     }
 }

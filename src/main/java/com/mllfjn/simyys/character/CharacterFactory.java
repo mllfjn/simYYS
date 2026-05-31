@@ -12,6 +12,7 @@ import com.mllfjn.simyys.character.list.sp.sphongye.SPHongYe;
 import com.mllfjn.simyys.character.list.sp.spjin.SpJin;
 import com.mllfjn.simyys.character.list.sp.yinfan.YinFan;
 import com.mllfjn.simyys.character.list.sr.haifangzhu.HaiFangZhu;
+import com.mllfjn.simyys.character.list.sr.qingji.QingJi;
 import com.mllfjn.simyys.character.list.sr.xienv.XieNv;
 import com.mllfjn.simyys.character.list.sr.yaoqin.YaoQin;
 import com.mllfjn.simyys.character.list.ssr.beimihu.BeiMiHu;
@@ -50,57 +51,58 @@ public class CharacterFactory {
     public static final Map<String, Map<String, Class<? extends Character>>> characterMap = new LinkedHashMap<>();
     private static final Map<String, Image> iconMap = new HashMap<>();
     static {
-        Map<String, Class<? extends Character>> mapYYS = new LinkedHashMap<>();
-        characterMap.put("阴阳师", mapYYS);
-        mapYYS.put(ShenLe.CharacterName, ShenLe.class);
-        mapYYS.put(YuanLaiGuang.CharacterName, YuanLaiGuang.class);
-        mapYYS.put(QingMing.CharacterName, QingMing.class);
-        mapYYS.put(BoYa.CharacterName, BoYa.class);
-        mapYYS.put(TengYuanDaoZhang.CharacterName, TengYuanDaoZhang.class);
+        Map<String, Class<? extends Character>> yysMap = new LinkedHashMap<>();
+        characterMap.put("阴阳师", yysMap);
+        yysMap.put(ShenLe.CharacterName, ShenLe.class);
+        yysMap.put(YuanLaiGuang.CharacterName, YuanLaiGuang.class);
+        yysMap.put(QingMing.CharacterName, QingMing.class);
+        yysMap.put(BoYa.CharacterName, BoYa.class);
+        yysMap.put(TengYuanDaoZhang.CharacterName, TengYuanDaoZhang.class);
 
-        Map<String, Class<? extends Character>> mapSP = new LinkedHashMap<>();
-        characterMap.put("SP", mapSP);
-        mapSP.put(DaYuan.CharacterName, DaYuan.class);
-        mapSP.put(ShenShe.CharacterName, ShenShe.class);
-        mapSP.put(LaoTou.CharacterName, LaoTou.class);
-//        mapSP.put(KongMian.CharacterName, KongMian.class);
-        mapSP.put(SpJin.CharacterName, SpJin.class);
-        mapSP.put(YinFan.CharacterName, YinFan.class);
-        mapSP.put(FuJi.CharacterName, FuJi.class);
-        mapSP.put(LuWan.CharacterName, LuWan.class);
-        mapSP.put(SPHongYe.CharacterName, SPHongYe.class);
+        Map<String, Class<? extends Character>> spMap = new LinkedHashMap<>();
+        characterMap.put("SP", spMap);
+        spMap.put(DaYuan.CharacterName, DaYuan.class);
+        spMap.put(ShenShe.CharacterName, ShenShe.class);
+        spMap.put(LaoTou.CharacterName, LaoTou.class);
+//        spMap.put(KongMian.CharacterName, KongMian.class);
+        spMap.put(SpJin.CharacterName, SpJin.class);
+        spMap.put(YinFan.CharacterName, YinFan.class);
+        spMap.put(FuJi.CharacterName, FuJi.class);
+        spMap.put(LuWan.CharacterName, LuWan.class);
+        spMap.put(SPHongYe.CharacterName, SPHongYe.class);
 
-        Map<String, Class<? extends Character>> mapSSR = new LinkedHashMap<>();
-        characterMap.put("SSR", mapSSR);
-        mapSSR.put(NaMei.CharacterName, NaMei.class);
-        mapSSR.put(QianJi.CharacterName, QianJi.class);
-        mapSSR.put(ShiLing.CharacterName, ShiLing.class);
-        mapSSR.put(XuZuo.CharacterName, XuZuo.class);
-        mapSSR.put(BeiMiHu.CharacterName, BeiMiHu.class);
-        mapSSR.put(ShenWuYue.CharacterName, ShenWuYue.class);
-//        mapSSR.put(MaoChuan.CharacterName, MaoChuan.class);
-        mapSSR.put(GeYe.CharacterName, GeYe.class);
-        mapSSR.put(ShiJiaMei.CharacterName, ShiJiaMei.class);
-        mapSSR.put(DiShiTian.CharacterName, DiShiTian.class);
-        mapSSR.put(XunXiangXing.CharacterName, XunXiangXing.class);
+        Map<String, Class<? extends Character>> ssrMap = new LinkedHashMap<>();
+        characterMap.put("SSR", ssrMap);
+        ssrMap.put(NaMei.CharacterName, NaMei.class);
+        ssrMap.put(QianJi.CharacterName, QianJi.class);
+        ssrMap.put(ShiLing.CharacterName, ShiLing.class);
+        ssrMap.put(XuZuo.CharacterName, XuZuo.class);
+        ssrMap.put(BeiMiHu.CharacterName, BeiMiHu.class);
+        ssrMap.put(ShenWuYue.CharacterName, ShenWuYue.class);
+//        ssrMap.put(MaoChuan.CharacterName, MaoChuan.class);
+        ssrMap.put(GeYe.CharacterName, GeYe.class);
+        ssrMap.put(ShiJiaMei.CharacterName, ShiJiaMei.class);
+        ssrMap.put(DiShiTian.CharacterName, DiShiTian.class);
+        ssrMap.put(XunXiangXing.CharacterName, XunXiangXing.class);
 
 
-        Map<String, Class<? extends Character>> mapSR = new LinkedHashMap<>();
-        characterMap.put("SR", mapSR);
-        mapSR.put(YaoQin.CharacterName, YaoQin.class);
-        mapSR.put(XieNv.CharacterName, XieNv.class);
-        mapSR.put(HaiFangZhu.CharacterName, HaiFangZhu.class);
+        Map<String, Class<? extends Character>> srMap = new LinkedHashMap<>();
+        characterMap.put("SR", srMap);
+        srMap.put(YaoQin.CharacterName, YaoQin.class);
+        srMap.put(XieNv.CharacterName, XieNv.class);
+        srMap.put(HaiFangZhu.CharacterName, HaiFangZhu.class);
+        srMap.put(QingJi.CharacterName, QingJi.class);
 
-        Map<String, Class<? extends Character>> mapR = new LinkedHashMap<>();
-        characterMap.put("R", mapR);
-        mapR.put(ChouNv.CharacterName, ChouNv.class);
+        Map<String, Class<? extends Character>> rMap = new LinkedHashMap<>();
+        characterMap.put("R", rMap);
+        rMap.put(ChouNv.CharacterName, ChouNv.class);
 
-        Map<String, Class<? extends Character>> mapMob = new LinkedHashMap<>();
-        characterMap.put("怪物", mapMob);
-        mapMob.put(ShenQiLou.CharacterName, ShenQiLou.class);
-        mapMob.put(TuZhiZhu.CharacterName, TuZhiZhu.class);
-        mapMob.put(HuangKuLou.CharacterName, HuangKuLou.class);
-        mapMob.put(DiZhenNian.CharacterName, DiZhenNian.class);
+        Map<String, Class<? extends Character>> mobMap = new LinkedHashMap<>();
+        characterMap.put("怪物", mobMap);
+        mobMap.put(ShenQiLou.CharacterName, ShenQiLou.class);
+        mobMap.put(TuZhiZhu.CharacterName, TuZhiZhu.class);
+        mobMap.put(HuangKuLou.CharacterName, HuangKuLou.class);
+        mobMap.put(DiZhenNian.CharacterName, DiZhenNian.class);
     }
 
     public static Optional<Character> getCharacter(String name) {

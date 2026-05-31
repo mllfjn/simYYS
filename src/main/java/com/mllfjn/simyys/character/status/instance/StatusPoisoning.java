@@ -4,6 +4,7 @@ import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.interactive.AttackType;
+import com.mllfjn.simyys.interactive.StatusSupplier;
 
 public class StatusPoisoning extends Status implements Displayable, AttributeModifier {
     private static final String StatusName = "中毒";
@@ -27,6 +28,12 @@ public class StatusPoisoning extends Status implements Displayable, AttributeMod
             }
         }
         belongTo.addStatus(new StatusPoisoning(from, belongTo, stack, duration));
+    }
+
+    public static StatusSupplier getSupplier(int stack, int duration) {
+        return new StatusSupplier(StatusName, StatusPoisoning.class,
+                (from, to) -> add(from, to, stack, duration)
+        );
     }
 
     @Override
