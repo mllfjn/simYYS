@@ -3,8 +3,6 @@ package com.mllfjn.simyys.character;
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.TeamPane;
 import com.mllfjn.simyys.character.list.mob.multiplayer.InfoDisplay;
-import com.mllfjn.simyys.character.list.sp.dayuan.StatusCombined;
-import com.mllfjn.simyys.character.list.sp.dayuan.StatusShengTian;
 import com.mllfjn.simyys.character.list.ssr.beimihu.StatusShiZhiHui;
 import com.mllfjn.simyys.character.list.ssr.beimihu.StatusShiZhiXi;
 import com.mllfjn.simyys.character.propertygetter.*;
@@ -158,6 +156,10 @@ public abstract class Character implements Serializable {
 
     public double getMaxHp() {
         return maxHp;
+    }
+
+    public double getHpPercent() {
+        return hp / maxHp;
     }
 
     public double getSpeed() {
@@ -508,16 +510,6 @@ public abstract class Character implements Serializable {
 
     public void afterRound() {
         isInRound = false;
-        // 不知道为什么，但是在时之隙跳过回合后结算的情况下需要让大缘拉条生效
-        for (Status status : statuses) {
-            if (status instanceof StatusShengTian sST) {
-                sST.active();
-                break;
-            } else if (status instanceof StatusCombined combined) {
-                combined.active();
-                break;
-            }
-        }
 
         statusRun(Trigger.AFTER_ACTION, null);
 

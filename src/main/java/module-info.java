@@ -33,4 +33,5 @@ module com.mllfjn.simyys {
     exports com.mllfjn.simyys.character.list.sp.yinfan;
     exports com.mllfjn.simyys.character.yuhun.list.youchizi;
     opens com.mllfjn.simyys.character.yuhun.list.youchizi to javafx.fxml;
+    exports com.mllfjn.simyys.starter.sceneeffect;
 }

@@ -25,6 +25,7 @@ import java.util.*;
 public class Initializer extends Application {
     public final SerializableObservableList<PropertiesHolder> items = new SerializableObservableList<>();
     public final Prediction prediction = new Prediction();
+    public String sceneEffect = null;
 
     private SerializableObservableList<ExtraFlag> extraFlags = new SerializableObservableList<>();
     private SerializableObservableList<ExtraLockSkill> extraLockSkills = new SerializableObservableList<>();
@@ -140,7 +141,10 @@ public class Initializer extends Application {
                 Button btn = new Button(name);
                 btn.setPrefWidth(100);
                 btn.setOnAction(event -> {
-                    PropertiesHolder propertiesHolder = new PropertiesHolder(name, CharacterFactory.getProperties(name).orElseThrow(), new LinkedHashMap<>(), new LinkedHashMap<>());
+                    PropertiesHolder propertiesHolder = new PropertiesHolder(name,
+                            CharacterFactory.getProperties(name).orElseThrow(),
+                            new LinkedHashMap<>(), new LinkedHashMap<>()
+                    );
                     propertiesHolder.show(stageSelect.getScene());
                     items.add(propertiesHolder);
                 });
