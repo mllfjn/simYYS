@@ -25,7 +25,7 @@ class Skill2 extends Skill {
         });
         // 先机获得花祓
         if (level >= 5) {
-            belongTo.bp.atBattleStart(() -> StatusHuaFu.addStack(belongTo, 2));
+            belongTo.bp.addPriorityMove(belongTo, () -> StatusHuaFu.addStack(belongTo, 2));
         }
     }
 

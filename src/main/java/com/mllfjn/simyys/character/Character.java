@@ -16,11 +16,9 @@ import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.determinant.IgnoreChangeMaxHp;
 import com.mllfjn.simyys.character.status.determinant.IgnoreDebuff;
-import com.mllfjn.simyys.character.status.determinant.PreventDie;
 import com.mllfjn.simyys.character.status.determinant.RejectAllStatuses;
 import com.mllfjn.simyys.character.status.instance.StatusBind;
 import com.mllfjn.simyys.character.status.instance.StatusConfusion;
-import com.mllfjn.simyys.character.status.instance.StatusPoisoning;
 import com.mllfjn.simyys.character.status.instance.StatusSealPassiveSkill;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.ParamLocationChange;
@@ -38,8 +36,6 @@ import com.mllfjn.simyys.guihuo.MobGuiHuo;
 import com.mllfjn.simyys.collections.SerializableObservableList;
 import com.mllfjn.simyys.ratecontroller.RateController;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
-import javafx.scene.input.MouseEvent;
 
 import java.io.Serializable;
 import java.util.*;
@@ -91,6 +87,7 @@ public abstract class Character implements Serializable {
             map.put(key, new PropertyInput());
         }
         ((PropertyInput) map.get(PropertyKey.GENERAL_BASE_ATTACK_KEY)).setValue(getDefaultBaseAttack());
+        ((PropertyInput) map.get(PropertyKey.GENERAL_WAVE_KEY)).setValue("1");
 
         for (String key : PropertyKey.GENERAL_CHECK_KEYS) {
             map.put(key, new PropertyCheck());

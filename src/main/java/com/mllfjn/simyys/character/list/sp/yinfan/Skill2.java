@@ -30,7 +30,7 @@ class Skill2 extends Skill {
         super(belongTo, level, 2, 0, 2);
         this.skill3Level = skill3Level;
 
-        belongTo.bp.atBattleStart(this::useWithoutCost);
+        belongTo.bp.addPriorityMove(belongTo, this::useWithoutCost);
     }
 
     public void reduceCost() {

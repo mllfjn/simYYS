@@ -21,7 +21,7 @@ public class ShenQiLou extends YuHun implements YuHunUnfullMark {
         super.init(character, isInit);
 
         // 与怪物的战斗开始时，获得庇护
-        character.bp.atBattleStart(() -> {
+        character.bp.addPriorityMove(character, () -> {
             if (character.bp.isMobBattle(character)) {
                 character.addStatus(new StatusBiHuSQL(character));
             }

@@ -39,7 +39,7 @@ class Skill2 extends PassiveSkill {
     @Override
     public void enable() {
         if (useAtStart) {
-            getBelongTo().bp.atBattleStart(() -> {
+            getBelongTo().bp.addPriorityMove(getBelongTo(), () -> {
                 wakeUp();
                 useAtStart = false;
             });

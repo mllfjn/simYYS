@@ -106,7 +106,7 @@ class Skill5 extends PassiveSkillCanNotSeal {
         characterBei.forceSetMaxHp(9999999999L, true);
         characterQian.forceSetMaxHp(9999999999L, true);
 
-        belongTo.bp.atBattleStart(() -> {
+        belongTo.bp.addPriorityMove(belongTo, () -> {
             belongTo.addStatus(new StatusUnselectable(belongTo, belongTo));
             belongTo.bp.addCharacter(characterTui);
             belongTo.bp.addCharacter(characterBei);

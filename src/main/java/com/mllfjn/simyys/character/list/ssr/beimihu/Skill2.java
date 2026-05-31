@@ -31,7 +31,7 @@ class Skill2 extends Skill {
         super(belongTo, level, 2, 0, 2);
 
         if (level == 5) {
-            belongTo.bp.atBattleStart(() -> {
+            belongTo.bp.addPriorityMove(belongTo, () -> {
                 Character target = new CharacterFinder(belongTo)
                         .filterTeammate()
                         .filterShiShen()

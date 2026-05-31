@@ -12,11 +12,8 @@ public class PropertyKey {
     public static final String GENERAL_CRIT_POWER_KEY = "暴击伤害";
     public static final String GENERAL_EFFECT_HIT_RATE_KEY = "效果命中";
     public static final String GENERAL_EFFECT_RESIST_RATE_KEY = "效果抵抗";
+    public static final String GENERAL_WAVE_KEY = "出场回目";
 
-    public static final String GENERAL_TEAM_KEY = "是否为敌方";
-    public static final String GENERAL_MOB_KEY = "是否为怪物";
-    public static final String GENERAL_YYS_KEY = "是否为阴阳师";
-    public static final String GENERAL_SUMMON_KEY = "是否为召唤物";
     public static final String[] GENERAL_INPUT_KEYS = {
             GENERAL_SPEED_KEY,
             GENERAL_BASE_ATTACK_KEY,
@@ -27,7 +24,14 @@ public class PropertyKey {
             GENERAL_CRIT_POWER_KEY,
             GENERAL_EFFECT_HIT_RATE_KEY,
             GENERAL_EFFECT_RESIST_RATE_KEY,
+            GENERAL_WAVE_KEY,
     };
+
+    public static final String GENERAL_TEAM_KEY = "是否为敌方";
+    public static final String GENERAL_MOB_KEY = "是否为怪物";
+    public static final String GENERAL_YYS_KEY = "是否为阴阳师";
+    public static final String GENERAL_SUMMON_KEY = "是否为召唤物";
+
     public static final String[] GENERAL_CHECK_KEYS = {
             GENERAL_TEAM_KEY,
             GENERAL_MOB_KEY,

@@ -6,6 +6,7 @@ import com.mllfjn.simyys.character.propertygetter.FlagChangeInfo;
 import com.mllfjn.simyys.character.status.Trigger;
 import com.mllfjn.simyys.character.status.instance.StatusUnselectable;
 import com.mllfjn.simyys.collections.SafeList;
+import com.mllfjn.simyys.utils.SerializableRunnable;
 
 import java.io.Serializable;
 import java.util.*;
@@ -29,10 +30,16 @@ public class SerializableItems implements Serializable {
     public boolean disablePush = false;
     // 队伍面板，负责显示头像和管理鬼火条
     public final TeamPane[] teamPane = new TeamPane[2];
-    // 全局监听器,可用于幻境,结界
+    // 全局监听器,用于监听添加角色,角色死亡,"任意回合"等
     public final SafeList<BattleActionListener> listeners = new SafeList<>();
     // 保存的概率
     private double currentRate;
+    // 先机
+    private final List<PriorityMove> priorityMoves = new ArrayList<>();
+
+    // 多回目战斗
+    private int team0Wave = 1;
+    private int team1Wave = 1;
 
     // 上一步中有多少个回合
     public int roundInLastStep = 0;
@@ -154,5 +161,32 @@ public class SerializableItems implements Serializable {
         } else {
             teamPane[characterSelected.team == 0 ? 1 : 0].setAuto(characterSelected, flagType);
         }
+    }
+
+    public void priorityMove() {
+        for (PriorityMove priorityMove : priorityMoves) {
+            if (priorityMove.character.alive) {
+                priorityMove.runnable.run();
+            }
+        }
+    }
+
+    public void addPriorityMove(Character character, SerializableRunnable runnable) {
+        priorityMoves.add(new PriorityMove(character, runnable));
+    }
+
+    public int getWave(int team) {
+        return team == 0 ? team0Wave : team1Wave;
+    }
+
+    public void addWave(int team) {
+        if (team == 0) {
+            team0Wave++;
+        } else {
+            team1Wave++;
+        }
+    }
+
+    private record PriorityMove(Character character, SerializableRunnable runnable) implements Serializable {
     }
 }

@@ -33,7 +33,7 @@ class Skill2 extends Skill {
     public Skill2(Character belongTo, int level) {
         super(belongTo, level, 0, 0, 2);
         // 开局时记录一下队友的总攻击
-        belongTo.bp.atBattleStart(() -> {
+        belongTo.bp.addPriorityMove(belongTo, () -> {
             List<Character> targets = new CharacterFinder(belongTo)
                     .filterTeammate()
                     .filterShiShen()

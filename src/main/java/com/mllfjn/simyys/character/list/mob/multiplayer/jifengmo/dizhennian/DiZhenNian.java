@@ -62,7 +62,7 @@ public class DiZhenNian extends CharacterJiFengMoBase {
         addSkill(new Skill6(this));
 
         // 先机召唤4只海坊主
-        bp.atBattleStart(() -> {
+        bp.addPriorityMove(this, () -> {
             for (StatusBuff.BuffType type : StatusBuff.BuffType.values()) {
                 bp.addCharacter(new SpecialHaiFangZhu(bp, team, this, type));
             }

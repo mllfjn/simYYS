@@ -19,7 +19,7 @@ class Skill3 extends Skill {
     public Skill3(Character belongTo, int level, int shuYin) {
         super(belongTo, level, 0, 1, 2);
         this.shuYin = shuYin;
-        belongTo.bp.atBattleStart(() -> {
+        belongTo.bp.addPriorityMove(belongTo, () -> {
             mobBattle = belongTo.bp.isMobBattle(belongTo);
             if (mobBattle) {
                 // 且不进入冷却

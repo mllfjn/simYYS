@@ -15,7 +15,7 @@ public class CiTiao7JiXing {
     public static final String CiTiaoName = "疾行";
 
     public static void install(Character character) {
-        character.bp.atBattleStart(() -> {
+        character.bp.addPriorityMove(character, () -> {
             List<Character> targets = new CharacterFinder(character)
                     .filterEnemy()
                     .getList();

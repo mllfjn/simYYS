@@ -21,7 +21,7 @@ class StatusPiCaoRouHou extends Status implements StatusRunnable, Displayable {
         super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
         this.breakDamage = breakDamage;
 
-        belongTo.bp.atBattleStart(() -> {
+        belongTo.bp.addPriorityMove(belongTo, () -> {
             for (Character target : belongTo.bp.situation.characters) {
                 target.addStatus(new StatusPiCaoRouHouReduceDamage(character, target));
             }

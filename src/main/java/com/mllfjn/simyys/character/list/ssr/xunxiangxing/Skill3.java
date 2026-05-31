@@ -19,7 +19,7 @@ class Skill3 extends Skill {
     public Skill3(Character belongTo, int level) {
         super(belongTo, level, 3, 0, 3);
         if (level >= 5) {
-            belongTo.bp.atBattleStart(() ->
+            belongTo.bp.addPriorityMove(belongTo, () ->
                     enemyCountAtStart = belongTo.bp.situation.teamPane[1 - belongTo.team].characters.size()
             );
         }

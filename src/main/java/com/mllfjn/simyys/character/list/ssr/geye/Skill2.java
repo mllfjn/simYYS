@@ -24,7 +24,7 @@ class Skill2 extends Skill {
         });
 
         if (level >= 5) {
-            belongTo.bp.atBattleStart(() -> {
+            belongTo.bp.addPriorityMove(belongTo, () -> {
                 StatusHZBH.addStack(belongTo, belongTo, 1, false);
             });
         }

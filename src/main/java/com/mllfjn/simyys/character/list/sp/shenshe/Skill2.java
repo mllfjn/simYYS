@@ -18,7 +18,7 @@ class Skill2 extends Skill {
         // lv5-先机：释放神堕之力
         if (level >= 5) {
             Character character = getBelongTo();
-            character.bp.atBattleStart(() -> use(character.bp));
+            character.bp.addPriorityMove(character, () -> use(character.bp));
         }
     }
 

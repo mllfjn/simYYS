@@ -30,7 +30,7 @@ public class ShenQiLou extends CharacterJiFengMoBase {
     @Override
     public void init(PropertiesHolder propertiesHolder, BattlePane bp) {
         super.init(propertiesHolder, bp);
-        this.bp.atBattleStart(() -> {
+        this.bp.addPriorityMove(this, () -> {
             List<Character> list = new CharacterFinder(this, true)
                     .filterEnemy()
                     .filterYYS(false)

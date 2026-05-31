@@ -10,7 +10,7 @@ public class YouChiZi extends YuHun {
     @Override
     public void init(Character character, boolean isInit) {
         super.init(character, isInit);
-        character.bp.atBattleStart(() -> character.addStatus(new StatusYCZ(character)));
+        character.bp.addPriorityMove(character, () -> character.addStatus(new StatusYCZ(character)));
     }
 
     @Override

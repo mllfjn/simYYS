@@ -14,7 +14,7 @@ public class CiTiao6DouHun {
 
     public static void install(Character character) {
         character.addStatus(new StatusDHJianShang(character));
-        character.bp.atBattleStart(() -> {
+        character.bp.addPriorityMove(character, () -> {
             Character maxCritPower = new CharacterFinder(character)
                     .filterEnemy()
                     .get(Attribute.CRIT_POWER, CharacterFinder.Criteria.MAX);

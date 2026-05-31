@@ -19,6 +19,7 @@ import com.mllfjn.simyys.starter.Initializer;
 import com.mllfjn.simyys.starter.LockSkillAndFlag;
 import com.mllfjn.simyys.starter.CharacterNameAndTeam;
 import com.mllfjn.simyys.utils.SerializableConsumer;
+import com.mllfjn.simyys.utils.SerializableRunnable;
 import com.mllfjn.simyys.utils.Utils;
 import javafx.beans.binding.DoubleBinding;
 import javafx.collections.ObservableMap;
@@ -43,7 +44,7 @@ public class BattlePane {
     // 所有需要在返回上一步时恢复的内容封装在这里
     public SerializableItems situation = new SerializableItems();
     // 初始化属性列表
-    private final SerializableObservableList<PropertiesHolder> PropertiesHolderList;
+    private final SerializableObservableList<PropertiesHolder> propertiesHolderList;
     // 概率控制模式
     public final RateCalc calc = new RateCalc();
     // 交互
@@ -62,8 +63,6 @@ public class BattlePane {
     // teamPane容器
     private final StackPane teamPaneContainer1 = new StackPane();
     private final StackPane teamPaneContainer0 = new StackPane();
-    // 战斗开始时事件列表，用于先机
-    private List<Runnable> battleStartEventList = new ArrayList<>();
 
     // 行动顺序记录
     private final SerializableObservableList<CharacterNameAndTeam> actionOrder = new SerializableObservableList<>();
@@ -74,7 +73,7 @@ public class BattlePane {
 
     public BattlePane(Scene scene, Pane stageRoot, Runnable back,
                       SerializableObservableList<PropertiesHolder> PropertiesHolderList, Initializer initializer) {
-        this.PropertiesHolderList = PropertiesHolderList;
+        this.propertiesHolderList = PropertiesHolderList;
         stageRoot.getChildren().set(0, root);
 
         setupUI(back, scene, initializer);
@@ -84,7 +83,7 @@ public class BattlePane {
 
     // 该构造方法用于预测模式
     public BattlePane(SerializableObservableList<PropertiesHolder> PropertiesHolderList) {
-        this.PropertiesHolderList = PropertiesHolderList;
+        this.propertiesHolderList = PropertiesHolderList;
 
         init();
     }
@@ -319,9 +318,11 @@ public class BattlePane {
     }
 
     private void init() {
-        for (PropertiesHolder holder : PropertiesHolderList) {
-            int team = holder.propertiesMap.get(PropertyKey.GENERAL_TEAM_KEY).getInt();
-            if (team == 0 || team == 1) {
+        int wave0 = situation.getWave(0);
+        int wave1 = situation.getWave(1);
+        for (PropertiesHolder holder : propertiesHolderList) {
+            int wave = holder.propertiesMap.get(PropertyKey.GENERAL_WAVE_KEY).getInt();
+            if (wave == wave0 || wave == wave1) {
                 CharacterFactory.getCharacter(holder, this).ifPresent(this::addCharacter);
             }
         }
@@ -335,10 +336,8 @@ public class BattlePane {
         currentLockSkillAndFlag = new LockSkillAndFlag(characterActing);
 
         // 战斗开始
-        for (Runnable runnable : battleStartEventList) {
-            runnable.run();
-        }
-        battleStartEventList = null;
+        // 先机
+        situation.priorityMove();
         // 火灵
         situation.teamPane[0].calHuoLing();
         situation.teamPane[1].calHuoLing();
@@ -576,6 +575,21 @@ public class BattlePane {
     public void removeCharacter(Character character) {
         situation.removeCharacter(character);
         onTrigger(new EventCharacterDie(character));
+
+        int team = character.team;
+        if (situation.teamPane[team].characters.isEmpty()) {
+            situation.addWave(team);
+            int wave = situation.getWave(team);
+            for (PropertiesHolder propertiesHolder : propertiesHolderList) {
+                if (wave == propertiesHolder.propertiesMap.get(PropertyKey.GENERAL_WAVE_KEY).getInt()) {
+                    CharacterFactory.getCharacter(propertiesHolder, this).ifPresent(this::addCharacter);
+                }
+            }
+
+            if (situation.teamPane[team].characters.isEmpty()) {
+                Utils.information(team == 0 ? "失败" : "胜利");
+            }
+        }
     }
 
     public void removeCharacterWithoutTrigger(Character character) {
@@ -601,12 +615,11 @@ public class BattlePane {
         situation.listeners.endIterator();
     }
 
-    public void atBattleStart(Runnable runnable) {
-        if (battleStartEventList != null) {
-            battleStartEventList.add(runnable);
-        } else {
-            runnable.run();
-        }
+    /**
+     * 先机,每个式神最多添加一个
+     */
+    public void addPriorityMove(Character character, SerializableRunnable runnable) {
+        situation.addPriorityMove(character, runnable);
     }
 
     public void characterSetLockSkill(Character character, int lockSkill) {

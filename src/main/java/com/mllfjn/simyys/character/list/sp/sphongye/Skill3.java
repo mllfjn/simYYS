@@ -12,7 +12,7 @@ class Skill3 extends Skill {
     public Skill3(Character belongTo, int level) {
         super(belongTo, level, 3, 0, 3);
         if (level >= 5) {
-            belongTo.bp.atBattleStart(this::useWithoutCost);
+            belongTo.bp.addPriorityMove(belongTo, this::useWithoutCost);
         }
     }
 

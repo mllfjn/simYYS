@@ -26,7 +26,7 @@ class Skill2 extends PassiveSkill {
         belongTo.addStatus(statusMengShen);
         belongTo.setStatusMengShen(statusMengShen);
 
-        belongTo.bp.atBattleStart(() -> {
+        belongTo.bp.addPriorityMove(belongTo, () -> {
             belongTo.addStatus(new StatusMeiMengBiCheng(belongTo, belongTo));
             belongTo.bp.forEveryone(belongTo, c -> {
                 if (c.team == belongTo.team) {

@@ -3,7 +3,6 @@ package com.mllfjn.simyys.character.list.yys.boya;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
-import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.skill.PassiveSkillCanNotSeal;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.AttackType;
@@ -24,7 +23,7 @@ class Skill6 extends PassiveSkillCanNotSeal {
     public Skill6(Character belongTo, int level, int shuYin) {
         super(belongTo, level, 6);
         multiplier = 90 + level * 10 + shuYin * 40;
-        belongTo.bp.atBattleStart(this::use);
+        belongTo.bp.addPriorityMove(belongTo, this::use);
     }
 
     private void use() {

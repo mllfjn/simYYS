@@ -11,7 +11,7 @@ class QiLingYueMoTu {
     static final String QiLingName = "月魔兔";
 
     static void install(Character character) {
-        character.bp.atBattleStart(() -> character.addStatus(new StatusQLYMTListener(character)));
+        character.bp.addPriorityMove(character, () -> character.addStatus(new StatusQLYMTListener(character)));
     }
 
     static class StatusQLYMTListener extends Status implements AttributeModifier, StatusRunnable {

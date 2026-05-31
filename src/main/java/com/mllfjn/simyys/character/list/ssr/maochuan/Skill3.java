@@ -17,7 +17,7 @@ class Skill3 extends Skill {
         this.skill2 = skill2;
 
         if (level >= 5) {
-            belongTo.bp.atBattleStart(this::useWithoutCost);
+            belongTo.bp.addPriorityMove(belongTo, this::useWithoutCost);
         }
     }
 

@@ -17,7 +17,7 @@ public class ELou extends YuHun implements YuHunSealResponse {
         super.init(character, isInit);
         lock = new StatusELLock(character);
 
-        character.bp.atBattleStart(() -> {
+        character.bp.addPriorityMove(character, () -> {
             character.addStatus(new StatusELZL(character));
             yuHunEffect();
         });

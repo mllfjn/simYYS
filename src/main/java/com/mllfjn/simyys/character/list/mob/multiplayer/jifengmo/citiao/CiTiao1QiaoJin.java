@@ -22,7 +22,7 @@ public class CiTiao1QiaoJin {
         character.addStatus(new StatusQJListener(character));
 
         // 己方（指玩家）攻击力最高的单位普攻时，额外获得一次行动，回合结束后增加自身35%行动条
-        character.bp.atBattleStart(() -> {
+        character.bp.addPriorityMove(character, () -> {
             Character maxAttack = new CharacterFinder(character)
                     .filterEnemy()
                     .get(Attribute.ATTACK, CharacterFinder.Criteria.MAX);

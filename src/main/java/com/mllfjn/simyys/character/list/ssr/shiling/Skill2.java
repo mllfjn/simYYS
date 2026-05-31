@@ -33,7 +33,7 @@ class Skill2 extends PassiveSkill {
         super(belongTo, level, 2);
         this.multiplier = level >= 4 ? 1.5 : level >= 2 ? 1.4 : 1.3;
         if (level >= 3) {
-            belongTo.bp.atBattleStart(() -> {
+            belongTo.bp.addPriorityMove(belongTo, () -> {
                 maxCritPower = new CharacterFinder(belongTo)
                         .filterTeammate()
                         .filterSelf()
