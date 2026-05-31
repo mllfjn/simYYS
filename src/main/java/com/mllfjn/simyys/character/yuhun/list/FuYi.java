@@ -4,20 +4,21 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunSealResponse;
 
-public class NiePanZhiHuo extends YuHun implements YuHunSealResponse {
-    public static final String YuHunName = "涅槃之火";
-    private static final Skill skill = Skill.getInstance("涅槃之火");
+public class FuYi extends YuHun implements YuHunSealResponse {
+    public static final String YuHunName = "蝠翼";
+    private static final Skill skill = Skill.getInstance(YuHunName);
 
-    private StatusNPListener status;
+    private StatusFYListener status;
 
     @Override
     public void init(Character character, boolean isInit) {
         super.init(character, isInit);
-        status = new StatusNPListener(character);
+        status = new StatusFYListener(character);
     }
 
     @Override
@@ -35,22 +36,26 @@ public class NiePanZhiHuo extends YuHun implements YuHunSealResponse {
         getBelongTo().removeStatus(status);
     }
 
-    static class StatusNPListener extends Status implements StatusRunnable {
-        public StatusNPListener(Character character) {
+    static class StatusFYListener extends Status implements StatusRunnable {
+        public StatusFYListener(Character character) {
             super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
         }
 
         @Override
         public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.AFTER_ACTION && belongTo.getHpPercent() < 0.3;
+            return trigger == Trigger.CAUSE_ATTACK;
         }
 
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            belongTo.doInteractive(interactive -> {
-                interactive.healTypical(skill, belongTo, 15);
-                skill.useDone();
-            });
+            if (param instanceof ParamAttackInfo pai) {
+                belongTo.doInteractive(interactive -> {
+                    interactive.recovery(skill, belongTo,
+                            0.2 * pai.getAttackInfo().getTraceableNumber().getNumber()
+                    );
+                    skill.useDone();
+                });
+            }
             return false;
         }
     }

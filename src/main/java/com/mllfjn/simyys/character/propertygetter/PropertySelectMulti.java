@@ -55,6 +55,10 @@ public class PropertySelectMulti  extends PropertyRequire implements Serializabl
         return value;
     }
 
+    public void setValue(String s) {
+        value = s;
+    }
+
     private boolean contains(String newValue) {
         for (StringGroup option : options) {
             for (String s : option.values()) {

@@ -22,7 +22,8 @@ public record StringGroup(String label, String... values) implements Serializabl
             new StringGroup("攻击两件套",
                     KuangGu.YuHunName,
                     LunRuDao.YuHunName,
-                    YinNian.YuHunName
+                    YinNian.YuHunName,
+                    FuYi.YuHunName
             ),
             new StringGroup("暴击两件套",
                     QingNvFang.YuHunName,
@@ -43,7 +44,8 @@ public record StringGroup(String label, String... values) implements Serializabl
             ),
             new StringGroup("生命两件套",
                     TuFo.YuHunName,
-                    ELou.YuHunName
+                    ELou.YuHunName,
+                    NiePanZhiHuo.YuHunName
             ),
             new StringGroup("防御两件套",
                     HuoZhiChe.YuHunName,
