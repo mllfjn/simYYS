@@ -1,14 +1,12 @@
 package com.mllfjn.simyys.character.list.sr.xuenv;
 
 import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
-import com.mllfjn.simyys.character.status.AttributeModifier;
-import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.character.status.instance.StatusDeepFrozen;
 import com.mllfjn.simyys.character.status.instance.StatusFrozen;
+import com.mllfjn.simyys.character.yuhun.list.XueYouHun;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.interactive.StatusSupplier;
@@ -63,7 +61,7 @@ class Skill3 extends Skill {
         ArrayList<Character> charactersNotMobWithReduceSpeed = new ArrayList<>();
 
         for (Character character : list) {
-            if (isHaveReduceSpeed(character)) {
+            if (XueYouHun.isHaveReduceSpeed(character)) {
                 if (character.isMob()) {
                     charactersMobWithReduceSpeed.add(character);
                 } else {
@@ -101,14 +99,5 @@ class Skill3 extends Skill {
         }
 
         return Optional.empty();
-    }
-
-    private static boolean isHaveReduceSpeed(Character character) {
-        for (Status status : character.getStatuses()) {
-            if (status instanceof AttributeModifier am && am.getInfluence(Attribute.SPEED, null) < 0) {
-                return true;
-            }
-        }
-        return false;
     }
 }

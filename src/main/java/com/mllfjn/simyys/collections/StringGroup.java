@@ -53,7 +53,8 @@ public record StringGroup(String label, String... values) implements Serializabl
                     ZhenZhu.YuHunName,
                     ZhaoCaiMao.YuHunName,
                     RiNvSiShi.YuHunName,
-                    FengHaiTu.YuHunName
+                    FengHaiTu.YuHunName,
+                    XueYouHun.YuHunName
             ),
             new StringGroup("首领两件套",
                     TuZhiZhu.YuHunName,

@@ -7,10 +7,7 @@ import com.mllfjn.simyys.character.list.sr.luoxinfu.LuoXinFu;
 import com.mllfjn.simyys.character.list.sr.qingji.QingJi;
 import com.mllfjn.simyys.character.list.sr.xuenv.XueNv;
 import com.mllfjn.simyys.character.propertygetter.*;
-import com.mllfjn.simyys.character.yuhun.list.FuYi;
-import com.mllfjn.simyys.character.yuhun.list.LunRuDao;
-import com.mllfjn.simyys.character.yuhun.list.NiePanZhiHuo;
-import com.mllfjn.simyys.character.yuhun.list.PoShi;
+import com.mllfjn.simyys.character.yuhun.list.*;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -69,7 +66,7 @@ class HunTu {
         ((PropertyCheck) pm.get(PropertyKey.GENERAL_TEAM_KEY)).setValue(true);
         ((PropertyInput) pm.get(PropertyKey.GENERAL_WAVE_KEY)).setValue("2");
         ((PropertyInput) pm.get(PropertyKey.SKILL_KEY)).setValue("112");
-        ((PropertySelectMulti) pm.get(PropertyKey.YU_HUN_KEY)).setValue(PoShi.YuHunName + PropertySelectMulti.SPLIT_CHAR);
+        ((PropertySelectMulti) pm.get(PropertyKey.YU_HUN_KEY)).setValue(PoShi.YuHunName + PropertySelectMulti.SPLIT_CHAR + XueYouHun.YuHunName);
         ((PropertyInput) pm.get(PropertyKey.GENERAL_BASE_ATTACK_KEY)).setValue("12055.5");
         ((PropertyInput) pm.get(PropertyKey.GENERAL_HP_KEY)).setValue("10356.2");
         ((PropertyInput) pm.get(PropertyKey.GENERAL_DEFENSE_KEY)).setValue("704");
