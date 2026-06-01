@@ -27,6 +27,7 @@ import com.mllfjn.simyys.character.list.ssr.shenwuyue.ShenWuYue;
 import com.mllfjn.simyys.character.list.ssr.shijiamei.ShiJiaMei;
 import com.mllfjn.simyys.character.list.ssr.shiling.ShiLing;
 import com.mllfjn.simyys.character.list.ssr.tianzhao.TianZhao;
+import com.mllfjn.simyys.character.list.ssr.xueyuqian.XueYuQian;
 import com.mllfjn.simyys.character.list.ssr.xunxiangxing.XunXiangXing;
 import com.mllfjn.simyys.character.list.ssr.xuzuo.XuZuo;
 import com.mllfjn.simyys.character.list.yys.boya.BoYa;
@@ -93,6 +94,7 @@ public class CharacterFactory {
         ssrMap.put(DaTianGou.CharacterName, DaTianGou.class);
         ssrMap.put(GuiQie.CharacterName, GuiQie.class);
         ssrMap.put(TianZhao.CharacterName, TianZhao.class);
+        ssrMap.put(XueYuQian.CharacterName, XueYuQian.class);
 
 
         Map<String, Class<? extends Character>> srMap = new LinkedHashMap<>();

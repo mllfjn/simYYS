@@ -10,8 +10,8 @@ import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.instance.StatusUnselectable;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
+import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.AttackType;
-import com.mllfjn.simyys.interactive.InteractiveInfo;
 
 import java.util.Optional;
 
@@ -207,7 +207,7 @@ class Skill2 extends Skill {
         }
 
         @Override
-        public void beforeDie(InteractiveInfo interactiveInfo, double excessDamage) {
+        public void beforeDie(AttackInfo attackInfo, double excessDamage) {
             if (StatusLv4ReduceDamage != null) {
                 StatusLv4ReduceDamage.delete();
             }

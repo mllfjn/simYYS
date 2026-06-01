@@ -21,7 +21,7 @@ public class AttackInfo extends InteractiveInfo {
     // 伤害上限
     private double limit = 10000000;
 
-    private AttackInfo(Character attacker, Skill skill, Character target, AttackType attackType, double basicNumber) {
+    public AttackInfo(Character attacker, Skill skill, Character target, AttackType attackType, double basicNumber) {
         super(attacker, skill, target, basicNumber);
         this.attackType = attackType;
     }

@@ -17,10 +17,7 @@ import com.mllfjn.simyys.character.status.determinant.IgnoreDebuff;
 import com.mllfjn.simyys.character.status.determinant.RejectAllStatuses;
 import com.mllfjn.simyys.character.status.instance.StatusBind;
 import com.mllfjn.simyys.character.status.instance.StatusConfusion;
-import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
-import com.mllfjn.simyys.character.status.triggerParam.ParamLocationChange;
-import com.mllfjn.simyys.character.status.triggerParam.ParamStatus;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
+import com.mllfjn.simyys.character.status.triggerParam.*;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunFactory;
 import com.mllfjn.simyys.character.yuhun.YuHunSealResponse;
@@ -984,12 +981,16 @@ public abstract class Character implements Serializable {
         return yuHunSet;
     }
 
-    public void beforeDie(InteractiveInfo interactiveInfo, double excessDamage) {
-        if (TraversalOrderManager.preventDie(interactiveInfo, excessDamage, statuses)) {
+    public void beforeDie(AttackInfo attackInfo, double excessDamage) {
+        if (TraversalOrderManager.preventDie(attackInfo, excessDamage, statuses)) {
             return;
         }
 
         die();
+
+        attackInfo.getAttacker().statusRun(Trigger.KILLED_CHARACTER,
+                new ParamKilledCharacter(this, excessDamage)
+        );
     }
 
     public void die() {

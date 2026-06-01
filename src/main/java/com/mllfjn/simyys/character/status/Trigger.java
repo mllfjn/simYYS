@@ -21,4 +21,5 @@ public enum Trigger {
     //    AFTER_HEAL, // 被治疗后
     HP_CHANGE, // 生命值改变，发生在受到伤害且打破护盾，失去生命，受到治疗和恢复并且不是满血
     DIE, // 死亡后
+    KILLED_CHARACTER, // 击杀角色后
 }
