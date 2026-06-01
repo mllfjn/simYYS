@@ -131,7 +131,7 @@ class Skill3 extends Skill {
 
         @Override
         public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.USED_SKILL || trigger == Trigger.USE_PU_GONG;
+            return trigger == Trigger.USED_SKILL || trigger == Trigger.USED_PU_GONG;
         }
 
         @Override

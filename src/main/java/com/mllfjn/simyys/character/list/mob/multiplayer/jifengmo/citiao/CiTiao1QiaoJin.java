@@ -38,7 +38,7 @@ public class CiTiao1QiaoJin {
 
         @Override
         public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.USE_PU_GONG;
+            return trigger == Trigger.USED_PU_GONG;
         }
 
         @Override

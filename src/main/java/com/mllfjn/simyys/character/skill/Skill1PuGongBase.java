@@ -67,6 +67,8 @@ public abstract class Skill1PuGongBase extends Skill {
         Character target = getTarget();
         Character belongTo = getBelongTo();
 
+        belongTo.statusRun(Trigger.WILL_USE_PU_GONG, new ParamUseSkill(this, target, 0));
+
         usePrivate(belongTo.getInteractive(), target);
 
         useOver(target);
@@ -77,7 +79,7 @@ public abstract class Skill1PuGongBase extends Skill {
         // 消息记录
         log(target);
 
-        belongTo.statusRun(Trigger.USE_PU_GONG, new ParamUseSkill(this, target, 0));
+        belongTo.statusRun(Trigger.USED_PU_GONG, new ParamUseSkill(this, target, 0));
 
         List<Character> list = new CharacterFinder(belongTo)
                 .filterTeammate()

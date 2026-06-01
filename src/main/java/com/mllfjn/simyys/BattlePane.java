@@ -6,6 +6,7 @@ import com.mllfjn.simyys.character.CharacterFactory;
 import com.mllfjn.simyys.character.PropertyKey;
 import com.mllfjn.simyys.character.list.ssr.xunxiangxing.StatusShiShen;
 import com.mllfjn.simyys.character.propertygetter.FlagChangeInfo;
+import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.customnode.CustomTextField;
 import com.mllfjn.simyys.customnode.TextFlowLog;
@@ -623,9 +624,6 @@ public class BattlePane {
         situation.listeners.endIterator();
     }
 
-    /**
-     * 先机,每个式神最多添加一个
-     */
     public void addPriorityMove(Character character, SerializableRunnable runnable) {
         situation.addPriorityMove(character, runnable);
     }
@@ -644,7 +642,8 @@ public class BattlePane {
         return situation.teamPane[1 - character.team].isMobTeam();
     }
 
-    public void addOutRoundSkill(Runnable runnable) {
+    public void addOutRoundSkill(Skill skill, Runnable runnable) {
+        // 将来skill.done要统一调用
         outRoundSkillList.add(runnable);
     }
 

@@ -19,6 +19,7 @@ class Skill5 extends PassiveSkillCanNotSeal {
             {
                 setInitDefense(686);
                 getCharacterIcon().setEventHandlerContainer(new ClearHpHandler(this));
+                setMob(1, 1);
             }
 
             @Override
@@ -43,6 +44,7 @@ class Skill5 extends PassiveSkillCanNotSeal {
             {
                 setInitDefense(774);
                 getCharacterIcon().setEventHandlerContainer(new ClearHpHandler(this));
+                setMob(1, 1);
             }
 
             @Override
@@ -67,6 +69,7 @@ class Skill5 extends PassiveSkillCanNotSeal {
             {
                 setInitDefense(778);
                 getCharacterIcon().setEventHandlerContainer(new ClearHpHandler(this));
+                setMob(1, 1);
             }
 
             @Override

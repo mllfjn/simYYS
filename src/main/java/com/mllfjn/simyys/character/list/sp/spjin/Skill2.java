@@ -112,7 +112,7 @@ class Skill2 extends PassiveSkill {
 
         @Override
         public boolean runnable(Trigger trigger) {
-            return (trigger == Trigger.USED_SKILL || trigger == Trigger.USE_PU_GONG) && belongTo.isInRound();
+            return (trigger == Trigger.USED_SKILL || trigger == Trigger.USED_PU_GONG) && belongTo.isInRound();
         }
 
         @Override

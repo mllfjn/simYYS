@@ -63,6 +63,7 @@ class Skill6 extends PassiveSkillCanNotSeal {
                 {
                     forceSetMaxHp(77600, true);
                     setInitDefense(212);
+                    setMob(1, 1);
                 }
 
                 @Override

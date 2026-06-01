@@ -26,6 +26,7 @@ import com.mllfjn.simyys.character.list.ssr.guiqie.GuiQie;
 import com.mllfjn.simyys.character.list.ssr.shenwuyue.ShenWuYue;
 import com.mllfjn.simyys.character.list.ssr.shijiamei.ShiJiaMei;
 import com.mllfjn.simyys.character.list.ssr.shiling.ShiLing;
+import com.mllfjn.simyys.character.list.ssr.tianzhao.TianZhao;
 import com.mllfjn.simyys.character.list.ssr.xunxiangxing.XunXiangXing;
 import com.mllfjn.simyys.character.list.ssr.xuzuo.XuZuo;
 import com.mllfjn.simyys.character.list.yys.boya.BoYa;
@@ -91,6 +92,7 @@ public class CharacterFactory {
         ssrMap.put(XunXiangXing.CharacterName, XunXiangXing.class);
         ssrMap.put(DaTianGou.CharacterName, DaTianGou.class);
         ssrMap.put(GuiQie.CharacterName, GuiQie.class);
+        ssrMap.put(TianZhao.CharacterName, TianZhao.class);
 
 
         Map<String, Class<? extends Character>> srMap = new LinkedHashMap<>();
@@ -130,6 +132,16 @@ public class CharacterFactory {
     }
 
     public static Optional<Character> getCharacter(PropertiesHolder ph, BattlePane bp) {
+        if (ph.characterClass != null) {
+            try {
+                Character character = ph.characterClass.getDeclaredConstructor().newInstance();
+                character.init(ph, bp);
+                character.fillSkills();
+                return Optional.of(character);
+            } catch (Exception e) {
+                Utils.throwException("获取角色信息失败", e);
+            }
+        }
         Optional<Character> oc = getCharacter(ph.name);
         oc.ifPresent(character -> {
             character.init(ph, bp);

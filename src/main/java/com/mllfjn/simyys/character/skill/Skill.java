@@ -89,9 +89,10 @@ public abstract class Skill implements Serializable {
     }
 
     protected void useBase(boolean isCost) {
-        belongTo.statusRun(Trigger.WILL_USE_SKILL, null);
-
         BattlePane bp = belongTo.bp;
+
+        // TODO 需要把选择目标的逻辑从释放技能中分离出来
+        belongTo.statusRun(Trigger.WILL_USE_SKILL, new ParamUseSkill(this, null, 0));
 
         int cost = 0;
         if (isCost) {

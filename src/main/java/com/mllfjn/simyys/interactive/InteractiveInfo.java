@@ -14,7 +14,7 @@ public abstract class InteractiveInfo {
     private final TraceableNumber traceableNumber;
 
     // 技能系数
-    protected int multiplier = 100;
+    protected double multiplier = 100;
     // 可否暴击
     protected boolean canCrit = true;
     // 是否暴击
@@ -91,7 +91,7 @@ public abstract class InteractiveInfo {
         this.calYuHun = calYuHun;
     }
 
-    public void setMultiplier(int multiplier) {
+    public void setMultiplier(double multiplier) {
         this.multiplier = multiplier;
     }
 }

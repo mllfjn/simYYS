@@ -143,7 +143,7 @@ class Skill2 extends PassiveSkill {
             protected void used() {
                 isActive = false;
                 if (useSkill3AfterBiHuUsed) {
-                    belongTo.bp.addOutRoundSkill(() -> Skill2.this.skill3.useWithoutCost());
+                    belongTo.bp.addOutRoundSkill(skill3, () -> skill3.useWithoutCost());
                 }
             }
 

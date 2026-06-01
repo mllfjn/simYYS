@@ -123,4 +123,8 @@ class HunTu {
         ((PropertyInput) pm.get(PropertyKey.GENERAL_CRIT_POWER_KEY)).setValue("150");
         list.add(new PropertiesHolder(GuiQie.CharacterName, pm, new LinkedHashMap<>(), new LinkedHashMap<>()));
     }
+
+    public static void addPriorityMove() {
+
+    }
 }

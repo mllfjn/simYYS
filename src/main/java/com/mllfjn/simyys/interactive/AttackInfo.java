@@ -28,7 +28,7 @@ public class AttackInfo extends InteractiveInfo {
 
     // 基本伤害类型
     public static AttackInfo createTypicalAttack(Character attacker, Skill skill, Character target,
-                                                 int multiplier, AttackType attackType) {
+                                                 double multiplier, AttackType attackType) {
         AttackInfo attackInfo = new AttackInfo(attacker, skill, target, attackType, attacker.getAttack());
         attackInfo.multiplier = multiplier;
         return attackInfo;

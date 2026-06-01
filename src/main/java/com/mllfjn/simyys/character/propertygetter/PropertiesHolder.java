@@ -1,5 +1,6 @@
 package com.mllfjn.simyys.character.propertygetter;
 
+import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.starter.Initializer;
 import com.mllfjn.simyys.utils.DecimalFormatUtil;
 import com.mllfjn.simyys.utils.Utils;
@@ -36,6 +37,8 @@ public class PropertiesHolder implements Serializable {
     public final PropertiesMap propertiesMap;
     public final Map<Integer, Integer> lockSkillMap;
     public final Map<Integer, FlagChangeInfo> flagChangeMap;
+
+    public Class<? extends Character> characterClass;
 
     private transient SimpleStringProperty nameProperty;
     private transient StringBinding totalAttackProperty;
