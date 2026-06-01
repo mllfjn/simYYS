@@ -215,4 +215,16 @@ public class RateController implements Serializable {
                 , owner.bp.calc, owner.bp.calc::isControlYuHun, item -> rate, (i, b) -> result.set(b));
         return result.get();
     }
+
+    public static double getFluctuation(RateCalc calc, double fluctuationLimit) {
+        if (calc.isControlFluctuation()) {
+            if (fluctuationLimit == 0.01) {
+                return calc.getSimpleFluctuation();
+            } else {
+                return calc.getFluctuation(fluctuationLimit);
+            }
+        } else {
+            return random.nextDouble(1 - fluctuationLimit, 1 + fluctuationLimit);
+        }
+    }
 }

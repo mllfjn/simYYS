@@ -14,6 +14,9 @@ public class AttackInfo extends InteractiveInfo {
     private boolean calYiShang = true;
     // 是否穿盾
     private boolean canThroughShield = false;
+    // 是否波动
+    private boolean canFluctuate = true;
+    private double fluctuationLimit = 0.01;
 
     // 伤害上限
     private double limit = 10000000;
@@ -39,6 +42,7 @@ public class AttackInfo extends InteractiveInfo {
         attackInfo.canCrit = false;
         attackInfo.calZengShang = false;
         attackInfo.calYiShang = false;
+        attackInfo.canFluctuate = false;
 
         return attackInfo;
     }
@@ -112,5 +116,21 @@ public class AttackInfo extends InteractiveInfo {
 
     public void setCanThroughShield(boolean canThroughShield) {
         this.canThroughShield = canThroughShield;
+    }
+
+    public void setCanFluctuate(boolean canFluctuate) {
+        this.canFluctuate = canFluctuate;
+    }
+
+    public boolean isCanFluctuate() {
+        return canFluctuate;
+    }
+
+    public void setFluctuationLimit(double fluctuationLimit) {
+        this.fluctuationLimit = fluctuationLimit;
+    }
+
+    public double getFluctuationLimit() {
+        return fluctuationLimit;
     }
 }

@@ -1,65 +1,59 @@
 package com.mllfjn.simyys.ratecontroller;
 
 import com.mllfjn.simyys.utils.DecimalFormatUtil;
+import javafx.beans.property.BooleanProperty;
 import javafx.scene.control.*;
 
 public class RateCalc {
     private double currentRate = 1;
     // 主开关
-    public boolean mainSwitch = false;
+    public final BooleanProperty mainSwitch;
 
     // 暴击
-    private boolean controlCrit = true;
+    private final BooleanProperty controlCrit;
     // 命中
-    private boolean controlEffectHit = true;
+    private final BooleanProperty controlEffectHit;
     // 协战
-    private boolean controlXieZhan = true;
+    private final BooleanProperty controlXieZhan;
     // 其他是否
-    private boolean controlWhetherOther = true;
+    private final BooleanProperty controlWhetherOther;
     // 选取
-    private boolean controlChoose = true;
+    private final BooleanProperty controlChoose;
     // 御魂
-    private boolean controlYuHun = true;
+    private final BooleanProperty controlYuHun;
+    // 波动
+    private final RangeControlMenuItem rangeController;
 
 
     // 显示概率
     private final Label label = new Label();
-    //
+    // 控制波动
     private final CheckBox control = new CheckBox("概率控制模式");
 
     public RateCalc() {
-        control.selectedProperty().addListener(
-                (obs, old, val) -> mainSwitch = val);
+        mainSwitch = control.selectedProperty();
 
-        CheckMenuItem menuItemCrit = new CheckMenuItem("控制暴击");
-        CheckMenuItem menuItemEffectHit = new CheckMenuItem("控制命中");
-        CheckMenuItem menuItemXieZhan = new CheckMenuItem("控制协战");
-        CheckMenuItem menuItemOther = new CheckMenuItem("控制其他是否");
-        CheckMenuItem menuItemChoose = new CheckMenuItem("控制选取");
-        CheckMenuItem menuItemYuHun = new CheckMenuItem("控制御魂");
+        CustomCheckMenuItem ccm1 = new CustomCheckMenuItem("控制暴击");
+        controlCrit = ccm1.selectedProperty();
 
-        menuItemCrit.setSelected(true);
-        menuItemEffectHit.setSelected(true);
-        menuItemXieZhan.setSelected(true);
-        menuItemOther.setSelected(true);
-        menuItemChoose.setSelected(true);
-        menuItemYuHun.setSelected(true);
+        CustomCheckMenuItem ccm2 = new CustomCheckMenuItem("控制命中");
+        controlEffectHit = ccm2.selectedProperty();
 
-        menuItemCrit.selectedProperty().addListener(
-                (obs, old, val) -> controlCrit = val);
-        menuItemEffectHit.selectedProperty().addListener(
-                (obs, old, val) -> controlEffectHit = val);
-        menuItemXieZhan.selectedProperty().addListener(
-                (obs, old, val) -> controlXieZhan = val);
-        menuItemOther.selectedProperty().addListener(
-                (obs, old, val) -> controlWhetherOther = val);
-        menuItemChoose.selectedProperty().addListener(
-                (obs, old, val) -> controlChoose = val);
-        menuItemYuHun.selectedProperty().addListener(
-                (obs, old, val) -> controlYuHun = val);
+        CustomCheckMenuItem ccm3 = new CustomCheckMenuItem("控制协战");
+        controlXieZhan = ccm3.selectedProperty();
 
-        control.setContextMenu(
-                new ContextMenu(menuItemCrit, menuItemEffectHit, menuItemXieZhan, menuItemOther, menuItemChoose, menuItemYuHun));
+        CustomCheckMenuItem ccm4 = new CustomCheckMenuItem("控制其他是否");
+        controlWhetherOther = ccm4.selectedProperty();
+
+        CustomCheckMenuItem ccm5 = new CustomCheckMenuItem("控制选取");
+        controlChoose = ccm5.selectedProperty();
+
+        CustomCheckMenuItem ccm6 = new CustomCheckMenuItem("控制御魂");
+        controlYuHun = ccm6.selectedProperty();
+
+        rangeController = new RangeControlMenuItem("控制波动");
+
+        control.setContextMenu(new ContextMenu(ccm1, ccm2, ccm3, ccm4, ccm5, ccm6, rangeController));
     }
 
 
@@ -94,26 +88,39 @@ public class RateCalc {
     }
 
     public boolean isControlCrit() {
-        return mainSwitch && controlCrit;
+        return mainSwitch.get() && controlCrit.get();
     }
 
     public boolean isControlEffectHit() {
-        return mainSwitch && controlEffectHit;
+        return mainSwitch.get() && controlEffectHit.get();
     }
 
     public boolean isControlChoose() {
-        return mainSwitch && controlChoose;
+        return mainSwitch.get() && controlChoose.get();
     }
 
     public boolean isControlWhetherOther() {
-        return mainSwitch && controlWhetherOther;
+        return mainSwitch.get() && controlWhetherOther.get();
     }
 
     public boolean isControlYuHun() {
-        return mainSwitch && controlYuHun;
+        return mainSwitch.get() && controlYuHun.get();
     }
 
     public boolean isControlXieZhan() {
-        return mainSwitch && controlXieZhan;
+        return mainSwitch.get() && controlXieZhan.get();
+    }
+
+    public boolean isControlFluctuation() {
+        return mainSwitch.get() && rangeController.selectedProperty().get();
+    }
+
+    public double getFluctuation(double delta) {
+        // 将[0.99,1.01]线性映射到[1-delta,1+delta]
+        return 1 + (rangeController.getValue() - 1) * delta * 100;
+    }
+
+    public double getSimpleFluctuation() {
+        return rangeController.getValue();
     }
 }

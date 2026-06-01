@@ -7,6 +7,7 @@ import com.mllfjn.simyys.character.list.sr.luoxinfu.LuoXinFu;
 import com.mllfjn.simyys.character.list.sr.qingji.QingJi;
 import com.mllfjn.simyys.character.list.sr.xuenv.XueNv;
 import com.mllfjn.simyys.character.list.ssr.datiangou.DaTianGou;
+import com.mllfjn.simyys.character.list.ssr.guiqie.GuiQie;
 import com.mllfjn.simyys.character.propertygetter.*;
 import com.mllfjn.simyys.character.yuhun.list.*;
 
@@ -83,13 +84,43 @@ class HunTu {
         ((PropertyCheck) pm.get(PropertyKey.GENERAL_TEAM_KEY)).setValue(true);
         ((PropertyInput) pm.get(PropertyKey.GENERAL_WAVE_KEY)).setValue("2");
         ((PropertyInput) pm.get(PropertyKey.SKILL_KEY)).setValue("111");
-        ((PropertySelectMulti) pm.get(PropertyKey.YU_HUN_KEY)).setValue(FuYi.YuHunName);
-        ((PropertyInput) pm.get(PropertyKey.GENERAL_BASE_ATTACK_KEY)).setValue("12055.5");
-        ((PropertyInput) pm.get(PropertyKey.GENERAL_HP_KEY)).setValue("10356.2");
-        ((PropertyInput) pm.get(PropertyKey.GENERAL_DEFENSE_KEY)).setValue("704");
-        ((PropertyInput) pm.get(PropertyKey.GENERAL_SPEED_KEY)).setValue("150");
-        ((PropertyInput) pm.get(PropertyKey.GENERAL_CRIT_RATE_KEY)).setValue("18");
+        ((PropertySelectMulti) pm.get(PropertyKey.YU_HUN_KEY)).setValue(ZhenNv.YuHunName);
+        ((PropertyInput) pm.get(PropertyKey.GENERAL_BASE_ATTACK_KEY)).setValue("14064.75");
+        ((PropertyInput) pm.get(PropertyKey.GENERAL_HP_KEY)).setValue("71193");
+        ((PropertyInput) pm.get(PropertyKey.GENERAL_DEFENSE_KEY)).setValue("0");
+        ((PropertyInput) pm.get(PropertyKey.GENERAL_SPEED_KEY)).setValue("158");
+        ((PropertyInput) pm.get(PropertyKey.GENERAL_CRIT_RATE_KEY)).setValue("10");
         ((PropertyInput) pm.get(PropertyKey.GENERAL_CRIT_POWER_KEY)).setValue("150");
         list.add(new PropertiesHolder(DaTianGou.CharacterName, pm, new LinkedHashMap<>(), new LinkedHashMap<>()));
+
+        // 鬼切
+        pm = CharacterFactory.getProperties(GuiQie.CharacterName).orElseThrow();
+        ((PropertyCheck) pm.get(PropertyKey.GENERAL_TEAM_KEY)).setValue(true);
+        ((PropertyInput) pm.get(PropertyKey.GENERAL_WAVE_KEY)).setValue("3");
+        ((PropertyInput) pm.get(PropertyKey.SKILL_KEY)).setValue("111");
+        ((PropertySelectMulti) pm.get(PropertyKey.YU_HUN_KEY)).setValue(ZhenNv.YuHunName);
+        ((PropertyInput) pm.get(PropertyKey.GENERAL_BASE_ATTACK_KEY)).setValue("16074");
+        ((PropertyInput) pm.get(PropertyKey.GENERAL_HP_KEY)).setValue("29000.7376");
+        ((PropertyInput) pm.get(PropertyKey.GENERAL_DEFENSE_KEY)).setValue("704");
+        ((PropertyInput) pm.get(PropertyKey.GENERAL_SPEED_KEY)).setValue("156");
+        ((PropertyInput) pm.get(PropertyKey.GENERAL_CRIT_RATE_KEY)).setValue("60");
+        ((PropertyInput) pm.get(PropertyKey.GENERAL_CRIT_POWER_KEY)).setValue("150");
+        list.add(new PropertiesHolder(GuiQie.CharacterName, pm, new LinkedHashMap<>(), new LinkedHashMap<>()));
+
+        // 巫女大蛇 TODO
+
+        // 鬼切
+        pm = CharacterFactory.getProperties(GuiQie.CharacterName).orElseThrow();
+        ((PropertyCheck) pm.get(PropertyKey.GENERAL_TEAM_KEY)).setValue(true);
+        ((PropertyInput) pm.get(PropertyKey.GENERAL_WAVE_KEY)).setValue("3");
+        ((PropertyInput) pm.get(PropertyKey.SKILL_KEY)).setValue("111");
+        ((PropertySelectMulti) pm.get(PropertyKey.YU_HUN_KEY)).setValue(ZhenNv.YuHunName);
+        ((PropertyInput) pm.get(PropertyKey.GENERAL_BASE_ATTACK_KEY)).setValue("16074");
+        ((PropertyInput) pm.get(PropertyKey.GENERAL_HP_KEY)).setValue("29000.7376");
+        ((PropertyInput) pm.get(PropertyKey.GENERAL_DEFENSE_KEY)).setValue("704");
+        ((PropertyInput) pm.get(PropertyKey.GENERAL_SPEED_KEY)).setValue("156");
+        ((PropertyInput) pm.get(PropertyKey.GENERAL_CRIT_RATE_KEY)).setValue("60");
+        ((PropertyInput) pm.get(PropertyKey.GENERAL_CRIT_POWER_KEY)).setValue("150");
+        list.add(new PropertiesHolder(GuiQie.CharacterName, pm, new LinkedHashMap<>(), new LinkedHashMap<>()));
     }
 }

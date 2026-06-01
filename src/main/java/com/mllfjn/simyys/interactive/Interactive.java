@@ -169,6 +169,14 @@ public class Interactive {
             }
         }
 
+        // 伤害波动
+        if (attackInfo.isCanFluctuate()) {
+            traceableNumber.mul(
+                    RateController.getFluctuation(bp.calc, attackInfo.getFluctuationLimit()),
+                    "伤害波动"
+            );
+        }
+
         // 易伤
         if (attackInfo.isCalYiShang()) {
             double yiShang = target.getYiShang();

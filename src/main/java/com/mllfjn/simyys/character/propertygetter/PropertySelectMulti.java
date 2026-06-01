@@ -14,11 +14,15 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 import java.util.StringJoiner;
 
 public class PropertySelectMulti  extends PropertyRequire implements Serializable {
+    @Serial
+    private static final long serialVersionUID = -9067275274183631003L;
+
     public static final String SPLIT_CHAR = ",";
 
     private String value;
