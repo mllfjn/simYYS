@@ -7,27 +7,17 @@ import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
 public class StatusShenSheJianShang extends Status implements StatusRunnable {
-    private int count;
+    int count;
 
     public StatusShenSheJianShang(Character character) {
         super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
     }
 
-    public static void add(Character character) {
-        character.getStatus(StatusShenSheJianShang.class)
-                .or(() -> character.addStatus(new StatusShenSheJianShang(character)))
-                .ifPresent(StatusShenSheJianShang::add);
-    }
-
-    public static void reduce(Character character) {
-        character.getStatus(StatusShenSheJianShang.class).ifPresent(StatusShenSheJianShang::reduce);
-    }
-
-    private void add() {
+    void add() {
         count++;
     }
 
-    private void reduce() {
+    void reduce() {
         count--;
         if (count == 0) {
             delete();

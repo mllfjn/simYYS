@@ -270,7 +270,7 @@ public class Interactive {
         return healInfos;
     }
 
-    public void heal(Skill skill, List<Character> targets
+    public HealInfo[] heal(Skill skill, List<Character> targets
             , Function<Character, HealInfo> healInfoSupplier) {
         HealInfo[] healInfos = new HealInfo[targets.size()];
         for (int i = 0; i < targets.size(); i++) {
@@ -283,6 +283,7 @@ public class Interactive {
         for (int i = 0; i < targets.size(); i++) {
             healBase(targets.get(i), healInfos[i]);
         }
+        return healInfos;
     }
 
     private void healBase(Character target, HealInfo healInfo) {

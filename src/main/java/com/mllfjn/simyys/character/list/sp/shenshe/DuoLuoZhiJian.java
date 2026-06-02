@@ -43,12 +43,12 @@ public class DuoLuoZhiJian extends CharacterSummonBase {
         }
 
         bp.addCharacter(this);
-        StatusShenSheJianShang.add(shenShe);
+        shenShe.addJianShang();
     }
 
     @Override
     public void dieHandle() {
-        StatusShenSheJianShang.reduce(shenShe);
+        shenShe.reduceJianShang();
     }
 
     @Override

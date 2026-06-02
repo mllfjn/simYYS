@@ -60,9 +60,9 @@ class CharacterLDLL extends CharacterSummonBase {
     }
 
     @Override
-    public <T extends Status> Optional<T> addStatus(T newStatus) {
+    public <T extends Status> boolean addStatus(T newStatus) {
         if (newStatus.statusType == StatusType.DEBUFF || newStatus instanceof CrowdControl) {
-            return Optional.empty();
+            return false;
         } else {
             return super.addStatus(newStatus);
         }

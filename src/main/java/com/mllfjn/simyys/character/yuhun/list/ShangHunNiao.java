@@ -52,7 +52,7 @@ public class ShangHunNiao extends YuHun implements YuHunSealResponse {
 
 
     static class StatusShangHunNiao extends Status implements AttributeModifier, Displayable {
-        private int stack;
+        private int stack = 1;
 
         public StatusShangHunNiao(Character character) {
             super(character, character, StatusType.BUFF, StatusForm.YIN_JI);
@@ -60,12 +60,14 @@ public class ShangHunNiao extends YuHun implements YuHunSealResponse {
 
         public static void addStack(Character character) {
             character.getStatus(StatusShangHunNiao.class)
-                    .or(() -> character.addStatus(new StatusShangHunNiao(character)))
-                    .ifPresent(status -> {
-                        if (status.stack < 6) {
-                            status.stack++;
-                        }
-                    });
+                    .ifPresentOrElse(
+                            status -> {
+                                if (status.stack < 6) {
+                                    status.stack++;
+                                }
+                            },
+                            () -> character.addStatus(new StatusShangHunNiao(character))
+                    );
         }
 
         @Override

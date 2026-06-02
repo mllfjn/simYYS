@@ -8,7 +8,7 @@ import com.mllfjn.simyys.character.status.StatusForm;
 import com.mllfjn.simyys.character.status.StatusType;
 
 // 这是神蛇被吸攻击的队友身上的状态
-public class StatusStoreAttack extends Status implements AttributeModifier {
+class StatusStoreAttack extends Status implements AttributeModifier {
     private int stack = 1;
 
     public StatusStoreAttack(Character from, Character belongTo) {
@@ -18,8 +18,10 @@ public class StatusStoreAttack extends Status implements AttributeModifier {
 
     public static void addStack(Character from, Character character) {
         character.getStatus(StatusStoreAttack.class)
-                .or(() -> character.addStatus(new StatusStoreAttack(from, character)))
-                .ifPresent(StatusStoreAttack::addStack);
+                .ifPresentOrElse(
+                        StatusStoreAttack::addStack,
+                        () -> character.addStatus(new StatusStoreAttack(from, character))
+                );
     }
 
     public void addStack() {

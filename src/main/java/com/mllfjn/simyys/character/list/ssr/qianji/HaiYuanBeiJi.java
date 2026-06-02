@@ -168,7 +168,7 @@ class StatusChaoSheng extends Status implements Displayable, IgnoreDebuff {
 
 class StatusQianJiZengShang extends Status implements AttributeModifier, Displayable {
     // 这个状态游戏里没显示来源,不知道会不会有影响
-    private int stack = 0;
+    private int stack = 1;
 
     public StatusQianJiZengShang(Character character) {
         super(null, character, StatusType.BUFF, StatusForm.YIN_JI);
@@ -176,8 +176,10 @@ class StatusQianJiZengShang extends Status implements AttributeModifier, Display
 
     public static void addStack(Character character) {
         character.getStatus(StatusQianJiZengShang.class)
-                .or(() -> character.addStatus(new StatusQianJiZengShang(character)))
-                .ifPresent(StatusQianJiZengShang::addStack);
+                .ifPresentOrElse(
+                        StatusQianJiZengShang::addStack,
+                        () -> character.addStatus(new StatusQianJiZengShang(character))
+                );
     }
 
     public void addStack() {

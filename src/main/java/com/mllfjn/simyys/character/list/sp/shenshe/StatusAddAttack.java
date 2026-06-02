@@ -6,21 +6,16 @@ import com.mllfjn.simyys.character.status.AttributeModifier;
 import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.character.status.StatusForm;
 import com.mllfjn.simyys.character.status.StatusType;
+import com.mllfjn.simyys.character.status.determinant.RetainAfterChangeWave;
 
-class StatusAddAttack extends Status implements AttributeModifier {
+class StatusAddAttack extends Status implements AttributeModifier, RetainAfterChangeWave {
     private double attack;
 
     public StatusAddAttack(Character character) {
         super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
     }
 
-    public static void addAttack(ShenShe shenShe, double attack) {
-        shenShe.getStatus(StatusAddAttack.class)
-                .or(() -> shenShe.addStatus(new StatusAddAttack(shenShe)))
-                .ifPresent(status -> status.addAttack(attack));
-    }
-
-    private void addAttack(double attack) {
+    void addAttack(double attack) {
         this.attack += attack;
     }
 

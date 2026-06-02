@@ -11,7 +11,34 @@ public class ShenShe extends CharacterShiShenBase {
 
     // 共被6把神剑·天羽羽斩镇压，最后一把是篡位，所以计数是5
     private int zhenyaRest = 5;
-    public ShenShe() {}
+
+    private StatusAddAttack statusAddAttack;
+    private StatusShenSheJianShang statusShenSheJianShang;
+
+    void addAttack(double attack) {
+        if (statusAddAttack == null) {
+            statusAddAttack = new StatusAddAttack(this);
+            addStatus(statusAddAttack);
+        }
+        statusAddAttack.addAttack(attack);
+    }
+
+    void addJianShang() {
+        if (statusShenSheJianShang == null) {
+            statusShenSheJianShang = new StatusShenSheJianShang(this);
+            addStatus(statusShenSheJianShang);
+        }
+        statusShenSheJianShang.add();
+    }
+
+    void reduceJianShang() {
+        if (statusShenSheJianShang != null) {
+            statusShenSheJianShang.reduce();
+            if (statusShenSheJianShang.count == 0) {
+                statusShenSheJianShang = null;
+            }
+        }
+    }
 
     public boolean isZhenYa() {
         return zhenyaRest > 0;

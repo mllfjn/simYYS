@@ -9,19 +9,19 @@ import com.mllfjn.simyys.interactive.TraceableNumber;
 class StatusMengJian extends StatusShield implements Displayable, AttributeModifier {
     private static final String StatusName = "梦茧";
 
-    private final boolean immuneOverDoseDamage;
+    private final Skill2 skill2;
 
     private boolean isFirst = true;
     private StatusMengJian next;
 
-    private StatusMengJian(Character from, Character belongTo, double shield, boolean immuneOverDoseDamage) {
+    private StatusMengJian(Character from, Character belongTo, double shield, Skill2 skill2) {
         super(from, belongTo, shield);
-        this.immuneOverDoseDamage = immuneOverDoseDamage;
+        this.skill2 = skill2;
 
         setDurationType(StatusDurationType.CHI_XU, 2);
     }
 
-    static void install(Character from, Character belongTo, double shield, boolean immuneOverDoseDamage) {
+    static void install(Character from, Character belongTo, double shield, Skill2 skill2) {
         StatusMengJian statusFirst = null;
         for (Status status : belongTo.getStatuses()) {
             if (status instanceof StatusMengJian smj) {
@@ -33,7 +33,7 @@ class StatusMengJian extends StatusShield implements Displayable, AttributeModif
             }
         }
 
-        StatusMengJian statusMengJian = new StatusMengJian(from, belongTo, shield, immuneOverDoseDamage);
+        StatusMengJian statusMengJian = new StatusMengJian(from, belongTo, shield, skill2);
         if (statusFirst != null) {
             statusFirst.next = statusMengJian;
             statusMengJian.isFirst = false;
@@ -58,13 +58,12 @@ class StatusMengJian extends StatusShield implements Displayable, AttributeModif
             traceableNumber.sub(number, StatusName);
             return false;
         } else {
-            if (immuneOverDoseDamage && number > shield) {
+            if (skill2.isImmuneOverDoseDamage() && number > shield) {
                 traceableNumber.sub(number, StatusName + "免疫过量伤害");
-                return true;
             } else {
                 traceableNumber.sub(shield, StatusName);
-                return true;
             }
+            return true;
         }
     }
 
@@ -88,6 +87,6 @@ class StatusMengJian extends StatusShield implements Displayable, AttributeModif
 
     @Override
     public double getInfluence(Attribute attribute, StatusModifyParam param) {
-        return 0;
+        return skill2.isReinforcement() ? 20 : 10;
     }
 }

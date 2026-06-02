@@ -5,8 +5,8 @@ import com.mllfjn.simyys.character.skill.Skill;
 
 public class HealInfo extends InteractiveInfo {
 
-    public HealInfo(Character attacker, Skill skill, Character target, double basicNumber) {
-        super(attacker, skill, target, basicNumber);
+    public HealInfo(Character character, Skill skill, Character target, double basicNumber) {
+        super(character, skill, target, basicNumber);
     }
 
     // 基本治疗

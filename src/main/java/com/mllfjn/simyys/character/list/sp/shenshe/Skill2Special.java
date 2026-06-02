@@ -42,8 +42,8 @@ class Skill2Special extends Skill {
         // 获得新回合
         shenShe.doInteractive(interactive -> interactive.getNewRound(shenShe));
         // 将审判仪式(3)替换位终焉裁决
-        getBelongTo().removeSkill(3);
-        getBelongTo().addSkill(new Skill3Special(shenShe));
+        shenShe.removeSkill(3);
+        shenShe.addSkill(new Skill3Special(shenShe));
         // 并在原地召唤1把堕落之剑
         new DuoLuoZhiJian(shenShe, shenShe, false);
         // 将剩余非召唤物的友方目标献祭为堕落之剑,并夺取其6%的初始攻击
@@ -57,7 +57,7 @@ class Skill2Special extends Skill {
                 .getList();
         for (Character character : teammateShiShen) {
             new DuoLuoZhiJian(shenShe, character, true);
-            StatusAddAttack.addAttack((ShenShe) getBelongTo(), character.getInitAttack() * 0.06);
+            shenShe.addAttack(character.getInitAttack() * 0.06);
         }
         return Optional.empty();
     }

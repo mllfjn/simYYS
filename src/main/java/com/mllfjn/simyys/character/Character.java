@@ -856,7 +856,7 @@ public abstract class Character implements Serializable {
         return getStatus(clazz).isPresent();
     }
 
-    public <T extends Status> Optional<T> addStatus(T newStatus) {
+    public <T extends Status> boolean addStatus(T newStatus) {
         // 拒绝添加所有状态:堕落之剑和青女房
         for (Status status : getStatuses()) {
             if (status instanceof RejectAllStatuses ||
@@ -865,7 +865,7 @@ public abstract class Character implements Serializable {
                             && status instanceof IgnoreDebuff id && id.ignoreDebuffEffective()
                     )
             ) {
-                return Optional.empty();
+                return false;
             }
         }
 
@@ -874,7 +874,16 @@ public abstract class Character implements Serializable {
             statusRun(Trigger.ADDING_DEBUFF, new ParamStatus(newStatus));
         }
 
-        return Optional.of(newStatus);
+        return true;
+    }
+
+    /**
+     * 开销好像比不过现在在用的静态方法,但是那个方法写起来太麻烦了,或者写一个通用的静态方法?
+     * 测试发现游戏里改变了在状态栏的位置,应该是替换了新的
+     */
+    public <T extends Status> void replaceStatus(T newStatus) {
+        removeStatus(newStatus.getClass());
+        addStatus(newStatus);
     }
 
     public boolean isIgnoreChangeMaxHp() {
@@ -899,14 +908,15 @@ public abstract class Character implements Serializable {
     }
 
     public <T extends Status> void removeStatus(Class<T> clazz) {
-        for (Status status : statuses) {
-            if (clazz.isInstance(status)) {
-                status.beforeDelete();
-                statuses.remove(status);
+        Iterator<Status> iterator = statuses.iterator();
+        while (iterator.hasNext()) {
+            Status next = iterator.next();
+            if (clazz.isInstance(next)) {
+                next.beforeDelete();
+                iterator.remove();
                 return;
             }
         }
-
     }
 
     public void removeStatus(Status status) {
