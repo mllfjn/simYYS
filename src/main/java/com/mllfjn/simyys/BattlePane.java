@@ -6,8 +6,10 @@ import com.mllfjn.simyys.character.CharacterFactory;
 import com.mllfjn.simyys.character.PropertyKey;
 import com.mllfjn.simyys.character.list.ssr.xunxiangxing.StatusShiShen;
 import com.mllfjn.simyys.character.propertygetter.FlagChangeInfo;
+import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.Status;
+import com.mllfjn.simyys.character.status.determinant.RetainAfterChangeWave;
 import com.mllfjn.simyys.customnode.CustomTextField;
 import com.mllfjn.simyys.customnode.TextFlowLog;
 import com.mllfjn.simyys.guihuo.GuiHuo;
@@ -581,11 +583,11 @@ public class BattlePane {
         return situation.teamPane[team].canSummon();
     }
 
-    public void removeCharacter(Character character) {
-        situation.removeCharacter(character);
-        onTrigger(new EventCharacterDie(character));
+    public void removeCharacter(Character tobeRemovedCharacter) {
+        situation.removeCharacter(tobeRemovedCharacter);
+        onTrigger(new EventCharacterDie(tobeRemovedCharacter));
 
-        int team = character.team;
+        int team = tobeRemovedCharacter.team;
         if (situation.teamPane[team].characters.isEmpty()) {
             situation.addWave(team);
             int wave = situation.getWave(team);
@@ -597,6 +599,21 @@ public class BattlePane {
 
             if (situation.teamPane[team].characters.isEmpty()) {
                 Utils.information(team == 0 ? "失败" : "胜利");
+            } else {
+                // 如果游戏没结束,那么进入新的回目,阵亡方不可以再复活
+                situation.deadCharacters.removeIf(character -> character.team == team);
+                // 让对方的人清一遍状态
+                int enemyTeam = CharacterFinder.getEnemyTeam(team);
+                for (Character character : situation.teamPane[enemyTeam].characters) {
+                    Iterator<Status> iterator = character.getStatuses().iterator();
+                    while (iterator.hasNext()) {
+                        Status status = iterator.next();
+                        if (!(status instanceof RetainAfterChangeWave)) {
+                            status.beforeDelete();
+                            iterator.remove();
+                        }
+                    }
+                }
             }
         }
     }

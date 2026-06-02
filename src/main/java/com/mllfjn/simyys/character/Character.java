@@ -15,6 +15,7 @@ import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.determinant.IgnoreChangeMaxHp;
 import com.mllfjn.simyys.character.status.determinant.IgnoreDebuff;
 import com.mllfjn.simyys.character.status.determinant.RejectAllStatuses;
+import com.mllfjn.simyys.character.status.determinant.RetainAfterDie;
 import com.mllfjn.simyys.character.status.instance.StatusBind;
 import com.mllfjn.simyys.character.status.instance.StatusConfusion;
 import com.mllfjn.simyys.character.status.triggerParam.*;
@@ -1000,6 +1001,14 @@ public abstract class Character implements Serializable {
         statusRun(Trigger.DIE, null);
         // 通过老头死亡时可以叠一层伤魂鸟判断，应该先触发死亡，再执行
         dieHandle();
+        Iterator<Status> iterator = statuses.iterator();
+        while (iterator.hasNext()) {
+            Status status = iterator.next();
+            if (!(status instanceof RetainAfterDie)) {
+                status.beforeDelete();
+                iterator.remove();
+            }
+        }
     }
 
     protected void dieHandle() {

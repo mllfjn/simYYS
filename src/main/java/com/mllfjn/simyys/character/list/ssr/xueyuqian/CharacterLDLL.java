@@ -19,7 +19,7 @@ class CharacterLDLL extends CharacterSummonBase {
 
     private int repeatCount = 0;
 
-    public CharacterLDLL(XueYuQian xueYuQian, double initHpMultiplier) {
+    public CharacterLDLL(XueYuQian xueYuQian, double initHpMultiplier, double location) {
         super(xueYuQian.bp, "龙胆蓝璃", xueYuQian.team);
         this.xueYuQian = xueYuQian;
         xueYuQian.isLDLLExist = true;
@@ -29,14 +29,18 @@ class CharacterLDLL extends CharacterSummonBase {
         setInitCritPower(xueYuQian.getInitCritPower());
         setInitDefense(xueYuQian.getInitDefense());
         setInitSpeed(xueYuQian.getInitSpeed() * 0.95);
+        forceSetLocation(location);
 
         fillSkills();
     }
 
-    void repeatSummon() {
+    void repeatSummon(double location, boolean forceChangeLocation) {
         if (repeatCount < 3) {
             repeatCount++;
             setMaxHp(getMaxHp() + 0.39 * xueYuQian.getInitAttack(), true);
+        }
+        if (forceChangeLocation) {
+            forceSetLocation(location);
         }
     }
 
