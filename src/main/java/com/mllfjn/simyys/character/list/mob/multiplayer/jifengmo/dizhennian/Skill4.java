@@ -46,33 +46,23 @@ class Skill4 extends Skill {
     class StatusNingShiRecordDamage extends Status implements StatusRunnable, Displayable {
         private final Map<Character, Double> map = new HashMap<>();
 
-        private int selfDuration;
-
         public StatusNingShiRecordDamage(Character character) {
             super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-            if (character.isInRound()) {
-                selfDuration = 3;
-            } else {
-                selfDuration = 2;
-            }
+            setDurationType(StatusDurationType.CHI_XU, 2);
         }
 
         @Override
         public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.AFTER_ATTACK || trigger == Trigger.AFTER_ROUND;
+            return trigger == Trigger.AFTER_ATTACK;
         }
 
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            if (trigger == Trigger.AFTER_ROUND) {
-                selfDuration--;
-                return selfDuration == 0;
-            } else if (trigger == Trigger.AFTER_ATTACK) {
-                AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
-                Character attacker = attackInfo.getAttacker();
-                map.put(attacker,
-                        map.getOrDefault(attacker, 0.0) + attackInfo.getTraceableNumber().getNumber());
-            }
+            AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
+            Character attacker = attackInfo.getAttacker();
+            map.put(attacker,
+                    map.getOrDefault(attacker, 0.0) + attackInfo.getTraceableNumber().getNumber());
+
             return false;
         }
 
@@ -92,7 +82,7 @@ class Skill4 extends Skill {
 
         @Override
         public String getDisplayText() {
-            return SkillName + selfDuration;
+            return SkillName + getDuration();
         }
 
         static class StatusHongNing extends Status implements Displayable {

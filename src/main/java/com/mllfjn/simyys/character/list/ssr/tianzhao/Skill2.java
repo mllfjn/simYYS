@@ -105,17 +105,16 @@ class Skill2 extends PassiveSkill {
             implements Displayable, InfluenceDamageWhenAttack, AttributeModifier {
         private static final String StatusName = "光涤";
 
-        private StatusGuangDi(Character from, Character belongTo, int duration) {
+        private StatusGuangDi(Character from, Character belongTo) {
             super(from, belongTo, StatusType.DEBUFF, StatusForm.YIN_JI);
-            setDurationType(StatusDurationType.CHI_XU, duration);
+            setDurationType(StatusDurationType.CHI_XU, 1);
         }
 
         private static void install(Character from, Character belongTo) {
-            int duration = belongTo.isInRound() ? 2 : 1;
             belongTo.getStatus(StatusGuangDi.class)
                     .ifPresentOrElse(
-                            status -> status.setDuration(duration),
-                            () -> belongTo.addStatus(new StatusGuangDi(from, belongTo, duration))
+                            status -> status.setDuration(1),
+                            () -> belongTo.addStatus(new StatusGuangDi(from, belongTo))
                     );
         }
 

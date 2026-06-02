@@ -29,12 +29,14 @@ public abstract class Status implements Serializable {
         }
     }
 
-    public void setDurationType(StatusDurationType settleType, int duration) {
-        this.durationType = settleType;
+    public void setDurationType(StatusDurationType durationType, int duration) {
+        this.durationType = durationType;
         this.duration = duration;
 
-        if (settleType == StatusDurationType.WEI_CHI) {
+        if (durationType == StatusDurationType.WEI_CHI) {
             from.addMaintainedStatus(this);
+        } else if (durationType == StatusDurationType.CHI_XU && belongTo.isInRound()) {
+            this.duration++;
         }
     }
 
@@ -48,6 +50,9 @@ public abstract class Status implements Serializable {
 
     public final void setDuration(int num) {
         duration = num;
+        if (durationType == StatusDurationType.CHI_XU && belongTo.isInRound()) {
+            this.duration++;
+        }
     }
 
     public final void delete() {

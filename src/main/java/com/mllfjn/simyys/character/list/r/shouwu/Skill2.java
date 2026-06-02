@@ -45,7 +45,7 @@ class Skill2 extends PassiveSkill {
 
         public StatusStealCritRate(Character character, Character target) {
             super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-            setDurationType(StatusDurationType.CHI_XU, character.isInRound() ? 2 : 1);
+            setDurationType(StatusDurationType.CHI_XU, 1);
 
             statusBeStolen = new StatusStealCritRate.StatusBeStolen(character, target);
         }
@@ -56,7 +56,7 @@ class Skill2 extends PassiveSkill {
                 statusBeStolen = new StatusBeStolen(belongTo, target);
                 target.addStatus(statusBeStolen);
             }
-            setDuration(belongTo.isInRound() ? 2 : 1);
+            setDuration(1);
         }
 
         @Override

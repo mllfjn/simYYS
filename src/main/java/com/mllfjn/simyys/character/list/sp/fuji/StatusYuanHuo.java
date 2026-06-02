@@ -11,9 +11,9 @@ class StatusYuanHuo extends Status implements StatusRunnable {
     private static final String StatusName = "怨火";
     private static final Skill SKILL = Skill.getInstance(StatusName);
 
-    public StatusYuanHuo(Character from, Character belongTo, int duration) {
+    public StatusYuanHuo(Character from, Character belongTo) {
         super(from, belongTo, StatusType.DEBUFF, StatusForm.YIN_JI);
-        setDurationType(StatusDurationType.CHI_XU, duration);
+        setDurationType(StatusDurationType.CHI_XU, 1);
     }
 
     @Override

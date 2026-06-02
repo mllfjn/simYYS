@@ -104,13 +104,13 @@ class Skill2 extends Skill {
     static class StatusSpeed extends StatusModifyAttribute {
         private StatusSpeed(Character character) {
             super(character, character, StatusType.BUFF, StatusForm.ZHUANG_TAI);
-            setDurationType(StatusDurationType.CHI_XU, character.isInRound() ? 3 : 2);
+            setDurationType(StatusDurationType.CHI_XU, 2);
         }
 
         static void install(Character character) {
             character.getStatus(StatusSpeed.class)
                     .ifPresentOrElse(
-                            status -> status.setDuration(character.isInRound() ? 3 : 2),
+                            status -> status.setDuration(2),
                             () -> character.addStatus(new StatusSpeed(character))
                     );
         }

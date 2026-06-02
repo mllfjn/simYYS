@@ -59,6 +59,7 @@ class Skill5 extends Skill {
             belongTo.getStatus(StatusMie.class).ifPresentOrElse(status -> {
                 if (status.bonus < bonus) {
                     status.delete();
+                    belongTo.addStatus(new StatusMie(from, belongTo, duration, bonus));
                 } else if (status.bonus == bonus && status.getDuration() < duration) {
                     status.setDuration(duration);
                 }

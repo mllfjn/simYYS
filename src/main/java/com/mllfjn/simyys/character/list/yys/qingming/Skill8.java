@@ -57,6 +57,7 @@ class Skill8 extends Skill {
             belongTo.getStatus(StatusXing.class).ifPresentOrElse(status -> {
                 if (status.bonus < bonus) {
                     status.delete();
+                    belongTo.addStatus(new StatusXing(from, belongTo, duration, bonus));
                 } else if (status.bonus == bonus && status.getDuration() < duration) {
                     status.setDuration(duration);
                 }

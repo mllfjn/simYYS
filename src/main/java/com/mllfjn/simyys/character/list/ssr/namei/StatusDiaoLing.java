@@ -22,11 +22,7 @@ public class StatusDiaoLing extends Status implements Displayable, AttributeModi
     public static StatusSupplier getSupplier(int duration) {
         return new StatusSupplier(StatusName, StatusDiaoLing.class, (from, to) ->
                 to.getStatus(StatusDiaoLing.class).ifPresentOrElse(
-                        status -> {
-                            if (status.getDuration() < duration) {
-                                status.setDuration(duration);
-                            }
-                        },
+                        status -> status.setDuration(duration),
                         () -> to.addStatus(new StatusDiaoLing(from, to, duration))
                 )
         );

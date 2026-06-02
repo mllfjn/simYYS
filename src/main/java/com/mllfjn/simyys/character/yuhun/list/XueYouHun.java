@@ -43,17 +43,16 @@ public class XueYouHun extends YuHun implements YuHunAfterCauseAttack, YuHunHitF
     }
 
     static class StatusReduceSpeed extends Status implements Displayable, AttributeModifier {
-        private StatusReduceSpeed(Character from, Character belongTo, int duration) {
+        private StatusReduceSpeed(Character from, Character belongTo) {
             super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
-            setDurationType(StatusDurationType.CHI_XU, duration);
+            setDurationType(StatusDurationType.CHI_XU, 1);
         }
 
         static void install(Character from, Character belongTo) {
-            int duration = belongTo.isInRound() ? 2 : 1;
             belongTo.getStatus(StatusReduceSpeed.class)
                     .ifPresentOrElse(
-                            status -> status.setDuration(duration),
-                            () -> belongTo.addStatus(new StatusReduceSpeed(from, belongTo, duration))
+                            status -> status.setDuration(1),
+                            () -> belongTo.addStatus(new StatusReduceSpeed(from, belongTo))
                     );
         }
 

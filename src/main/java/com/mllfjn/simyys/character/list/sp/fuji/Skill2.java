@@ -171,7 +171,7 @@ class Skill2 extends Skill {
                 public Optional<Character> usePrivate(BattlePane bp) {
                     getBelongTo().doInteractive(interactive -> {
                         interactive.attackTypical(this, target, 200, AttackType.DAN_TI);
-                        target.addStatus(new StatusYuanHuo(CharacterSheLing.this, target, 1));
+                        target.addStatus(new StatusYuanHuo(CharacterSheLing.this, target));
                         if (isLv2) {
                             interactive.increaseLocation(owner, 30);
                         }

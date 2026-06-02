@@ -20,7 +20,7 @@ class StatusHZBH extends Status implements StatusRunnable, Displayable {
         super(from, belongTo, StatusType.BUFF, StatusForm.YIN_JI);
         this.stack = stack;
 
-        setDurationType(StatusDurationType.CHI_XU, belongTo.isInRound() ? 2 : 1);
+        setDurationType(StatusDurationType.CHI_XU, 1);
     }
 
     static void addStack(Character from, Character belongTo, int stack, boolean isIncreaseSpeed) {
@@ -30,9 +30,7 @@ class StatusHZBH extends Status implements StatusRunnable, Displayable {
                     if (status.stack > 3) {
                         status.stack = 3;
                     }
-                    if (belongTo.isInRound()) {
-                        status.setDuration(2);
-                    }
+                    status.setDuration(1);
                 },
                 () -> belongTo.addStatus(new StatusHZBH(from, belongTo, stack))
         );
@@ -113,15 +111,6 @@ class StatusHZBH extends Status implements StatusRunnable, Displayable {
             } else {
                 character.addStatus(new StatusHZBHSpeed(character, shouldDuration));
             }
-
-            /*character.getStatus(StatusHZBHSpeed.class).ifPresentOrElse(
-                    statusHZBHSpeed -> {
-                        if (statusHZBHSpeed.stack < 3) {
-                            statusHZBHSpeed.stack++;
-                        }
-                    },
-                    () -> character.addStatus(new StatusHZBHSpeed(character))
-            );*/
         }
 
         @Override

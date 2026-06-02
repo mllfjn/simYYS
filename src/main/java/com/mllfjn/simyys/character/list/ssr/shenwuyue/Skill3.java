@@ -69,12 +69,11 @@ class Skill3 extends Skill {
 
         public static void add(Character character, int duration, boolean gainGuiHuo
                 , Skill2.StatusMengShen statusMengShen) {
-            int realDuration = character.isInRound() ? duration + 1 : duration;
             character.getStatus(StatusHuanJingListener.class).ifPresentOrElse(
-                    status -> status.setDuration(realDuration),
+                    status -> status.setDuration(duration),
                     () -> {
                         StatusHuanJingListener status =
-                                new StatusHuanJingListener(character, realDuration);
+                                new StatusHuanJingListener(character, duration);
                         character.addStatus(status);
                         status.addListener(gainGuiHuo, statusMengShen);
                     }
