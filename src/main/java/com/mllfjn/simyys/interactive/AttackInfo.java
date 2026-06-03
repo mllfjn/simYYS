@@ -15,7 +15,6 @@ public class AttackInfo extends InteractiveInfo {
     // 是否穿盾
     private boolean canThroughShield = false;
     // 是否波动
-    private boolean canFluctuate = true;
     private double fluctuationLimit = 0.01;
     // 计算伤害御魂
     private boolean calAttackYuHun = true;
@@ -46,7 +45,7 @@ public class AttackInfo extends InteractiveInfo {
         attackInfo.canCrit = false;
         attackInfo.calZengShang = false;
         attackInfo.calYiShang = false;
-        attackInfo.canFluctuate = false;
+        attackInfo.fluctuationLimit = 0;
 
         return attackInfo;
     }
@@ -127,14 +126,6 @@ public class AttackInfo extends InteractiveInfo {
 
     public void setCanThroughShield(boolean canThroughShield) {
         this.canThroughShield = canThroughShield;
-    }
-
-    public void setCanFluctuate(boolean canFluctuate) {
-        this.canFluctuate = canFluctuate;
-    }
-
-    public boolean isCanFluctuate() {
-        return canFluctuate;
     }
 
     public void setFluctuationLimit(double fluctuationLimit) {

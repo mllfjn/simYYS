@@ -48,7 +48,7 @@ public class TuZhiZhu extends YuHun implements YuHunUnfullMark {
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
             if (trigger == Trigger.CAUSE_ATTACK) {
                 AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
-                if (attackInfo.isCalYuHun()) {
+                if (attackInfo.isCalEffectYuHun()) {
                     Character target = attackInfo.getTarget();
                     // 对怪物造成伤害时
                     if (!target.isMob()) {

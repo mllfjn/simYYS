@@ -162,9 +162,10 @@ public class Interactive {
         }
 
         // 伤害波动
-        if (attackInfo.isCanFluctuate()) {
+        double fluctuationLimit = attackInfo.getFluctuationLimit();
+        if (fluctuationLimit != 0) {
             traceableNumber.mul(
-                    RateController.getFluctuation(bp.calc, attackInfo.getFluctuationLimit()),
+                    RateController.getFluctuation(bp.calc, fluctuationLimit),
                     "伤害波动"
             );
         }
