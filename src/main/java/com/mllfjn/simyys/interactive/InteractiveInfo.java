@@ -19,8 +19,6 @@ public abstract class InteractiveInfo {
     protected boolean canCrit = true;
     // 是否暴击
     protected Boolean crit;
-    // 计算御魂
-    protected boolean calYuHun = true;
     // 是否被取消
     private boolean cancel = false;
 
@@ -59,10 +57,6 @@ public abstract class InteractiveInfo {
         return canCrit;
     }
 
-    public boolean isCalYuHun() {
-        return calYuHun;
-    }
-
     public Character getAttacker() {
         return attacker;
     }
@@ -81,14 +75,6 @@ public abstract class InteractiveInfo {
 
     public Skill getSkill() {
         return skill;
-    }
-
-    public void setCanCrit(boolean canCrit) {
-        this.canCrit = canCrit;
-    }
-
-    public void setCalYuHun(boolean calYuHun) {
-        this.calYuHun = calYuHun;
     }
 
     public void setMultiplier(double multiplier) {

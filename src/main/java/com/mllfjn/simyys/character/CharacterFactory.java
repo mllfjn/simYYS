@@ -28,6 +28,7 @@ import com.mllfjn.simyys.character.list.ssr.guiqie.GuiQie;
 import com.mllfjn.simyys.character.list.ssr.shenwuyue.ShenWuYue;
 import com.mllfjn.simyys.character.list.ssr.shijiamei.ShiJiaMei;
 import com.mllfjn.simyys.character.list.ssr.shiling.ShiLing;
+import com.mllfjn.simyys.character.list.ssr.sijinshen.SiJinShen;
 import com.mllfjn.simyys.character.list.ssr.tianzhao.TianZhao;
 import com.mllfjn.simyys.character.list.ssr.xueyuqian.XueYuQian;
 import com.mllfjn.simyys.character.list.ssr.xunxiangxing.XunXiangXing;
@@ -51,14 +52,14 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class CharacterFactory {
     public static final Map<String, Map<String, Class<? extends Character>>> characterMap = new LinkedHashMap<>();
     private static final Map<String, Image> iconMap = new HashMap<>();
+    public static final List<Class<? extends Character>> FIRE_CHARACTER =
+            List.of(FuJi.class, SPHongYe.class, ShiLing.class, SiJinShen.class, QingJi.class);
+
     static {
         Map<String, Class<? extends Character>> yysMap = new LinkedHashMap<>();
         characterMap.put("阴阳师", yysMap);
@@ -100,6 +101,7 @@ public class CharacterFactory {
         ssrMap.put(TianZhao.CharacterName, TianZhao.class);
         ssrMap.put(XueYuQian.CharacterName, XueYuQian.class);
         ssrMap.put(BuJianYue.CharacterName, BuJianYue.class);
+        ssrMap.put(SiJinShen.CharacterName, SiJinShen.class);
 
 
 

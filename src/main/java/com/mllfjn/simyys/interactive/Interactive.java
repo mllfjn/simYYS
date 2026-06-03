@@ -161,20 +161,20 @@ public class Interactive {
             traceableNumber.mul(300.0 / (300 + defense), (int) defense + "防御");
         }
 
-        // 一般增伤乘区
-        if (attackInfo.isCalZengShang()) {
-            double zengShang = owner.getZengShang();
-            if (zengShang != 0) {
-                traceableNumber.mul(1 + zengShang / 100, "增伤");
-            }
-        }
-
         // 伤害波动
         if (attackInfo.isCanFluctuate()) {
             traceableNumber.mul(
                     RateController.getFluctuation(bp.calc, attackInfo.getFluctuationLimit()),
                     "伤害波动"
             );
+        }
+
+        // 一般增伤乘区
+        if (attackInfo.isCalZengShang()) {
+            double zengShang = owner.getZengShang();
+            if (zengShang != 0) {
+                traceableNumber.mul(1 + zengShang / 100, "增伤");
+            }
         }
 
         // 易伤
@@ -186,7 +186,7 @@ public class Interactive {
         }
 
         // 地震鲶,荒骷髅,雪幽魂等被攻击触发
-        if (attackInfo.isCalYuHun()) {
+        if (attackInfo.isCalAttackYuHun()) {
             target.forEachYuHun(yuHun -> {
                 if (yuHun instanceof YuHunHitFeedBack f) {
                     f.hitFeedBack(attackInfo);
@@ -214,7 +214,7 @@ public class Interactive {
         }
 
         // 部分造成伤害时生效的御魂(破势狂骨等)
-        if (traceableNumber.getNumber() > 0 && attackInfo.isCalYuHun()) {
+        if (attackInfo.isCalAttackYuHun() && traceableNumber.getNumber() > 0) {
             owner.forEachYuHun(yuHun -> {
                 if (yuHun instanceof YuHunAttack yei) {
                     yei.effectInfo(attackInfo);
@@ -235,7 +235,7 @@ public class Interactive {
                 , attackInfo.isCrit() ? TextFlowLog.TextColor.CRITICAL : TextFlowLog.TextColor.ATTACK, size));
 
         // 部分造成伤害后生效的御魂(日女等)
-        if (traceableNumber.getNumber() > 0 && attackInfo.isCalYuHun()) {
+        if (traceableNumber.getNumber() > 0 && attackInfo.isCalEffectYuHun()) {
             owner.forEachYuHun(yuHun -> {
                 if (yuHun instanceof YuHunAfterCauseAttack yca) {
                     yca.action(attackInfo, this);

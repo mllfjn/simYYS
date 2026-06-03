@@ -218,10 +218,12 @@ public class RateController implements Serializable {
 
     public static double getFluctuation(RateCalc calc, double fluctuationLimit) {
         if (calc.isControlFluctuation()) {
+            double fluctuation = calc.getFluctuation();
             if (fluctuationLimit == 0.01) {
-                return calc.getSimpleFluctuation();
+                return fluctuation;
             } else {
-                return calc.getFluctuation(fluctuationLimit);
+                // 将[0.99,1.01]线性映射到[1-delta,1+delta]
+                return 1 + (fluctuation - 1) * fluctuationLimit * 100;
             }
         } else {
             return random.nextDouble(1 - fluctuationLimit, 1 + fluctuationLimit);

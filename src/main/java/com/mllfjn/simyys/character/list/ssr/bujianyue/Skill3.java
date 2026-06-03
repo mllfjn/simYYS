@@ -18,7 +18,7 @@ class Skill3 extends Skill {
     private static final String SkillName = "水宿山行";
 
     private final Skill2 skill2;
-    private StatusJieJieContainer status;
+    StatusJieJieContainer status;
 
     public Skill3(Character belongTo, int level, Skill2 skill2) {
         super(belongTo, level, 3, 0, 3);

@@ -46,7 +46,7 @@ class Skill3 extends Skill {
                 AttackInfo info = AttackInfo
                         .createTypicalAttack(belongTo, this, character, multiplier, AttackType.QUN_TI);
                 if (getLevel() >= 5) {
-                    info.setCalYuHun(false);
+                    info.setNotCalYuHun();
                 }
                 return info;
             });

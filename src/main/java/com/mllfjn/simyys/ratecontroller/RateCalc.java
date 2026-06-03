@@ -115,12 +115,7 @@ public class RateCalc {
         return mainSwitch.get() && rangeController.selectedProperty().get();
     }
 
-    public double getFluctuation(double delta) {
-        // 将[0.99,1.01]线性映射到[1-delta,1+delta]
-        return 1 + (rangeController.getValue() - 1) * delta * 100;
-    }
-
-    public double getSimpleFluctuation() {
+    public double getFluctuation() {
         return rangeController.getValue();
     }
 }

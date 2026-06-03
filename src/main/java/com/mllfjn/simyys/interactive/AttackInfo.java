@@ -17,6 +17,10 @@ public class AttackInfo extends InteractiveInfo {
     // 是否波动
     private boolean canFluctuate = true;
     private double fluctuationLimit = 0.01;
+    // 计算伤害御魂
+    private boolean calAttackYuHun = true;
+    // 计算效果类御魂
+    private boolean calEffectYuHun = true;
 
     // 伤害上限
     private double limit = 10000000;
@@ -47,14 +51,14 @@ public class AttackInfo extends InteractiveInfo {
         return attackInfo;
     }
 
-    // 间接伤害:不会触发御魂效果,TODO 无法被分担
-    // 对防御为0的敌人必定暴击
+    // 间接伤害:不会触发御魂效果,对防御为0的敌人必定暴击 TODO 无法被分担
     public static AttackInfo createJianJieAttack(Character attacker, Skill skill, Character target,
                                                  double basicNumber
     ) {
         AttackInfo attackInfo = new AttackInfo(attacker, skill, target, AttackType.JIAN_JIE, basicNumber);
 
-        attackInfo.calYuHun = false;
+        attackInfo.calAttackYuHun = false;
+        attackInfo.calEffectYuHun = false;
 
         // 防御为0必定暴击
         if (TraversalOrderManager.getActualDefense(attacker, target, AttackType.JIAN_JIE) == 0) {
@@ -66,8 +70,7 @@ public class AttackInfo extends InteractiveInfo {
         return attackInfo;
     }
 
-    // 传导伤害:不会暴击,不触发御魂TODO薙魂
-    // 没写，但是不吃防御、增伤、易伤
+    // 传导伤害:不会暴击,不触发御魂,不吃防御、增伤、易伤TODO薙魂
     public static AttackInfo createChuanDaoAttack(Character attacker, Skill skill, Character target, double basicNumber) {
         AttackInfo attackInfo = new AttackInfo(attacker, skill, target, AttackType.CHUAN_DAO, basicNumber);
 
@@ -75,6 +78,18 @@ public class AttackInfo extends InteractiveInfo {
         attackInfo.calDefence = false;
         attackInfo.calZengShang = false;
         attackInfo.calYiShang = false;
+        return attackInfo;
+    }
+
+    // 固定伤害:无视防御,不会暴击,不受增减伤效果影响
+    public static AttackInfo createGuDingAttack(Character attacker, Skill skill, Character target, double basicNumber) {
+        AttackInfo attackInfo = new AttackInfo(attacker, skill, target, AttackType.GU_DING, basicNumber);
+        attackInfo.calDefence = false;
+        attackInfo.canCrit = false;
+        attackInfo.calZengShang = false;
+        attackInfo.calYiShang = false;
+        attackInfo.calAttackYuHun = false;
+
         return attackInfo;
     }
 
@@ -106,10 +121,6 @@ public class AttackInfo extends InteractiveInfo {
         this.calDefence = calDefence;
     }
 
-    public void setCalZengShang(boolean calZengShang) {
-        this.calZengShang = calZengShang;
-    }
-
     public boolean isCanThroughShield() {
         return canThroughShield;
     }
@@ -132,5 +143,18 @@ public class AttackInfo extends InteractiveInfo {
 
     public double getFluctuationLimit() {
         return fluctuationLimit;
+    }
+
+    public void setNotCalYuHun() {
+        this.calAttackYuHun = false;
+        this.calEffectYuHun = false;
+    }
+
+    public boolean isCalAttackYuHun() {
+        return calAttackYuHun;
+    }
+
+    public boolean isCalEffectYuHun() {
+        return calEffectYuHun;
     }
 }

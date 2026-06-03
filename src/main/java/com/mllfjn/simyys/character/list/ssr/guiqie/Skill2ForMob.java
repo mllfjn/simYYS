@@ -35,7 +35,7 @@ class Skill2ForMob extends PassiveSkill {
                         AttackInfo attackInfo = AttackInfo
                                 .createTypicalAttack(belongTo, this, c, 125, AttackType.QUN_TI);
                         attackInfo.setCanThroughShield(true);
-                        attackInfo.setCalYuHun(false);
+                        attackInfo.setNotCalYuHun();
                         return attackInfo;
                     });
                     for (Character character : list) {

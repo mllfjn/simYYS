@@ -38,7 +38,7 @@ class Skill6 extends PassiveSkill {
                     .createTypicalAttack(belongTo, this, target, multiplier, AttackType.DAN_TI);
 
             if (level >= 5) {
-                interactiveInfo.setCalYuHun(false);
+                interactiveInfo.setNotCalYuHun();
             }
 
             interactive.attack(interactiveInfo);

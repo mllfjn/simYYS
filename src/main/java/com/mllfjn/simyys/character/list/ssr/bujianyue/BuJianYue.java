@@ -5,6 +5,17 @@ import com.mllfjn.simyys.character.CharacterShiShenBase;
 public class BuJianYue extends CharacterShiShenBase {
     public static final String CharacterName = "不见岳";
 
+    private Skill3 skill3;
+
+    @Override
+    protected boolean useSkillAuto() {
+        if (skill3.status == null) {
+            return tryUseSkill(3);
+        } else {
+            return false;
+        }
+    }
+
     @Override
     protected String getDefaultSkillLevel() {
         return "555";
@@ -25,6 +36,7 @@ public class BuJianYue extends CharacterShiShenBase {
         addSkill(new Skill1(this, skill1Level));
         Skill2 skill2 = new Skill2(this, skill2Level);
         addSkill(skill2);
-        addSkill(new Skill3(this, skill3Level, skill2));
+        skill3 = new Skill3(this, skill3Level, skill2);
+        addSkill(skill3);
     }
 }

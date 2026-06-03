@@ -6,4 +6,5 @@ public enum AttackType {
     JIAN_JIE,
     ZHEN_SHI,
     CHUAN_DAO,
+    GU_DING,
 }
