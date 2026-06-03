@@ -1,7 +1,7 @@
 package com.mllfjn.simyys.character.list.ssr.xunxiangxing;
 
 import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.battleevent.BattleActionListener;
+import com.mllfjn.simyys.battleevent.StatusAdder;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
@@ -13,29 +13,24 @@ class StatusHuanJing extends Status implements Displayable, InfluenceDamageWhenA
 
     private final boolean isAwakening;
     private final Skill2 skill2;
-    private final BattleActionListener listener;
+    private final StatusAdder<?> adder;
 
     private StatusHuanJing(Skill2 skill2, Character character) {
         super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
         this.skill2 = skill2;
         setDurationType(StatusDurationType.WEI_CHI, 3);
-        listener = character.bp.forEveryone(character, c -> {
-            // 除自身外非召唤物友方
-            if (c.team == character.team && !c.isSummon() && c != character) {
-                c.addStatus(new StatusAfterRound(character, c));
-            }
-        });
+        adder = character.bp.addStatusAdder(c ->
+                // 除自身外非召唤物友方
+                c.team == character.team && c != character && !c.isSummon()
+                        ? new StatusAfterRound(character, c)
+                        : null
+        );
         isAwakening = ((XunXiangXing) character).awakening;
     }
 
     @Override
     public void beforeDelete() {
-        belongTo.bp.removeActionListener(listener);
-        for (Character c : belongTo.bp.situation.characters) {
-            if (c.team == belongTo.team && !c.isSummon() && c != belongTo) {
-                c.removeStatus(StatusAfterRound.class);
-            }
-        }
+        adder.deleteAndRemove();
     }
 
     void usedSkill3() {

@@ -1,7 +1,7 @@
 package com.mllfjn.simyys.character.list.ssr.maochuan;
 
 import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.battleevent.BattleActionListener;
+import com.mllfjn.simyys.battleevent.StatusAdder;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.status.*;
@@ -15,7 +15,7 @@ class Skill2 extends PassiveSkill {
     final int rate;
     final boolean selfDouble;
 
-    private BattleActionListener listener;
+    private StatusAdder<?> adder;
 
     public Skill2(Character belongTo, int level) {
         super(belongTo, level, 2);
@@ -37,21 +37,18 @@ class Skill2 extends PassiveSkill {
     @Override
     public void enable() {
         Character belongTo = getBelongTo();
-        listener = belongTo.bp.forEveryone(belongTo, character -> {
-            if (character.team == belongTo.team) {
-                character.addStatus(new StatusPassByListener(belongTo, character));
-            }
-        });
+        adder = belongTo.bp.addStatusAdder(c ->
+                c.team == belongTo.team
+                        ? new StatusPassByListener(belongTo, c)
+                        : null
+        );
     }
 
     @Override
     public void disable() {
-        if (listener != null) {
-            getBelongTo().bp.removeActionListener(listener);
-            listener = null;
-            for (Character character : getBelongTo().bp.situation.teamPane[getBelongTo().team].characters) {
-                character.removeStatus(StatusPassByListener.class);
-            }
+        if (adder != null) {
+            adder.deleteAndRemove();
+            adder = null;
         }
     }
 

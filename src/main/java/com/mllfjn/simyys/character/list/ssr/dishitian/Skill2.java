@@ -1,6 +1,7 @@
 package com.mllfjn.simyys.character.list.ssr.dishitian;
 
 import com.mllfjn.simyys.BattlePane;
+import com.mllfjn.simyys.battleevent.StatusAdder;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
@@ -15,7 +16,9 @@ class Skill2 extends Skill {
 
     public Skill2(Character belongTo, int level) {
         super(belongTo, level, 2, 0, 2);
-        belongTo.addStatus(new StatusHuanJingListener(belongTo, level >= 3));
+        belongTo.bp.addPriorityMove(belongTo,
+                () -> belongTo.addStatus(new StatusHuanJingListener(belongTo, level >= 3))
+        );
     }
 
     @Override
@@ -87,7 +90,7 @@ class Skill2 extends Skill {
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
             if (trigger == Trigger.BEFORE_ROUND) {
-                ((DiShiTian) belongTo).openHuanJing();
+                belongTo.addStatus(new StatusHuanJingContainer(((DiShiTian) belongTo)));
                 return true;
             } else {
                 belongTo.doInteractive(interactive ->
@@ -95,6 +98,27 @@ class Skill2 extends Skill {
                 );
             }
             return false;
+        }
+
+        private static class StatusHuanJingContainer extends Status {
+            private final StatusAdder<?> adder;
+
+            public StatusHuanJingContainer(DiShiTian belongTo) {
+                super(belongTo, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
+
+                adder = belongTo.bp.addStatusAdder(c ->
+                        c.team == belongTo.team
+                                ? new DiShiTian.StatusReduceSpeed(belongTo, c)
+                                : c.isYYS() || c.isShiShen()
+                                ? new DiShiTian.StatusIncreaseLocation(belongTo, c)
+                                : null
+                );
+            }
+
+            @Override
+            public void beforeDelete() {
+                adder.deleteAndRemove();
+            }
         }
     }
 }

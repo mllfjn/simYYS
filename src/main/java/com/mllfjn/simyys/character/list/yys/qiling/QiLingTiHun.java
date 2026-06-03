@@ -1,7 +1,7 @@
 package com.mllfjn.simyys.character.list.yys.qiling;
 
 import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.battleevent.BattleActionListener;
+import com.mllfjn.simyys.battleevent.StatusAdder;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
@@ -23,38 +23,30 @@ class QiLingTiHun {
     }
 
     static class StatusQLTHListener extends Status implements StatusRunnable {
-        private final BattleActionListener listener;
+        private final StatusAdder<?> adder;
         private int cooling = 0;
         private int remainingTimes = 3;
 
         public StatusQLTHListener(Character character) {
             super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-            listener = character.bp.forEveryone(character, c -> {
-                if (c.team == character.team && c != character) {
-                    c.addStatus(new StatusTHPreventDie(character, c));
-                }
-            });
-            character.addStatus(new StatusDieListener(character));
+            adder = character.bp.addStatusAdder(c ->
+                    c.team == character.team && c != character
+                            ? new StatusTHPreventDie(character, c)
+                            : null
+            );
         }
 
         public void takeEffect() {
             if (remainingTimes == 1) {
-                belongTo.bp.removeActionListener(listener);
-                removePreventDie();
-                belongTo.removeStatus(StatusDieListener.class);
+                delete();
             } else {
                 remainingTimes--;
             }
         }
 
-        public void removePreventDie() {
-            List<Character> list = new CharacterFinder(belongTo, true)
-                    .filterTeammate()
-                    .filterSelf()
-                    .getList();
-            for (Character character : list) {
-                character.removeStatus(StatusTHPreventDie.class);
-            }
+        @Override
+        public void beforeDelete() {
+            adder.deleteAndRemove();
         }
 
         @Override
@@ -101,24 +93,6 @@ class QiLingTiHun {
             }
             // 冷却2回合,好像实际是3回合
             cooling = 3;
-        }
-
-        class StatusDieListener extends Status implements StatusRunnable {
-
-            public StatusDieListener(Character c) {
-                super(c, c, StatusType.SPECIAL, StatusForm.SPECIAL);
-            }
-
-            @Override
-            public boolean runnable(Trigger trigger) {
-                return trigger == Trigger.DIE;
-            }
-
-            @Override
-            public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-                StatusQLTHListener.this.removePreventDie();
-                return true;
-            }
         }
 
         class StatusTHPreventDie extends Status implements PreventDie {

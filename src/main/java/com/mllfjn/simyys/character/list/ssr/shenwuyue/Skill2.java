@@ -1,5 +1,6 @@
 package com.mllfjn.simyys.character.list.ssr.shenwuyue;
 
+import com.mllfjn.simyys.battleevent.StatusAdder;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
@@ -28,11 +29,7 @@ class Skill2 extends PassiveSkill {
 
         belongTo.bp.addPriorityMove(belongTo, () -> {
             belongTo.addStatus(new StatusMeiMengBiCheng(belongTo, belongTo));
-            belongTo.bp.forEveryone(belongTo, c -> {
-                if (c.team == belongTo.team) {
-                    c.addStatus(new StatusJianShang(belongTo, c));
-                }
-            });
+            belongTo.addStatus(new JianShangContainer(belongTo));
             if (level == 5) {
                 belongTo.addStack();
             }
@@ -77,6 +74,24 @@ class Skill2 extends PassiveSkill {
         @Override
         public String getDisplayText() {
             return StatusName + stack;
+        }
+    }
+
+    static class JianShangContainer extends Status {
+        private final StatusAdder<?> adder;
+
+        public JianShangContainer(Character character) {
+            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
+            adder = character.bp.addStatusAdder(c ->
+                    c.team == belongTo.team
+                            ? new StatusJianShang(belongTo, c)
+                            : null
+            );
+        }
+
+        @Override
+        public void beforeDelete() {
+            adder.deleteAndRemove();
         }
     }
 

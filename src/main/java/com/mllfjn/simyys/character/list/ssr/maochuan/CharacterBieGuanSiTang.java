@@ -1,5 +1,6 @@
 package com.mllfjn.simyys.character.list.ssr.maochuan;
 
+import com.mllfjn.simyys.battleevent.StatusAdder;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.CharacterSummonBase;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
@@ -21,6 +22,7 @@ class CharacterBieGuanSiTang extends CharacterSummonBase {
     private final MaoChuan maoChuan;
     private final double puGongDamageIncrease;
     private final Skill2 skill2;
+    private final StatusAdder<?> adder;
 
     public CharacterBieGuanSiTang(MaoChuan maoChuan, double puGongDamageIncrease, Skill2 skill2) {
         super(maoChuan.bp, CharacterName, maoChuan.team);
@@ -33,11 +35,11 @@ class CharacterBieGuanSiTang extends CharacterSummonBase {
         forceSetMaxHp(5.5 * maoChuan.getAttack(), true);
         setInitDefense(maoChuan.getDefence());
 
-        bp.forEveryone(this, c -> {
-            if (c.team == this.team) {
-                c.addStatus(new StatusPuGongDamageIncrease(this, c));
-            }
-        });
+        adder = bp.addStatusAdder(c ->
+                c.team == this.team
+                        ? new StatusPuGongDamageIncrease(this, c)
+                        : null
+        );
 
         addStatus(new StatusBoss(this));
 
@@ -83,12 +85,7 @@ class CharacterBieGuanSiTang extends CharacterSummonBase {
     @Override
     protected void dieHandle() {
         maoChuan.setBieGuanSiTang(null);
-        List<Character> list = new CharacterFinder(this, true)
-                .filterTeammate()
-                .getList();
-        for (Character character : list) {
-            character.removeStatus(StatusPuGongDamageIncrease.class);
-        }
+        adder.deleteAndRemove();
     }
 
     class StatusPuGongDamageIncrease extends Status implements InfluenceDamageWhenAttack {

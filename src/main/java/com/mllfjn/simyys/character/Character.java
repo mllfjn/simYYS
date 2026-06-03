@@ -596,6 +596,10 @@ public abstract class Character implements Serializable {
         });
     }
 
+    public void removeSkill(Skill skill) {
+        skills.remove(skill);
+    }
+
     public boolean tryUseSkill(int skillID) {
         return getSkill(skillID)
                 .map(skill -> skill.tryUse(bp))

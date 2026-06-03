@@ -18,11 +18,11 @@ class Skill2 extends Skill {
         // 持有两把刃时获得的效果
         belongTo.addStatus(new StatusRenBuff(belongTo, level));
         // 敌方式神回合外行动监听
-        belongTo.bp.forEveryone(belongTo, character -> {
-            if (character.team != belongTo.team && character.isShiShen()) {
-                character.addStatus(new StatusOutRoundActionListener(belongTo, character));
-            }
-        });
+        belongTo.bp.addStatusAdder(c ->
+                c.team != belongTo.team && c.isShiShen()
+                        ? new StatusOutRoundActionListener(belongTo, c)
+                        : null
+        );
         // 先机获得花祓
         if (level >= 5) {
             belongTo.bp.addPriorityMove(belongTo, () -> StatusHuaFu.addStack(belongTo, 2));

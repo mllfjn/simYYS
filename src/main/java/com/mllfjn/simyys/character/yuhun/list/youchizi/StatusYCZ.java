@@ -1,36 +1,27 @@
 package com.mllfjn.simyys.character.yuhun.list.youchizi;
 
-import com.mllfjn.simyys.battleevent.BattleActionListener;
+import com.mllfjn.simyys.battleevent.StatusAdder;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.status.*;
-
-import java.util.List;
 
 public class StatusYCZ extends Status implements Displayable {
     private int stack = 2;
-    BattleActionListener listener;
+    private final StatusAdder<?> adder;
 
     StatusYCZ(Character character) {
         super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-        listener = character.bp.forEveryone(character, c -> {
-            if (c.team == character.team) {
-                c.addStatus(new StatusYCZDefense(character, c));
-            }
-        });
+        adder = character.bp.addStatusAdder(c ->
+                c.team == character.team
+                        ? new StatusYCZDefense(character, c)
+                        : null
+        );
         character.bp.getGuiHuoInstance(character.team).setYCZ(this);
     }
 
     public void use(int usedCount) {
         if (usedCount == stack) {
-            List<Character> list = new CharacterFinder(belongTo, true)
-                    .filterTeammate()
-                    .getList();
-            for (Character character : list) {
-                character.removeStatus(StatusYCZDefense.class);
-            }
-            belongTo.bp.removeActionListener(listener);
+            adder.deleteAndRemove();
             belongTo.bp.getGuiHuoInstance(belongTo.team).setYCZ(null);
             delete();
         } else {

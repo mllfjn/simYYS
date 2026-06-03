@@ -1,13 +1,9 @@
 package com.mllfjn.simyys.character.list.sp.luwan;
 
 import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.battleevent.BattleActionListener;
-import com.mllfjn.simyys.battleevent.BattleEvent;
-import com.mllfjn.simyys.battleevent.EventActionDone;
-import com.mllfjn.simyys.battleevent.EventCharacterDie;
+import com.mllfjn.simyys.battleevent.*;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.determinant.IgnoreDebuff;
@@ -16,7 +12,6 @@ import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.AttackType;
 
-import java.util.List;
 import java.util.Optional;
 
 class Skill2 extends Skill {
@@ -68,7 +63,7 @@ class Skill2 extends Skill {
         private static final String StatusName = "驭魂";
 
         private final BattleActionListener listener;
-        private final BattleActionListener everyone;
+        private final StatusAdder<?> adder;
 
         private final boolean reduceDamage;
 
@@ -99,11 +94,11 @@ class Skill2 extends Skill {
                 }
             };
 
-            everyone = belongTo.bp.forEveryone(belongTo, c -> {
-                if (c.team == belongTo.team && c != belongTo) {
-                    c.addStatus(new StatusLuWanUseSkillListener(character, c));
-                }
-            });
+            adder = belongTo.bp.addStatusAdder(c ->
+                    c.team == belongTo.team && c != belongTo
+                            ? new StatusLuWanUseSkillListener(character, c)
+                            : null
+            );
 
             character.bp.addActionListener(listener);
         }
@@ -130,14 +125,7 @@ class Skill2 extends Skill {
         @Override
         public void beforeDelete() {
             belongTo.bp.removeActionListener(listener);
-            belongTo.bp.removeActionListener(everyone);
-            List<Character> list = new CharacterFinder(belongTo, true)
-                    .filterTeammate()
-                    .filterSelf()
-                    .getList();
-            for (Character character : list) {
-                character.removeStatus(StatusLuWanUseSkillListener.class);
-            }
+            adder.deleteAndRemove();
         }
 
         @Override

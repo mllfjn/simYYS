@@ -17,16 +17,16 @@ class Skill2 extends Skill {
         super(belongTo, level, 0, 0, 2);
 
         belongTo.addStatus(new StatusUseSkillListener(belongTo));
-        belongTo.bp.forEveryone(belongTo, c -> {
-            if (c.team == belongTo.team && !c.isSummon() && c != belongTo) {
-                c.addSkill(new SkillHeShou(belongTo, c, level >= 3));
-            }
-        });
+        belongTo.bp.addStatusAdder(c ->
+                c.team == belongTo.team && !c.isSummon() && c != belongTo
+                        ? new HeShouContainer(belongTo, c, level >= 3)
+                        : null
+        );
 
         if (level >= 5) {
-            belongTo.bp.addPriorityMove(belongTo, () -> {
-                StatusHZBH.addStack(belongTo, belongTo, 1, false);
-            });
+            belongTo.bp.addPriorityMove(belongTo, () ->
+                    StatusHZBH.addStack(belongTo, belongTo, 1, false)
+            );
         }
     }
 
@@ -83,6 +83,21 @@ class Skill2 extends Skill {
                 return StatusJiuWei.addStack(belongTo);
             }
             return false;
+        }
+    }
+
+    static class HeShouContainer extends Status {
+        private final Skill skill;
+
+        public HeShouContainer(GeYe from, Character belongTo, boolean isIncreaseSpeed) {
+            super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
+            skill = new SkillHeShou(from, belongTo, isIncreaseSpeed);
+            belongTo.addSkill(skill);
+        }
+
+        @Override
+        public void beforeDelete() {
+            belongTo.removeSkill(skill);
         }
     }
 

@@ -1,9 +1,8 @@
 package com.mllfjn.simyys.character.yuhun.list;
 
 import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.battleevent.BattleActionListener;
+import com.mllfjn.simyys.battleevent.StatusAdder;
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
@@ -11,12 +10,10 @@ import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunSealResponse;
 import com.mllfjn.simyys.interactive.AttackInfo;
 
-import java.util.List;
-
 public class FengHaiTu extends YuHun implements YuHunSealResponse {
     public static final String YuHunName = "奉海图";
 
-    private BattleActionListener listener;
+    private StatusAdder<?> adder;
 
     @Override
     public String getName() {
@@ -25,24 +22,18 @@ public class FengHaiTu extends YuHun implements YuHunSealResponse {
 
     @Override
     public void enable() {
-        listener = character.bp.forEveryone(character, c -> {
-            if (c.team == character.team) {
-                c.addStatus(new StatusHTListener(character, c));
-            }
-        });
+        adder = character.bp.addStatusAdder(c ->
+                c.team == character.team
+                        ? new StatusHTListener(character, c)
+                        : null
+        );
     }
 
     @Override
     public void disable() {
-        if (listener != null) {
-            character.bp.removeActionListener(listener);
-            List<Character> list = new CharacterFinder(character, true)
-                    .filterTeammate()
-                    .getList();
-            for (Character c : list) {
-                c.removeStatus(StatusHTListener.class);
-            }
-            listener = null;
+        if (adder != null) {
+            adder.deleteAndRemove();
+            adder = null;
         }
     }
 

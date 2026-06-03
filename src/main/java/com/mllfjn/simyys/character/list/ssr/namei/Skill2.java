@@ -1,6 +1,7 @@
 package com.mllfjn.simyys.character.list.ssr.namei;
 
 import com.mllfjn.simyys.BattlePane;
+import com.mllfjn.simyys.battleevent.StatusAdder;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
@@ -8,7 +9,6 @@ import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
-import java.util.List;
 import java.util.Optional;
 
 class Skill2 extends Skill {
@@ -17,6 +17,7 @@ class Skill2 extends Skill {
     private final boolean awakening;
 
     private int times = 3;
+    private StatusAdder<?> adder;
 
     public Skill2(NaMei naMei, boolean awakening, int level) {
         super(naMei, level, 2, 0, 2);
@@ -29,11 +30,11 @@ class Skill2 extends Skill {
 
         // lv2-当场上非召唤物友方目标首次剩余1点生命时，速度提升50%，持续2回合(每个目标至多生效1次,单次战斗累计至多生效3次)
         if (level >= 2) {
-            naMei.bp.forEveryone(naMei, c -> {
-                if (c.team == naMei.team && !c.isSummon()) {
-                    c.addStatus(new StatusHpChangeListener(naMei, c, level >= 3));
-                }
-            });
+            adder = naMei.bp.addStatusAdder(c ->
+                    c.team == naMei.team && !c.isSummon()
+                            ? new StatusHpChangeListener(naMei, c, level >= 3)
+                            : null
+            );
         }
     }
 
@@ -42,6 +43,7 @@ class Skill2 extends Skill {
         this.useWithoutCost();
         useFront = false;
     }
+
     @Override
     public Optional<Character> usePrivate(BattlePane bp) {
         Character target = getTarget();
@@ -95,13 +97,7 @@ class Skill2 extends Skill {
                     belongTo.addStatus(new StatusNaMeiCritPower(from, belongTo));
                 }
                 if (Skill2.this.times == 1) {
-                    List<Character> list = new CharacterFinder(from, true)
-                            .filterTeammate()
-                            .filterSummon(false)
-                            .getList();
-                    for (Character character : list) {
-                        character.removeStatus(StatusHpChangeListener.class);
-                    }
+                    Skill2.this.adder.deleteAndRemove();
                     return false;
                 } else {
                     Skill2.this.times--;

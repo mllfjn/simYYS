@@ -1,14 +1,13 @@
 package com.mllfjn.simyys.character.list.sp.yinfan;
 
 import com.mllfjn.simyys.BattlePane;
+import com.mllfjn.simyys.battleevent.StatusAdder;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
-import java.util.List;
 import java.util.Optional;
 
 // √     创造存在1回合的幻境并获得3点愿力.
@@ -60,6 +59,7 @@ class Skill2 extends Skill {
 
         private final int skill2Level;
         private final int skill3Level;
+        private final StatusAdder<?> adder;
 
         public StatusHuanJing(Character character, int duration, int skill2Level, int skill3Level) {
             super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
@@ -68,11 +68,11 @@ class Skill2 extends Skill {
             this.getYuanLiBeforeRound = skill2Level >= 3;
             setDurationType(StatusDurationType.WEI_CHI, duration);
 
-            character.bp.forEveryone(character, c -> {
-                if (c.team == character.team && c != character && !c.isYYS()) {
-                    c.addStatus(new StatusUseSkillListener(character, c));
-                }
-            });
+            adder = belongTo.bp.addStatusAdder(c ->
+                    c.team == character.team && c != character && !c.isYYS()
+                            ? new StatusUseSkillListener(character, c)
+                            : null
+            );
         }
 
         public static void create(Character character, int skill2Level, int skill3Level) {
@@ -85,15 +85,7 @@ class Skill2 extends Skill {
 
         @Override
         public void beforeDelete() {
-            List<Character> list = new CharacterFinder(belongTo)
-                    .filterTeammate()
-                    .filterShiShen()
-                    .filterSelf()
-                    .getList();
-
-            for (Character character : list) {
-                character.removeStatus(StatusUseSkillListener.class);
-            }
+            adder.deleteAndRemove();
         }
 
         @Override

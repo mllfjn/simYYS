@@ -1,7 +1,6 @@
 package com.mllfjn.simyys.character.list.ssr.dishitian;
 
 import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.battleevent.BattleActionListener;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.CharacterShiShenBase;
@@ -12,7 +11,6 @@ import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 public class DiShiTian extends CharacterShiShenBase {
     public static final String CharacterName = "帝释天";
 
-    private BattleActionListener listener;
     private int enemyCount;
 
     private StatusJinLian jinLian;
@@ -38,30 +36,6 @@ public class DiShiTian extends CharacterShiShenBase {
 
     StatusJinLian getJinLian() {
         return jinLian;
-    }
-
-    void openHuanJing() {
-        listener = bp.forEveryone(this, character -> {
-            if (character.team == team) {
-                character.addStatus(new StatusReduceSpeed(this, character));
-            } else if (character.isYYS() || character.isShiShen()) {
-                character.addStatus(new StatusIncreaseLocation(this, character));
-            }
-        });
-    }
-
-    @Override
-    protected void dieHandle() {
-        if (listener != null) {
-            for (Character character : bp.situation.characters) {
-                if (character.team == team) {
-                    character.removeStatus(StatusReduceSpeed.class);
-                } else if (character.isYYS() || character.isShiShen()) {
-                    character.removeStatus(StatusIncreaseLocation.class);
-                }
-            }
-            listener = null;
-        }
     }
 
     @Override

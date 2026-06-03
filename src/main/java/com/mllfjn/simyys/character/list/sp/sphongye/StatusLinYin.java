@@ -1,10 +1,9 @@
 package com.mllfjn.simyys.character.list.sp.sphongye;
 
 import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.battleevent.BattleActionListener;
+import com.mllfjn.simyys.battleevent.StatusAdder;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
@@ -12,13 +11,11 @@ import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.TraceableNumber;
 
-import java.util.List;
-
 class StatusLinYin extends Status implements StatusRunnable, Displayable, AttributeModifier {
     private static final String StatusName = "林隐";
 
     private final boolean ignoreDefense;
-    private final BattleActionListener listener;
+    private final StatusAdder<?> adder;
 
     private final double beingJianJieAttack;
     private final double beingNormalAttack;
@@ -37,11 +34,11 @@ class StatusLinYin extends Status implements StatusRunnable, Displayable, Attrib
         character.addSkill(new Skill1Special(character, character.skill1Level, this), true);
 
         // 友方获得叶之护
-        listener = belongTo.bp.forEveryone(belongTo, c -> {
-            if (c.team == belongTo.team) {
-                c.addStatus(new StatusYeZhiHu(belongTo, c, level >= 3));
-            }
-        });
+        adder = belongTo.bp.addStatusAdder(c ->
+                c.team == belongTo.team
+                        ? new StatusYeZhiHu(belongTo, c, level >= 3)
+                        : null
+        );
     }
 
     void reduceStack() {
@@ -65,13 +62,7 @@ class StatusLinYin extends Status implements StatusRunnable, Displayable, Attrib
         belongTo.removeSkill(1);
         belongTo.addSkill(new Skill1(belongTo, ((SPHongYe) belongTo).skill1Level), true);
 
-        belongTo.bp.removeActionListener(listener);
-        List<Character> list = new CharacterFinder(belongTo, true)
-                .filterTeammate()
-                .getList();
-        for (Character character : list) {
-            character.removeStatus(StatusYeZhiHu.class);
-        }
+        adder.deleteAndRemove();
     }
 
     @Override

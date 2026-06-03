@@ -1,6 +1,7 @@
 package com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.dizhennian;
 
 import com.mllfjn.simyys.BattlePane;
+import com.mllfjn.simyys.battleevent.StatusAdder;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.CharacterSummonBase;
 import com.mllfjn.simyys.character.list.mob.multiplayer.ClearHpHandler;
@@ -23,11 +24,13 @@ public class HouZi extends CharacterSummonBase {
 
     private final DiZhenNian owner;
 
+    private final StatusAdder<?> adder;
+
     public HouZi(DiZhenNian owner) {
         super(owner.bp, CharacterName, owner.team);
         this.owner = owner;
 
-        this.forceSetMaxHp(9999999999L, true);
+        this.forceSetMaxHp(999999999, true);
         setMob(1, 1);
 
         this.setInitDefense(352);
@@ -35,11 +38,11 @@ public class HouZi extends CharacterSummonBase {
 
         fillSkills();
 
-        bp.forEveryone(this, character -> {
-            if (character.team != team) {
-                character.addStatus(new StatusIncreaseActionListener(this, character));
-            }
-        });
+        adder = bp.addStatusAdder(c ->
+                c.team != team
+                        ? new StatusIncreaseActionListener(this, c)
+                        : null
+        );
 
         addStatus(new StatusDamageRecord(this));
         getCharacterIcon().setEventHandlerContainer(new ClearHpHandler(this));
@@ -67,8 +70,8 @@ public class HouZi extends CharacterSummonBase {
         }
 
         // 移除拉条踢一次的效果，添加增伤
+        adder.deleteAndRemove();
         for (Character target : targets) {
-            target.removeStatus(StatusIncreaseActionListener.class);
             if (bonus != 1) {
                 target.addStatus(new StatusHouZiBonus(this, target, bonus));
             }

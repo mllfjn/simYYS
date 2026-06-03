@@ -1,11 +1,14 @@
 package com.mllfjn.simyys;
 
 import com.mllfjn.simyys.battleevent.BattleActionListener;
+import com.mllfjn.simyys.battleevent.StatusAdder;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.propertygetter.FlagChangeInfo;
+import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.character.status.Trigger;
 import com.mllfjn.simyys.character.status.instance.StatusUnselectable;
 import com.mllfjn.simyys.collections.SafeList;
+import com.mllfjn.simyys.utils.SerialFunction;
 import com.mllfjn.simyys.utils.SerializableRunnable;
 
 import java.io.Serializable;
@@ -30,8 +33,10 @@ public class SerializableItems implements Serializable {
     public boolean disablePush = false;
     // 队伍面板，负责显示头像和管理鬼火条
     public final TeamPane[] teamPane = new TeamPane[2];
-    // 全局监听器,用于监听添加角色,角色死亡,"任意回合"等
+    // 全局监听器,用于监听角色死亡,"任意回合"等
     public final SafeList<BattleActionListener> listeners = new SafeList<>();
+    // 状态添加器,用于结界,幻境等
+    public final List<StatusAdder<?>> statusAdders = new ArrayList<>();
     // 保存的概率
     private double currentRate;
     // 先机
@@ -185,6 +190,16 @@ public class SerializableItems implements Serializable {
         } else {
             team1Wave++;
         }
+    }
+
+    public <T extends Status> StatusAdder<T> addStatusAdder(SerialFunction<Character, T> statusProvider) {
+        StatusAdder<T> adder = new StatusAdder<>(this, statusProvider);
+        statusAdders.add(adder);
+        return adder;
+    }
+
+    public void removeStatusAdder(StatusAdder<?> statusAdder) {
+        statusAdders.remove(statusAdder);
     }
 
     private record PriorityMove(Character character, SerializableRunnable runnable) implements Serializable {

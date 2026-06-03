@@ -28,13 +28,11 @@ class Skill2 extends PassiveSkill {
         damageIncreasement = level >= 2 ? 0.1 : 0.05;
 
         if (level >= 3) {
-            belongTo.bp.forEveryone(belongTo, c -> {
-                if (c.team == belongTo.team) {
-                    c.addStatus(new StatusAddingDebuffListener(belongTo, c));
-                } else if (level >= 4) {
-                    c.addStatus(new StatusLocationChangeListener(belongTo, c));
-                }
-            });
+            belongTo.bp.addStatusAdder(c ->
+                    c.team == belongTo.team
+                            ? new StatusAddingDebuffListener(belongTo, c)
+                            : level >= 4 ? new StatusLocationChangeListener(belongTo, c) : null
+            );
             listener = new BattleActionListener(belongTo) {
                 @Override
                 public boolean onBattleAction(BattleEvent event) {

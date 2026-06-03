@@ -10,7 +10,7 @@ public class CiTiao4MengHuo {
     public static final String CiTiaoName = "猛火";
 
     public static void install(Character character) {
-        character.bp.forEveryone(character, c -> c.addStatus(new StatusMHForceChange(character, c)));
+        character.bp.addStatusAdder(c -> new StatusMHForceChange(character, c));
     }
 
     static class StatusMHForceChange extends Status implements ForceChangeCost {

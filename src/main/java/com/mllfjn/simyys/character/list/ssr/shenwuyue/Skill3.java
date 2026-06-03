@@ -1,7 +1,7 @@
 package com.mllfjn.simyys.character.list.ssr.shenwuyue;
 
 import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.battleevent.BattleActionListener;
+import com.mllfjn.simyys.battleevent.StatusAdder;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
@@ -9,7 +9,6 @@ import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
-import java.util.List;
 import java.util.Optional;
 
 // √     创造存在1回合的幻境(好像是"持续")
@@ -60,53 +59,33 @@ class Skill3 extends Skill {
     }
 
     static class StatusHuanJingListener extends Status {
-        private BattleActionListener listener;
+        private final StatusAdder<?> adder;
 
-        private StatusHuanJingListener(Character character, int duration) {
+        private StatusHuanJingListener(Character character, int duration, boolean gainGuiHuo
+                , Skill2.StatusMengShen statusMengShen) {
             super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
             setDurationType(StatusDurationType.CHI_XU, duration);
+
+            adder = belongTo.bp.addStatusAdder(c ->
+                    c.team == belongTo.team
+                            ? new StatusHuanJing(belongTo, c, gainGuiHuo, statusMengShen)
+                            : null
+            );
         }
 
         public static void add(Character character, int duration, boolean gainGuiHuo
                 , Skill2.StatusMengShen statusMengShen) {
             character.getStatus(StatusHuanJingListener.class).ifPresentOrElse(
                     status -> status.setDuration(duration),
-                    () -> {
-                        StatusHuanJingListener status =
-                                new StatusHuanJingListener(character, duration);
-                        character.addStatus(status);
-                        status.addListener(gainGuiHuo, statusMengShen);
-                    }
+                    () -> character.addStatus(
+                            new StatusHuanJingListener(character, duration, gainGuiHuo, statusMengShen)
+                    )
             );
-        }
-
-        private void addListener(boolean gainGuiHuo, Skill2.StatusMengShen statusMengShen) {
-            listener = belongTo.bp.forEveryone(belongTo, c -> {
-                if (c.team == belongTo.team) {
-                    c.addStatus(new StatusHuanJing(belongTo, c, gainGuiHuo, statusMengShen));
-                }
-            });
         }
 
         @Override
         public void beforeDelete() {
-            List<Character> list = new CharacterFinder(belongTo, true)
-                    .filterTeammate()
-                    .getList();
-
-            for (Character character : list) {
-                // TODO 将来把statuses写成safeRemoved的话改掉这个
-                if (character == belongTo) {
-                    character.getStatus(StatusHuanJing.class)
-                            .ifPresent(status ->
-                                    status.setDurationType(StatusDurationType.CHI_XU, 1)
-                            );
-                } else {
-                    character.removeStatus(StatusHuanJing.class);
-                }
-            }
-
-            belongTo.bp.removeActionListener(listener);
+            adder.deleteAndRemove();
         }
     }
 

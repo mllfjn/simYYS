@@ -3,6 +3,7 @@ package com.mllfjn.simyys.character.list.ssr.qianji;
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.battleevent.BattleActionListener;
 import com.mllfjn.simyys.battleevent.BattleEvent;
+import com.mllfjn.simyys.battleevent.StatusAdder;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.CharacterSummonBase;
@@ -23,6 +24,7 @@ class HaiYuanBeiJi extends CharacterSummonBase {
 
     private final QianJi qianJi;
     private final StatusChaoSheng chaoSheng;
+    private final StatusAdder<?> adder;
 
     public HaiYuanBeiJi(QianJi qianJi, BattlePane bp, int level) {
         super(bp, CharacterName, qianJi.team);
@@ -49,11 +51,11 @@ class HaiYuanBeiJi extends CharacterSummonBase {
         // TODO 有50%的概率
         // 使海原贝戟叠加1层潮声
         // lv3-概率增至100%
-        bp.forEveryone(this, c -> {
-            if (c.team == this.team) {
-                c.addStatus(new StatusRecovery(this, c));
-            }
-        });
+        adder = bp.addStatusAdder(c ->
+                c.team == this.team
+                        ? new StatusRecovery(this, c)
+                        : null
+        );
         bp.addActionListener(new BattleActionListener(this) {
             @Override
             public boolean onBattleAction(BattleEvent event) {
@@ -77,6 +79,7 @@ class HaiYuanBeiJi extends CharacterSummonBase {
         qianJi.addStatus(new QianJi.StatusQianJiIgnoreDebuff(qianJi));
         qianJi.removeStatus(StatusJianShang.class);
         Skill3_2.removeBeiGeAndChangeSkill(qianJi);
+        adder.deleteAndRemove();
     }
 
     public void addChaoSheng(int count) {

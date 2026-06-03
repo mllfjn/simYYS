@@ -55,11 +55,11 @@ class Skill5 extends PassiveSkillCanNotSeal implements YingFenShenCopy {
             super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
             this.multiplier = multiplier;
 
-            character.bp.forEveryone(character, c -> {
-                if (c.team == character.team && c != character) {
-                    c.addStatus(new StatusZXJListener(character, c, this));
-                }
-            });
+            character.bp.addStatusAdder(c ->
+                    c.team == character.team && c != character
+                            ? new StatusZXJListener(character, c, this)
+                            : null
+            );
         }
 
         public void use(Character target) {

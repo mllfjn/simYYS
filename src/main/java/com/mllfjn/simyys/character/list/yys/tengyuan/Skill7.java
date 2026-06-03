@@ -14,11 +14,11 @@ class Skill7 extends PassiveSkillCanNotSeal {
     public Skill7(TengYuanDaoZhang belongTo) {
         super(belongTo, 1, 7);
         belongTo.getLvYin().setSkill7(this);
-        belongTo.bp.forEveryone(belongTo, character -> {
-            if (character.team != belongTo.team && character.isShiShen()) {
-                character.addStatus(new StatusUseSkillListener(belongTo, character));
-            }
-        });
+        belongTo.bp.addStatusAdder(c ->
+                c.team != belongTo.team && c.isShiShen()
+                        ? new StatusUseSkillListener(belongTo, c)
+                        : null
+        );
     }
 
     @Override

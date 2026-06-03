@@ -1,7 +1,7 @@
 package com.mllfjn.simyys.character.list.ssr.shiling;
 
 import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.battleevent.BattleActionListener;
+import com.mllfjn.simyys.battleevent.StatusAdder;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
@@ -11,8 +11,6 @@ import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
 import com.mllfjn.simyys.character.status.triggerParam.ParamUseSkill;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
-
-import java.util.List;
 
 // √     全体友方回合外造成的伤害增加30%
 // √     每当友方目标进入饱食时,攻击提升30%,最多叠加5次
@@ -26,7 +24,7 @@ class Skill2 extends PassiveSkill {
 
     private final double multiplier;
 
-    private BattleActionListener listener = null;
+    private StatusAdder<?> adder;
     private Character maxCritPower;
 
     public Skill2(Character belongTo, int level) {
@@ -56,11 +54,11 @@ class Skill2 extends PassiveSkill {
         }
 
         Character belongTo = getBelongTo();
-        listener = belongTo.bp.forEveryone(belongTo, character -> {
-            if (character.team == belongTo.team) {
-                character.addStatus(new StatusOutRoundInfluence(belongTo, character, multiplier));
-            }
-        });
+        adder = belongTo.bp.addStatusAdder(c ->
+                c.team == belongTo.team
+                        ? new StatusOutRoundInfluence(belongTo, c, multiplier)
+                        : null
+        );
 
         if (getLevel() >= 3) {
             maxCritPower.addStatus(new StatusXieZhanFromShiLing(belongTo, maxCritPower));
@@ -69,17 +67,8 @@ class Skill2 extends PassiveSkill {
 
     @Override
     public void disable() {
-        if (listener != null) {
-            List<Character> targets = new CharacterFinder(getBelongTo())
-                    .filterTeammate()
-                    .getList();
-
-            for (Character target : targets) {
-                target.removeStatus(StatusOutRoundInfluence.class);
-                target.removeStatus(StatusXieZhanFromShiLing.class);
-            }
-
-            getBelongTo().bp.removeActionListener(listener);
+        if (adder != null) {
+            adder.deleteAndRemove();
         }
     }
 

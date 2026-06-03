@@ -21,7 +21,7 @@ import com.mllfjn.simyys.collections.SerializableObservableList;
 import com.mllfjn.simyys.starter.Initializer;
 import com.mllfjn.simyys.starter.LockSkillAndFlag;
 import com.mllfjn.simyys.starter.CharacterNameAndTeam;
-import com.mllfjn.simyys.utils.SerializableConsumer;
+import com.mllfjn.simyys.utils.SerialFunction;
 import com.mllfjn.simyys.utils.SerializableRunnable;
 import com.mllfjn.simyys.utils.Utils;
 import javafx.beans.binding.DoubleBinding;
@@ -359,7 +359,9 @@ public class BattlePane {
 
     public void addCharacter(Character character) {
         situation.addCharacter(character);
-        onTrigger(new EventAddCharacter(character));
+        for (StatusAdder<?> statusAdder : situation.statusAdders) {
+            statusAdder.CharacterAdd(character);
+        }
     }
 
     private List<Character> getCharactersByLocation() {
@@ -591,6 +593,7 @@ public class BattlePane {
         if (situation.teamPane[team].characters.isEmpty()) {
             situation.addWave(team);
             int wave = situation.getWave(team);
+            boolean haveCleaned = false;
             for (PropertiesHolder propertiesHolder : propertiesHolderList) {
                 if (wave == propertiesHolder.propertiesMap.get(PropertyKey.GENERAL_WAVE_KEY).getInt()) {
                     CharacterFactory.getCharacter(propertiesHolder, this).ifPresent(this::addCharacter);
@@ -664,14 +667,8 @@ public class BattlePane {
         outRoundSkillList.add(runnable);
     }
 
-    public BattleActionListener forEveryone(Character owner, SerializableConsumer<Character> action) {
-        for (Character character : situation.characters) {
-            action.accept(character);
-        }
-
-        BattleActionListener listener = new BattleActionListenerWrapper(owner, action);
-        addActionListener(listener);
-        return listener;
+    public <T extends Status> StatusAdder<T> addStatusAdder(SerialFunction<Character, T> statusProvider) {
+        return situation.addStatusAdder(statusProvider);
     }
 
     private enum ActionBarType {
