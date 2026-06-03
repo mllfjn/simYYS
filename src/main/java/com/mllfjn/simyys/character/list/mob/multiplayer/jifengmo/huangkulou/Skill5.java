@@ -7,7 +7,7 @@ import com.mllfjn.simyys.character.CharacterSummonBase;
 import com.mllfjn.simyys.character.list.mob.multiplayer.ClearHpHandler;
 import com.mllfjn.simyys.character.list.mob.multiplayer.DisplayDamageRecord;
 import com.mllfjn.simyys.character.list.mob.multiplayer.StatusRecordDamage;
-import com.mllfjn.simyys.character.skill.PassiveSkillCanNotSeal;
+import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.skill.Skill1PuGongBase;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.ratecontroller.RateController;
@@ -15,7 +15,7 @@ import com.mllfjn.simyys.ratecontroller.RateController;
 import java.util.ArrayList;
 import java.util.List;
 
-class Skill5 extends PassiveSkillCanNotSeal {
+class Skill5 extends PassiveSkill {
     private static final String SkillName = "阴界召唤";
     private static final String[] Names = new String[]{"斗", "牛", "虚", "危", "室", "壁"};
 

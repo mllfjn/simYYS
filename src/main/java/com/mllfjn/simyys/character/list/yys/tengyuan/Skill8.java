@@ -3,14 +3,14 @@ package com.mllfjn.simyys.character.list.yys.tengyuan;
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
-import com.mllfjn.simyys.character.skill.PassiveSkillCanNotSeal;
+import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.determinant.PreventDie;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAddCrowdControl;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
-class Skill8 extends PassiveSkillCanNotSeal {
+class Skill8 extends PassiveSkill {
     static final String SkillName = "余音入梦";
 
     public Skill8(Character belongTo, int level) {

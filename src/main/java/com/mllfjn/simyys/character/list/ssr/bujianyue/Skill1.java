@@ -6,6 +6,8 @@ import com.mllfjn.simyys.character.skill.Skill1PuGongBase;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.interactive.Interactive;
 
+import java.util.Iterator;
+
 class Skill1 extends Skill1PuGongBase {
     private static final String SkillName = "重峦";
 
@@ -19,6 +21,26 @@ class Skill1 extends Skill1PuGongBase {
         if (getLevel() >= 5) {
             getBelongTo().replaceStatus(new StatusEffectResist(getBelongTo()));
         }
+
+        boolean findOne = false;
+        Iterator<Status> iterator = getBelongTo().getStatuses().iterator();
+        while (iterator.hasNext()) {
+            Status status = iterator.next();
+            if (status instanceof StatusYun sy) {
+                sy.consumeStack();
+            } else if (status instanceof StatusShan ss) {
+                ss.consumeStack(this, interactive);
+            }
+
+            if (status instanceof StatusYun || status instanceof StatusShan) {
+                iterator.remove();
+                if (findOne) {
+                    return;
+                }
+                findOne = true;
+            }
+        }
+
     }
 
     @Override

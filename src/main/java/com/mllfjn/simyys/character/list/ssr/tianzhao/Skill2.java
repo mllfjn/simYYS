@@ -19,7 +19,6 @@ class Skill2 extends PassiveSkill {
     private static final double[] Coefficients = new double[]{0, 0.55, 0.6, 0.65, 0.7, 0.7};
 
     private final List<Copy> copyList = new ArrayList<>();
-    private boolean isActive = false;
     private StatusGDListener status;
 
     public Skill2(Character belongTo, int level) {
@@ -36,7 +35,7 @@ class Skill2 extends PassiveSkill {
     }
 
     void copyDone(Character copyTarget) {
-        if (isActive && !copyList.isEmpty()) {
+        if (isActive() && !copyList.isEmpty()) {
             TianZhao tianZhao = (TianZhao) getBelongTo();
             if (!tianZhao.isUncontrollable()) {
                 tianZhao.bp.addOutRoundSkill(this, () -> {
@@ -60,7 +59,6 @@ class Skill2 extends PassiveSkill {
 
     @Override
     public void enable() {
-        isActive = true;
         if (status == null) {
             status = new StatusGDListener(getBelongTo());
         }
@@ -69,7 +67,6 @@ class Skill2 extends PassiveSkill {
 
     @Override
     public void disable() {
-        isActive = false;
         getBelongTo().removeStatus(status);
     }
 

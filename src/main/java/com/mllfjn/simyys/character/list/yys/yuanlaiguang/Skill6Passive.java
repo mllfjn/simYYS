@@ -2,7 +2,7 @@ package com.mllfjn.simyys.character.list.yys.yuanlaiguang;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.character.skill.PassiveSkillCanNotSeal;
+import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.status.Displayable;
 import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.StatusShield;
@@ -12,7 +12,7 @@ import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.InteractiveInfo;
 
-class Skill6Passive extends PassiveSkillCanNotSeal {
+class Skill6Passive extends PassiveSkill {
     static final String SkillName = "鬼胄";
 
     private final StatusShieldGZ status;

@@ -13,14 +13,12 @@ import com.mllfjn.simyys.interactive.StatusSupplier;
 class Skill2 extends PassiveSkill {
     private static final String SkillName = "蜘蛛印记";
 
-    private boolean isActive = false;
-
     Skill2(Character belongTo) {
         super(belongTo, 1, 2);
     }
 
     void madeAttack(Character target) {
-        if (isActive) {
+        if (isActive()) {
             getBelongTo().doInteractive(interactive ->
                     interactive.effect(this, target, 60, 0, true,
                             new StatusSupplier(StatusZhuYin.StatusName, StatusZhuYin.class,
@@ -34,16 +32,6 @@ class Skill2 extends PassiveSkill {
                     )
             );
         }
-    }
-
-    @Override
-    public void enable() {
-        isActive = true;
-    }
-
-    @Override
-    public void disable() {
-        isActive = false;
     }
 
     @Override

@@ -6,6 +6,8 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.status.*;
+import com.mllfjn.simyys.character.status.determinant.RetainAfterChangeWave;
+import com.mllfjn.simyys.character.status.determinant.RetainAfterDie;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.StatusSupplier;
 
@@ -41,7 +43,7 @@ class Skill2 extends PassiveSkill {
         return SkillName;
     }
 
-    class StatusXiaZhou extends Status implements StatusRunnable {
+    class StatusXiaZhou extends Status implements StatusRunnable, RetainAfterDie, RetainAfterChangeWave {
         private final int yiShang;
         private final int rate;
 

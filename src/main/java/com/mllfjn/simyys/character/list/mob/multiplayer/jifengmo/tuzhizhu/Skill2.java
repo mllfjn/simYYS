@@ -3,11 +3,11 @@ package com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.tuzhizhu;
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.character.skill.PassiveSkillCanNotSeal;
+import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
-class Skill2 extends PassiveSkillCanNotSeal {
+class Skill2 extends PassiveSkill {
     private static final String SkillName = "激怒";
 
     public Skill2(Character belongTo) {

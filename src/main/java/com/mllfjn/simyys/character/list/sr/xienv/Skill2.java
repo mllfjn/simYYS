@@ -15,7 +15,6 @@ import java.util.List;
 
 class Skill2 extends PassiveSkill {
     private static final String SkillName = "以毒攻毒";
-    private boolean enable = false;
 
     private final StatusXieDuSpecialOnXieNv status;
 
@@ -39,13 +38,11 @@ class Skill2 extends PassiveSkill {
 
     @Override
     public void enable() {
-        enable = true;
         getBelongTo().addStatus(status);
     }
 
     @Override
     public void disable() {
-        enable = false;
         getBelongTo().removeStatus(status);
     }
 
@@ -55,7 +52,7 @@ class Skill2 extends PassiveSkill {
     }
 
     public boolean canCount() {
-        return enable && getLevel() >= 5;
+        return isActive() && getLevel() >= 5;
     }
 
     class StatusXieDuSpecialOnXieNv extends Status implements StatusRunnable, AttributeModifier {

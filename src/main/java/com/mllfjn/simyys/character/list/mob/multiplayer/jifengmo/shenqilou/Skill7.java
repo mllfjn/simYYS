@@ -2,7 +2,7 @@ package com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.shenqilou;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.character.skill.PassiveSkillCanNotSeal;
+import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.character.status.StatusForm;
@@ -12,7 +12,7 @@ import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 
-class Skill7 extends PassiveSkillCanNotSeal {
+class Skill7 extends PassiveSkill {
     private static final String SkillName = "蜃气升腾";
 
     public Skill7(Character belongTo) {

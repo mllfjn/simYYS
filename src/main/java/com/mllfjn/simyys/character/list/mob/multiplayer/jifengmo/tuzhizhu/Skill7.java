@@ -2,12 +2,12 @@ package com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.tuzhizhu;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.character.skill.PassiveSkillCanNotSeal;
+import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
-class Skill7 extends PassiveSkillCanNotSeal {
+class Skill7 extends PassiveSkill {
     private static final String SkillName = "坚韧";
 
     private final StatusTZZJRReduceDamage status;

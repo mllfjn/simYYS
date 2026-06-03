@@ -14,14 +14,12 @@ import java.util.List;
 class Skill2ForMob extends PassiveSkill {
     private static final String SkillName = "鬼刃·罗城门(怪物)";
 
-    private boolean isActive;
-
     public Skill2ForMob(Character belongTo) {
         super(belongTo, 1, 2);
     }
 
     void attacked(Interactive interactive, Character target) {
-        if (isActive) {
+        if (isActive()) {
             if (target.getHp() < (target.getMaxHp() * 0.85)) {
                 interactive.attackTypical(this, target, 125, AttackType.DAN_TI);
                 Character belongTo = getBelongTo();
@@ -47,16 +45,6 @@ class Skill2ForMob extends PassiveSkill {
                 this.useDone();
             }
         }
-    }
-
-    @Override
-    public void enable() {
-        isActive = true;
-    }
-
-    @Override
-    public void disable() {
-        isActive = false;
     }
 
     @Override

@@ -4,14 +4,14 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
-import com.mllfjn.simyys.character.skill.PassiveSkillCanNotSeal;
+import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.determinant.IgnoreActionDecrease;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
 import java.util.List;
 
-class Skill6 extends PassiveSkillCanNotSeal {
+class Skill6 extends PassiveSkill {
     static final String SkillName = "诸律精通";
 
     public Skill6(TengYuanDaoZhang belongTo, int level) {

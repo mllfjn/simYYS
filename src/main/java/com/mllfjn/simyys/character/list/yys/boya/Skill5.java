@@ -2,7 +2,7 @@ package com.mllfjn.simyys.character.list.yys.boya;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.character.skill.PassiveSkillCanNotSeal;
+import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.ParamUseSkill;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
@@ -16,7 +16,7 @@ import com.mllfjn.simyys.interactive.Interactive;
 // √     lv5-每箭伤害增加至70%
 // √     诛邪箭:增益,印记.至多3层.连续射出3发箭,攻击敌方目标,每箭造成攻击50%的伤害,每箭伤害递增25%(不知道这个递增是什么,按照加25系数写)
 // √     术印:每箭造成的基础伤害额外提升40%
-class Skill5 extends PassiveSkillCanNotSeal implements YingFenShenCopy {
+class Skill5 extends PassiveSkill implements YingFenShenCopy {
     static final String SkillName = "诛邪箭";
 
     private final int multiplier;

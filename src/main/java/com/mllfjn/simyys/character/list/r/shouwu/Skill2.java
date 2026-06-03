@@ -8,7 +8,6 @@ import com.mllfjn.simyys.character.status.*;
 class Skill2 extends PassiveSkill {
     private static final String SkillName = "冥火";
 
-    private boolean isActive = false;
     private StatusStealCritRate status;
 
     public Skill2(Character belongTo) {
@@ -16,23 +15,13 @@ class Skill2 extends PassiveSkill {
     }
 
     void madeAttack(Character target) {
-        if (isActive) {
+        if (isActive()) {
             if (status == null) {
                 status = new StatusStealCritRate(getBelongTo(), target);
             } else {
                 status.steal(target);
             }
         }
-    }
-
-    @Override
-    public void enable() {
-        isActive = true;
-    }
-
-    @Override
-    public void disable() {
-        isActive = false;
     }
 
     @Override

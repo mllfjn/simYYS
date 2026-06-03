@@ -11,16 +11,6 @@ class Skill2 extends PassiveSkill {
     }
 
     @Override
-    public void enable() {
-
-    }
-
-    @Override
-    public void disable() {
-
-    }
-
-    @Override
     public String getName() {
         return SkillName;
     }

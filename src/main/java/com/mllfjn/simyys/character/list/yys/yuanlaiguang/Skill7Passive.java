@@ -6,7 +6,7 @@ import com.mllfjn.simyys.battleevent.BattleEvent;
 import com.mllfjn.simyys.battleevent.EventActionDone;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
-import com.mllfjn.simyys.character.skill.PassiveSkillCanNotSeal;
+import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
@@ -15,7 +15,7 @@ import com.mllfjn.simyys.interactive.AttackType;
 import java.util.List;
 import java.util.Optional;
 
-class Skill7Passive extends PassiveSkillCanNotSeal {
+class Skill7Passive extends PassiveSkill {
     static final String SkillName = "剑之垒";
 
     private int count;

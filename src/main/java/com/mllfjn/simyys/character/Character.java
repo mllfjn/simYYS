@@ -36,6 +36,7 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public abstract class Character implements Serializable {
     public String name;
@@ -879,6 +880,11 @@ public abstract class Character implements Serializable {
         }
 
         return true;
+    }
+
+    // TODO 一开始忘记可以这么写了,写了一堆静态方法,以后改
+    public <T extends Status> void addStatusOrChange(Class<T> tClass, Consumer<T> action, Supplier<T> supplier) {
+        getStatus(tClass).ifPresentOrElse(action, () -> addStatus(supplier.get()));
     }
 
     /**

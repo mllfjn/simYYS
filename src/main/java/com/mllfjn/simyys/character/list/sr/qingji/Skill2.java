@@ -11,26 +11,14 @@ import com.mllfjn.simyys.character.status.StatusType;
 class Skill2 extends PassiveSkill {
     private static final String SkillName = "淬毒";
 
-    private boolean isActive = false;
-
     public Skill2(Character belongTo) {
         super(belongTo, 1, 2);
     }
 
     void madePoisoning(Character target) {
-        if (isActive) {
+        if (isActive()) {
             StatusQingJiReduceDefense.addStack(getBelongTo(), target);
         }
-    }
-
-    @Override
-    public void enable() {
-        isActive = true;
-    }
-
-    @Override
-    public void disable() {
-        isActive = false;
     }
 
     @Override

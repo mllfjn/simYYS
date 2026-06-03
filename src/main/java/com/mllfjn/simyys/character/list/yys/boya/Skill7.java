@@ -4,7 +4,7 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
-import com.mllfjn.simyys.character.skill.PassiveSkillCanNotSeal;
+import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
@@ -17,7 +17,7 @@ import java.util.List;
 // √     lv5-持续回合数+1
 //      术印:增加的伤害额外提升20%,增加的速度额外提升10点 (注:该效果目前无效)
 
-class Skill7 extends PassiveSkillCanNotSeal {
+class Skill7 extends PassiveSkill {
     static final String SkillName = "悲声哀嚎";
     private static final int[] baseZengShang = new int[]{0, 60, 60, 80, 80, 80};
     private static final int[] baseSpeed = new int[]{0, 20, 30, 30, 40, 40};

@@ -2,12 +2,12 @@ package com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.tuzhizhu;
 
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.CharacterSummonBase;
-import com.mllfjn.simyys.character.skill.PassiveSkillCanNotSeal;
+import com.mllfjn.simyys.character.skill.PassiveSkill;
 
 import java.util.HashSet;
 import java.util.Set;
 
-class Skill6 extends PassiveSkillCanNotSeal {
+class Skill6 extends PassiveSkill {
     private static final String SkillName = "召唤";
 
     private final Skill7 skill7;

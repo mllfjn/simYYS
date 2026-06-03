@@ -6,6 +6,7 @@ import com.mllfjn.simyys.character.Character;
 import java.util.Optional;
 
 public abstract class PassiveSkill extends Skill {
+    private boolean enabled = false;
 
     public PassiveSkill(Character belongTo, int level, int skillID) {
         super(belongTo, level, 0, 0, skillID);
@@ -16,7 +17,15 @@ public abstract class PassiveSkill extends Skill {
         return Optional.empty();
     }
 
-    public abstract void enable();
+    public void enable() {
+        enabled = true;
+    }
 
-    public abstract void disable();
+    public void disable() {
+        enabled = false;
+    }
+
+    public boolean isActive() {
+        return enabled;
+    }
 }
