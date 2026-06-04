@@ -111,10 +111,22 @@ class Skill2 extends Skill {
 
         private void check() {
             int count = 0;
-            for (Character deadCharacter : belongTo.bp.situation.deadCharacters) {
+            for (Character deadCharacter : belongTo.bp.situation.team0DeadCharacters) {
                 if (!deadCharacter.isSummon()) {
                     if (count == 2) {
                         listenerType = false;
+                        return;
+                    } else {
+                        count++;
+                    }
+                }
+            }
+
+            for (Character deadCharacter : belongTo.bp.situation.team1DeadCharacters) {
+                if (!deadCharacter.isSummon()) {
+                    if (count == 2) {
+                        listenerType = false;
+                        return;
                     } else {
                         count++;
                     }

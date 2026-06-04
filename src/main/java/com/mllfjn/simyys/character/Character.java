@@ -23,10 +23,7 @@ import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunFactory;
 import com.mllfjn.simyys.character.yuhun.YuHunSealResponse;
 import com.mllfjn.simyys.character.list.yys.qiling.QiLingFactory;
-import com.mllfjn.simyys.interactive.AttackInfo;
-import com.mllfjn.simyys.interactive.TraceableNumber;
-import com.mllfjn.simyys.interactive.InteractiveInfo;
-import com.mllfjn.simyys.interactive.Interactive;
+import com.mllfjn.simyys.interactive.*;
 import com.mllfjn.simyys.guihuo.MobGuiHuo;
 import com.mllfjn.simyys.collections.SerializableObservableList;
 import com.mllfjn.simyys.ratecontroller.RateController;
@@ -652,6 +649,10 @@ public abstract class Character implements Serializable {
         }
     }
 
+    public int getSealPassiveSkillCount() {
+        return sealPassiveSkillCount;
+    }
+
     public void addSkill(Skill skill) {
         addSkill(skill, false);
     }
@@ -706,8 +707,9 @@ public abstract class Character implements Serializable {
         }
     }
 
-    public void beHeal(InteractiveInfo interactiveInfo) {
-        setHp(getHp() + interactiveInfo.getTraceableNumber().getNumber());
+    public void beHeal(HealInfo healInfo) {
+        setHp(getHp() + healInfo.getTraceableNumber().getNumber());
+        statusRun(Trigger.AFTER_HEAL, new ParamHealInfo(healInfo));
     }
 
     /**
@@ -1031,9 +1033,30 @@ public abstract class Character implements Serializable {
                 iterator.remove();
             }
         }
+
+        if (sealPassiveSkillCount == 0) {
+            for (Skill skill : skills) {
+                if (skill instanceof PassiveSkill ps) {
+                    ps.disable();
+                }
+            }
+        }
     }
 
     protected void dieHandle() {
+    }
+
+    public void revive(BattlePane bp, double hp) {
+        reset(bp);
+        alive = true;
+        this.hp = hp;
+
+        for (Skill skill : skills) {
+            if (skill instanceof PassiveSkill ps) {
+                ps.enable();
+            }
+        }
+        bp.addCharacter(this);
     }
 
     /**

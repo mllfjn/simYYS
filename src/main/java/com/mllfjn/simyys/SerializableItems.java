@@ -22,7 +22,8 @@ public class SerializableItems implements Serializable {
     // 目标选取参与单位
     private final List<Character> charactersSelectable = new ArrayList<>();
     // 死亡角色列表
-    public final List<Character> deadCharacters = new ArrayList<>();
+    public final List<Character> team0DeadCharacters = new ArrayList<>();
+    public final List<Character> team1DeadCharacters = new ArrayList<>();
     // 当前行动角色
     public Character characterActing;
     // 记录获得新回合的单位
@@ -113,7 +114,11 @@ public class SerializableItems implements Serializable {
         characters.remove(character);
         charactersChangeLocation.remove(character);
         charactersSelectable.remove(character);
-        deadCharacters.add(character);
+        if (character.team == 0) {
+            team0DeadCharacters.add(character);
+        } else {
+            team1DeadCharacters.add(character);
+        }
 
         for (TeamPane teamPane : teamPane) {
             teamPane.removeCharacter(character);
@@ -187,8 +192,10 @@ public class SerializableItems implements Serializable {
     public void addWave(int team) {
         if (team == 0) {
             team0Wave++;
+            team0DeadCharacters.clear();
         } else {
             team1Wave++;
+            team1DeadCharacters.clear();
         }
     }
 
@@ -200,6 +207,10 @@ public class SerializableItems implements Serializable {
 
     public void removeStatusAdder(StatusAdder<?> statusAdder) {
         statusAdders.remove(statusAdder);
+    }
+
+    public List<Character> getDeadCharacters(int team) {
+        return team == 0 ? team0DeadCharacters : team1DeadCharacters;
     }
 
     private record PriorityMove(Character character, SerializableRunnable runnable) implements Serializable {

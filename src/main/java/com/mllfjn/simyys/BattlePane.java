@@ -596,27 +596,31 @@ public class BattlePane {
             boolean haveCleaned = false;
             for (PropertiesHolder propertiesHolder : propertiesHolderList) {
                 if (wave == propertiesHolder.propertiesMap.get(PropertyKey.GENERAL_WAVE_KEY).getInt()) {
-                    CharacterFactory.getCharacter(propertiesHolder, this).ifPresent(this::addCharacter);
-                }
-            }
-
-            if (situation.teamPane[team].characters.isEmpty()) {
-                Utils.information(team == 0 ? "失败" : "胜利");
-            } else {
-                // 如果游戏没结束,那么进入新的回目,阵亡方不可以再复活
-                situation.deadCharacters.removeIf(character -> character.team == team);
-                // 让对方的人清一遍状态
-                int enemyTeam = CharacterFinder.getEnemyTeam(team);
-                for (Character character : situation.teamPane[enemyTeam].characters) {
-                    Iterator<Status> iterator = character.getStatuses().iterator();
-                    while (iterator.hasNext()) {
-                        Status status = iterator.next();
-                        if (!(status instanceof RetainAfterChangeWave)) {
-                            status.beforeDelete();
-                            iterator.remove();
+                    Optional<Character> oCharacter = CharacterFactory.getCharacter(propertiesHolder, this);
+                    if (oCharacter.isPresent()) {
+                        if (!haveCleaned) {
+                            // 让对方的人清一遍状态
+                            int enemyTeam = CharacterFinder.getEnemyTeam(team);
+                            for (Character character : situation.teamPane[enemyTeam].characters) {
+                                Iterator<Status> iterator = character.getStatuses().iterator();
+                                while (iterator.hasNext()) {
+                                    Status status = iterator.next();
+                                    if (!(status instanceof RetainAfterChangeWave)) {
+                                        status.beforeDelete();
+                                        iterator.remove();
+                                    }
+                                }
+                            }
+                            haveCleaned = true;
+                            addCharacter(oCharacter.get());
                         }
                     }
                 }
+            }
+            if (situation.teamPane[team].characters.isEmpty()) {
+                Utils.information(team == 0 ? "失败" : "胜利");
+            } else {
+                situation.priorityMove();
             }
         }
     }

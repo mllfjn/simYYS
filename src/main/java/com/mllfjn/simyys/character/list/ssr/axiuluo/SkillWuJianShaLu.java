@@ -17,7 +17,7 @@ class SkillWuJianShaLu extends Skill {
     private boolean replaced;
 
     public SkillWuJianShaLu(Character belongTo, Skill2 skill2) {
-        super(belongTo, -1, 0, 0, -1);
+        super(belongTo, -1, 0, 0, 2);
         this.skill2 = skill2;
     }
 
@@ -28,6 +28,7 @@ class SkillWuJianShaLu extends Skill {
 
     void replace() {
         if (!replaced) {
+            ((AXiuLuo) getBelongTo()).skillWuJianShaLu = this;
             getBelongTo().removeSkill(skill2);
             getBelongTo().addSkill(this, true);
             replaced = true;
