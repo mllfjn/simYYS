@@ -348,7 +348,7 @@ public class BattlePane {
         situation.teamPane[0].calHuoLing();
         situation.teamPane[1].calHuoLing();
 
-        characterActing.beforeRound();
+        characterActing.checkBeforeBeforeRound();
         characterActing.setLockSkillAndAuto();
 
         interactive.display();
@@ -523,7 +523,7 @@ public class BattlePane {
             Character newRoundCharacter = situation.newRoundCharacter().orElseGet(this::getNextOrder);
             // 这部分不在时之隙新回合生效
             newRoundCharacter.forceSetLocation(0);
-            newRoundCharacter.beforeRound();
+            newRoundCharacter.checkBeforeBeforeRound();
             return newRoundCharacter;
         });
         situation.characterActing = characterActing;

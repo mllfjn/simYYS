@@ -414,17 +414,19 @@ public abstract class Character implements Serializable {
         this.location = newLocation;
     }
 
-    public void beforeRound() {
+    public void checkBeforeBeforeRound() {
         // 如果没有时之隙但是有时之辉,转化成时之隙
-        // 需要在"行动前生效"的状态和维持类过回合之前判定
         Optional<StatusShiZhiHui> oStatus = getStatus(StatusShiZhiHui.class);
         if (oStatus.isPresent()) {
             StatusShiZhiHui status = oStatus.get();
             status.transform();
             statusRun(Trigger.OUT_ROUND_ACTION, null);
-            return;
+        } else {
+            beforeRound();
         }
+    }
 
+    public void beforeRound() {
         isInRound = true;
 
         statusRun(Trigger.BEFORE_ROUND, null);

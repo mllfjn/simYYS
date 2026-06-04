@@ -19,6 +19,7 @@ import com.mllfjn.simyys.character.list.sr.qingji.QingJi;
 import com.mllfjn.simyys.character.list.sr.xienv.XieNv;
 import com.mllfjn.simyys.character.list.sr.xuenv.XueNv;
 import com.mllfjn.simyys.character.list.sr.yaoqin.YaoQin;
+import com.mllfjn.simyys.character.list.ssr.axiuluo.AXiuLuo;
 import com.mllfjn.simyys.character.list.ssr.beimihu.BeiMiHu;
 import com.mllfjn.simyys.character.list.ssr.bujianyue.BuJianYue;
 import com.mllfjn.simyys.character.list.ssr.datiangou.DaTianGou;
@@ -102,6 +103,7 @@ public class CharacterFactory {
         ssrMap.put(XueYuQian.CharacterName, XueYuQian.class);
         ssrMap.put(BuJianYue.CharacterName, BuJianYue.class);
         ssrMap.put(SiJinShen.CharacterName, SiJinShen.class);
+        ssrMap.put(AXiuLuo.CharacterName, AXiuLuo.class);
 
 
 

@@ -64,7 +64,7 @@ class Skill3 extends Skill {
         // 攻击指定敌方目标造成攻击120%伤害
         interactive.attackTypical(this, target, 120, AttackType.DAN_TI);
         // TODO 并额外使其获得恍惚 不写恍惚了直接过一遍回合前后状态完事
-        target.beforeRound();
+        target.checkBeforeBeforeRound();
         target.afterRound();
 
         return Optional.of(target);
