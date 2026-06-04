@@ -53,9 +53,9 @@ class Skill4Special extends Skill {
         int enemyCount = list.size();
 
         // 前两次固定系数
-        int multiplier = 300 / enemyCount;
+        double multiplier = 300.0 / enemyCount;
         if (enemyCount < initTeammateCount) {
-            multiplier = (int) (multiplier * (1 - (initTeammateCount - enemyCount) * 0.12));
+            multiplier = multiplier * (1 - (initTeammateCount - enemyCount) * 0.12);
         }
 
         for (int i = 0; i < 2; i++) {
@@ -63,9 +63,8 @@ class Skill4Special extends Skill {
         }
 
         // 第三次
-        int thirdMultiplier = (int) (
-                multiplier * coefficient[belongTo.getStatus(StatusDaYao.class).orElseThrow().getStack()]
-        );
+        double thirdMultiplier = multiplier
+                * coefficient[belongTo.getStatus(StatusDaYao.class).orElseThrow().getStack()];
 
         interactive.attackTypical(this, list, thirdMultiplier, AttackType.QUN_TI);
 
