@@ -18,6 +18,7 @@ import com.mllfjn.simyys.character.list.sr.huajing.HuaJing;
 import com.mllfjn.simyys.character.list.sr.luoxinfu.LuoXinFu;
 import com.mllfjn.simyys.character.list.sr.qingji.QingJi;
 import com.mllfjn.simyys.character.list.sr.rihefang.RiHeFang;
+import com.mllfjn.simyys.character.list.sr.xiazhongshaonv.XiaZhongShaoNv;
 import com.mllfjn.simyys.character.list.sr.xienv.XieNv;
 import com.mllfjn.simyys.character.list.sr.xuenv.XueNv;
 import com.mllfjn.simyys.character.list.sr.yaoqin.YaoQin;
@@ -117,6 +118,7 @@ public class CharacterFactory {
         srMap.put(XueNv.CharacterName, XueNv.class);
         srMap.put(HuaJing.CharacterName, HuaJing.class);
         srMap.put(RiHeFang.CharacterName, RiHeFang.class);
+        srMap.put(XiaZhongShaoNv.CharacterName, XiaZhongShaoNv.class);
 
         Map<String, Class<? extends Character>> rMap = new LinkedHashMap<>();
         characterMap.put("R", rMap);

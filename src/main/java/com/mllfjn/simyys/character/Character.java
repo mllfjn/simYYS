@@ -424,9 +424,9 @@ public abstract class Character implements Serializable {
     }
 
     public void beforeRound() {
-        isInRound = true;
-
         statusRun(Trigger.BEFORE_ROUND, null);
+
+        isInRound = true;
 
         // 维持类状态过回合
         maintainedStatuses.removeIf(status -> {

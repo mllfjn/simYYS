@@ -27,6 +27,7 @@ import javafx.stage.Window;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.AbstractMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class PropertiesHolder implements Serializable {
@@ -43,12 +44,23 @@ public class PropertiesHolder implements Serializable {
     private transient SimpleStringProperty nameProperty;
     private transient StringBinding totalAttackProperty;
 
-    public PropertiesHolder(String name, PropertiesMap propertiesMap, Map<Integer, Integer> lockSkillMap, Map<Integer, FlagChangeInfo> flagChangeMap) {
+    public PropertiesHolder(String name, PropertiesMap propertiesMap,
+                            Map<Integer, Integer> lockSkillMap, Map<Integer, FlagChangeInfo> flagChangeMap
+    ) {
         this.name = name;
         this.propertiesMap = propertiesMap;
         this.lockSkillMap = lockSkillMap;
         this.flagChangeMap = flagChangeMap;
     }
+
+    public PropertiesHolder(String name, PropertiesMap propertiesMap) {
+        this.name = name;
+        this.propertiesMap = propertiesMap;
+        this.lockSkillMap = new LinkedHashMap<>();
+        this.flagChangeMap = new LinkedHashMap<>();
+    }
+
+
 
     public void show(Scene OwnerScent) {
         Stage stage = new Stage();

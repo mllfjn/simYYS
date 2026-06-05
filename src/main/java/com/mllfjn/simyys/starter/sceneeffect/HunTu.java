@@ -15,7 +15,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 class HunTu {
-    public static final String Scene_Name = "魂土";
+    public static final String SCENE_NAME = "魂土";
 
     public static void addCharacterProperty(List<PropertiesHolder> list) {
         // 数据来自https://bbs.nga.cn/read.php?tid=16641284
@@ -122,9 +122,5 @@ class HunTu {
         ((PropertyInput) pm.get(PropertyKey.GENERAL_CRIT_RATE_KEY)).setValue("60");
         ((PropertyInput) pm.get(PropertyKey.GENERAL_CRIT_POWER_KEY)).setValue("150");
         list.add(new PropertiesHolder(GuiQie.CharacterName, pm, new LinkedHashMap<>(), new LinkedHashMap<>()));
-    }
-
-    public static void addPriorityMove() {
-
     }
 }
