@@ -109,8 +109,6 @@ class Skill5 extends PassiveSkill {
             setInitSpeed(100);
             setInitBaseAttack(2000);
             setMob(1, 1);
-
-            fillSkills();
         }
 
         @Override

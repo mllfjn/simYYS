@@ -30,8 +30,6 @@ class CharacterLDLL extends CharacterSummonBase {
         setInitDefense(xueYuQian.getInitDefense());
         setInitSpeed(xueYuQian.getInitSpeed() * 0.95);
         forceSetLocation(location);
-
-        fillSkills();
     }
 
     void repeatSummon(double location, boolean forceChangeLocation) {

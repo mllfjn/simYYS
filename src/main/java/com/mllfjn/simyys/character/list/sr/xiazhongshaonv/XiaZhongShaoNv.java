@@ -24,5 +24,6 @@ public class XiaZhongShaoNv extends CharacterShiShenBase {
     protected void addOwnSkills() {
         addSkill(new Skill1(this, skill1Level));
         addSkill(new Skill2(this, awakening));
+        addSkill(new Skill3(this, skill3Level));
     }
 }

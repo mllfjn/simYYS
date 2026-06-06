@@ -36,8 +36,6 @@ public class HouZi extends CharacterSummonBase {
         this.setInitDefense(352);
         this.setInitSpeed(100);
 
-        fillSkills();
-
         adder = bp.addStatusAdder(c ->
                 c.team != team
                         ? new StatusIncreaseActionListener(this, c)

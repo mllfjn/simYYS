@@ -28,9 +28,13 @@ public abstract class CharacterShiShenBase extends Character {
         super.init(propertiesHolder, bp);
 
         int skillLevel = propertiesHolder.propertiesMap.get(PropertyKey.SKILL_KEY).getInt();
-        skill1Level = PropertyKey.getSkillLevel(skillLevel, 1);
-        skill2Level = PropertyKey.getSkillLevel(skillLevel, 2);
-        skill3Level = PropertyKey.getSkillLevel(skillLevel, 3);
+        if (skillLevel < 100 || skillLevel > 999) {
+            throw new IllegalArgumentException("技能等级输入错误");
+        }
+        skill3Level = skillLevel % 10;
+        skillLevel /= 10;
+        skill2Level = skillLevel % 10;
+        skill1Level = skillLevel / 10;
 
         if (canAwakening()) {
             awakening = propertiesHolder.propertiesMap.get(PropertyKey.JUE_XING_KEY).getBoolean();

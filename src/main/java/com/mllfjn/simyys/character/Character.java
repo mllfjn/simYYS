@@ -72,10 +72,17 @@ public abstract class Character implements Serializable {
     private final List<Status> maintainedStatuses = new ArrayList<>();
     // 御魂列表
     private final LinkedHashSet<YuHun> yuHunSet = new LinkedHashSet<>();
+    // 封印御魂次数
+    private int sealYuHunCount = 0;
     // 头像
     private CharacterIcon characterIcon;
 
     public transient BattlePane bp;
+
+    public BattlePane getBp() {
+        // 尽量用这个方法,TODO 改成根据bp序号从静态类中获取bp
+        return bp;
+    }
 
     public PropertiesMap getProperties() {
         PropertiesMap map = new PropertiesMap();
@@ -891,10 +898,6 @@ public abstract class Character implements Serializable {
         getStatus(tClass).ifPresentOrElse(action, () -> addStatus(supplier.get()));
     }
 
-    /**
-     * 开销好像比不过现在在用的静态方法,但是那个方法写起来太麻烦了,或者写一个通用的静态方法?
-     * 测试发现游戏里改变了在状态栏的位置,应该是替换了新的
-     */
     public <T extends Status> void replaceStatus(T newStatus) {
         removeStatus(newStatus.getClass());
         addStatus(newStatus);
@@ -985,7 +988,7 @@ public abstract class Character implements Serializable {
     }
 
     public boolean isYuHunSeal() {
-        return false;
+        return sealYuHunCount > 0;
     }
 
     public <T extends YuHun> YuHun removeYuHun(Class<T> tClass) {
@@ -1004,6 +1007,14 @@ public abstract class Character implements Serializable {
 
     public LinkedHashSet<YuHun> getYuHunSet() {
         return yuHunSet;
+    }
+
+    public void sealYuHun() {
+        sealYuHunCount++;
+    }
+
+    public void unsealYuHun() {
+        sealYuHunCount--;
     }
 
     public void beforeDie(AttackInfo attackInfo, double excessDamage) {

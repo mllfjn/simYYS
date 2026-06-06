@@ -34,7 +34,7 @@ class Skill2 extends Skill {
             // 再次释放时，解除目标 胜天之缘
             status.from.removeStatus(StatusSTChi.class);
             status.from.removeStatus(StatusSTQing.class);
-            // 并驱散其全部减益状态与 TODO 控制效果
+            // 并驱散其全部减益状态与控制效果
             status.from.dispelAllDebuff();
             status.delete();
         });

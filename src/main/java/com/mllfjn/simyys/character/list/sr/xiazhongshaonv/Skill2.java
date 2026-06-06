@@ -15,13 +15,7 @@ import java.util.List;
 
 class Skill2 extends PassiveSkill {
     private static final String SkillName = "溢彩";
-    private static final List<String> buffs = List.of(
-            StatusIncreaseAttack.StatusName,
-            StatusIncreaseDefense.StatusName,
-            StatusIncreaseCritPower.StatusName,
-            StatusIncreaseSpeed.StatusName,
-            StatusIncreaseEffectResist.StatusName
-    );
+    private static final List<RandomStatus> buffs = List.of(RandomStatus.values());
 
     private final boolean awakening;
 
@@ -68,33 +62,13 @@ class Skill2 extends PassiveSkill {
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
             Character attacker = ((ParamAttackInfo) param).getAttackInfo().getAttacker();
-            String choose = RateController.choose("匣中少女-溢彩:为攻击者附加减益", buffs, s -> s, belongTo.bp.calc);
-            StatusSupplier supplier = switch (choose) {
-                case StatusIncreaseAttack.StatusName -> new StatusSupplier(StatusIncreaseAttack.StatusName,
-                        StatusReduceAttack.class, (from, to) ->
-                        to.replaceStatus(new StatusReduceAttack(belongTo, attacker))
-                );
-                case StatusIncreaseDefense.StatusName -> new StatusSupplier(StatusIncreaseDefense.StatusName,
-                        StatusReduceDefense.class, (from, to) ->
-                        to.replaceStatus(new StatusReduceDefense(belongTo, attacker))
-                );
-                case StatusIncreaseCritPower.StatusName -> new StatusSupplier(StatusIncreaseCritPower.StatusName,
-                        StatusReduceCritPower.class, (from, to) ->
-                        to.replaceStatus(new StatusReduceCritPower(belongTo, attacker))
-                );
-                case StatusIncreaseSpeed.StatusName -> new StatusSupplier(StatusIncreaseSpeed.StatusName,
-                        StatusReduceSpeed.class, (from, to) ->
-                        to.replaceStatus(new StatusReduceSpeed(belongTo, attacker))
-                );
-                case StatusIncreaseEffectResist.StatusName -> new StatusSupplier(StatusIncreaseEffectResist.StatusName,
-                        StatusReduceEffectResist.class, (from, to) ->
-                        to.replaceStatus(new StatusReduceEffectResist(belongTo, attacker))
-                );
-                default -> throw new IllegalStateException("Unexpected value: " + choose);
-            };
-            belongTo.doInteractive(interactive -> interactive.effect(Skill2.this, attacker,
-                    100, 0, true, supplier)
+            RandomStatus choose = RateController.choose("匣中少女-溢彩:为攻击者附加减益", buffs,
+                    v -> v.attribute.getText(), belongTo.bp.calc
             );
+            belongTo.doInteractive(interactive -> interactive.effect(Skill2.this, attacker,
+                    100, 0, true,
+                    StatusRandomStatus.getSupplier(choose)
+            ));
             return false;
         }
     }
@@ -113,17 +87,10 @@ class Skill2 extends PassiveSkill {
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
             belongTo.replaceStatus(new StatusXZShield(from, belongTo, belongTo.getMaxHp() * 0.08));
-            String choose = RateController.choose("匣中少女-溢彩:获得BUFF", buffs, s -> s, belongTo.bp.calc);
-            switch (choose) {
-                case StatusIncreaseAttack.StatusName -> belongTo.replaceStatus(new StatusReduceAttack(from, belongTo));
-                case StatusIncreaseDefense.StatusName ->
-                        belongTo.replaceStatus(new StatusReduceDefense(from, belongTo));
-                case StatusIncreaseCritPower.StatusName ->
-                        belongTo.replaceStatus(new StatusReduceCritPower(from, belongTo));
-                case StatusIncreaseSpeed.StatusName -> belongTo.replaceStatus(new StatusReduceSpeed(from, belongTo));
-                case StatusIncreaseEffectResist.StatusName ->
-                        belongTo.replaceStatus(new StatusReduceEffectResist(from, belongTo));
-            }
+            RandomStatus choose = RateController.choose("匣中少女-溢彩:获得BUFF", buffs,
+                    v -> v.attribute.getText(), belongTo.bp.calc
+            );
+            StatusRandomStatus.install(from, belongTo, StatusType.BUFF, choose, 2);
             return false;
         }
 
@@ -135,183 +102,69 @@ class Skill2 extends PassiveSkill {
         }
     }
 
-    private static class StatusIncreaseAttack extends Status implements AttributeModifier {
-        private static final String StatusName = "攻击";
+    private static class StatusRandomStatus extends Status implements AttributeModifier {
+        private final RandomStatus randomStatus;
 
-        public StatusIncreaseAttack(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.BUFF, StatusForm.ZHUANG_TAI);
-            setDurationType(StatusDurationType.CHI_XU, 2);
+        private StatusRandomStatus(Character from, Character belongTo, StatusType statusType,
+                                   RandomStatus randomStatus, int duration
+        ) {
+            super(from, belongTo, statusType, StatusForm.ZHUANG_TAI);
+            this.randomStatus = randomStatus;
+            setDurationType(StatusDurationType.CHI_XU, duration);
+        }
+
+        static StatusSupplier getSupplier(RandomStatus randomStatus) {
+            return new StatusSupplier(randomStatus.attribute.getText(), StatusRandomStatus.class,
+                    (c1, c2) -> install(c1, c2, StatusType.DEBUFF, randomStatus, 1)
+            );
+        }
+
+        static void install(Character from, Character belongTo, StatusType statusType,
+                            RandomStatus randomStatus, int duration
+        ) {
+            for (Status status : belongTo.getStatuses()) {
+                if (status instanceof StatusRandomStatus srs
+                        && srs.randomStatus == randomStatus
+                        && status.statusType == statusType
+                ) {
+                    status.setDuration(duration);
+                    return;
+                }
+            }
+            belongTo.addStatus(new StatusRandomStatus(from, belongTo, statusType, randomStatus, duration));
+
         }
 
         @Override
         public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.ATTACK;
+            return attribute == randomStatus.attribute;
         }
 
         @Override
         public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return belongTo.getInitAttack() * 0.1;
+            double rtValue = switch (randomStatus) {
+                case ATTACK -> belongTo.getInitAttack() * 0.1;
+                case DEFENSE -> belongTo.getInitDefense() * 0.2;
+                case CRIT_POWER, SPEED, EFFECT_RESIST_RATE -> 10;
+            };
+            if (statusType == StatusType.DEBUFF) {
+                rtValue = -rtValue;
+            }
+            return rtValue;
         }
     }
 
-    private static class StatusIncreaseDefense extends Status implements AttributeModifier {
-        private static final String StatusName = "防御";
+    private enum RandomStatus {
+        ATTACK(Attribute.ATTACK),
+        DEFENSE(Attribute.DEFENCE),
+        CRIT_POWER(Attribute.CRIT_POWER),
+        SPEED(Attribute.SPEED),
+        EFFECT_RESIST_RATE(Attribute.EFFECT_RESIST_RATE),
+        ;
+        private final Attribute attribute;
 
-        public StatusIncreaseDefense(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.BUFF, StatusForm.ZHUANG_TAI);
-            setDurationType(StatusDurationType.CHI_XU, 2);
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.DEFENCE;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return belongTo.getInitDefense() * 0.2;
-        }
-    }
-
-    private static class StatusIncreaseCritPower extends Status implements AttributeModifier {
-        private static final String StatusName = "爆伤";
-
-        public StatusIncreaseCritPower(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.BUFF, StatusForm.ZHUANG_TAI);
-            setDurationType(StatusDurationType.CHI_XU, 2);
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.CRIT_POWER;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return 10;
-        }
-    }
-
-    private static class StatusIncreaseSpeed extends Status implements AttributeModifier {
-        private static final String StatusName = "速度";
-
-        public StatusIncreaseSpeed(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.BUFF, StatusForm.ZHUANG_TAI);
-            setDurationType(StatusDurationType.CHI_XU, 2);
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.SPEED;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return 10;
-        }
-    }
-
-    private static class StatusIncreaseEffectResist extends Status implements AttributeModifier {
-        private static final String StatusName = "抵抗";
-
-        public StatusIncreaseEffectResist(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.BUFF, StatusForm.ZHUANG_TAI);
-            setDurationType(StatusDurationType.CHI_XU, 2);
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.EFFECT_RESIST_RATE;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return 10;
-        }
-    }
-
-    private static class StatusReduceAttack extends Status implements AttributeModifier {
-        public StatusReduceAttack(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
-            setDurationType(StatusDurationType.CHI_XU, 1);
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.ATTACK;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return -belongTo.getInitAttack() * 0.1;
-        }
-    }
-
-    private static class StatusReduceDefense extends Status implements AttributeModifier {
-        public StatusReduceDefense(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
-            setDurationType(StatusDurationType.CHI_XU, 1);
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.DEFENCE;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return -belongTo.getInitDefense() * 0.2;
-        }
-    }
-
-    private static class StatusReduceCritPower extends Status implements AttributeModifier {
-        public StatusReduceCritPower(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
-            setDurationType(StatusDurationType.CHI_XU, 1);
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.CRIT_POWER;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return -10;
-        }
-    }
-
-    private static class StatusReduceSpeed extends Status implements AttributeModifier {
-        public StatusReduceSpeed(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
-            setDurationType(StatusDurationType.CHI_XU, 1);
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.SPEED;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return -10;
-        }
-    }
-
-    private static class StatusReduceEffectResist extends Status implements AttributeModifier {
-        public StatusReduceEffectResist(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
-            setDurationType(StatusDurationType.CHI_XU, 1);
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.EFFECT_RESIST_RATE;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return -10;
+        RandomStatus(Attribute attribute) {
+            this.attribute = attribute;
         }
     }
 }

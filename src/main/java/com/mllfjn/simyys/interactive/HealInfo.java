@@ -21,8 +21,8 @@ public class HealInfo extends InteractiveInfo {
 
     // 恢复,不会暴击
     public static HealInfo createRecovery(Character attacker, Skill skill, Character target, double basicNumber) {
-        HealInfo interactiveInfo = new HealInfo(attacker, skill, target, basicNumber);
-        interactiveInfo.canCrit = false;
-        return interactiveInfo;
+        HealInfo healInfo = new HealInfo(attacker, skill, target, basicNumber);
+        healInfo.canCrit = false;
+        return healInfo;
     }
 }

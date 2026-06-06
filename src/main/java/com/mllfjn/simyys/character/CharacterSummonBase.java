@@ -10,6 +10,8 @@ public class CharacterSummonBase extends Character {
         this.bp = bp;
         this.name = name;
         this.team = team;
+
+        fillSkills();
     }
 
     @Override

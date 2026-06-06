@@ -44,15 +44,6 @@ public class PropertyKey {
     public static final String JUE_XING_KEY = "是否觉醒";
     public static final String QI_LING_KEY = "契灵";
 
-    public static int getSkillLevel(int skill, int i) {
-        return switch (i) {
-            case 1 -> skill / 100;
-            case 2 -> skill / 10 % 10;
-            case 3 -> skill % 10;
-            default -> 0;
-        };
-    }
-
     private static final String[] YYSSkillDesc = new String[]{"技能等级", "契灵术印等级"};
 
     public static void addYYSSkill(PropertiesMap map
