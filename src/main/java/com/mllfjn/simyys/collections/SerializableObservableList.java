@@ -8,11 +8,19 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
 
-public class SerializableObservableList<E extends Serializable> implements Serializable, Iterable<E>{
+public class SerializableObservableList<E extends Serializable> implements Serializable, Iterable<E> {
     @Serial
     private static final long serialVersionUID = 3451015018844167861L;
-    private final List<E> list = new ArrayList<>();
+    private final List<E> list;
     private transient ObservableList<E> observableList;
+
+    public SerializableObservableList() {
+        list = new ArrayList<>();
+    }
+
+    public SerializableObservableList(SerializableObservableList<E> other) {
+        list = new ArrayList<>(other.list);
+    }
 
     public ObservableList<E> getObservableList() {
         if (observableList == null) {

@@ -7,14 +7,14 @@ import com.mllfjn.simyys.character.list.sr.luoxinfu.LuoXinFu;
 import com.mllfjn.simyys.character.list.sr.rihefang.RiHeFang;
 import com.mllfjn.simyys.character.list.sr.xiazhongshaonv.XiaZhongShaoNv;
 import com.mllfjn.simyys.character.list.ssr.axiuluo.AXiuLuo;
+import com.mllfjn.simyys.character.list.ssr.dashe.DaShe;
 import com.mllfjn.simyys.character.propertygetter.*;
-
-import java.util.List;
+import com.mllfjn.simyys.collections.SerializableObservableList;
 
 public class HunWang {
     public static final String SCENE_NAME = "魂王";
 
-    /*public static void addCharacterProperty(List<PropertiesHolder> list) {
+    public static void addCharacterProperty(SerializableObservableList<PropertiesHolder> list) {
         // 数据来自https://bbs.nga.cn/read.php?tid=35316684
         PropertiesMap pm;
 
@@ -59,26 +59,26 @@ public class HunWang {
         list.add(new PropertiesHolder(HuaJing.CharacterName, pm));
 
         // 八岐大蛇
-        pm = CharacterFactory.getProperties(.CharacterName).orElseThrow();
+        pm = CharacterFactory.getProperties(DaShe.CharacterName).orElseThrow();
         ((PropertyCheck) pm.get(PropertyKey.GENERAL_TEAM_KEY)).setValue(true);
         ((PropertyInput) pm.get(PropertyKey.GENERAL_WAVE_KEY)).setValue("2");
         ((PropertyInput) pm.get(PropertyKey.SKILL_KEY)).setValue("111");
         ((PropertyInput) pm.get(PropertyKey.GENERAL_HP_KEY)).setValue("666666");
         ((PropertyInput) pm.get(PropertyKey.GENERAL_DEFENSE_KEY)).setValue("390");
         ((PropertyInput) pm.get(PropertyKey.GENERAL_SPEED_KEY)).setValue("137");
-        list.add(new PropertiesHolder(.CharacterName, pm));
+        list.add(new PropertiesHolder(DaShe.CharacterName, pm));
 
         // 日和坊
         pm = CharacterFactory.getProperties(RiHeFang.CharacterName).orElseThrow();
         ((PropertyCheck) pm.get(PropertyKey.GENERAL_TEAM_KEY)).setValue(true);
-        ((PropertyInput) pm.get(PropertyKey.GENERAL_WAVE_KEY)).setValue("1");
+        ((PropertyInput) pm.get(PropertyKey.GENERAL_WAVE_KEY)).setValue("2");
         ((PropertyInput) pm.get(PropertyKey.SKILL_KEY)).setValue("111");
         ((PropertyInput) pm.get(PropertyKey.GENERAL_HP_KEY)).setValue("198500");
         ((PropertyInput) pm.get(PropertyKey.GENERAL_DEFENSE_KEY)).setValue("0");
         ((PropertyInput) pm.get(PropertyKey.GENERAL_SPEED_KEY)).setValue("152");
         list.add(new PropertiesHolder(RiHeFang.CharacterName, pm));
 
-        // 蛇魔
+        /*// 蛇魔
         pm = CharacterFactory.getProperties(.CharacterName).orElseThrow();
         ((PropertyCheck) pm.get(PropertyKey.GENERAL_TEAM_KEY)).setValue(true);
         ((PropertyInput) pm.get(PropertyKey.GENERAL_WAVE_KEY)).setValue("3");
@@ -103,6 +103,6 @@ public class HunWang {
         ((PropertyInput) pm.get(PropertyKey.GENERAL_HP_KEY)).setValue("120000");
         ((PropertyInput) pm.get(PropertyKey.GENERAL_DEFENSE_KEY)).setValue("570");
         ((PropertyInput) pm.get(PropertyKey.GENERAL_SPEED_KEY)).setValue("145");
-        list.add(new PropertiesHolder(.CharacterName, pm));
-    }*/
+        list.add(new PropertiesHolder(.CharacterName, pm));*/
+    }
 }

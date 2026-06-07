@@ -84,18 +84,23 @@ public abstract class Character implements Serializable {
         return bp;
     }
 
-    public PropertiesMap getProperties() {
+    public static PropertiesMap getDefaultProperties() {
         PropertiesMap map = new PropertiesMap();
         for (String key : PropertyKey.GENERAL_INPUT_KEYS) {
             map.put(key, new PropertyInput());
         }
-        ((PropertyInput) map.get(PropertyKey.GENERAL_BASE_ATTACK_KEY)).setValue(getDefaultBaseAttack());
         ((PropertyInput) map.get(PropertyKey.GENERAL_WAVE_KEY)).setValue("1");
 
         for (String key : PropertyKey.GENERAL_CHECK_KEYS) {
             map.put(key, new PropertyCheck());
         }
 
+        return map;
+    }
+
+    public PropertiesMap getProperties() {
+        PropertiesMap map = getDefaultProperties();
+        ((PropertyInput) map.get(PropertyKey.GENERAL_BASE_ATTACK_KEY)).setValue(getDefaultBaseAttack());
         return map;
     }
 

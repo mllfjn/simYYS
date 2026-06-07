@@ -3,7 +3,6 @@ module com.mllfjn.simyys {
     requires javafx.base;
     requires javafx.graphics;
     requires static org.jetbrains.annotations;
-    requires com.mllfjn.simyys;
 //    requires com.mllfjn.simyys; TODO 为什么会反复自动出现这句循环引用？
 
     opens com.mllfjn.simyys to javafx.fxml;

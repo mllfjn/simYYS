@@ -48,4 +48,8 @@ public class NodeWithController extends BorderPane {
 
         controller.getChildren().add(button);
     }
+
+    public void addNode(Node node) {
+        controller.getChildren().add(node);
+    }
 }

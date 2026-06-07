@@ -22,7 +22,11 @@ class StatusMo extends Status implements Displayable {
                 AttackInfo attackInfo = AttackInfo.createJianJieAttack(from, skill2, belongTo, from.getAttack());
                 attackInfo.setMultiplier(211);
                 interactive.attack(attackInfo);
-
+                double recovery = attackInfo.getTraceableNumber().getNumber();
+                interactive.recovery(skill2, from, recovery);
+                ((DaShe) from).getMinHpSheMo().ifPresent(sheMo ->
+                        interactive.recovery(skill2, sheMo, recovery)
+                );
             });
             delete();
         } else {

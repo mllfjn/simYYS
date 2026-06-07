@@ -10,14 +10,14 @@ import com.mllfjn.simyys.character.list.ssr.datiangou.DaTianGou;
 import com.mllfjn.simyys.character.list.ssr.guiqie.GuiQie;
 import com.mllfjn.simyys.character.propertygetter.*;
 import com.mllfjn.simyys.character.yuhun.list.*;
+import com.mllfjn.simyys.collections.SerializableObservableList;
 
 import java.util.LinkedHashMap;
-import java.util.List;
 
 class HunTu {
     public static final String SCENE_NAME = "魂土";
 
-    public static void addCharacterProperty(List<PropertiesHolder> list) {
+    public static void addCharacterProperty(SerializableObservableList<PropertiesHolder> list) {
         // 数据来自https://bbs.nga.cn/read.php?tid=16641284
         PropertiesMap pm;
 

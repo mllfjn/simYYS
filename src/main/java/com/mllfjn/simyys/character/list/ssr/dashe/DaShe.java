@@ -4,7 +4,9 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.CharacterShiShenBase;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 public class DaShe extends CharacterShiShenBase {
     public static final String CharacterName = "八岐大蛇";
@@ -29,6 +31,14 @@ public class DaShe extends CharacterShiShenBase {
 
     void removeSheMo(CharacterSheMo sheMo) {
         sheMoList.remove(sheMo);
+    }
+
+    Optional<CharacterSheMo> getMinHpSheMo() {
+        if (sheMoList == null || sheMoList.isEmpty()) {
+            return Optional.empty();
+        } else {
+            return sheMoList.stream().min(Comparator.comparing(CharacterSheMo::getHp));
+        }
     }
 
     int getSheMoCount() {
@@ -70,7 +80,10 @@ public class DaShe extends CharacterShiShenBase {
         skill3 = new Skill3(this, skill3Level);
         skill2 = new Skill2(this, skill2Level, skill3);
 
-        addSkill(skill2);
+        if (skill2Level > 0) {
+            addSkill(skill2);
+        }
+
         addSkill(skill3);
     }
 }

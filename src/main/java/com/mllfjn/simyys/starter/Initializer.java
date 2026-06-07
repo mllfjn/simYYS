@@ -1,15 +1,16 @@
 package com.mllfjn.simyys.starter;
 
 import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.character.propertygetter.FlagChangeInfo;
 import com.mllfjn.simyys.collections.SerializableObservableList;
 import com.mllfjn.simyys.customnode.NodeWithController;
+import com.mllfjn.simyys.starter.sceneeffect.SceneEffect;
 import com.mllfjn.simyys.utils.Utils;
 import com.mllfjn.simyys.character.CharacterFactory;
 import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
 import com.mllfjn.simyys.character.propertygetter.PropertiesMap;
 import com.mllfjn.simyys.character.propertygetter.PropertyRequire;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
@@ -25,10 +26,8 @@ import java.util.*;
 public class Initializer extends Application {
     public final SerializableObservableList<PropertiesHolder> items = new SerializableObservableList<>();
     public final Prediction prediction = new Prediction();
-    public String sceneEffect = null;
 
-    private SerializableObservableList<ExtraFlag> extraFlags = new SerializableObservableList<>();
-    private SerializableObservableList<ExtraLockSkill> extraLockSkills = new SerializableObservableList<>();
+    private ComboBox<SceneEffect> sceneEffectComboBox;
 
     private final static double BORDER_WIDTH = 16;
     private final static double BORDER_HEIGHT = 39;
@@ -90,6 +89,13 @@ public class Initializer extends Application {
         borderPane.addControlButton("设置预计顺序", e -> prediction.showPrediction(scene, items));
         borderPane.addControlButton("检查是否符合", e -> prediction.check(items
                 , stage, () -> stage.setScene(scene), this), scene, KeyCode.C);
+
+        // 场景选择器
+        sceneEffectComboBox = new ComboBox<>();
+        sceneEffectComboBox.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        sceneEffectComboBox.setPromptText("选择场景");
+        sceneEffectComboBox.setItems(FXCollections.observableArrayList(SceneEffect.values()));
+        borderPane.addNode(sceneEffectComboBox);
 
         stage.setScene(scene);
         stage.setTitle("配置式神");
@@ -174,6 +180,14 @@ public class Initializer extends Application {
         saveButton.setOnAction(event -> saveDate(stage));
         loadButton.setOnAction(event -> loadData(stage));
         startButton.setOnAction(event -> {
+            SceneEffect selectedItem = sceneEffectComboBox.getSelectionModel().getSelectedItem();
+            SerializableObservableList<PropertiesHolder> list;
+            if (selectedItem != null) {
+                list = new SerializableObservableList<>(items);
+                selectedItem.getAddCharacter().accept(list);
+            } else {
+                list = items;
+            }
             new BattlePane(
                     scene,
                     stageRoot,
@@ -181,7 +195,7 @@ public class Initializer extends Application {
                         stageRoot.getChildren().set(0, borderPane);
                         stage.setTitle("配置式神");
                     },
-                    items,
+                    list,
                     this
             );
             stage.setTitle("战斗中");
@@ -208,7 +222,7 @@ public class Initializer extends Application {
                 Utils.throwException("读取文件时出错", e);
             }
 
-            if (readRecord == null || readRecord.items == null) {
+            if (readRecord == null) {
                 return;
             }
 
@@ -216,12 +230,8 @@ public class Initializer extends Application {
                 prediction.predictionOrder = readRecord.prediction.predictionOrder;
             }
 
-            if (extraFlags.isEmpty()) {
-                extraFlags = readRecord.extraFlags;
-            }
-
-            if (extraLockSkills.isEmpty()) {
-                extraLockSkills = readRecord.extraLockSkills;
+            if (readRecord.sceneEffect != null) {
+                sceneEffectComboBox.getSelectionModel().select(readRecord.sceneEffect);
             }
 
             SerializableObservableList<PropertiesHolder> readItems = readRecord.items;
@@ -274,7 +284,9 @@ public class Initializer extends Application {
                     FileOutputStream fos = new FileOutputStream(file);
                     ObjectOutputStream oos = new ObjectOutputStream(fos)
             ) {
-                oos.writeObject(new SerializableRecord(items, extraFlags, extraLockSkills, prediction));
+                oos.writeObject(new SerializableRecord(items, prediction,
+                        sceneEffectComboBox.getSelectionModel().getSelectedItem()
+                ));
             } catch (Exception e) {
                 Utils.throwException("保存时出错", e);
             }
@@ -302,16 +314,9 @@ public class Initializer extends Application {
         stage.setHeight(expectedHeight * Initializer.scaleY + Initializer.BORDER_HEIGHT);
     }
 
-    record ExtraFlag(String name, int team, int timesToAct, FlagChangeInfo flagChangeInfo) implements Serializable {
-    }
-
-    record ExtraLockSkill(String name, int team, int timesToAct, int skillId) implements Serializable {
-    }
-
+    // 屎山:
     record SerializableRecord(
-            SerializableObservableList<PropertiesHolder> items
-            , SerializableObservableList<ExtraFlag> extraFlags
-            , SerializableObservableList<ExtraLockSkill> extraLockSkills,
-            Prediction prediction) implements Serializable {
+            SerializableObservableList<PropertiesHolder> items,
+            Prediction prediction, SceneEffect sceneEffect) implements Serializable {
     }
 }
