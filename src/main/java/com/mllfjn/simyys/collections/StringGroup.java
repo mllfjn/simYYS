@@ -32,7 +32,8 @@ public record StringGroup(String label, String... values) implements Serializabl
                     ZhenMuShou.YuHunName,
                     YingShengChong.YuHunName,
                     PoShi.YuHunName,
-                    ZhenNv.YuHunName
+                    ZhenNv.YuHunName,
+                    PianYeZhiWei.YuHunName
             ),
             new StringGroup("命中两件套",
                     HuoLing.YuHunName,
@@ -63,7 +64,8 @@ public record StringGroup(String label, String... values) implements Serializabl
                     ShenQiLou.YuHunName,
                     HuangKuLou.YuHunName,
                     LongChe.YuHunName,
-                    YeHuangHun.YuHunName
+                    YeHuangHun.YuHunName,
+                    GuiLingGeJi.YuHunName
             ),
     };
 }

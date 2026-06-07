@@ -9,12 +9,13 @@ import com.mllfjn.simyys.character.status.triggerParam.ParamAddCrowdControl;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunSealResponse;
+import com.mllfjn.simyys.character.yuhun.YuHunUnfullMark;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class YeHuangHun extends YuHun implements YuHunSealResponse {
+public class YeHuangHun extends YuHun implements YuHunSealResponse, YuHunUnfullMark {
     public static final String YuHunName = "夜荒魂";
     private StatusYHHListener status;
 

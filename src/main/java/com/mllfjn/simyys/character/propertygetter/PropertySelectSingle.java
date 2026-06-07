@@ -4,7 +4,6 @@ import com.mllfjn.simyys.collections.StringGroup;
 import com.mllfjn.simyys.starter.Initializer;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -15,26 +14,18 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 public class PropertySelectSingle  extends PropertyRequire implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 3858806336321004506L;
+
     private String value;
     private final StringGroup[] options;
 
     public PropertySelectSingle(StringGroup[] options) {
         this.options = options;
-    }
-
-    @Override
-    public int getInt() {
-        if (options.length == 1) {
-            for (int i = 0; i < options[0].values().length; i++) {
-                if (options[0].values()[i].equals(value)) {
-                    return i;
-                }
-            }
-        }
-        return super.getInt();
     }
 
     @Override

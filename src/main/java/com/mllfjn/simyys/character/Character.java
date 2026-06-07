@@ -423,7 +423,7 @@ public abstract class Character implements Serializable {
         this.location = newLocation;
     }
 
-    public void checkBeforeBeforeRound() {
+    public void checkWhetherRunBeforeRound() {
         // 如果没有时之隙但是有时之辉,转化成时之隙
         Optional<StatusShiZhiHui> oStatus = getStatus(StatusShiZhiHui.class);
         if (oStatus.isPresent()) {

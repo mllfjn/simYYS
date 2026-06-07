@@ -5,9 +5,13 @@ import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.stage.Window;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 public class PropertyCheck extends PropertyRequire implements Serializable {
+    @Serial
+    private static final long serialVersionUID = -4955169577216666265L;
+
     private boolean value;
     private transient SimpleBooleanProperty property;
 
@@ -25,8 +29,9 @@ public class PropertyCheck extends PropertyRequire implements Serializable {
         return this;
     }
 
-    public boolean getValue() {
-        return value;
+    @Override
+    public int getInt() {
+        return value ? 1 : 0;
     }
 
     public SimpleBooleanProperty getProperty() {

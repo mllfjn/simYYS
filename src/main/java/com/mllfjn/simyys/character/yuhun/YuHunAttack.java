@@ -1,7 +1,7 @@
 package com.mllfjn.simyys.character.yuhun;
 
-import com.mllfjn.simyys.interactive.InteractiveInfo;
+import com.mllfjn.simyys.interactive.AttackInfo;
 
 public interface YuHunAttack {
-    void effectInfo(InteractiveInfo interactiveInfo);
+    void effectInfo(AttackInfo attackInfo);
 }

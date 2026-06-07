@@ -7,7 +7,6 @@ import com.mllfjn.simyys.character.yuhun.YuHunAttack;
 import com.mllfjn.simyys.character.yuhun.YuHunHitFeedBack;
 import com.mllfjn.simyys.character.yuhun.YuHunUnfullMark;
 import com.mllfjn.simyys.interactive.AttackInfo;
-import com.mllfjn.simyys.interactive.InteractiveInfo;
 
 public class HuangKuLou extends YuHun implements YuHunUnfullMark, YuHunAttack, YuHunHitFeedBack {
     public static final String YuHunName = "荒骷髅";
@@ -18,8 +17,8 @@ public class HuangKuLou extends YuHun implements YuHunUnfullMark, YuHunAttack, Y
     }
 
     @Override
-    public void effectInfo(InteractiveInfo interactiveInfo) {
-        interactiveInfo.getTraceableNumber().mul(character.isHaveStatus(StatusHKLMark.class) ? 1.25 : 1.1, YuHunName);
+    public void effectInfo(AttackInfo attackInfo) {
+        attackInfo.getTraceableNumber().mul(character.isHaveStatus(StatusHKLMark.class) ? 1.25 : 1.1, YuHunName);
         yuHunEffect();
     }
 

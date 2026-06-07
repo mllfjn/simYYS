@@ -3,7 +3,7 @@ package com.mllfjn.simyys.character.yuhun.list;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunAttack;
-import com.mllfjn.simyys.interactive.InteractiveInfo;
+import com.mllfjn.simyys.interactive.AttackInfo;
 
 public class YinNian extends YuHun implements YuHunAttack {
     public static final String YuHunName = "隐念";
@@ -18,15 +18,15 @@ public class YinNian extends YuHun implements YuHunAttack {
     }
 
     @Override
-    public void effectInfo(InteractiveInfo interactiveInfo) {
+    public void effectInfo(AttackInfo attackInfo) {
         if (skill == null) {
-            skill = interactiveInfo.getSkill();
+            skill = attackInfo.getSkill();
             skill.addSkillEndListener(() -> {
                 skill = null;
                 index = 0;
             });
         }
-        interactiveInfo.getTraceableNumber().mul(multiplier[index], YuHunName);
+        attackInfo.getTraceableNumber().mul(multiplier[index], YuHunName);
         index = (index + 1) % 3;
         yuHunEffect();
     }

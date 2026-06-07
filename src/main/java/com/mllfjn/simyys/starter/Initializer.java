@@ -93,8 +93,8 @@ public class Initializer extends Application {
         // 场景选择器
         sceneEffectComboBox = new ComboBox<>();
         sceneEffectComboBox.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-        sceneEffectComboBox.setPromptText("选择场景");
         sceneEffectComboBox.setItems(FXCollections.observableArrayList(SceneEffect.values()));
+        sceneEffectComboBox.getSelectionModel().select(0);
         borderPane.addNode(sceneEffectComboBox);
 
         stage.setScene(scene);
@@ -182,7 +182,7 @@ public class Initializer extends Application {
         startButton.setOnAction(event -> {
             SceneEffect selectedItem = sceneEffectComboBox.getSelectionModel().getSelectedItem();
             SerializableObservableList<PropertiesHolder> list;
-            if (selectedItem != null) {
+            if (selectedItem != SceneEffect.NULL) {
                 list = new SerializableObservableList<>(items);
                 selectedItem.getAddCharacter().accept(list);
             } else {

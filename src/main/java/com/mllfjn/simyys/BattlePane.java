@@ -324,17 +324,18 @@ public class BattlePane {
     }
 
     private void init() {
-        int wave0 = situation.getWave(0);
-        int wave1 = situation.getWave(1);
         for (PropertiesHolder holder : propertiesHolderList) {
             int wave = holder.propertiesMap.get(PropertyKey.GENERAL_WAVE_KEY).getInt();
-            if (wave == wave0 || wave == wave1) {
+            if (wave == 1) {
                 CharacterFactory.getCharacter(holder, this).ifPresent(this::addCharacter);
             }
         }
+        atStart();
+        log.next();
+    }
 
-
-        Character characterActing = getNextOrder();
+    private void atStart() {
+        Character characterActing = getNextOrder(true);
         situation.characterActing = characterActing;
         characterActing.timesToAct++;
         characterActing.forceSetLocation(0);
@@ -348,13 +349,12 @@ public class BattlePane {
         situation.teamPane[0].calHuoLing();
         situation.teamPane[1].calHuoLing();
 
-        characterActing.checkBeforeBeforeRound();
+        characterActing.checkWhetherRunBeforeRound();
         characterActing.setLockSkillAndAuto();
 
         interactive.display();
         situation.teamPane[characterActing.team].totalActTimes++;
-        log.characterAct(characterActing, 1);
-        log.next();
+        log.characterAct(characterActing, situation.teamPane[characterActing.team].totalActTimes);
     }
 
     public void addCharacter(Character character) {
@@ -498,12 +498,16 @@ public class BattlePane {
                 iterator.next().run();
                 iterator.remove();
             }
-            getNextActor();
-            characterActing = situation.characterActing;
+            if (!checkGameEnd(CharacterFinder.getEnemyTeam(characterActing.team))) {
+                getNextActor();
+                characterActing = situation.characterActing;
+                situation.teamPane[characterActing.team].totalActTimes++;
+                situation.roundInLastStep++;
+                log.characterAct(characterActing, situation.teamPane[characterActing.team].totalActTimes);
+            }
+
             interactive.display();
-            situation.teamPane[characterActing.team].totalActTimes++;
-            situation.roundInLastStep++;
-            log.characterAct(characterActing, situation.teamPane[characterActing.team].totalActTimes);
+
         } while (characterActing.isUncontrollable());
 
         lockSkillAndFlagList.add(currentLockSkillAndFlag);
@@ -520,10 +524,10 @@ public class BattlePane {
     private void getNextActor() {
         // 如果有时之隙新回合,先时之隙,否则看一般获得新回合,最后跑条
         Character characterActing = situation.sZXNewRoundCharacter().orElseGet(() -> {
-            Character newRoundCharacter = situation.newRoundCharacter().orElseGet(this::getNextOrder);
+            Character newRoundCharacter = situation.newRoundCharacter().orElseGet(() -> getNextOrder(false));
             // 这部分不在时之隙新回合生效
             newRoundCharacter.forceSetLocation(0);
-            newRoundCharacter.checkBeforeBeforeRound();
+            newRoundCharacter.checkWhetherRunBeforeRound();
             return newRoundCharacter;
         });
         situation.characterActing = characterActing;
@@ -534,14 +538,14 @@ public class BattlePane {
         actionOrder.add(new CharacterNameAndTeam(characterActing.name, characterActing.team));
     }
 
-    private Character getNextOrder() {
+    private Character getNextOrder(boolean atStart) {
         List<Character> characters = situation.getCharactersChangeLocation();
         int indexMin = -1;
         double ttaMin = Double.MAX_VALUE;
         double[] speeds = new double[characters.size()];
         for (int i = 0; i < characters.size(); i++) {
             speeds[i] = characters.get(i).getSpeed();
-            double ttaNext = Character.getTTA(100 - characters.get(i).getLocationWhenGettingOrder(), speeds[i]);
+            double ttaNext = Character.getTTA(atStart ? 100 : 100 - characters.get(i).getLocationWhenGettingOrder(), speeds[i]);
             if (ttaNext < ttaMin) {
                 ttaMin = ttaNext;
                 indexMin = i;
@@ -557,11 +561,12 @@ public class BattlePane {
         }
 
         Character character = characters.get(indexMin);
+        // 失神印记跳过回合，可以改在checkWhetherRunBeforeRound()里处理
         for (Status status : character.getStatuses()) {
             if (status instanceof StatusShiShen) {
                 status.delete();
                 character.forceSetLocation(0);
-                return getNextOrder();
+                return getNextOrder(false);
             }
         }
 
@@ -588,19 +593,23 @@ public class BattlePane {
     public void removeCharacter(Character tobeRemovedCharacter) {
         situation.removeCharacter(tobeRemovedCharacter);
         onTrigger(new EventCharacterDie(tobeRemovedCharacter));
+    }
 
-        int team = tobeRemovedCharacter.team;
-        if (situation.teamPane[team].characters.isEmpty()) {
-            situation.addWave(team);
-            int wave = situation.getWave(team);
+    private boolean checkGameEnd(int checkTeam) {
+        if (situation.teamPane[checkTeam].characters.isEmpty()) {
+            situation.addWave(checkTeam);
+            int wave = situation.getWave(checkTeam);
             boolean haveCleaned = false;
             for (PropertiesHolder propertiesHolder : propertiesHolderList) {
-                if (wave == propertiesHolder.propertiesMap.get(PropertyKey.GENERAL_WAVE_KEY).getInt()) {
+                if (
+                        wave == propertiesHolder.propertiesMap.get(PropertyKey.GENERAL_WAVE_KEY).getInt()
+                                && (checkTeam == propertiesHolder.propertiesMap.get(PropertyKey.GENERAL_TEAM_KEY).getInt())
+                ) {
                     Optional<Character> oCharacter = CharacterFactory.getCharacter(propertiesHolder, this);
                     if (oCharacter.isPresent()) {
                         if (!haveCleaned) {
                             // 让对方的人清一遍状态
-                            int enemyTeam = CharacterFinder.getEnemyTeam(team);
+                            int enemyTeam = CharacterFinder.getEnemyTeam(checkTeam);
                             for (Character character : situation.teamPane[enemyTeam].characters) {
                                 Iterator<Status> iterator = character.getStatuses().iterator();
                                 while (iterator.hasNext()) {
@@ -610,18 +619,23 @@ public class BattlePane {
                                         iterator.remove();
                                     }
                                 }
+                                character.forceSetLocation(0);
                             }
                             haveCleaned = true;
-                            addCharacter(oCharacter.get());
                         }
+                        addCharacter(oCharacter.get());
                     }
                 }
             }
-            if (situation.teamPane[team].characters.isEmpty()) {
-                Utils.information(team == 0 ? "失败" : "胜利");
+            if (situation.teamPane[checkTeam].characters.isEmpty()) {
+                Utils.information(checkTeam == 0 ? "失败" : "胜利");
             } else {
-                situation.priorityMove();
+                atStart();
             }
+
+            return true;
+        } else {
+            return false;
         }
     }
 

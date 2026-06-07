@@ -4,8 +4,8 @@ import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunAttack;
 import com.mllfjn.simyys.interactive.AttackInfo;
 
-public class PoShi extends YuHun implements YuHunAttack {
-    public static final String YuHunName = "破势";
+public class PianYeZhiWei extends YuHun implements YuHunAttack {
+    public static final String YuHunName = "片叶之苇";
 
     @Override
     public String getName() {
@@ -14,9 +14,8 @@ public class PoShi extends YuHun implements YuHunAttack {
 
     @Override
     public void effectInfo(AttackInfo attackInfo) {
-        if (attackInfo.getTarget().getHpPercent() > 0.7) {
-            attackInfo.getTraceableNumber().mul(1.4, YuHunName);
-            yuHunEffect();
+        if (character.getHp() == character.getMaxHp()) {
+            attackInfo.getTraceableNumber().mul(1.45, YuHunName);
         }
     }
 }

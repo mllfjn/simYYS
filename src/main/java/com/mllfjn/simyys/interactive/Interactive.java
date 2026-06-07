@@ -235,6 +235,10 @@ public class Interactive {
                 , traceableNumber.getTrace(), type
                 , attackInfo.isCrit() ? TextFlowLog.TextColor.CRITICAL : TextFlowLog.TextColor.ATTACK, size));
 
+        if (attackInfo.isCancel()) {
+            return;
+        }
+
         // 部分造成伤害后生效的御魂(日女等)
         if (traceableNumber.getNumber() > 0 && attackInfo.isCalEffectYuHun()) {
             owner.forEachYuHun(yuHun -> {

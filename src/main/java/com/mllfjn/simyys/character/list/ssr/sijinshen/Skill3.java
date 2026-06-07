@@ -12,10 +12,16 @@ import java.util.Optional;
 class Skill3 extends Skill {
     private static final String SkillName = "智火长明";
 
+    private boolean usePriority;
+
     public Skill3(Character belongTo, int level) {
         super(belongTo, level, 0, 0, 3);
         if (level >= 5) {
-            belongTo.bp.addPriorityMove(belongTo, this::useWithoutCost);
+            belongTo.bp.addPriorityMove(belongTo, () -> {
+                usePriority = true;
+                useWithoutCost();
+                usePriority = false;
+            });
         }
     }
 
@@ -31,9 +37,7 @@ class Skill3 extends Skill {
         double lostHp = belongTo.getHp() * 0.24;
         belongTo.lostHP(lostHp);
 
-        Character target = new CharacterFinder(belongTo)
-                .filterTeammate()
-                .getPriorAuto(Attribute.ATTACK, CharacterFinder.Criteria.MAX);
+        Character target = getTarget();
 
         target.replaceStatus(new StatusZSZH(belongTo, target, level >= 3 ? 60 : 30, belongTo.qm));
 
@@ -45,6 +49,21 @@ class Skill3 extends Skill {
         }
 
         return Optional.of(target);
+    }
+
+    private Character getTarget() {
+        CharacterFinder characterFinder = new CharacterFinder(getBelongTo())
+                .filterTeammate();
+
+        if (usePriority) {
+            return characterFinder
+                    .filterSelf()
+                    .filterShiShen()
+                    .get(Attribute.ATTACK, CharacterFinder.Criteria.MAX);
+        } else {
+            return characterFinder
+                    .getPriorAuto(Attribute.ATTACK, CharacterFinder.Criteria.MAX);
+        }
     }
 
 }
