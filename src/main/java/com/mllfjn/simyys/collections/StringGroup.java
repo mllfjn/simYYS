@@ -23,7 +23,8 @@ public record StringGroup(String label, String... values) implements Serializabl
                     KuangGu.YuHunName,
                     LunRuDao.YuHunName,
                     YinNian.YuHunName,
-                    FuYi.YuHunName
+                    FuYi.YuHunName,
+                    XinYan.YuHunName
             ),
             new StringGroup("暴击两件套",
                     QingNvFang.YuHunName,
