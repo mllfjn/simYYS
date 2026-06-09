@@ -10,7 +10,6 @@ import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunAfterBeingAttack;
-import com.mllfjn.simyys.character.yuhun.YuHunAfterCauseAttack;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.interactive.TraceableNumber;
