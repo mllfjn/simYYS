@@ -20,6 +20,7 @@ import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
+import com.mllfjn.simyys.character.yuhun.list.ChuShiLuo;
 import com.mllfjn.simyys.collections.SerializableObservableList;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.AttackType;
@@ -97,6 +98,8 @@ public class HunWang {
         ((PropertyInput) pm.get(PropertyKey.GENERAL_HP_KEY)).setValue("44000");
         ((PropertyInput) pm.get(PropertyKey.GENERAL_DEFENSE_KEY)).setValue("900");
         ((PropertyInput) pm.get(PropertyKey.GENERAL_SPEED_KEY)).setValue("148");
+        ((PropertyCheck) pm.get(PropertyKey.JUE_XING_KEY)).setValue(false);
+        ((PropertySelectMulti) pm.get(PropertyKey.YU_HUN_KEY)).setValue(ChuShiLuo.YuHunName);
         list.add(new PropertiesHolder(HuaJing.CharacterName, pm));
 
         // 日和坊

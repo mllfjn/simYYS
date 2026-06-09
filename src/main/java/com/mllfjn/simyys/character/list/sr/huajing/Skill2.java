@@ -12,17 +12,19 @@ class Skill2 extends Skill {
     static final String SkillName = "齿甲";
     private static final int[] coefficient = new int[]{0, 12, 13, 14, 15, 15};
 
-    public Skill2(HuaJing belongTo, int level, Skill3 skill3) {
+    public Skill2(HuaJing belongTo, int level, Skill3 skill3, boolean awakening) {
         super(belongTo, level, 2, 0, 2);
-        belongTo.bp.addPriorityMove(belongTo, () -> {
-            StatusChiJia statusChiJia = new StatusChiJia(belongTo, belongTo, this);
-            belongTo.addStatus(statusChiJia);
-            belongTo.statusChiJia = statusChiJia;
+        if (awakening) {
+            belongTo.bp.addPriorityMove(belongTo, () -> {
+                StatusChiJia statusChiJia = new StatusChiJia(belongTo, belongTo, this);
+                belongTo.addStatus(statusChiJia);
+                belongTo.statusChiJia = statusChiJia;
 
-            StatusTiJia statusTiJia = new StatusTiJia(belongTo, belongTo, skill3);
-            belongTo.addStatus(statusTiJia);
-            belongTo.statusTiJia = statusTiJia;
-        });
+                StatusTiJia statusTiJia = new StatusTiJia(belongTo, belongTo, skill3);
+                belongTo.addStatus(statusTiJia);
+                belongTo.statusTiJia = statusTiJia;
+            });
+        }
         if (level < 5) {
             setCost(3);
         }

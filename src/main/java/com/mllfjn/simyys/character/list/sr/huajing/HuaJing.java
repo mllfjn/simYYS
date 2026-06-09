@@ -19,7 +19,7 @@ public class HuaJing extends CharacterShiShenBase {
 
     @Override
     protected boolean canAwakening() {
-        return false;
+        return true;
     }
 
     @Override
@@ -31,7 +31,7 @@ public class HuaJing extends CharacterShiShenBase {
     protected void addOwnSkills() {
         addSkill(new Skill1(this, skill1Level));
         Skill3 skill3 = new Skill3(this, skill3Level);
-        addSkill(new Skill2(this, skill2Level, skill3));
+        addSkill(new Skill2(this, skill2Level, skill3, awakening));
         addSkill(skill3);
     }
 }

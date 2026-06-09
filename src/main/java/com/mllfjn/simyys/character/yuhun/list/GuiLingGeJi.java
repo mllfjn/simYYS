@@ -47,6 +47,7 @@ public class GuiLingGeJi extends YuHun implements YuHunUnfullMark, YuHunAfterCau
             attackInfo.addNote(YuHunName + "计数:" + record().count);
         } else {
             record().count = 0;
+            attackInfo.addNote("本次攻击触发" + YuHunName);
             Character target = attackInfo.getTarget();
             skill.triggerSkill = attackInfo.getSkill();
             AttackInfo aInfo = AttackInfo.createRealAttack(character, skill, target,

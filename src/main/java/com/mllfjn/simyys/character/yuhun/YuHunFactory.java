@@ -85,6 +85,7 @@ public class YuHunFactory {
         yuHunMap.put(GuiLingGeJi.YuHunName, GuiLingGeJi.class);
         yuHunMap.put(PianYeZhiWei.YuHunName, PianYeZhiWei.class);
         yuHunMap.put(XinYan.YuHunName, XinYan.class);
+        yuHunMap.put(ChuShiLuo.YuHunName, ChuShiLuo.class);
     }
 
     public static Image getImage(String name) {

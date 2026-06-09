@@ -8,6 +8,7 @@ import com.mllfjn.simyys.character.status.Trigger;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAddCrowdControl;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
+import com.mllfjn.simyys.character.yuhun.YuHunAfterBeingAttack;
 import com.mllfjn.simyys.character.yuhun.YuHunAfterCauseAttack;
 import com.mllfjn.simyys.character.yuhun.YuHunAttack;
 import com.mllfjn.simyys.character.yuhun.YuHunHitFeedBack;
@@ -244,28 +245,39 @@ public class Interactive {
             return;
         }
 
-        StringBuilder sb = new StringBuilder()
-                .append(traceableNumber.getTrace())
-                .append("\n剩余血量").append(DecimalFormatUtil.df_0_2.format(target.getHp()))
-                .append(" 本回合总第").append((++attackCountTotal)).append("次伤害 ")
-                .append(owner.name).append("第")
-                .append(attackCountMap.merge(owner, 1, (old, val) -> old + 1))
-                .append("次伤害 伤害类型:").append(attackInfo.getAttackType().getDesc());
+        final double currentHp = target.getHp();
+        final int currentCount = ++attackCountTotal;
+        final int currentOwnerCount = attackCountMap.merge(owner, 1, (old, val) -> old + 1);
+        final String currentName = owner.name;
+        CustomText customText = new CustomText(traceableNumber.getNumberString() + " ", type,
+                attackInfo.isCrit() ? TextFlowLog.TextColor.CRITICAL : TextFlowLog.TextColor.ATTACK, size);
+        customText.setTooltipSupplier(() -> {
+            StringBuilder sb = new StringBuilder()
+                    .append(traceableNumber.getTrace())
+                    .append("\n剩余血量").append(DecimalFormatUtil.df_0_2.format(currentHp))
+                    .append(" 本回合总第").append(currentCount).append("次伤害 ")
+                    .append(currentName).append("第").append(currentOwnerCount)
+                    .append("次伤害 伤害类型:").append(attackInfo.getAttackType().getDesc());
 
-        String note = attackInfo.getNote();
-        if (note != null) {
-            sb.append("\n").append(note);
-        }
-
-        addNumberRecord(target, new CustomText(traceableNumber.getNumberString() + " ", sb.toString(), type,
-                attackInfo.isCrit() ? TextFlowLog.TextColor.CRITICAL : TextFlowLog.TextColor.ATTACK, size)
-        );
+            String note = attackInfo.getNote();
+            if (note != null) {
+                sb.append("\n").append(note);
+            }
+            return sb.toString();
+        });
+        addNumberRecord(target, customText);
 
         // 部分造成伤害后生效的御魂(日女歌姬等)
         if (traceableNumber.getNumber() > 0 && attackInfo.isCalEffectYuHun()) {
             owner.forEachYuHun(yuHun -> {
                 if (yuHun instanceof YuHunAfterCauseAttack yca) {
                     yca.action(attackInfo, this);
+                }
+            });
+
+            target.forEachYuHun(yuHun -> {
+                if (yuHun instanceof YuHunAfterBeingAttack yaa) {
+                    yaa.action(attackInfo, this);
                 }
             });
         }
@@ -339,9 +351,11 @@ public class Interactive {
 
         target.beHeal(healInfo);
 
-        addNumberRecord(target, new CustomText(traceableNumber.getNumberString() + " "
-                , traceableNumber.getTrace()
-                , type, TextFlowLog.TextColor.HEAL, size));
+        CustomText customText = new CustomText(traceableNumber.getNumberString() + " ",
+                type, TextFlowLog.TextColor.HEAL, size
+        );
+        customText.setTooltipSupplier(traceableNumber::getTrace);
+        addNumberRecord(target, customText);
 
     }
 
@@ -351,9 +365,11 @@ public class Interactive {
 
         target.recovery(num);
 
-        addNumberRecord(target, new CustomText(traceableNumber.getNumberString() + " "
-                , traceableNumber.getTrace()
-                , type, TextFlowLog.TextColor.HEAL, size));
+        CustomText customText = new CustomText(traceableNumber.getNumberString() + " ",
+                type, TextFlowLog.TextColor.HEAL, size
+        );
+        customText.setTooltipSupplier(traceableNumber::getTrace);
+        addNumberRecord(target, customText);
     }
 
     public EffectInfo[] effect(Skill skill, List<Character> targets, int baseRate, int additionRate, boolean calHit
