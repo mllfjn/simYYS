@@ -20,7 +20,7 @@ public class StatusAdder<T extends Status> implements Serializable {
         this.statusProvider = statusProvider;
     }
 
-    public void CharacterAdd(Character character) {
+    public void characterAdd(Character character) {
         T status = statusProvider.apply(character);
         if (status != null) {
             character.addStatus(status);

@@ -16,9 +16,12 @@ public class XinYan extends YuHun implements YuHunAttack {
     @Override
     public void effectInfo(AttackInfo attackInfo) {
         Character target = attackInfo.getTarget();
-        int count = (int) ((target.getMaxHp() - target.getHp()) / target.getMaxHp());
+        int lostPercentage = (int) ((1 - target.getHpPercent()) * 100);
+        int count = lostPercentage / 15;
+
         if (count > 0) {
             attackInfo.getTraceableNumber().mul(1 + 0.1 * count, YuHunName);
+            yuHunEffect();
         }
     }
 }

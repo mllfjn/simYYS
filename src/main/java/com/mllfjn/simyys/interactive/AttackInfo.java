@@ -4,7 +4,12 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.TraversalOrderManager;
 import com.mllfjn.simyys.character.skill.Skill;
 
+import java.util.StringJoiner;
+
 public class AttackInfo extends InteractiveInfo {
+    // TODO 感觉这样写不太好,以后看看要不要改
+    public static double LIMIT = 10000000;
+
     private final AttackType attackType;
     // 计算防御
     private boolean calDefence = true;
@@ -20,9 +25,14 @@ public class AttackInfo extends InteractiveInfo {
     private boolean calAttackYuHun = true;
     // 计算效果类御魂
     private boolean calEffectYuHun = true;
+    // 其他造成受到伤害时影响伤害的状态
+    private boolean canInfluenceAttack = true;
 
     // 伤害上限
-    private double limit = 10000000;
+    private double limit = LIMIT;
+
+    // 备注信息
+    private StringJoiner note;
 
     public AttackInfo(Character attacker, Skill skill, Character target, AttackType attackType, double basicNumber) {
         super(attacker, skill, target, basicNumber);
@@ -46,6 +56,7 @@ public class AttackInfo extends InteractiveInfo {
         attackInfo.calZengShang = false;
         attackInfo.calYiShang = false;
         attackInfo.fluctuationLimit = 0;
+        attackInfo.calEffectYuHun = false;
 
         return attackInfo;
     }
@@ -88,6 +99,8 @@ public class AttackInfo extends InteractiveInfo {
         attackInfo.calZengShang = false;
         attackInfo.calYiShang = false;
         attackInfo.calAttackYuHun = false;
+        attackInfo.setFluctuationLimit(0);
+        attackInfo.canInfluenceAttack = false;
 
         return attackInfo;
     }
@@ -147,5 +160,24 @@ public class AttackInfo extends InteractiveInfo {
 
     public boolean isCalEffectYuHun() {
         return calEffectYuHun;
+    }
+
+    public boolean isCanInfluenceAttack() {
+        return canInfluenceAttack;
+    }
+
+    public void addNote(String s) {
+        if (note == null) {
+            note = new StringJoiner("; ");
+        }
+        note.add(s);
+    }
+
+    public String getNote() {
+        if (note == null) {
+            return null;
+        } else {
+            return note.toString();
+        }
     }
 }

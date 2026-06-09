@@ -17,14 +17,12 @@ class StatusLiXing extends Status
 
     private final double suppressPerStack;
     private final boolean reduceDamage;
-    private int stack;
+    private int stack = 9;
 
     public StatusLiXing(Character character, double suppressPerStack, boolean reduceDamage) {
         super(character, character, StatusType.GENERAL, StatusForm.YIN_JI);
         this.suppressPerStack = suppressPerStack;
         this.reduceDamage = reduceDamage;
-
-        character.bp.addPriorityMove(character, () -> stack = 9);
     }
 
     void consume(int useStack) {
@@ -33,6 +31,11 @@ class StatusLiXing extends Status
 
     int getStack() {
         return stack;
+    }
+
+    @Override
+    public void changeWaveAction() {
+        stack = 9;
     }
 
     @Override

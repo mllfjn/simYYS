@@ -5,6 +5,8 @@ import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.CharacterFactory;
 import com.mllfjn.simyys.character.skill.Skill;
+import com.mllfjn.simyys.character.status.Trigger;
+import com.mllfjn.simyys.character.status.triggerParam.ParamUseSkill;
 import com.mllfjn.simyys.interactive.AttackInfo;
 
 import java.util.ArrayList;
@@ -25,10 +27,15 @@ class SkillQiMeng extends Skill {
         maxDamage = belongTo.getInitAttack() * 24;
 
         belongTo.bp.addStatusAdder(c ->
-                c.team == belongTo.team && CharacterFactory.FIRE_CHARACTER.contains(c.getClass())
+                c.team == belongTo.team && c != belongTo && CharacterFactory.FIRE_CHARACTER.contains(c.getClass())
                         ? new StatusQMCauseAttackListener(this, belongTo, c)
                         : null
         );
+    }
+
+    void start() {
+        getBelongTo().statusRun(Trigger.WILL_USE_SKILL, new ParamUseSkill(this, null, 0));
+        log(null);
     }
 
     void addCharacter(Character belongTo) {

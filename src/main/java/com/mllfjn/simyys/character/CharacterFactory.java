@@ -135,41 +135,40 @@ public class CharacterFactory {
         mobMap.put(DiZhenNian.CharacterName, DiZhenNian.class);
     }
 
-    public static Optional<Character> getCharacter(String name) {
+    public static Character getCharacter(String name) {
         for (Map<String, Class<? extends Character>> map : characterMap.values()) {
             if (map.containsKey(name)) {
                 try {
-                    return Optional.of(map.get(name).getDeclaredConstructor().newInstance());
+                    return map.get(name).getDeclaredConstructor().newInstance();
                 } catch (Exception e) {
                     Utils.throwException("获取角色信息失败", e);
                 }
 
             }
         }
-        return Optional.empty();
+        return new EmptyCharacter();
     }
 
-    public static Optional<Character> getCharacter(PropertiesHolder ph, BattlePane bp) {
-        if (ph.characterClass != null) {
-            try {
-                Character character = ph.characterClass.getDeclaredConstructor().newInstance();
-                character.init(ph, bp);
-                character.fillSkills();
-                return Optional.of(character);
-            } catch (Exception e) {
-                Utils.throwException("获取角色信息失败", e);
+    public static Character getCharacter(PropertiesHolder ph, BattlePane bp) {
+        try {
+            Character character;
+            if (ph.characterClass != null) {
+                character = ph.characterClass.getDeclaredConstructor().newInstance();
+            } else {
+                character = getCharacter(ph.name);
             }
-        }
-        Optional<Character> oc = getCharacter(ph.name);
-        oc.ifPresent(character -> {
             character.init(ph, bp);
             character.fillSkills();
-        });
-        return oc;
+            ph.created(character);
+            return character;
+        } catch (Exception e) {
+            Utils.throwException("获取角色信息失败", e);
+        }
+        return null;
     }
 
-    public static Optional<PropertiesMap> getProperties(String name) {
-        return getCharacter(name).map(Character::getProperties);
+    public static PropertiesMap getProperties(String name) {
+        return getCharacter(name).getProperties();
     }
 
     public static Node getImage(String name, ImageSize size) {
@@ -199,8 +198,21 @@ public class CharacterFactory {
         LABEL(35);
 
         public final double size;
+
         ImageSize(double size) {
             this.size = size;
+        }
+    }
+
+    private static class EmptyCharacter extends Character {
+        @Override
+        protected String getDefaultBaseAttack() {
+            return "";
+        }
+
+        @Override
+        protected void addOwnSkills() {
+
         }
     }
 }

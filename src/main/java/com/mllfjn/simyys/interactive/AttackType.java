@@ -1,10 +1,20 @@
 package com.mllfjn.simyys.interactive;
 
 public enum AttackType {
-    DAN_TI,
-    QUN_TI,
-    JIAN_JIE,
-    ZHEN_SHI,
-    CHUAN_DAO,
-    GU_DING,
+    DAN_TI("单体"),
+    QUN_TI("群体"),
+    JIAN_JIE("间接"),
+    ZHEN_SHI("真实"),
+    CHUAN_DAO("传导"),
+    GU_DING("固定"),
+    ;
+    private final String desc;
+
+    AttackType(String desc) {
+        this.desc = desc;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
 }

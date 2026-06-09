@@ -32,8 +32,11 @@ class StatusQMCauseAttackListener extends Status implements StatusRunnable {
             count = 0;
             skillQiMeng.useDone();
         } else {
-            skillQiMeng.doInteractive(((ParamAttackInfo) param).getAttackInfo());
             count++;
+            if (count == 1) {
+                skillQiMeng.start();
+            }
+            skillQiMeng.doInteractive(((ParamAttackInfo) param).getAttackInfo());
         }
         return false;
     }

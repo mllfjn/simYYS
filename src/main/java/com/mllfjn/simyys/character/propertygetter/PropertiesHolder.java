@@ -29,6 +29,7 @@ import java.io.Serializable;
 import java.util.AbstractMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class PropertiesHolder implements Serializable {
     @Serial
@@ -43,6 +44,9 @@ public class PropertiesHolder implements Serializable {
 
     private transient SimpleStringProperty nameProperty;
     private transient StringBinding totalAttackProperty;
+
+    // 创建角色后执行
+    private transient Consumer<Character> afterCreateAction;
 
     public PropertiesHolder(String name, PropertiesMap propertiesMap,
                             Map<Integer, Integer> lockSkillMap, Map<Integer, FlagChangeInfo> flagChangeMap
@@ -363,4 +367,13 @@ public class PropertiesHolder implements Serializable {
         return borderPane;
     }
 
+    public void setAfterCreateAction(Consumer<Character> afterCreateAction) {
+        this.afterCreateAction = afterCreateAction;
+    }
+
+    public void created(Character character) {
+        if (afterCreateAction != null) {
+            afterCreateAction.accept(character);
+        }
+    }
 }

@@ -23,7 +23,9 @@ class Skill3 extends Skill {
     public Skill3(Character belongTo, int level, Skill2 skill2) {
         super(belongTo, level, 3, 0, 3);
         this.skill2 = skill2;
-        belongTo.bp.addPriorityMove(belongTo, this::useWithoutCost);
+        if (level >= 5) {
+            belongTo.bp.addPriorityMove(belongTo, this::useWithoutCost);
+        }
     }
 
     @Override

@@ -5,8 +5,10 @@ import com.mllfjn.simyys.character.status.Displayable;
 import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.character.status.StatusForm;
 import com.mllfjn.simyys.character.status.StatusType;
+import com.mllfjn.simyys.character.status.determinant.RetainAfterChangeWave;
+import com.mllfjn.simyys.character.status.determinant.RetainAfterDie;
 
-class StatusWLXR extends Status implements Displayable {
+class StatusWLXR extends Status implements Displayable, RetainAfterDie, RetainAfterChangeWave {
     private static final String StatusName = "巫灵雪刃";
 
     private int stack;
@@ -25,6 +27,11 @@ class StatusWLXR extends Status implements Displayable {
         if (stack < 3) {
             stack++;
         }
+    }
+
+    @Override
+    public void changeWaveAction() {
+        stack = 0;
     }
 
     boolean evolve() {

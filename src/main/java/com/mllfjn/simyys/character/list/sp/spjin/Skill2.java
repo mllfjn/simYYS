@@ -112,7 +112,8 @@ class Skill2 extends PassiveSkill {
 
         @Override
         public boolean runnable(Trigger trigger) {
-            return (trigger == Trigger.USED_SKILL || trigger == Trigger.USED_PU_GONG) && belongTo.isInRound();
+            return (trigger == Trigger.USED_SKILL || trigger == Trigger.USED_PU_GONG)
+                    && belongTo.isInRound();
         }
 
         @Override
@@ -120,33 +121,35 @@ class Skill2 extends PassiveSkill {
             if (param instanceof ParamUseSkill pus) {
                 Character target;
                 Optional<Character> oTarget = pus.getTarget();
-                if (oTarget.isPresent() && oTarget.get().team != belongTo.team) {
+                if (oTarget.isPresent() && oTarget.get().team != belongTo.team && oTarget.get().alive) {
                     target = oTarget.get();
                 } else {
                     target = new CharacterFinder(belongTo)
                             .filterEnemy()
                             .get(Attribute.HP_PERCENT, CharacterFinder.Criteria.MIN);
                 }
-                // lv5-玄象每次攻击后,提升[skill3]12%伤害系数(至多24%)
-                Skill3 skill3 = ((Skill3) from.getSkill(3).orElse(null));
-                boolean increasing = skill3 != null && skill3.isIncreasing(target);
+                if (target != null) {
+                    // lv5-玄象每次攻击后,提升[skill3]12%伤害系数(至多24%)
+                    Skill3 skill3 = ((Skill3) from.getSkill(3).orElse(null));
+                    boolean increasing = skill3 != null && skill3.isIncreasing(target);
 
-                from.doInteractive(interactive -> {
-                    int multiplier = 62;
-                    for (int i = 0; i < 3; i++) {
-                        interactive.attackTypical(Skill2.this.skill, target, multiplier, AttackType.DAN_TI);
-                        if (increasing) {
-                            multiplier += 23;
+                    from.doInteractive(interactive -> {
+                        int multiplier = 62;
+                        for (int i = 0; i < 3; i++) {
+                            interactive.attackTypical(Skill2.this.skill, target, multiplier, AttackType.DAN_TI);
+                            if (increasing) {
+                                multiplier += 23;
+                            }
                         }
+                        Skill2.this.skill.useDone();
+                    });
+
+                    if (skill3 != null && getLevel() >= 5) {
+                        skill3.increaseMultiplier();
                     }
-                    Skill2.this.skill.useDone();
-                });
 
-                if (skill3 != null && getLevel() >= 5) {
-                    skill3.increaseMultiplier();
+                    return true;
                 }
-
-                return true;
             }
             return false;
         }

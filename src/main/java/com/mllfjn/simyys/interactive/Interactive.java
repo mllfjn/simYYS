@@ -18,6 +18,7 @@ import com.mllfjn.simyys.ratecontroller.RateController;
 import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.character.status.determinant.IgnoreActionDecrease;
 import com.mllfjn.simyys.character.status.determinant.IgnoreActionIncrease;
+import com.mllfjn.simyys.utils.DecimalFormatUtil;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -27,16 +28,20 @@ public class Interactive {
     private static final TextFlowLog.TextType type = TextFlowLog.TextType.NUMBER;
     private static final TextFlowLog.FontSize size = TextFlowLog.FontSize.SMALL;
 
-    private Character owner;
-
     private final BattlePane bp;
     private final List<CustomText> guiHuoLog = new ArrayList<>();
     private final Map<Character, List<CustomText>> currentNumberLog = new LinkedHashMap<>();
     private final List<String> increaseLog = new ArrayList<>();
     private final Map<Character, Set<String>> yuHunEffect = new LinkedHashMap<>();
+    private final Map<Character, Integer> attackCountMap = new HashMap<>();
+    private int attackCountTotal;
+
+    private Character owner;
+
 
     public Interactive(BattlePane bp) {
         this.bp = bp;
+        AttackInfo.LIMIT = 10000000;
     }
 
     public void setOwner(Character owner) {
@@ -57,6 +62,8 @@ public class Interactive {
             list.forEach(bp.log::addText);
             bp.log.addText("\n", type, TextFlowLog.TextColor.NORMAL, size);
         });
+        attackCountTotal = 0;
+        attackCountMap.clear();
 
         yuHunEffect.forEach(((character, strings) ->
                 bp.log.addText("\t" + character.name + "触发御魂：" + String.join("、", strings) + "\n"
@@ -200,18 +207,20 @@ public class Interactive {
             target.checkShield(attackInfo);
         }
 
-        // 攻击者身上状态类影响
-        for (Status status : owner.getStatuses()) {
-            if (status instanceof InfluenceDamageWhenAttack iwa) {
-                iwa.doInfluenceWhenAttack(attackInfo);
+        if (attackInfo.isCanInfluenceAttack()) {
+            // 攻击者身上状态类影响
+            for (Status status : owner.getStatuses()) {
+                if (status instanceof InfluenceDamageWhenAttack iwa) {
+                    iwa.doInfluenceWhenAttack(attackInfo);
+                }
             }
-        }
 
-        // 被攻击者身上状态类影响
-        target.statusRun(Trigger.BEING_ATTACKED, new ParamAttackInfo(attackInfo));
+            // 被攻击者身上状态类影响
+            target.statusRun(Trigger.BEING_ATTACKED, new ParamAttackInfo(attackInfo));
 
-        if (attackInfo.isCancel()) {
-            return;
+            if (attackInfo.isCancel()) {
+                return;
+            }
         }
 
         // 部分造成伤害时生效的御魂(破势狂骨等)
@@ -231,15 +240,28 @@ public class Interactive {
 
         target.beHurt(attackInfo);
 
-        addNumberRecord(target, new CustomText(traceableNumber.getNumberString() + " "
-                , traceableNumber.getTrace(), type
-                , attackInfo.isCrit() ? TextFlowLog.TextColor.CRITICAL : TextFlowLog.TextColor.ATTACK, size));
-
         if (attackInfo.isCancel()) {
             return;
         }
 
-        // 部分造成伤害后生效的御魂(日女等)
+        StringBuilder sb = new StringBuilder()
+                .append(traceableNumber.getTrace())
+                .append("\n剩余血量").append(DecimalFormatUtil.df_0_2.format(target.getHp()))
+                .append(" 本回合总第").append((++attackCountTotal)).append("次伤害 ")
+                .append(owner.name).append("第")
+                .append(attackCountMap.merge(owner, 1, (old, val) -> old + 1))
+                .append("次伤害 伤害类型:").append(attackInfo.getAttackType().getDesc());
+
+        String note = attackInfo.getNote();
+        if (note != null) {
+            sb.append("\n").append(note);
+        }
+
+        addNumberRecord(target, new CustomText(traceableNumber.getNumberString() + " ", sb.toString(), type,
+                attackInfo.isCrit() ? TextFlowLog.TextColor.CRITICAL : TextFlowLog.TextColor.ATTACK, size)
+        );
+
+        // 部分造成伤害后生效的御魂(日女歌姬等)
         if (traceableNumber.getNumber() > 0 && attackInfo.isCalEffectYuHun()) {
             owner.forEachYuHun(yuHun -> {
                 if (yuHun instanceof YuHunAfterCauseAttack yca) {

@@ -202,6 +202,9 @@ public class SerializableItems implements Serializable {
     public <T extends Status> StatusAdder<T> addStatusAdder(SerialFunction<Character, T> statusProvider) {
         StatusAdder<T> adder = new StatusAdder<>(this, statusProvider);
         statusAdders.add(adder);
+        for (Character character : characters) {
+            adder.characterAdd(character);
+        }
         return adder;
     }
 

@@ -16,6 +16,7 @@ public class PianYeZhiWei extends YuHun implements YuHunAttack {
     public void effectInfo(AttackInfo attackInfo) {
         if (character.getHp() == character.getMaxHp()) {
             attackInfo.getTraceableNumber().mul(1.45, YuHunName);
+            yuHunEffect();
         }
     }
 }

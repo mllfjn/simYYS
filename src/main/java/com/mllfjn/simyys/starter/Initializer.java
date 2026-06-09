@@ -84,6 +84,7 @@ public class Initializer extends Application {
         borderPane.addControlButton("清空", e -> {
             items.clear();
             prediction.predictionOrder.clear();
+            sceneEffectComboBox.getSelectionModel().select(0);
         });
 
         borderPane.addControlButton("设置预计顺序", e -> prediction.showPrediction(scene, items));
@@ -148,7 +149,7 @@ public class Initializer extends Application {
                 btn.setPrefWidth(100);
                 btn.setOnAction(event -> {
                     PropertiesHolder propertiesHolder = new PropertiesHolder(name,
-                            CharacterFactory.getProperties(name).orElseThrow(),
+                            CharacterFactory.getProperties(name),
                             new LinkedHashMap<>(), new LinkedHashMap<>()
                     );
                     propertiesHolder.show(stageSelect.getScene());
@@ -238,12 +239,13 @@ public class Initializer extends Application {
 
             StringJoiner sj = new StringJoiner("\n");
             for (PropertiesHolder item : readItems) {
-                Optional<PropertiesMap> op = CharacterFactory.getProperties(item.name);
+                /*Optional<PropertiesMap> op = CharacterFactory.getProperties(item.name);
                 if (op.isEmpty()) {
                     sj.add(item.name + "角色不存在");
                     continue;
                 }
-                PropertiesMap currentProperties = op.get();
+                PropertiesMap currentProperties = op.get();*/
+                PropertiesMap currentProperties = CharacterFactory.getProperties(item.name);
 
                 for (Map.Entry<String, PropertyRequire> entry : currentProperties.entrySet()) {
                     String key = entry.getKey();

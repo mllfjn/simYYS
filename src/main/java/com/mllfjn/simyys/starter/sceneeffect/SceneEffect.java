@@ -7,7 +7,7 @@ import java.util.function.Consumer;
 
 public enum SceneEffect {
     NULL("选择场景", null),
-    HUN_TU("魂土", HunTu::addCharacterProperty),
+    //    HUN_TU("魂土", HunTu::addCharacterProperty),
     HUN_WANG("魂王", HunWang::addCharacterProperty),
     ;
     private final String sceneName;

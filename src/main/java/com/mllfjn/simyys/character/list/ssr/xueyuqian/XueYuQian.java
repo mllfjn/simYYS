@@ -1,7 +1,6 @@
 package com.mllfjn.simyys.character.list.ssr.xueyuqian;
 
 import com.mllfjn.simyys.character.CharacterShiShenBase;
-import com.mllfjn.simyys.interactive.AttackInfo;
 
 public class XueYuQian extends CharacterShiShenBase {
     public static final String CharacterName = "雪御前";
@@ -14,15 +13,6 @@ public class XueYuQian extends CharacterShiShenBase {
             return tryUseSkill(3);
         } else {
             return tryUseSkill(2);
-        }
-    }
-
-    @Override
-    public void beHurt(AttackInfo attackInfo) {
-        if (isLDLLExist) {
-            attackInfo.setCancel(true);
-        } else {
-            super.beHurt(attackInfo);
         }
     }
 

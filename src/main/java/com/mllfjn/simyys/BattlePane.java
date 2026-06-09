@@ -327,7 +327,7 @@ public class BattlePane {
         for (PropertiesHolder holder : propertiesHolderList) {
             int wave = holder.propertiesMap.get(PropertyKey.GENERAL_WAVE_KEY).getInt();
             if (wave == 1) {
-                CharacterFactory.getCharacter(holder, this).ifPresent(this::addCharacter);
+                addCharacter(CharacterFactory.getCharacter(holder, this));
             }
         }
         atStart();
@@ -360,7 +360,7 @@ public class BattlePane {
     public void addCharacter(Character character) {
         situation.addCharacter(character);
         for (StatusAdder<?> statusAdder : situation.statusAdders) {
-            statusAdder.CharacterAdd(character);
+            statusAdder.characterAdd(character);
         }
     }
 
@@ -499,6 +499,7 @@ public class BattlePane {
                 iterator.remove();
             }
             if (!checkGameEnd(CharacterFinder.getEnemyTeam(characterActing.team))) {
+                interactive.display();
                 getNextActor();
                 characterActing = situation.characterActing;
                 situation.teamPane[characterActing.team].totalActTimes++;
@@ -506,9 +507,8 @@ public class BattlePane {
                 log.characterAct(characterActing, situation.teamPane[characterActing.team].totalActTimes);
             }
 
-            interactive.display();
 
-        } while (characterActing.isUncontrollable());
+        } while (situation.characterActing.isUncontrollable());
 
         lockSkillAndFlagList.add(currentLockSkillAndFlag);
         currentLockSkillAndFlag = new LockSkillAndFlag(situation.characterActing);
@@ -605,26 +605,26 @@ public class BattlePane {
                         wave == propertiesHolder.propertiesMap.get(PropertyKey.GENERAL_WAVE_KEY).getInt()
                                 && (checkTeam == propertiesHolder.propertiesMap.get(PropertyKey.GENERAL_TEAM_KEY).getInt())
                 ) {
-                    Optional<Character> oCharacter = CharacterFactory.getCharacter(propertiesHolder, this);
-                    if (oCharacter.isPresent()) {
-                        if (!haveCleaned) {
-                            // 让对方的人清一遍状态
-                            int enemyTeam = CharacterFinder.getEnemyTeam(checkTeam);
-                            for (Character character : situation.teamPane[enemyTeam].characters) {
-                                Iterator<Status> iterator = character.getStatuses().iterator();
-                                while (iterator.hasNext()) {
-                                    Status status = iterator.next();
-                                    if (!(status instanceof RetainAfterChangeWave)) {
-                                        status.beforeDelete();
-                                        iterator.remove();
-                                    }
+                    if (!haveCleaned) {
+                        // 让对方的人清一遍状态
+                        int enemyTeam = CharacterFinder.getEnemyTeam(checkTeam);
+                        ArrayList<Character> characters = new ArrayList<>(situation.teamPane[enemyTeam].characters);
+                        for (Character c : characters) {
+                            Iterator<Status> iterator = c.getStatuses().iterator();
+                            while (iterator.hasNext()) {
+                                Status status = iterator.next();
+                                if (status instanceof RetainAfterChangeWave rw) {
+                                    rw.changeWaveAction();
+                                } else {
+                                    status.beforeDelete();
+                                    iterator.remove();
                                 }
-                                character.forceSetLocation(0);
                             }
-                            haveCleaned = true;
+                            c.forceSetLocation(0);
                         }
-                        addCharacter(oCharacter.get());
+                        haveCleaned = true;
                     }
+                    addCharacter(CharacterFactory.getCharacter(propertiesHolder, this));
                 }
             }
             if (situation.teamPane[checkTeam].characters.isEmpty()) {

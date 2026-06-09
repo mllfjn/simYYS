@@ -9,7 +9,7 @@ import java.io.Serializable;
 record CharacterMirror(ShenQiLou shenQiLou, Character existCharacter) implements Serializable {
 
     public Character getInstance() {
-        Character newCharacter = CharacterFactory.getCharacter(existCharacter.name).orElseThrow();
+        Character newCharacter = CharacterFactory.getCharacter(existCharacter.name);
         newCharacter.reset(shenQiLou.bp);
         newCharacter.name = existCharacter.name;
         newCharacter.team = shenQiLou.team;

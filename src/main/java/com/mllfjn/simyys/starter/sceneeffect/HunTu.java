@@ -1,3 +1,4 @@
+/*
 package com.mllfjn.simyys.starter.sceneeffect;
 
 import com.mllfjn.simyys.character.CharacterFactory;
@@ -22,7 +23,7 @@ class HunTu {
         PropertiesMap pm;
 
         // 清姬
-        pm = CharacterFactory.getProperties(QingJi.CharacterName).orElseThrow();
+        pm = CharacterFactory.getProperties(QingJi.CharacterName);
         ((PropertyCheck) pm.get(PropertyKey.GENERAL_TEAM_KEY)).setValue(true);
         ((PropertyInput) pm.get(PropertyKey.GENERAL_WAVE_KEY)).setValue("1");
         ((PropertyInput) pm.get(PropertyKey.SKILL_KEY)).setValue("115");
@@ -36,7 +37,7 @@ class HunTu {
         list.add(new PropertiesHolder(QingJi.CharacterName, pm, new LinkedHashMap<>(), new LinkedHashMap<>()));
 
         // 络新妇
-        pm = CharacterFactory.getProperties(LuoXinFu.CharacterName).orElseThrow();
+        pm = CharacterFactory.getProperties(LuoXinFu.CharacterName);
         ((PropertyCheck) pm.get(PropertyKey.GENERAL_TEAM_KEY)).setValue(true);
         ((PropertyInput) pm.get(PropertyKey.GENERAL_WAVE_KEY)).setValue("1");
         ((PropertyInput) pm.get(PropertyKey.SKILL_KEY)).setValue("115");
@@ -124,3 +125,4 @@ class HunTu {
         list.add(new PropertiesHolder(GuiQie.CharacterName, pm, new LinkedHashMap<>(), new LinkedHashMap<>()));
     }
 }
+*/

@@ -1027,6 +1027,7 @@ public abstract class Character implements Serializable {
             return;
         }
 
+        hp = -excessDamage;
         die();
 
         attackInfo.getAttacker().statusRun(Trigger.KILLED_CHARACTER,

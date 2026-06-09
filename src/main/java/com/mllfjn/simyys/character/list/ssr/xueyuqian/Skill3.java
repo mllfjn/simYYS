@@ -20,6 +20,7 @@ class Skill3 extends Skill {
     public Skill3(Character belongTo, int level, StatusWLXR statusWLXR) {
         super(belongTo, level, 3, 0, 3);
         this.statusWLXR = statusWLXR;
+        belongTo.addStatus(statusWLXR);
     }
 
     @Override
@@ -54,6 +55,9 @@ class Skill3 extends Skill {
                     target = new CharacterFinder(belongTo)
                             .filterEnemy()
                             .getPriorAuto(Attribute.HP, CharacterFinder.Criteria.MIN);
+                    if (target == null) {
+                        break;
+                    }
                 }
             }
 
