@@ -157,6 +157,7 @@ public class Interactive {
         // https://bbs.nga.cn/read.php?tid=24250479 伤害结算机制详细分析
 
         Character target = attackInfo.getTarget();
+        ParamAttackInfo paramAttackInfo = new ParamAttackInfo(attackInfo);
         if (!target.alive) {
             return;
         }
@@ -229,7 +230,7 @@ public class Interactive {
             }
 
             // 被攻击者身上状态类影响
-            target.statusRun(Trigger.BEING_ATTACKED, new ParamAttackInfo(attackInfo));
+            target.statusRun(Trigger.BEING_ATTACKED, paramAttackInfo);
 
             if (attackInfo.isCancel()) {
                 return;
@@ -279,6 +280,12 @@ public class Interactive {
         });
         addNumberRecord(target, customText);
 
+        // 触发攻击的目标身上的状态
+        target.statusRun(Trigger.AFTER_ATTACK, paramAttackInfo);
+
+        // 触发攻击者身上的攻击监听
+        owner.statusRun(Trigger.CAUSE_ATTACK, paramAttackInfo);
+
         // 部分造成伤害后生效的御魂(日女歌姬等)
         if (traceableNumber.getNumber() > 0 && attackInfo.isCalEffectYuHun()) {
             owner.forEachYuHun(yuHun -> {
@@ -298,12 +305,6 @@ public class Interactive {
                 setOwner(temp);
             }
         }
-
-        // 触发攻击的目标身上的状态
-        target.statusRun(Trigger.AFTER_ATTACK, new ParamAttackInfo(attackInfo));
-
-        // 触发攻击者身上的攻击监听
-        owner.statusRun(Trigger.CAUSE_ATTACK, new ParamAttackInfo(attackInfo));
     }
 
     public HealInfo healTypical(Skill skill, Character target, int multiplier) {

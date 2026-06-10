@@ -22,7 +22,7 @@ class QiLingTiHun {
         character.addStatus(new StatusQLTHListener(character));
     }
 
-    static class StatusQLTHListener extends Status implements StatusRunnable {
+    private static class StatusQLTHListener extends Status implements StatusRunnable {
         private final StatusAdder<?> adder;
         private int cooling = 0;
         private int remainingTimes = 3;

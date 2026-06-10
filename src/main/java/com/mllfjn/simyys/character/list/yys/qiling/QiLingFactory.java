@@ -12,7 +12,8 @@ public class QiLingFactory {
             QiLingHuoLing.QiLingName,
             QiLingZhenMuShou.QiLingName,
             QiLingTiHun.QiLingName,
-            QiLingYueMoTu.QiLingName
+            QiLingYueMoTu.QiLingName,
+            QiLingZhenNv.QiLingName
     )};
 
     public static void addQiLing(PropertiesMap map, Character character) {
@@ -29,6 +30,7 @@ public class QiLingFactory {
             case QiLingZhenMuShou.QiLingName -> QiLingZhenMuShou.install(character);
             case QiLingTiHun.QiLingName -> QiLingTiHun.install(character);
             case QiLingYueMoTu.QiLingName -> QiLingYueMoTu.install(character);
+            case QiLingZhenNv.QiLingName -> QiLingZhenNv.install(character);
         }
     }
 
