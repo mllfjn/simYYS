@@ -8,6 +8,7 @@ import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.Trigger;
 import com.mllfjn.simyys.character.status.triggerParam.ParamUseSkill;
 import com.mllfjn.simyys.interactive.AttackInfo;
+import com.mllfjn.simyys.interactive.AttackType;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -55,7 +56,10 @@ public class SkillQiMeng extends Skill {
     }
 
     void addAttackInfo(AttackInfo attackInfo) {
-        attackInfos.add(attackInfo);
+        // 歌姬不触发,原因不太确定
+        if (attackInfo.getAttackType() != AttackType.ZHEN_SHI) {
+            attackInfos.add(attackInfo);
+        }
     }
 
     @Override

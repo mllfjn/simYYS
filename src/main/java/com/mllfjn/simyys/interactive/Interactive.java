@@ -95,6 +95,8 @@ public class Interactive {
 
     // 普攻的对群体伤害
     public AttackInfo[] attackTypical(Skill skill, List<Character> targets, double multiplier, AttackType attackType) {
+        qiMengCheck(skill);
+
         AttackInfo[] attackInfos = new AttackInfo[targets.size()];
         for (int i = 0; i < targets.size(); i++) {
             AttackInfo attackInfo = AttackInfo.createTypicalAttack(owner, skill, targets.get(i), multiplier, attackType);
@@ -122,6 +124,8 @@ public class Interactive {
 
     // 对群体伤害,需要指定AttackInfo
     public void attack(Skill skill, List<Character> targets, Function<Character, AttackInfo> attackInfoGetter) {
+        qiMengCheck(skill);
+
         AttackInfo[] attackInfos = new AttackInfo[targets.size()];
         for (int i = 0; i < targets.size(); i++) {
             attackInfos[i] = attackInfoGetter.apply(targets.get(i));
