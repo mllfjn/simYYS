@@ -4,6 +4,7 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
+import com.mllfjn.simyys.character.status.triggerParam.ParamUseSkill;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
 class StatusQMCauseAttackListener extends Status implements StatusRunnable {
@@ -27,6 +28,7 @@ class StatusQMCauseAttackListener extends Status implements StatusRunnable {
     public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
         if (trigger == Trigger.WILL_USE_SKILL) {
             start = true;
+            skillQiMeng.start(((ParamUseSkill) param).getSkill());
         } else if (trigger == Trigger.USED_SKILL) {
             start = false;
             count = 0;
@@ -34,9 +36,9 @@ class StatusQMCauseAttackListener extends Status implements StatusRunnable {
         } else {
             count++;
             if (count == 1) {
-                skillQiMeng.start();
+                skillQiMeng.log();
             }
-            skillQiMeng.doInteractive(((ParamAttackInfo) param).getAttackInfo());
+            skillQiMeng.addAttackInfo(((ParamAttackInfo) param).getAttackInfo());
         }
         return false;
     }

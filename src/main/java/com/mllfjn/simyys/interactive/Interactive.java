@@ -3,6 +3,7 @@ package com.mllfjn.simyys.interactive;
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.TraversalOrderManager;
+import com.mllfjn.simyys.character.list.ssr.sijinshen.SkillQiMeng;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.Trigger;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
@@ -38,6 +39,9 @@ public class Interactive {
     private int attackCountTotal;
 
     private Character owner;
+
+    // 思金神的神秘结算
+    public final SkillQiMeng[] qiMeng = new SkillQiMeng[2];
 
 
     public Interactive(BattlePane bp) {
@@ -104,6 +108,8 @@ public class Interactive {
             attack(attackInfos[i]);
         }
 
+        qiMengCheck(skill);
+
         return attackInfos;
     }
 
@@ -127,6 +133,8 @@ public class Interactive {
         for (int i = 0; i < targets.size(); i++) {
             attack(attackInfos[i]);
         }
+
+        qiMengCheck(skill);
     }
 
     // 对单体伤害,需要指定AttackInfo
@@ -275,11 +283,16 @@ public class Interactive {
                 }
             });
 
-            target.forEachYuHun(yuHun -> {
-                if (yuHun instanceof YuHunAfterBeingAttack yaa) {
-                    yaa.action(attackInfo, this);
-                }
-            });
+            if (target.alive) {
+                Character temp = owner;
+                setOwner(target);
+                target.forEachYuHun(yuHun -> {
+                    if (yuHun instanceof YuHunAfterBeingAttack yaa) {
+                        yaa.action(attackInfo, this);
+                    }
+                });
+                setOwner(temp);
+            }
         }
 
         // 触发攻击的目标身上的状态
@@ -462,5 +475,11 @@ public class Interactive {
 
     public void addYuHunEffectLog(Character character, String yuHunName) {
         yuHunEffect.computeIfAbsent(character, k -> new LinkedHashSet<>()).add(yuHunName);
+    }
+
+    public void qiMengCheck(Skill skill) {
+        if (qiMeng[owner.team] != null) {
+            qiMeng[owner.team].check(skill);
+        }
     }
 }
