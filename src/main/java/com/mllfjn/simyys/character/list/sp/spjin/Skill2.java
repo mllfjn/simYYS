@@ -3,6 +3,7 @@ package com.mllfjn.simyys.character.list.sp.spjin;
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.list.ssr.bujianyue.StatusJieJieEffect;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.skill.Skill;
@@ -129,16 +130,28 @@ class Skill2 extends PassiveSkill {
                             .get(Attribute.HP_PERCENT, CharacterFinder.Criteria.MIN);
                 }
                 if (target != null) {
+                    // TODO 这段为与不见岳奇怪的交互设立,如果后续找到解决方法需要修改
+                    Status status;
+                    Optional<StatusJieJieEffect> oStatusJJ = from.getStatus(StatusJieJieEffect.class);
+                    if (oStatusJJ.isPresent()) {
+                        StatusJieJieEffect statusJJ = oStatusJJ.get();
+                        status = statusJJ.getYunYi(statusJJ.from, from);
+                        from.addStatus(status);
+                    } else {
+                        status = null;
+                    }
+
+
                     // lv5-玄象每次攻击后,提升[skill3]12%伤害系数(至多24%)
                     Skill3 skill3 = ((Skill3) from.getSkill(3).orElse(null));
                     boolean increasing = skill3 != null && skill3.isIncreasing(target);
 
                     from.doInteractive(interactive -> {
-                        int multiplier = 62;
+                        double multiplier = 62;
                         for (int i = 0; i < 3; i++) {
                             interactive.attackTypical(Skill2.this.skill, target, multiplier, AttackType.DAN_TI);
                             if (increasing) {
-                                multiplier += 23;
+                                multiplier *= 1.23;
                             }
                         }
                         Skill2.this.skill.useDone();
@@ -147,6 +160,12 @@ class Skill2 extends PassiveSkill {
                     if (skill3 != null && getLevel() >= 5) {
                         skill3.increaseMultiplier();
                     }
+
+                    // TODO 这段为与不见岳奇怪的交互设立,如果后续找到解决方法需要修改
+                    if (status != null) {
+                        from.removeStatus(status);
+                    }
+
 
                     return true;
                 }

@@ -4,6 +4,7 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.battleevent.BattleActionListener;
 import com.mllfjn.simyys.battleevent.BattleEvent;
 import com.mllfjn.simyys.battleevent.EventActionDone;
+import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.CharacterFactory;
 import com.mllfjn.simyys.character.PropertyKey;
@@ -12,6 +13,7 @@ import com.mllfjn.simyys.character.list.sr.luoxinfu.LuoXinFu;
 import com.mllfjn.simyys.character.list.sr.rihefang.RiHeFang;
 import com.mllfjn.simyys.character.list.sr.xiazhongshaonv.XiaZhongShaoNv;
 import com.mllfjn.simyys.character.list.ssr.axiuluo.AXiuLuo;
+import com.mllfjn.simyys.character.list.ssr.bujianyue.StatusJieJieEffect;
 import com.mllfjn.simyys.character.list.ssr.dashe.DaShe;
 import com.mllfjn.simyys.character.propertygetter.*;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
@@ -21,6 +23,7 @@ import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.character.yuhun.list.ChuShiLuo;
+import com.mllfjn.simyys.character.yuhun.list.GuiLingGeJi;
 import com.mllfjn.simyys.collections.SerializableObservableList;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.AttackType;
@@ -133,7 +136,9 @@ public class HunWang {
         ((PropertyInput) pm.get(PropertyKey.GENERAL_HP_KEY)).setValue("172000");
         ((PropertyInput) pm.get(PropertyKey.GENERAL_DEFENSE_KEY)).setValue("570");
         ((PropertyInput) pm.get(PropertyKey.GENERAL_SPEED_KEY)).setValue("127");
-        list.add(new PropertiesHolder("蛇魔", pm));
+        ph = new PropertiesHolder("蛇魔", pm);
+        ph.setAfterCreateAction(character -> character.addStatus(new StatusAddDefense(character)));
+        list.add(ph);
 
         // 蛇魔
         pm = Character.getDefaultProperties();
@@ -143,7 +148,9 @@ public class HunWang {
         ((PropertyInput) pm.get(PropertyKey.GENERAL_HP_KEY)).setValue("172000");
         ((PropertyInput) pm.get(PropertyKey.GENERAL_DEFENSE_KEY)).setValue("570");
         ((PropertyInput) pm.get(PropertyKey.GENERAL_SPEED_KEY)).setValue("127");
-        list.add(new PropertiesHolder("蛇魔", pm));
+        ph = new PropertiesHolder("蛇魔", pm);
+        ph.setAfterCreateAction(character -> character.addStatus(new StatusAddDefense(character)));
+        list.add(ph);
     }
 
     private static class StatusHpCheck extends Status implements InfluenceDamageWhenAttack {
@@ -213,6 +220,15 @@ public class HunWang {
                         interactive.attack(skill, list, c -> {
                             AttackInfo aInfo = AttackInfo.createGuDingAttack(attacker, skill, c, splashDamage);
                             aInfo.setNotCalYuHun();
+                            if (attackInfo.getSkill() instanceof GuiLingGeJi.SkillGLGJ) {
+                                attacker.getStatus(StatusJieJieEffect.class).ifPresent(
+                                        status -> {
+                                            if (status.isCreaseNonCritDamage(aInfo)) {
+                                                aInfo.getTraceableNumber().mul(0.8, "不知道为什么歌姬溅射不吃不见岳结界");
+                                            }
+                                        }
+                                );
+                            }
                             return aInfo;
                         })
                 );
@@ -222,6 +238,22 @@ public class HunWang {
                 count++;
             }
             return false;
+        }
+    }
+
+    private static class StatusAddDefense extends Status implements AttributeModifier {
+        public StatusAddDefense(Character character) {
+            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
+        }
+
+        @Override
+        public boolean isAffectAttribute(Attribute attribute) {
+            return attribute == Attribute.DEFENCE && belongTo.getHpPercent() < 0.6;
+        }
+
+        @Override
+        public double getInfluence(Attribute attribute, StatusModifyParam param) {
+            return belongTo.getInitDefense() * 0.2;
         }
     }
 }

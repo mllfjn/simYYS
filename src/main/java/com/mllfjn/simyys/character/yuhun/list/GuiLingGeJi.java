@@ -71,7 +71,7 @@ public class GuiLingGeJi extends YuHun implements YuHunUnfullMark, YuHunAfterCau
         }
     }
 
-    private static class SkillGLGJ extends Skill {
+    public static class SkillGLGJ extends Skill {
         Skill triggerSkill;
 
         SkillGLGJ(Character character) {

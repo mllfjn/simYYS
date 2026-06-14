@@ -50,6 +50,12 @@ public class CustomText extends Text {
         });
     }
 
+    public void addStrikeThrough() {
+        setOnMouseClicked(event -> {
+            strikethroughProperty().set(!strikethroughProperty().get());
+        });
+    }
+
     public TextFlowLog.TextType getType() {
         return type;
     }

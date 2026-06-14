@@ -99,7 +99,7 @@ public class AttackInfo extends InteractiveInfo {
         attackInfo.calZengShang = false;
         attackInfo.calYiShang = false;
         attackInfo.calAttackYuHun = false;
-        attackInfo.setFluctuationLimit(0);
+        attackInfo.fluctuationLimit = 0;
         attackInfo.canInfluenceAttack = false;
 
         return attackInfo;
