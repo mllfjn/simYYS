@@ -27,7 +27,6 @@ public class CiTiao7JiXing {
     }
 
     static class StatusJXListener extends Status implements InfluenceDamageWhenAttack, StatusRunnable {
-        private boolean increase = false;
 
         public StatusJXListener(Character from, Character belongTo) {
             super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
@@ -36,34 +35,38 @@ public class CiTiao7JiXing {
         @Override
         public void doInfluenceWhenAttack(AttackInfo attackInfo) {
             // 造成伤害时，每有1个增益状态
+
+            int count = getCount();
+            if (count > 0) {
+                // 提升4%
+                attackInfo.getTraceableNumber().mul(1 + 0.04 * count, CiTiaoName);
+            }
+        }
+
+        private int getCount() {
             int count = 0;
             for (Status status : belongTo.getStatuses()) {
                 if (status.statusType == StatusType.BUFF) {
                     count++;
                     // 上限5层
                     if (count == 5) {
-                        break;
+                        return 5;
                     }
                 }
             }
-
-            if (count > 0) {
-                // 提升4%
-                attackInfo.getTraceableNumber().mul(1 + 0.04 * count, CiTiaoName);
-                // 回合结束后增加自身20%行动条
-                increase = true;
-            }
+            return count;
         }
 
         @Override
         public boolean runnable(Trigger trigger) {
-            return increase && trigger == Trigger.AFTER_ROUND;
+            return trigger == Trigger.AFTER_ACTION;
         }
 
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            belongTo.doInteractive(interactive -> interactive.increaseLocation(belongTo, 20));
-            increase = false;
+            if (getCount() == 5) {
+                belongTo.doInteractive(interactive -> interactive.increaseLocation(belongTo, 20));
+            }
             return false;
         }
     }
