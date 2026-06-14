@@ -51,6 +51,10 @@ class StatusWLXR extends Status implements Displayable, RetainAfterDie, RetainAf
 
     @Override
     public String getDisplayText() {
-        return StatusName;
+        if (stack > 0) {
+            return StatusName + stack;
+        } else {
+            return null;
+        }
     }
 }

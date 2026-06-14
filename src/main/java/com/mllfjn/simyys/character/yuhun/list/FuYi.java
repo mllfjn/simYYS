@@ -2,7 +2,6 @@ package com.mllfjn.simyys.character.yuhun.list;
 
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
-import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunAfterCauseAttack;
 import com.mllfjn.simyys.interactive.AttackInfo;

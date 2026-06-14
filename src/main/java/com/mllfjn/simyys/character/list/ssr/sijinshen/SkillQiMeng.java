@@ -75,11 +75,13 @@ public class SkillQiMeng extends Skill {
             Character belongTo = getBelongTo();
             belongTo.doInteractive(interactive -> {
                 for (AttackInfo attackInfo : attackInfos) {
-                    interactive.attack(AttackInfo
-                            .createGuDingAttack(belongTo, this, attackInfo.getTarget(),
-                                    Math.min(maxDamage, attackInfo.getTraceableNumber().getNumber() * coefficient)
-                            )
-                    );
+                    if (attackInfo.getTarget().alive) {
+                        interactive.attack(AttackInfo
+                                .createGuDingAttack(belongTo, this, attackInfo.getTarget(),
+                                        Math.min(maxDamage, attackInfo.getTraceableNumber().getNumber() * coefficient)
+                                )
+                        );
+                    }
                 }
             });
             attackInfos.clear();
