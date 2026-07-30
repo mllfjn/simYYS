@@ -12,7 +12,7 @@ import com.mllfjn.simyys.character.list.sp.luwan.LuWan;
 import com.mllfjn.simyys.character.list.sp.sphongye.SPHongYe;
 import com.mllfjn.simyys.character.list.sp.spjin.SpJin;
 import com.mllfjn.simyys.character.list.sp.yinfan.YinFan;
-import com.mllfjn.simyys.character.list.sphudie.SpHuDie;
+import com.mllfjn.simyys.character.list.sp.sphudie.SpHuDie;
 import com.mllfjn.simyys.character.list.sr.haifangzhu.HaiFangZhu;
 import com.mllfjn.simyys.character.list.sr.huajing.HuaJing;
 import com.mllfjn.simyys.character.list.sr.luoxinfu.LuoXinFu;

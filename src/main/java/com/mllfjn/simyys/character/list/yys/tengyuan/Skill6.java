@@ -14,8 +14,11 @@ import java.util.List;
 class Skill6 extends PassiveSkill {
     static final String SkillName = "诸律精通";
 
-    public Skill6(TengYuanDaoZhang belongTo, int level) {
+    private final int shuYin;
+
+    public Skill6(TengYuanDaoZhang belongTo, int level, int shuYin) {
         super(belongTo, level, 6);
+        this.shuYin = shuYin;
         StatusLvYin lvYin = belongTo.getLvYin();
         lvYin.setSkill6(this);
         belongTo.addStatus(new StatusSkill6(belongTo));
@@ -45,7 +48,7 @@ class Skill6 extends PassiveSkill {
                 .filterTeammate()
                 .getList();
         for (Character character : list) {
-            StatusCritPower.addStack(character, level >= 4 ? 8 : 5, maxStack, count);
+            StatusZhuLvForTeammates.addStack(character, level >= 4 ? 8 : 5, 2 * shuYin, maxStack, count);
         }
     }
 
@@ -68,7 +71,7 @@ class Skill6 extends PassiveSkill {
 
         @Override
         public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            ((TengYuanDaoZhang) belongTo).getLvYin().addStack(1);
+            TengYuanDaoZhang.getLvYin(belongTo).addStack(1);
             ignoreActionDecreaseTimes = 0;
             return false;
         }
@@ -77,7 +80,7 @@ class Skill6 extends PassiveSkill {
         public void takeEffectFeedBack() {
             ignoreActionDecreaseTimes++;
             if (ignoreActionDecreaseTimes < 4) {
-                ((TengYuanDaoZhang) belongTo).getLvYin().addStack(ignoreActionDecreaseTimes);
+                TengYuanDaoZhang.getLvYin(belongTo).addStack(ignoreActionDecreaseTimes);
             }
         }
     }
@@ -118,22 +121,27 @@ class Skill6 extends PassiveSkill {
         }
     }
 
-    static class StatusCritPower extends Status implements AttributeModifier {
+    static class StatusZhuLvForTeammates extends Status implements AttributeModifier {
         private final int critPowerPerStack;
-        private final int maxStack;
+        private final int effectResistPerStack;
 
+        private final int maxStack;
         private int stack;
 
-        public StatusCritPower(Character character, int critPowerPerStack, int maxStack) {
+        public StatusZhuLvForTeammates(Character character, int critPowerPerStack, int effectResistPerStack,
+                                       int maxStack) {
             super(character, character, StatusType.BUFF, StatusForm.ZHUANG_TAI);
             this.critPowerPerStack = critPowerPerStack;
+            this.effectResistPerStack = effectResistPerStack;
             this.maxStack = maxStack;
         }
 
-        public static void addStack(Character character, int critPowerPerStack, int maxStack, int stack) {
-            character.getStatus(StatusCritPower.class)
+        public static void addStack(Character character, int critPowerPerStack, int effectResistPerStack,
+                                    int maxStack, int stack) {
+            character.getStatus(StatusZhuLvForTeammates.class)
                     .orElseGet(() -> {
-                        StatusCritPower status = new StatusCritPower(character, critPowerPerStack, maxStack);
+                        StatusZhuLvForTeammates status = new StatusZhuLvForTeammates(character,
+                                critPowerPerStack, effectResistPerStack, maxStack);
                         character.addStatus(status);
                         return status;
                     }).addStack(stack);
@@ -145,12 +153,17 @@ class Skill6 extends PassiveSkill {
 
         @Override
         public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.CRIT_POWER;
+            return attribute == Attribute.CRIT_POWER
+                    || (attribute == Attribute.EFFECT_RESIST_RATE && effectResistPerStack > 0);
         }
 
         @Override
         public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return critPowerPerStack * stack;
+            if (attribute == Attribute.CRIT_POWER) {
+                return critPowerPerStack * stack;
+            } else {
+                return effectResistPerStack * stack;
+            }
         }
     }
 }

@@ -15,10 +15,13 @@ import java.util.Optional;
 class Skill4 extends Skill {
     static final String SkillName = "咏叹巧韵";
     private static final int[] duration = new int[]{0, 3, 4, 4, 5, 5};
-    private static final int[] ratio = new int[]{0, 10, 10, 20, 20, 30};
+    private static final int[] increases = new int[]{0, 10, 10, 20, 20, 30};
 
-    public Skill4(Character belongTo, int level) {
+    private final double increase;
+
+    public Skill4(Character belongTo, int level, int shuYin) {
         super(belongTo, level, 0, 0, 4);
+        increase = (increases[level] + shuYin * 3) / 100.0;
     }
 
     @Override
@@ -51,7 +54,7 @@ class Skill4 extends Skill {
 
         for (Character character : list) {
             character.addStatus(
-                    new StatusIncreaseAttack(getBelongTo(), character, duration[level], ratio[level] / 100.0));
+                    new StatusIncreaseAttack(getBelongTo(), character, duration[level], increase));
         }
 
         return Optional.empty();

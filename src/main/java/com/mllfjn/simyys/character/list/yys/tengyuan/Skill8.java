@@ -10,12 +10,14 @@ import com.mllfjn.simyys.character.status.triggerParam.ParamAddCrowdControl;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
+import java.util.List;
+
 class Skill8 extends PassiveSkill {
     static final String SkillName = "余音入梦";
 
-    public Skill8(Character belongTo, int level) {
+    public Skill8(Character belongTo, int level, int shuYin) {
         super(belongTo, level, 8);
-        belongTo.addStatus(new StatusPreventDie(belongTo, level >= 6 ? 6 : level - 1));
+        belongTo.addStatus(new StatusPreventDie(belongTo, level >= 6 ? 6 : level - 1, shuYin));
     }
 
     @Override
@@ -34,12 +36,14 @@ class Skill8 extends PassiveSkill {
         return SkillName;
     }
 
-    static class StatusPreventDie extends Status implements PreventDie {
+    class StatusPreventDie extends Status implements PreventDie {
         private final int getLvYin;
+        private final int shuYin;
 
-        public StatusPreventDie(Character character, int getLvYin) {
+        public StatusPreventDie(Character character, int getLvYin, int shuYin) {
             super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
             this.getLvYin = getLvYin;
+            this.shuYin = shuYin;
         }
 
         @Override
@@ -47,7 +51,15 @@ class Skill8 extends PassiveSkill {
             belongTo.removeAllDeBuff();
             belongTo.addStatus(new StatusDeadLine(belongTo));
             if (getLvYin > 0) {
-                ((TengYuanDaoZhang) belongTo).getLvYin().addStack(getLvYin);
+                TengYuanDaoZhang.getLvYin(belongTo).addStack(getLvYin);
+            }
+            if (shuYin > 0) {
+                List<Character> list = new CharacterFinder(belongTo)
+                        .filterTeammate()
+                        .getList();
+                belongTo.doInteractive(interactive -> {
+                    interactive.healTypical(Skill8.this, list, 10 * shuYin);
+                });
             }
             delete();
         }
