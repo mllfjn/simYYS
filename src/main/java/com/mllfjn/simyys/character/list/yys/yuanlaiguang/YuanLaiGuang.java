@@ -42,27 +42,27 @@ public class YuanLaiGuang extends Character {
 
         PropertiesMap map = propertiesHolder.propertiesMap;
 
-        int[] skill = ((PropertyMultiInput) map.get(Skill1.SkillName)).getValuesInt();
-        addSkill(new Skill1(this, skill[0], skill[1]));
+        int[] skillLevels = ((PropertyMultiInput) map.get(Skill1.SkillName)).getValuesInt();
+        addSkill(new Skill1(this, skillLevels[0], skillLevels[1]));
 
-        skill = ((PropertyMultiInput) map.get(Skill4.SkillName)).getValuesInt();
-        if (skill[0] > 0) {
-            addSkill(new Skill4(this, skill[0], skill[1]));
+        skillLevels = ((PropertyMultiInput) map.get(Skill4.SkillName)).getValuesInt();
+        if (skillLevels[0] > 0) {
+            addSkill(new Skill4(this, skillLevels[0], skillLevels[1]));
         }
 
-        skill = ((PropertyMultiInput) map.get(Skill5.SkillName)).getValuesInt();
-        if (skill[0] > 0) {
-            addSkill(new Skill5(this, skill[0], skill[1]));
+        skillLevels = ((PropertyMultiInput) map.get(Skill5.SkillName)).getValuesInt();
+        if (skillLevels[0] > 0) {
+            addSkill(new Skill5(this, skillLevels[0], skillLevels[1]));
         }
 
-        skill = ((PropertyMultiInput) map.get(Skill6Passive.SkillName)).getValuesInt();
-        if (skill[0] > 0) {
-            addSkill(new Skill6Passive(this, skill[1]));
+        skillLevels = ((PropertyMultiInput) map.get(Skill6Passive.SkillName)).getValuesInt();
+        if (skillLevels[0] > 0) {
+            addSkill(new Skill6Passive(this, skillLevels[1]));
         }
 
-        skill = ((PropertyMultiInput) map.get(Skill7Passive.SkillName)).getValuesInt();
-        if (skill[0] > 0) {
-            addSkill(new Skill7Passive(this, skill[0], skill[1]));
+        skillLevels = ((PropertyMultiInput) map.get(Skill7Passive.SkillName)).getValuesInt();
+        if (skillLevels[0] > 0) {
+            addSkill(new Skill7Passive(this, skillLevels[0], skillLevels[1]));
         }
     }
 

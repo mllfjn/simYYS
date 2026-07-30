@@ -1,4 +1,4 @@
-package com.mllfjn.simyys.character.list.sphudie;
+package com.mllfjn.simyys.character.list.sp.sphudie;
 
 import com.mllfjn.simyys.character.CharacterShiShenBase;
 import com.mllfjn.simyys.character.status.Status;

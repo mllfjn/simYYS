@@ -17,10 +17,12 @@ class Skill2 extends Skill {
     private final int chargeDecrease;
     private final boolean getLvYin;
 
-    public Skill2(Character belongTo, int level) {
+    public Skill2(Character belongTo, int level, int shuYin) {
         super(belongTo, level, 0, 0, 2);
 
-        chargeMultiplier = level >= 4 ? 240 : (level >= 2 ? 200 : 160);
+        int tempChargeMultiplier = level >= 4 ? 240 : (level >= 2 ? 200 : 160);
+        tempChargeMultiplier += shuYin * 25;
+        this.chargeMultiplier = tempChargeMultiplier;
         chargeDecrease = level >= 5 ? 20 : 10;
         getLvYin = level >= 3;
     }

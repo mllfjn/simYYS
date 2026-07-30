@@ -12,15 +12,18 @@ import java.util.Optional;
 
 class Skill5 extends Skill {
     static final String SkillName = "琴月齐鸣";
-    private static final int[] increase = new int[]{0, 10, 13, 16, 20, 20};
+    private static final int[] increases = new int[]{0, 10, 13, 16, 20, 20};
 
-    public Skill5(Character belongTo, int level) {
+    private final int shuYin;
+
+    public Skill5(Character belongTo, int level, int shuYin) {
         super(belongTo, level, 0, 0, 5);
+        this.shuYin = shuYin;
     }
 
     @Override
     public boolean canUse(BattlePane bp) {
-        return ((TengYuanDaoZhang) getBelongTo()).getLvYin().canUse(1) && super.canUse(bp);
+        return TengYuanDaoZhang.getLvYin(getBelongTo()).canUse(1) && super.canUse(bp);
     }
 
     @Override
@@ -57,7 +60,7 @@ class Skill5 extends Skill {
 
         for (Character character : list) {
             character.addStatus(new StatusAttack(belongTo, character,
-                    (double) (count * increase[getLevel()]) / 100, duration));
+                    (double) (count * increases[getLevel()] + shuYin) / 100, duration));
             if (removeCrowdControl) {
                 character.removeAllCrowControl();
             }

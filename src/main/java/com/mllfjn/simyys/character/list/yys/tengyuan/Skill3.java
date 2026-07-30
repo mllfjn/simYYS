@@ -14,8 +14,11 @@ class Skill3 extends Skill {
     static final String SkillName = "神鸟惊弦";
     private static final int costLvYin = 3;
 
-    public Skill3(Character belongTo, int level) {
+    private final int shuYin;
+
+    public Skill3(Character belongTo, int level, int shuYin) {
         super(belongTo, level, 0, 0, 3);
+        this.shuYin = shuYin;
     }
 
     @Override
@@ -33,7 +36,7 @@ class Skill3 extends Skill {
 
     @Override
     public boolean canUse(BattlePane bp) {
-        return ((TengYuanDaoZhang) getBelongTo()).getLvYin().canUse(costLvYin) && super.canUse(bp);
+        return TengYuanDaoZhang.getLvYin(getBelongTo()).canUse(costLvYin) && super.canUse(bp);
     }
 
     @Override
@@ -51,7 +54,6 @@ class Skill3 extends Skill {
                 .filterEnemy()
                 .getPriorAuto(Attribute.HP, CharacterFinder.Criteria.MIN);
 
-        belongTo.getLvYin().use(costLvYin);
         interactive.decreaseLocation(target, 50);
 
         if (level >= 2) {
@@ -59,6 +61,12 @@ class Skill3 extends Skill {
             if (level >= 3) {
                 StatusReduceDefense.install(belongTo, target, level >= 5 ? 0.5 : 0.25);
             }
+        }
+
+        StatusLvYin lvYin = belongTo.getLvYin();
+        lvYin.use(costLvYin);
+        if (shuYin > 0) {
+            lvYin.addStack(shuYin);
         }
 
         return Optional.of(target);
