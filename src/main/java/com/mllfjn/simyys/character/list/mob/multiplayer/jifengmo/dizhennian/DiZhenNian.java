@@ -64,7 +64,7 @@ public class DiZhenNian extends CharacterJiFengMoBase {
         // 先机召唤4只海坊主
         bp.addPriorityMove(this, () -> {
             for (StatusBuff.BuffType type : StatusBuff.BuffType.values()) {
-                bp.addCharacter(new SpecialHaiFangZhu(bp, team, this, type));
+                this.getBp().addCharacter(new SpecialHaiFangZhu(this.getBp(), team, this, type));
             }
         });
     }

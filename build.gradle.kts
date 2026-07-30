@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "com.mllfjn"
-version = "1.0"
+version = "1.0.4"
 
 repositories {
     mavenCentral()
