@@ -11,6 +11,7 @@ import com.mllfjn.simyys.character.list.sp.laotou.LaoTou;
 import com.mllfjn.simyys.character.list.sp.luwan.LuWan;
 import com.mllfjn.simyys.character.list.sp.sphongye.SPHongYe;
 import com.mllfjn.simyys.character.list.sp.spjin.SpJin;
+import com.mllfjn.simyys.character.list.sp.spyue.SpYue;
 import com.mllfjn.simyys.character.list.sp.yinfan.YinFan;
 import com.mllfjn.simyys.character.list.sp.sphudie.SpHuDie;
 import com.mllfjn.simyys.character.list.sr.haifangzhu.HaiFangZhu;
@@ -62,8 +63,37 @@ import java.util.*;
 public class CharacterFactory {
     public static final Map<String, Map<String, Class<? extends Character>>> characterMap = new LinkedHashMap<>();
     private static final Map<String, Image> iconMap = new HashMap<>();
-    public static final List<Class<? extends Character>> FIRE_CHARACTER =
-            List.of(FuJi.class, SPHongYe.class, ShiLing.class, SiJinShen.class, QingJi.class);
+    private static final Set<Class<? extends Character>> FIRE_CHARACTER =
+            Set.of(
+                    // 炼狱茨木童子
+                    // 烬天玉藻前
+                    // 鬼王酒吞童子
+                    // 浮世青行灯
+                    FuJi.class, // 缚骨清姬
+                    // 大夜摩天阎魔
+                    SPHongYe.class, // 心狩鬼女红叶
+                    // 福悦座敷童子
+                    SpYue.class, // 云间不见岳
+                    // 天火命铃彦姬
+                    // 阎魔
+                    // 茨木童子
+                    // 青行灯
+                    // 玉藻前
+                    // 不知火
+                    AXiuLuo.class, // 阿修罗
+                    ShiLing.class, // 食灵
+                    // 铃彦姬
+                    // 闻人翊悬
+                    // 平将门
+                    SiJinShen.class, // 思金神
+                    // 鬼使白
+                    // 凤凰火
+                    QingJi.class // 清姬
+                    // 座敷童子
+                    // 狸猫
+                    // 武士之灵
+                    // 古笼火
+            );
 
     static {
         Map<String, Class<? extends Character>> yysMap = new LinkedHashMap<>();
@@ -189,6 +219,10 @@ public class CharacterFactory {
                 character.team == 0 ? Color.ORANGE : Color.RED,
                 strokeWidth
         );
+    }
+
+    public static boolean isFireCharacter(Character character) {
+        return FIRE_CHARACTER.contains(character.getClass());
     }
 
     public enum ImageSize {
