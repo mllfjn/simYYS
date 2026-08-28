@@ -18,6 +18,7 @@ import com.mllfjn.simyys.character.status.determinant.RejectAllStatuses;
 import com.mllfjn.simyys.character.status.determinant.RetainAfterDie;
 import com.mllfjn.simyys.character.status.instance.StatusBind;
 import com.mllfjn.simyys.character.status.instance.StatusConfusion;
+import com.mllfjn.simyys.character.status.instance.StatusShield;
 import com.mllfjn.simyys.character.status.triggerParam.*;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunFactory;
@@ -746,13 +747,13 @@ public abstract class Character implements Serializable {
         for (Status status : statuses) {
             if (status.statusType == StatusType.DEBUFF
                     && status.statusForm == StatusForm.ZHUANG_TAI
-                    && status instanceof Displayable) {
+            ) {
                 debuffs.add(status);
             }
         }
 
         List<Status> tobeDelete = RateController
-                .choose(name + "驱散减益状态", debuffs, Status::toString, bp.calc, count);
+                .choose(name + "驱散减益状态", debuffs, Status::getName, bp.calc, count);
 
         for (Status status : tobeDelete) {
             status.delete();

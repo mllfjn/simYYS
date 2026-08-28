@@ -6,9 +6,8 @@ import com.mllfjn.simyys.battleevent.EventActionDone;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.EventHandlerContainer;
 import com.mllfjn.simyys.character.status.instance.StatusDieHandler;
-import com.mllfjn.simyys.utils.SerializableConsumer;
-import com.mllfjn.simyys.utils.SerializableRunnable;
-import javafx.event.EventHandler;
+import com.mllfjn.simyys.utils.serializable.SerialConsumer;
+import com.mllfjn.simyys.utils.serializable.SerialRunnable;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -21,7 +20,7 @@ import java.util.List;
 import java.util.Queue;
 
 public class MultiStageManager implements Serializable, EventHandlerContainer {
-    private final Queue<SerializableRunnable> stageQueue = new LinkedList<>();
+    private final Queue<SerialRunnable> stageQueue = new LinkedList<>();
     private final List<Character> summonList = new ArrayList<>(5);
     private final Character character;
 
@@ -35,7 +34,7 @@ public class MultiStageManager implements Serializable, EventHandlerContainer {
     private boolean autoChangeStage = false;
 
     // 召唤的小怪死亡后回调
-    private SerializableConsumer<Character> summonDieCallback;
+    private SerialConsumer<Character> summonDieCallback;
 
     // 死亡后是否需要调用处理方法,用于清除所有召唤物
     private boolean needHandle = true;
@@ -53,7 +52,7 @@ public class MultiStageManager implements Serializable, EventHandlerContainer {
         }
     }
 
-    public void addStage(SerializableRunnable stage) {
+    public void addStage(SerialRunnable stage) {
         stageQueue.add(stage);
     }
 
@@ -71,7 +70,7 @@ public class MultiStageManager implements Serializable, EventHandlerContainer {
         this.autoChangeStage = autoChangeStage;
     }
 
-    public void setSummonDieCallback(SerializableConsumer<Character> summonDieCallback) {
+    public void setSummonDieCallback(SerialConsumer<Character> summonDieCallback) {
         this.summonDieCallback = summonDieCallback;
     }
 

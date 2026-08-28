@@ -9,10 +9,10 @@ import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunFactory;
 import com.mllfjn.simyys.character.status.Displayable;
 import com.mllfjn.simyys.character.status.Status;
-import com.mllfjn.simyys.character.status.StatusShield;
+import com.mllfjn.simyys.character.status.instance.StatusShield;
 import com.mllfjn.simyys.customnode.CustomInputMenuItem;
 import com.mllfjn.simyys.utils.DecimalFormatUtil;
-import com.mllfjn.simyys.utils.SerializableConsumer;
+import com.mllfjn.simyys.utils.serializable.SerialConsumer;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -92,9 +92,9 @@ public class CharacterIcon implements Serializable {
     private transient VBox bottom;
 
     // 视觉效果
-    private SerializableConsumer<Node> visualEffectTop;
-    private SerializableConsumer<Node> visualEffectCenter;
-    private SerializableConsumer<Node> visualEffectBottom;
+    private SerialConsumer<Node> visualEffectTop;
+    private SerialConsumer<Node> visualEffectCenter;
+    private SerialConsumer<Node> visualEffectBottom;
 
     // 状态栏
     private transient TextFlow statuses;
@@ -414,17 +414,17 @@ public class CharacterIcon implements Serializable {
         }
     }
 
-    public void setVisualEffectTop(SerializableConsumer<Node> consumer) {
+    public void setVisualEffectTop(SerialConsumer<Node> consumer) {
         consumer.accept(top);
         visualEffectTop = consumer;
     }
 
-    public void setVisualEffectCenter(SerializableConsumer<Node> consumer) {
+    public void setVisualEffectCenter(SerialConsumer<Node> consumer) {
         consumer.accept(center);
         visualEffectCenter = consumer;
     }
 
-    public void setVisualEffectBottom(SerializableConsumer<Node> consumer) {
+    public void setVisualEffectBottom(SerialConsumer<Node> consumer) {
         consumer.accept(bottom);
         visualEffectBottom = consumer;
     }

@@ -3,7 +3,7 @@ package com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.shenqilou;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.Displayable;
 import com.mllfjn.simyys.interactive.InteractiveInfo;
-import com.mllfjn.simyys.character.status.StatusShield;
+import com.mllfjn.simyys.character.status.instance.StatusShield;
 
 class StatusShenWuHuDun extends StatusShield implements Displayable {
     private static final String StatusName = "蜃气护盾";

@@ -1,6 +1,9 @@
-package com.mllfjn.simyys.character.status;
+package com.mllfjn.simyys.character.status.instance;
 
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.status.Status;
+import com.mllfjn.simyys.character.status.StatusForm;
+import com.mllfjn.simyys.character.status.StatusType;
 import com.mllfjn.simyys.interactive.InteractiveInfo;
 import com.mllfjn.simyys.interactive.TraceableNumber;
 

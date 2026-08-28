@@ -3,6 +3,7 @@ package com.mllfjn.simyys.character.list.ssr.sijinshen;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.status.*;
+import com.mllfjn.simyys.character.status.instance.StatusShield;
 
 import java.util.List;
 

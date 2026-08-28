@@ -21,8 +21,8 @@ import com.mllfjn.simyys.collections.SerializableObservableList;
 import com.mllfjn.simyys.starter.Initializer;
 import com.mllfjn.simyys.starter.LockSkillAndFlag;
 import com.mllfjn.simyys.starter.CharacterNameAndTeam;
-import com.mllfjn.simyys.utils.SerialFunction;
-import com.mllfjn.simyys.utils.SerializableRunnable;
+import com.mllfjn.simyys.utils.serializable.SerialFunction;
+import com.mllfjn.simyys.utils.serializable.SerialRunnable;
 import com.mllfjn.simyys.utils.Utils;
 import javafx.beans.binding.DoubleBinding;
 import javafx.collections.ObservableMap;
@@ -662,7 +662,7 @@ public class BattlePane {
         situation.listeners.endIterator();
     }
 
-    public void addPriorityMove(Character character, SerializableRunnable runnable) {
+    public void addPriorityMove(Character character, SerialRunnable runnable) {
         situation.addPriorityMove(character, runnable);
     }
 

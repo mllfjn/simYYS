@@ -19,6 +19,7 @@ public class CiTiao1QiaoJin {
     public static final String CiTiaoName = "巧劲";
 
     public static void install(Character character) {
+        Status statusQJListener = new Status("");
         character.addStatus(new StatusQJListener(character));
 
         // 己方（指玩家）攻击力最高的单位普攻时，额外获得一次行动，回合结束后增加自身35%行动条
@@ -26,47 +27,25 @@ public class CiTiao1QiaoJin {
             Character maxAttack = new CharacterFinder(character)
                     .filterEnemy()
                     .get(Attribute.ATTACK, CharacterFinder.Criteria.MAX);
-            maxAttack.addStatus(new StatusQJUsePugGongListener(character, maxAttack));
+            Status statusQJMax = new Status("巧劲-攻击最高", character, maxAttack, StatusType.SPECIAL, StatusForm.SPECIAL);
+            statusQJMax.runOn(Trigger.USED_PU_GONG, _ -> {
+                Optional<StatusQJNewRoundMark> optional = statusQJMax.belongTo().getStatus(StatusQJNewRoundMark.class);
+                if (optional.isEmpty()) {
+                    statusQJMax.belongTo.addStatus(new StatusQJNewRoundMark(statusQJMax.from, statusQJMax.belongTo));
+                    statusQJMax.belongTo.doInteractive(interactive -> {
+                        interactive.getNewRound(statusQJMax.belongTo);
+                        interactive.increaseLocation(statusQJMax.belongTo, 35);
+                    });
+                }
+                return false;
+            });
+            maxAttack.addStatus(statusQJMax);
         });
     }
 
-    static class StatusQJUsePugGongListener extends Status implements StatusRunnable {
-
-        public StatusQJUsePugGongListener(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.USED_PU_GONG;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            Optional<StatusQJNewRoundMark> optional = belongTo.getStatus(StatusQJNewRoundMark.class);
-            if (optional.isEmpty()) {
-                belongTo.addStatus(new StatusQJNewRoundMark(from, belongTo));
-                belongTo.doInteractive(interactive -> interactive.getNewRound(belongTo));
-            }
-            return false;
-        }
-    }
-
-    static class StatusQJNewRoundMark extends Status implements StatusRunnable {
-
+    static class StatusQJNewRoundMark extends Status {
         public StatusQJNewRoundMark(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.AFTER_ROUND;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            belongTo.doInteractive(interactive -> interactive.increaseLocation(belongTo, 35));
-            return true;
+            super("标记-巧劲不可连续触发", from, belongTo);
         }
     }
 

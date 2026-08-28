@@ -3,6 +3,7 @@ package com.mllfjn.simyys.character.list.sp.yinfan;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
+import com.mllfjn.simyys.character.status.instance.StatusShield;
 
 public class StatusYuanLi extends Status implements Displayable {
     public static final String StatusName = "愿力";
