@@ -17,7 +17,7 @@ class CharacterSheMo extends CharacterSummonBase {
     SkillDuYe skillDuYe;
 
     private CharacterSheMo(DaShe daShe, Character target) {
-        super(daShe.getBp(), "蛇魔", daShe.team);
+        super(daShe.bp(), "蛇魔", daShe.team);
         this.daShe = daShe;
 
         setInitBaseAttack(target.getInitBaseAttack() + daShe.getInitBaseAttack() * 0.2);
@@ -42,7 +42,7 @@ class CharacterSheMo extends CharacterSummonBase {
                 daShe.addStatus(new StatusIncreaseAttribute(daShe, daShe, skill2));
             }
         }
-        daShe.getBp().addCharacter(characterSheMo);
+        daShe.bp().addCharacter(characterSheMo);
     }
 
     @Override

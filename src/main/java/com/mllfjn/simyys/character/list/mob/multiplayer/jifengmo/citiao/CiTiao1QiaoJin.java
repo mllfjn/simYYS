@@ -1,16 +1,14 @@
 package com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.citiao;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
-import com.mllfjn.simyys.interactive.InteractiveInfo;
+import com.mllfjn.simyys.utils.serializable.SerialConsumer;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,140 +17,94 @@ public class CiTiao1QiaoJin {
     public static final String CiTiaoName = "巧劲";
 
     public static void install(Character character) {
-        Status statusQJListener = new Status("");
-        character.addStatus(new StatusQJListener(character));
+        character.bp().addStatusAdder(c -> c.team != character.team
+                ? new StatusQJSplash(character, c)
+                : null
+        );
 
         // 己方（指玩家）攻击力最高的单位普攻时，额外获得一次行动，回合结束后增加自身35%行动条
-        character.bp.addPriorityMove(character, () -> {
+        character.bp().addPriorityMove(character, () -> {
             Character maxAttack = new CharacterFinder(character)
                     .filterEnemy()
                     .get(Attribute.ATTACK, CharacterFinder.Criteria.MAX);
-            Status statusQJMax = new Status("巧劲-攻击最高", character, maxAttack, StatusType.SPECIAL, StatusForm.SPECIAL);
+            Status statusQJMax = Status.of("巧劲-攻击最高", character, maxAttack);
             statusQJMax.runOn(Trigger.USED_PU_GONG, _ -> {
-                Optional<StatusQJNewRoundMark> optional = statusQJMax.belongTo().getStatus(StatusQJNewRoundMark.class);
-                if (optional.isEmpty()) {
-                    statusQJMax.belongTo.addStatus(new StatusQJNewRoundMark(statusQJMax.from, statusQJMax.belongTo));
-                    statusQJMax.belongTo.doInteractive(interactive -> {
-                        interactive.getNewRound(statusQJMax.belongTo);
-                        interactive.increaseLocation(statusQJMax.belongTo, 35);
-                    });
-                }
-                return false;
-            });
-            maxAttack.addStatus(statusQJMax);
+                        Optional<StatusQJNewRoundMark> optional
+                                = statusQJMax.belongTo.getStatus(StatusQJNewRoundMark.class);
+                        if (optional.isEmpty()) {
+                            statusQJMax.belongTo.addStatus(new StatusQJNewRoundMark(statusQJMax.from, statusQJMax.belongTo));
+                            statusQJMax.belongTo.doInteractive(interactive -> {
+                                interactive.getNewRound(statusQJMax.belongTo);
+                                interactive.increaseLocation(statusQJMax.belongTo, 35);
+                            });
+                        }
+                    })
+                    .addTo();
         });
     }
 
-    static class StatusQJNewRoundMark extends Status {
+    private static class StatusQJSplash extends Status {
+        private final Skill skill = Skill.getInstance(CiTiao1QiaoJin.CiTiaoName);
+
+        public StatusQJSplash(Character from, Character belongTo) {
+            super("巧劲-伤害溅射", from, belongTo);
+            SerialConsumer<TriggerParam> actionSplash = param -> {
+                AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
+                double number = attackInfo.getTraceableNumber().getNumber();
+                List<Character> targets = new CharacterFinder(belongTo)
+                        .filterEnemy()
+                        .getList();
+                targets.remove(attackInfo.getTarget());
+                belongTo.doInteractive(interactive -> {
+                    for (Character target : targets) {
+                        interactive.attack(
+                                AttackInfo.createRealAttack(belongTo, skill, target, number * 0.4)
+                        );
+                    }
+                });
+                skill.useDone();
+            };
+            SerialConsumer<TriggerParam> actionAfterRound = _ -> {
+                StatusQJJianShang.addStack(from, belongTo);
+                removeAction(Trigger.AFTER_ROUND);
+            };
+            runOn(Trigger.WILL_USE_PU_GONG, _ -> {
+                runOn(Trigger.CAUSE_ATTACK, actionSplash);
+                runOn(Trigger.USED_PU_GONG, _ -> {
+                    removeAction(Trigger.CAUSE_ATTACK);
+                    removeAction(Trigger.USED_PU_GONG);
+                    runOn(Trigger.AFTER_ROUND, actionAfterRound);
+                });
+            });
+        }
+    }
+
+    private static class StatusQJNewRoundMark extends Status {
         public StatusQJNewRoundMark(Character from, Character belongTo) {
             super("标记-巧劲不可连续触发", from, belongTo);
         }
     }
 
-    // 巧劲要用状态类生效在BOSS身上，因为只有BOSS本体直接受到伤害才会触发这个效果，打在盾上不生效
-    static class StatusQJListener extends Status implements StatusRunnable {
-        private final Skill SKILL = Skill.getInstance(CiTiao1QiaoJin.CiTiaoName);
+    static class StatusQJJianShang extends Status {
+        private int stack = 1;
 
-        public StatusQJListener(Character character) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
+        private StatusQJJianShang(Character from, Character belongTo) {
+            super("巧劲-减伤", from, belongTo);
+            display(() -> CiTiao1QiaoJin.CiTiaoName + stack);
+            attribute(Attribute.JIAN_SHANG, _ -> 5.0 * stack);
         }
 
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.AFTER_ATTACK;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            // 己方（指玩家，在这里是对面的人）普攻时，会造成40%溅射伤害
-            if (trigger == Trigger.AFTER_ATTACK) {
-                InteractiveInfo interactiveInfo = ((ParamAttackInfo) param).getAttackInfo();
-                Character attacker = interactiveInfo.getAttacker();
-                Skill skill = interactiveInfo.getSkill();
-                if (skill.getSkillID() == 1
-                        && attacker.team != belongTo.team
-                        && interactiveInfo.getTraceableNumber().getNumber() > 0) {
-                    double number = interactiveInfo.getTraceableNumber().getNumber();
-                    List<Character> targets = new CharacterFinder(belongTo)
-                            .filterTeammate()
-                            .filterSelf()
-                            .getList();
-
-                    if (attacker.getStatus(StatusAddStackAfterRound.class).isEmpty()) {
-                        attacker.addStatus(new StatusAddStackAfterRound(attacker));
-                    }
-
-                    attacker.doInteractive(interactive -> {
-                        for (Character target : targets) {
-                            interactive.attack(AttackInfo.createRealAttack(attacker
-                                    , SKILL, target, number * 0.4));
-                        }
-                        SKILL.useDone();
-                    });
-                }
-            }
-            return false;
-        }
-    }
-
-    static class StatusQJJianShang extends Status implements Displayable, AttributeModifier {
-        private int stack = 0;
-
-        private StatusQJJianShang(Character character) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        public static void addStack(Character character) {
-            StatusQJJianShang status = character.getStatus(StatusQJJianShang.class)
-                    .orElseGet(() -> {
-                        StatusQJJianShang newStatus = new StatusQJJianShang(character);
-                        character.addStatus(newStatus);
-                        return newStatus;
-                    });
-
-            // 上限30层
-            if (status.stack < 30) {
-                status.stack++;
-            }
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.JIAN_SHANG;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            // 全队受到的伤害降低5%
-            return stack * 5;
-        }
-
-        @Override
-        public String getDisplayText() {
-            return CiTiao1QiaoJin.CiTiaoName + stack;
-        }
-    }
-
-    static class StatusAddStackAfterRound extends Status implements StatusRunnable {
-
-        public StatusAddStackAfterRound(Character character) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.AFTER_ROUND;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            List<Character> targets = new CharacterFinder(belongTo)
+        public static void addStack(Character from, Character target) {
+            List<Character> list = new CharacterFinder(target)
                     .filterTeammate()
                     .getList();
-            for (Character character : targets) {
-                StatusQJJianShang.addStack(character);
+            for (Character c : list) {
+                c.addStatusOrChange(
+                        StatusQJJianShang.class,
+                        status -> status.stack = Math.min(30, status.stack + 1),
+                        () -> new StatusQJJianShang(from, c)
+                );
             }
-            return true;
         }
     }
 }

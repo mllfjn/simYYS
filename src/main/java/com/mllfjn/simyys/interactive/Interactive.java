@@ -221,19 +221,23 @@ public class Interactive {
             target.checkShield(attackInfo);
         }
 
-        if (attackInfo.isCanInfluenceAttack()) {
-            // 攻击者身上状态类影响
-            for (Status status : owner.getStatuses()) {
-                if (status instanceof InfluenceDamageWhenAttack iwa) {
-                    iwa.doInfluenceWhenAttack(attackInfo);
+        if (traceableNumber.getNumber() > 0) {
+            if (attackInfo.isCanInfluenceAttack()) {
+                // 攻击者身上状态类影响
+                for (Status status : owner.getStatuses()) {
+                    if (status instanceof InfluenceDamageWhenAttack iwa) {
+                        iwa.doInfluenceWhenAttack(attackInfo);
+                        删除
+                    }
                 }
-            }
+                owner.statusRun(Trigger.);
 
-            // 被攻击者身上状态类影响
-            target.statusRun(Trigger.BEING_ATTACKED, paramAttackInfo);
+                // 被攻击者身上状态类影响
+                target.statusRun(Trigger.BEING_ATTACKED, paramAttackInfo);
 
-            if (attackInfo.isCancel()) {
-                return;
+                if (attackInfo.isCancel()) {
+                    return;
+                }
             }
         }
 
@@ -280,29 +284,31 @@ public class Interactive {
         });
         addNumberRecord(target, customText);
 
-        // 触发攻击的目标身上的状态
-        target.statusRun(Trigger.AFTER_ATTACK, paramAttackInfo);
-
-        // 触发攻击者身上的攻击监听
-        owner.statusRun(Trigger.CAUSE_ATTACK, paramAttackInfo);
-
         // 部分造成伤害后生效的御魂(日女歌姬等)
-        if (traceableNumber.getNumber() > 0 && attackInfo.isCalEffectYuHun()) {
-            owner.forEachYuHun(yuHun -> {
-                if (yuHun instanceof YuHunAfterCauseAttack yca) {
-                    yca.action(attackInfo, this);
-                }
-            });
+        if (traceableNumber.getNumber() > 0) {
+            // 触发攻击的目标身上的状态
+            target.statusRun(Trigger.AFTER_ATTACK, paramAttackInfo);
 
-            if (target.alive) {
-                Character temp = owner;
-                setOwner(target);
-                target.forEachYuHun(yuHun -> {
-                    if (yuHun instanceof YuHunAfterBeingAttack yaa) {
-                        yaa.action(attackInfo, this);
+            // 触发攻击者身上的攻击监听
+            owner.statusRun(Trigger.CAUSE_ATTACK, paramAttackInfo);
+
+            if (attackInfo.isCalEffectYuHun()) {
+                owner.forEachYuHun(yuHun -> {
+                    if (yuHun instanceof YuHunAfterCauseAttack yca) {
+                        yca.action(attackInfo, this);
                     }
                 });
-                setOwner(temp);
+
+                if (target.alive) {
+                    Character temp = owner;
+                    setOwner(target);
+                    target.forEachYuHun(yuHun -> {
+                        if (yuHun instanceof YuHunAfterBeingAttack yaa) {
+                            yaa.action(attackInfo, this);
+                        }
+                    });
+                    setOwner(temp);
+                }
             }
         }
     }

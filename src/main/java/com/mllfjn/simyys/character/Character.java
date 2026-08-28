@@ -11,11 +11,9 @@ import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.skill.Skill1PuGongBase;
 import com.mllfjn.simyys.character.skill.SkillAuto;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.determinant.IgnoreChangeMaxHp;
 import com.mllfjn.simyys.character.status.determinant.IgnoreDebuff;
 import com.mllfjn.simyys.character.status.determinant.RejectAllStatuses;
-import com.mllfjn.simyys.character.status.determinant.RetainAfterDie;
 import com.mllfjn.simyys.character.status.instance.StatusBind;
 import com.mllfjn.simyys.character.status.instance.StatusConfusion;
 import com.mllfjn.simyys.character.status.instance.StatusShield;
@@ -80,7 +78,7 @@ public abstract class Character implements Serializable {
 
     public transient BattlePane bp;
 
-    public BattlePane getBp() {
+    public BattlePane bp() {
         // 尽量用这个方法,TODO 改成根据bp序号从静态类中获取bp
         return bp;
     }
@@ -443,7 +441,7 @@ public abstract class Character implements Serializable {
 
         // 维持类状态过回合
         maintainedStatuses.removeIf(status -> {
-            status.setDuration(status.getDuration() - 1);
+            status.duration(status.getDuration() - 1);
             if (status.getDuration() == 0) {
                 status.delete();
                 return true;
@@ -540,17 +538,15 @@ public abstract class Character implements Serializable {
         statusRun(Trigger.AFTER_ROUND_FIRST, null);
         statusRun(Trigger.AFTER_ROUND, null);
 
-        // 持续类状态过回合
-        statuses.removeIf(status -> {
+        // 持续类状态过回合 TODO:和AfterRound合并
+        new ArrayList<>(statuses).forEach(status -> {
             if (status.getDurationType() == StatusDurationType.CHI_XU) {
                 if (status.getDuration() == 1) {
-                    status.beforeDelete();
-                    return true;
+                    status.delete();
                 } else {
-                    status.setDuration(status.getDuration() - 1);
+                    status.duration(status.getDuration() - 1);
                 }
             }
-            return false;
         });
         // 技能冷却
         skills.forEach(Skill::pastRound);
@@ -732,14 +728,17 @@ public abstract class Character implements Serializable {
         setHp(getHp() + num);
     }
 
-    public void dispelAllDebuff() {
-        getStatuses().removeIf(status -> {
-            if (status.statusType == StatusType.DEBUFF && status.statusForm == StatusForm.ZHUANG_TAI) {
-                status.beforeDelete();
-                return true;
+    public void deleteStatusIf(Predicate<Status> predicate) {
+        new ArrayList<>(getStatuses()).forEach(status -> {
+            if (predicate.test(status)) {
+                status.delete();
             }
-            return false;
         });
+    }
+
+    public void dispelAllDebuff() {
+        deleteStatusIf(status -> status.statusType == StatusType.DEBUFF
+                && status.statusForm == StatusForm.ZHUANG_TAI);
     }
 
     public void dispelDeBuff(int count) {
@@ -816,35 +815,12 @@ public abstract class Character implements Serializable {
         }
     }
 
-    public void removeStatusIf(Predicate<Status> filter) {
-        final Iterator<Status> iterator = getStatuses().iterator();
-        while (iterator.hasNext()) {
-            Status next = iterator.next();
-            if (filter.test(next)) {
-                next.beforeDelete();
-                iterator.remove();
-            }
-        }
-    }
-
     public void removeAllCrowControl() {
-        getStatuses().removeIf(status -> {
-            if (status instanceof CrowdControl) {
-                status.beforeDelete();
-                return true;
-            }
-            return false;
-        });
+        deleteStatusIf(status -> status instanceof CrowdControl);
     }
 
     public void removeAllDeBuff() {
-        getStatuses().removeIf(status -> {
-            if (status.statusType == StatusType.DEBUFF) {
-                status.beforeDelete();
-                return true;
-            }
-            return false;
-        });
+        deleteStatusIf(status -> status.statusType == StatusType.DEBUFF);
     }
 
     public CharacterIcon getCharacterIcon() {
@@ -931,12 +907,9 @@ public abstract class Character implements Serializable {
     }
 
     public <T extends Status> void removeStatus(Class<T> clazz) {
-        Iterator<Status> iterator = statuses.iterator();
-        while (iterator.hasNext()) {
-            Status next = iterator.next();
+        for (Status next : statuses) {
             if (clazz.isInstance(next)) {
-                next.beforeDelete();
-                iterator.remove();
+                next.delete();
                 return;
             }
         }
@@ -1043,14 +1016,7 @@ public abstract class Character implements Serializable {
         statusRun(Trigger.DIE, null);
         // 通过老头死亡时可以叠一层伤魂鸟判断，应该先触发死亡，再执行
         dieHandle();
-        Iterator<Status> iterator = statuses.iterator();
-        while (iterator.hasNext()) {
-            Status status = iterator.next();
-            if (!(status instanceof RetainAfterDie)) {
-                status.beforeDelete();
-                iterator.remove();
-            }
-        }
+        deleteStatusIf(status -> !status.isRetainAfterDie());
 
         if (sealPassiveSkillCount == 0) {
             for (Skill skill : skills) {
@@ -1096,12 +1062,11 @@ public abstract class Character implements Serializable {
     }
 
     public void statusRun(Trigger trigger, TriggerParam param) {
+        // TODO:加一个运行时可以改变遍历顺序
         List<Status> copy = new ArrayList<>(statuses);
         for (Status status : copy) {
-            if (status instanceof StatusRunnable r && r.runnable(trigger)) {
-                if (r.run(trigger, bp, param)) {
-                    status.delete();
-                }
+            if (status.runnable(trigger)) {
+                status.run(trigger, param);
             }
         }
     }

@@ -46,7 +46,7 @@ public class HunWang {
         ((PropertyInput) pm.get(PropertyKey.GENERAL_SPEED_KEY)).setValue("141");
         PropertiesHolder ph = new PropertiesHolder(AXiuLuo.CharacterName, pm);
         ph.setAfterCreateAction(character -> {
-            BattlePane bp = character.getBp();
+            BattlePane bp = character.bp();
             AttackInfo.LIMIT = 100000;
             bp.addStatusAdder(c ->
                     c.team != character.team

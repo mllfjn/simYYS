@@ -24,7 +24,7 @@ public class QiLingZhenNv implements Serializable {
     }
 
     private void installBase(Character character) {
-        character.getBp().addPriorityMove(character, () -> {
+        character.bp().addPriorityMove(character, () -> {
             Character target = new CharacterFinder(character)
                     .filterTeammate()
                     .get(Attribute.ATTACK, CharacterFinder.Criteria.MAX);
@@ -84,7 +84,7 @@ public class QiLingZhenNv implements Serializable {
             AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
             if (attackInfo.getSkill() != QiLingZhenNv.this.skill) {
                 added = true;
-                belongTo.getBp().addOutRoundSkill(QiLingZhenNv.this.skill, () -> {
+                belongTo.bp().addOutRoundSkill(QiLingZhenNv.this.skill, () -> {
                     List<Character> list = new CharacterFinder(belongTo)
                             .filterEnemy()
                             .getList();

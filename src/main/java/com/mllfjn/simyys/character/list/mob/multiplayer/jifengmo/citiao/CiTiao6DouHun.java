@@ -13,36 +13,23 @@ public class CiTiao6DouHun {
     public static final String CiTiaoName = "斗魂";
 
     public static void install(Character character) {
-        character.addStatus(new StatusDHJianShang(character));
+        Status.of(CiTiaoName, character)
+                .runOn(Trigger.BEING_ATTACKED, triggerParam -> {
+                    AttackInfo attackInfo = ((ParamAttackInfo) triggerParam).getAttackInfo();
+                    if (!attackInfo.isCrit()) {
+                        // 首领受到非暴击伤害降低80%
+                        attackInfo.getTraceableNumber().mul(0.2, CiTiaoName);
+                    }
+                })
+                .addTo();
+
         character.bp.addPriorityMove(character, () -> {
             Character maxCritPower = new CharacterFinder(character)
                     .filterEnemy()
                     .get(Attribute.CRIT_POWER, CharacterFinder.Criteria.MAX);
+            Status.of(CiTiaoName + "攻击加成", character, maxCritPower)
             maxCritPower.addStatus(new StatusDHAttack(character, maxCritPower));
         });
-    }
-
-    static class StatusDHJianShang extends Status implements StatusRunnable {
-
-        public StatusDHJianShang(Character character) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.BEING_ATTACKED;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
-            if (!attackInfo.isCrit()) {
-                // 首领受到非暴击伤害降低80%
-                attackInfo.getTraceableNumber().mul(0.2, CiTiaoName);
-            }
-
-            return false;
-        }
     }
 
     static class StatusDHAttack extends Status implements AttributeModifier {

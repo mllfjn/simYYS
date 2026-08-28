@@ -12,6 +12,7 @@ import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.AttackType;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 class Skill2 extends Skill {
@@ -104,7 +105,7 @@ class Skill2 extends Skill {
         }
 
         private void transform() {
-            belongTo.removeStatusIf(status -> status.statusType != StatusType.SPECIAL);
+            belongTo.deleteStatusIf(status -> status.statusType != StatusType.SPECIAL);
             belongTo.addStatus(new StatusGuiHai(belongTo));
             ((LuWan) belongTo).skill2Special = new Skill2Special(belongTo);
         }

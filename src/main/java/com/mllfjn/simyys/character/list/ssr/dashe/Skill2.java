@@ -22,7 +22,7 @@ class Skill2 extends Skill {
 
     public Skill2(DaShe belongTo, int level, Skill3 skill3) {
         super(belongTo, level, 0, 1, 2);
-        belongTo.getBp().addActionListener(new BattleActionListener(belongTo) {
+        belongTo.bp().addActionListener(new BattleActionListener(belongTo) {
             @Override
             public boolean onBattleAction(BattleEvent event) {
                 if (event instanceof EventCharacterDie ecd && ecd.getCharacter().team == belongTo.team) {

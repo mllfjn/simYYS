@@ -9,7 +9,6 @@ import com.mllfjn.simyys.character.propertygetter.FlagChangeInfo;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.Status;
-import com.mllfjn.simyys.character.status.determinant.RetainAfterChangeWave;
 import com.mllfjn.simyys.customnode.CustomTextField;
 import com.mllfjn.simyys.customnode.TextFlowLog;
 import com.mllfjn.simyys.guihuo.GuiHuo;
@@ -165,7 +164,7 @@ public class BattlePane {
     public Label requestInfoDisplayLabel() {
         Label label = new Label();
         label.setFont(new Font(30));
-        info.getChildren().add(0, label);
+        info.getChildren().addFirst(label);
         return label;
     }
 
@@ -215,16 +214,16 @@ public class BattlePane {
         Button backBtn = new Button("返回(B)");
         Button savePredictionBtn = new Button("保存预测顺序");
         Button saveLockSkillAndFlagBtn = new Button("技能和红绿标");
-        prevBtn.setOnAction(event -> prev());
-        nextBtn.setOnAction(event -> {
+        prevBtn.setOnAction(_ -> prev());
+        nextBtn.setOnAction(_ -> {
             next(false);
             repaint();
         });
-        savePredictionBtn.setOnAction(event -> {
+        savePredictionBtn.setOnAction(_ -> {
             initializer.prediction.predictionOrder = actionOrder;
             initializer.prediction.copyToClipboard();
         });
-        saveLockSkillAndFlagBtn.setOnAction(event -> {
+        saveLockSkillAndFlagBtn.setOnAction(_ -> {
             for (LockSkillAndFlag lockSkillAndFlag : lockSkillAndFlagList) {
                 int lockSkill = lockSkillAndFlag.getLockSkill();
                 int flagTarget = lockSkillAndFlag.getFlagTarget();
@@ -262,7 +261,7 @@ public class BattlePane {
 
         CustomTextField round = new CustomTextField();
         Button skip = new Button("跳过回合(S)");
-        skip.setOnAction(event -> {
+        skip.setOnAction(_ -> {
             int skipRound = Utils.parseIntOrDefault(round.getText(), 0);
             if (skipRound > 0) {
                 skip(skipRound);
@@ -279,7 +278,7 @@ public class BattlePane {
 
         // next和edit快捷键冲突
         Runnable temp = accelerators.get(kce);
-        backBtn.setOnAction(event -> {
+        backBtn.setOnAction(_ -> {
             back.run();
             accelerators.put(kce, temp);
         });
@@ -312,7 +311,7 @@ public class BattlePane {
 
     private void configureActionBar() {
         actionBar.setPrefWidth(200);
-        actionBar.setOnMouseClicked(event -> {
+        actionBar.setOnMouseClicked(_ -> {
             if (actionBarType == ActionBarType.SHUN_WEI) {
                 actionBarType = ActionBarType.JIN_DU;
             } else {
@@ -410,7 +409,7 @@ public class BattlePane {
         if (actionBarType == ActionBarType.SHUN_WEI) {
 
             List<Character> list = getCharactersByActionSort();
-            Node imageBig = CharacterFactory.getImageWithStroke(list.get(0), CharacterFactory.ImageSize.BIG, 3);
+            Node imageBig = CharacterFactory.getImageWithStroke(list.getFirst(), CharacterFactory.ImageSize.BIG, 3);
             imageBig.setLayoutY(yOffset + 8 * CharacterFactory.ImageSize.SMALL.size);
             imageBig.setLayoutX(layoutXBig);
             actionBar.getChildren().add(imageBig);
@@ -432,7 +431,7 @@ public class BattlePane {
                 imageSmall.setLayoutX(layoutXSmall);
                 actionBar.getChildren().add(imageSmall);
             }
-            Node imageBig = CharacterFactory.getImageWithStroke(list.get(list.size() - 1), CharacterFactory.ImageSize.BIG, 3);
+            Node imageBig = CharacterFactory.getImageWithStroke(list.getLast(), CharacterFactory.ImageSize.BIG, 3);
             imageBig.setLayoutY(yOffset + 8 * CharacterFactory.ImageSize.SMALL.size);
             imageBig.setLayoutX(layoutXBig);
             actionBar.getChildren().add(imageBig);
@@ -443,7 +442,7 @@ public class BattlePane {
         if (!recorder.isEmpty()) {
 
             actionOrder.subList(actionOrder.size() - situation.roundInLastStep, actionOrder.size()).clear();
-            currentLockSkillAndFlag = lockSkillAndFlagList.remove(lockSkillAndFlagList.size() - 1);
+            currentLockSkillAndFlag = lockSkillAndFlagList.removeLast();
 
             try (ByteArrayInputStream bis = new ByteArrayInputStream(recorder.pop());
                  ObjectInputStream ois = new ObjectInputStream(bis)
@@ -610,16 +609,7 @@ public class BattlePane {
                         int enemyTeam = CharacterFinder.getEnemyTeam(checkTeam);
                         ArrayList<Character> characters = new ArrayList<>(situation.teamPane[enemyTeam].characters);
                         for (Character c : characters) {
-                            Iterator<Status> iterator = c.getStatuses().iterator();
-                            while (iterator.hasNext()) {
-                                Status status = iterator.next();
-                                if (status instanceof RetainAfterChangeWave rw) {
-                                    rw.changeWaveAction();
-                                } else {
-                                    status.beforeDelete();
-                                    iterator.remove();
-                                }
-                            }
+                            new ArrayList<>(c.getStatuses()).forEach(Status::changeWave);
                             c.forceSetLocation(0);
                         }
                         haveCleaned = true;
@@ -681,7 +671,7 @@ public class BattlePane {
     }
 
     public void addOutRoundSkill(Skill skill, Runnable runnable) {
-        // 将来skill.done要统一调用
+        // TODO skill.done要统一调用
         outRoundSkillList.add(runnable);
     }
 

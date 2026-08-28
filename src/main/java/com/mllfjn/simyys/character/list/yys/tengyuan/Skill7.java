@@ -40,7 +40,7 @@ class Skill7 extends PassiveSkill {
         Character belongTo = getBelongTo();
         final double increase = 5 * count;
         if (shuYin >= 3
-                || RateController.otherWhether(SkillName, "提升行动条效果作用于全体友方", belongTo.getBp().calc,
+                || RateController.otherWhether(SkillName, "提升行动条效果作用于全体友方", belongTo.bp().calc,
                 shuYin * 100.0 / 3)
         ) {
             List<Character> list = new CharacterFinder(belongTo)

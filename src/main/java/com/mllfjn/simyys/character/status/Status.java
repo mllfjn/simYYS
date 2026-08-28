@@ -25,16 +25,18 @@ public class Status implements Serializable {
     // 状态形式 状态/印记
     public StatusForm statusForm = StatusForm.SPECIAL;
 
-    public Status(String name, Character from, Character belongTo) {
+    protected Status(String name, Character from, Character belongTo) {
         this.name = name;
         this.from = from;
         this.belongTo = belongTo;
     }
 
-    public Status(String name, Character character) {
-        this.name = name;
-        this.from = character;
-        this.belongTo = character;
+    public static Status of(String name, Character character) {
+        return new Status(name, character, character);
+    }
+
+    public static Status of(String name, Character from, Character belongTo) {
+        return new Status(name, from, belongTo);
     }
 
     public Character belongTo() {
@@ -45,7 +47,7 @@ public class Status implements Serializable {
         return from;
     }
 
-    public void typeAndForm(StatusType statusType, StatusForm statusForm) {
+    public void type(StatusType statusType, StatusForm statusForm) {
         this.statusType = statusType;
         this.statusForm = statusForm;
     }
@@ -54,14 +56,18 @@ public class Status implements Serializable {
         return name;
     }
 
+    public void addTo() {
+        belongTo.addStatus(this);
+    }
+
     // ====================可运行的状态===============================
-    private Map<Trigger, SerialFunction<TriggerParam, Boolean>> actions = Collections.emptyMap();
+    private Map<Trigger, SerialConsumer<TriggerParam>> actions = Collections.emptyMap();
 
     public boolean runnable(Trigger trigger) {
         return actions.containsKey(trigger);
     }
 
-    public Status runOn(Trigger trigger, SerialFunction<TriggerParam, Boolean> action) {
+    public Status runOn(Trigger trigger, SerialConsumer<TriggerParam> action) {
         if (actions == Collections.EMPTY_MAP) {
             actions = new EnumMap<>(Trigger.class);
         }
@@ -69,11 +75,12 @@ public class Status implements Serializable {
         return this;
     }
 
-    /**
-     * @return 状态应当在运行后移除时返回true
-     */
-    public boolean run(Trigger trigger, TriggerParam param) {
-        return actions.get(trigger).apply(param);
+    public void removeAction(Trigger trigger) {
+        actions.remove(trigger);
+    }
+
+    public void run(Trigger trigger, TriggerParam param) {
+        actions.get(trigger).accept(param);
     }
 
     // ====================持续方式和回合数============================
@@ -212,5 +219,38 @@ public class Status implements Serializable {
 
     public int getForceChangeSkillCost() {
         return forceChangeSkillCost;
+    }
+
+    // =========================状态留存===============================
+    private boolean retainAfterDie = false;
+    private boolean retainAfterChangeWave = false;
+    private SerialRunnable changeAction;
+
+    public Status retainAfterDie() {
+        retainAfterDie = true;
+        return this;
+    }
+
+    public boolean isRetainAfterDie() {
+        return retainAfterDie;
+    }
+
+    public Status retainAfterChangeWave() {
+        retainAfterChangeWave = true;
+        return this;
+    }
+
+    public Status retainAfterChangeWave(SerialRunnable changeAction) {
+        retainAfterChangeWave = true;
+        this.changeAction = changeAction;
+        return this;
+    }
+
+    public void changeWave() {
+        if (!retainAfterChangeWave) {
+            delete();
+        } else if (changeAction != null) {
+            changeAction.run();
+        }
     }
 }
