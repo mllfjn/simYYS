@@ -8,6 +8,7 @@ import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
+import com.mllfjn.simyys.utils.Utils;
 
 import java.util.List;
 
@@ -23,6 +24,9 @@ public class CiTiao7JiXing {
             for (Character target : targets) {
                 target.addStatus(new StatusJXListener(character, target));
             }
+
+            Utils.information("疾行机制太乱，鉴于当前有太多增益了，改为默认满增伤，必定拉条\n" +
+                    "如果有不该拉条的地方，使用设置相对位置\"-20\"来更正");
         });
     }
 
@@ -44,7 +48,8 @@ public class CiTiao7JiXing {
         }
 
         private int getCount() {
-            int count = 0;
+            return 5;
+            /*int count = 0;
             for (Status status : belongTo.getStatuses()) {
                 if (status.statusType == StatusType.BUFF) {
                     count++;
@@ -54,7 +59,7 @@ public class CiTiao7JiXing {
                     }
                 }
             }
-            return count;
+            return count;*/
         }
 
         @Override
