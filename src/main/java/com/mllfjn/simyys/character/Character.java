@@ -1099,7 +1099,6 @@ public abstract class Character implements Serializable {
         for (Status status : copy) {
             if (status instanceof StatusRunnable r && r.runnable(trigger)) {
                 if (r.run(trigger, bp, param)) {
-//                    statuses.remove(status);
                     status.delete();
                 }
             }
