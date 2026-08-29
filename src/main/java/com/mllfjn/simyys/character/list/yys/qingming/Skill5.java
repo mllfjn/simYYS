@@ -52,7 +52,7 @@ class Skill5 extends Skill {
             super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
 
             this.bonus = bonus;
-            setDurationType(StatusDurationType.CHI_XU, duration);
+            duration(StatusDurationType.CHI_XU, duration);
         }
 
         public static void install(Character from, Character belongTo, int duration, int bonus) {
@@ -61,7 +61,7 @@ class Skill5 extends Skill {
                     status.delete();
                     belongTo.addStatus(new StatusMie(from, belongTo, duration, bonus));
                 } else if (status.bonus == bonus && status.getDuration() < duration) {
-                    status.setDuration(duration);
+                    status.duration(duration);
                 }
             }, () -> belongTo.addStatus(new StatusMie(from, belongTo, duration, bonus)));
         }

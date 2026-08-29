@@ -100,7 +100,7 @@ class Skill3 extends Skill {
             }
 
             // 持续3个回合后自动引燃
-            setDurationType(StatusDurationType.CHI_XU, 3);
+            duration(StatusDurationType.CHI_XU, 3);
         }
 
         public void yinRan() {

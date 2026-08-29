@@ -64,7 +64,7 @@ class Skill3 extends Skill {
         private StatusHuanJingListener(Character character, int duration, boolean gainGuiHuo
                 , Skill2.StatusMengShen statusMengShen) {
             super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-            setDurationType(StatusDurationType.CHI_XU, duration);
+            duration(StatusDurationType.CHI_XU, duration);
 
             adder = belongTo.bp.addStatusAdder(c ->
                     c.team == belongTo.team
@@ -76,7 +76,7 @@ class Skill3 extends Skill {
         public static void add(Character character, int duration, boolean gainGuiHuo
                 , Skill2.StatusMengShen statusMengShen) {
             character.getStatus(StatusHuanJingListener.class).ifPresentOrElse(
-                    status -> status.setDuration(duration),
+                    status -> status.duration(duration),
                     () -> character.addStatus(
                             new StatusHuanJingListener(character, duration, gainGuiHuo, statusMengShen)
                     )

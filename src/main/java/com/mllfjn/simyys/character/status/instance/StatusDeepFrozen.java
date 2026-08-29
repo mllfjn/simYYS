@@ -7,7 +7,7 @@ import com.mllfjn.simyys.character.status.*;
 public class StatusDeepFrozen extends Status implements CrowdControl, Displayable, AttributeModifier {
     private StatusDeepFrozen(Character from, Character belongTo) {
         super(from, belongTo, StatusType.DEBUFF, StatusForm.YIN_JI);
-        setDurationType(StatusDurationType.CHI_XU, 1);
+        duration(StatusDurationType.CHI_XU, 1);
     }
 
     public static void install(Character from, Character belongTo) {

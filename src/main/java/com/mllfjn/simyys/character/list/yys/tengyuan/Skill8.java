@@ -78,7 +78,7 @@ class Skill8 extends PassiveSkill {
                         .filterTeammate()
                         .filterShiShen()
                         .getCount();
-                setDurationType(StatusDurationType.CHI_XU, duration);
+                duration(StatusDurationType.CHI_XU, duration);
             }
 
             @Override

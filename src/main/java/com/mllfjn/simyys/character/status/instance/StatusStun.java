@@ -10,7 +10,7 @@ public class StatusStun extends Status implements CrowdControl, Displayable {
     public StatusStun(Character from, Character belongTo, int duration) {
         super(from, belongTo, StatusType.DEBUFF, StatusForm.YIN_JI);
 
-        setDurationType(StatusDurationType.CHI_XU, duration);
+        duration(StatusDurationType.CHI_XU, duration);
     }
 
     public static StatusSupplier getSupplier(int duration) {
@@ -18,7 +18,7 @@ public class StatusStun extends Status implements CrowdControl, Displayable {
                 to.getStatus(StatusStun.class).ifPresentOrElse(
                         status -> {
                             if (status.getDuration() < duration) {
-                                status.setDuration(duration);
+                                status.duration(duration);
                             }
                         },
                         () -> to.addStatus(new StatusStun(from, to, duration))

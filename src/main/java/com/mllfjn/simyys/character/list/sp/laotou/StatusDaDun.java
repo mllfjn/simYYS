@@ -18,7 +18,7 @@ public class StatusDaDun extends StatusSleep implements Displayable {
         if (levelGZ4) {
             laoTou.bp.gainGuiHuo(laoTou, 1);
         }
-        setDurationType(StatusDurationType.WEI_CHI, 1);
+        duration(StatusDurationType.WEI_CHI, 1);
     }
 
     @Override

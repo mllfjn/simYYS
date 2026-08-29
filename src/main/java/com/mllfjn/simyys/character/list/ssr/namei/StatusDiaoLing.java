@@ -16,13 +16,13 @@ public class StatusDiaoLing extends Status implements Displayable, AttributeModi
 
     private StatusDiaoLing(Character from, Character belongTo, int duration) {
         super(from, belongTo, StatusType.GENERAL, StatusForm.YIN_JI);
-        setDurationType(StatusDurationType.CHI_XU, duration);
+        duration(StatusDurationType.CHI_XU, duration);
     }
 
     public static StatusSupplier getSupplier(int duration) {
         return new StatusSupplier(StatusName, StatusDiaoLing.class, (from, to) ->
                 to.getStatus(StatusDiaoLing.class).ifPresentOrElse(
-                        status -> status.setDuration(duration),
+                        status -> status.duration(duration),
                         () -> to.addStatus(new StatusDiaoLing(from, to, duration))
                 )
         );

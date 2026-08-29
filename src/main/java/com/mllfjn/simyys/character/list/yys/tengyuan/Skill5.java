@@ -78,7 +78,7 @@ class Skill5 extends Skill {
             super(from, belongTo, StatusType.BUFF, StatusForm.ZHUANG_TAI);
             this.ratio = ratio;
 
-            setDurationType(StatusDurationType.CHI_XU, duration);
+            duration(StatusDurationType.CHI_XU, duration);
         }
 
         @Override

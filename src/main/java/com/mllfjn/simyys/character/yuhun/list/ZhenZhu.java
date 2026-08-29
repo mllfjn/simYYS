@@ -23,7 +23,7 @@ public class ZhenZhu extends YuHun {
 
         public StatusZZShield(Character from, Character belongTo, double shield) {
             super(from, belongTo, shield);
-            setDurationType(StatusDurationType.CHI_XU, 2);
+            duration(StatusDurationType.CHI_XU, 2);
         }
     }
 }

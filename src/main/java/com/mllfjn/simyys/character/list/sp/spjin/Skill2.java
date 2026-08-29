@@ -178,7 +178,7 @@ class Skill2 extends PassiveSkill {
 
         private StatusXXCritResist(Character character) {
             super(character, character, StatusType.BUFF, StatusForm.ZHUANG_TAI);
-            setDurationType(StatusDurationType.CHI_XU, 2);
+            duration(StatusDurationType.CHI_XU, 2);
         }
 
         public static void install(Character character) {
@@ -186,7 +186,7 @@ class Skill2 extends PassiveSkill {
                 StatusXXCritResist status = new StatusXXCritResist(character);
                 character.addStatus(status);
                 return status;
-            }).setDuration(2);
+            }).duration(2);
         }
 
         @Override
@@ -211,7 +211,7 @@ class Skill2 extends PassiveSkill {
                 StatusXXEffectResist status = new StatusXXEffectResist(character);
                 character.addStatus(status);
                 return status;
-            }).setDuration(2);
+            }).duration(2);
         }
 
         @Override
@@ -241,7 +241,7 @@ class Skill2 extends PassiveSkill {
                     StatusXXDefence status = new StatusXXDefence(from, to);
                     to.addStatus(status);
                     return status;
-                }).setDuration(2);
+                }).duration(2);
             }
         }
 

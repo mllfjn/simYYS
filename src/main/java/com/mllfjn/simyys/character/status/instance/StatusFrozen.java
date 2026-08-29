@@ -11,7 +11,7 @@ public class StatusFrozen extends Status implements CrowdControl, Displayable {
 
     private StatusFrozen(Character from, Character belongTo, int duration) {
         super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
-        setDurationType(StatusDurationType.CHI_XU, duration);
+        duration(StatusDurationType.CHI_XU, duration);
     }
 
     public static void install(Character from, Character belongTo, int duration) {

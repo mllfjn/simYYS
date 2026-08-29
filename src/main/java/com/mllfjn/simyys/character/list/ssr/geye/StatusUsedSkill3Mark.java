@@ -9,6 +9,6 @@ import com.mllfjn.simyys.character.status.StatusType;
 class StatusUsedSkill3Mark extends Status {
     public StatusUsedSkill3Mark(Character character) {
         super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-        setDurationType(StatusDurationType.CHI_XU, 2);
+        duration(StatusDurationType.CHI_XU, 2);
     }
 }

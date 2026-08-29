@@ -110,7 +110,7 @@ class Skill2 extends Skill {
         static void install(Character character) {
             character.getStatus(StatusSpeed.class)
                     .ifPresentOrElse(
-                            status -> status.setDuration(2),
+                            status -> status.duration(2),
                             () -> character.addStatus(new StatusSpeed(character))
                     );
         }

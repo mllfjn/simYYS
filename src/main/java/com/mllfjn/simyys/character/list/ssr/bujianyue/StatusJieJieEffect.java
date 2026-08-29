@@ -88,7 +88,7 @@ public class StatusJieJieEffect extends Status implements AttributeModifier, Sta
     static class StatusYunYi extends Status implements AttributeModifier {
         public StatusYunYi(Character from, Character belongTo) {
             super(from, belongTo, StatusType.BUFF, StatusForm.ZHUANG_TAI);
-            setDurationType(StatusDurationType.CHI_XU, 0);
+            duration(StatusDurationType.CHI_XU, 0);
         }
 
         @Override
@@ -105,7 +105,7 @@ public class StatusJieJieEffect extends Status implements AttributeModifier, Sta
     static class StatusShanSe extends StatusShield implements Displayable, AttributeModifier {
         public StatusShanSe(Character from, Character belongTo) {
             super(from, belongTo, from.getInitDefense() * 3.5);
-            setDurationType(StatusDurationType.CHI_XU, 1);
+            duration(StatusDurationType.CHI_XU, 1);
         }
 
         @Override

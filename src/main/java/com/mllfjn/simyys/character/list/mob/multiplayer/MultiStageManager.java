@@ -60,8 +60,8 @@ public class MultiStageManager implements Serializable, EventHandlerContainer {
         summonList.add(character);
         character.bp.addCharacter(character);
         Status.of("特殊-死亡监听", character)
-                .beforeDelete()
-        character.addStatus(new StatusDieHandler(character, () -> summonDie(character)));
+                .beforeDelete(() -> summonDie(character))
+                .addTo();
     }
 
     public void setCanChangeStage(boolean canChangeStage) {
@@ -113,12 +113,12 @@ public class MultiStageManager implements Serializable, EventHandlerContainer {
             MenuItem itemSkip = new MenuItem("跳过当前回合切换阶段");
             MenuItem itemAfter = new MenuItem("该回合行动后切换阶段");
 
-            itemSkip.setOnAction(event -> {
+            itemSkip.setOnAction(_ -> {
                 changeStage();
                 character.bp.skipCharacterAct();
             });
 
-            itemAfter.setOnAction(event -> {
+            itemAfter.setOnAction(_ -> {
                         prepareChangeStage = true;
                 character.bp.addActionListener(new BattleActionListener(character) {
                     @Override

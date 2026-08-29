@@ -48,7 +48,7 @@ class Skill3 extends Skill {
         interactive.effect(this, charactersWithFrozen, 30, false,
                 new StatusSupplier("再次攻击冰冻", StatusFrozen.class, (from, to) -> {
                     if (to.isMob()) {
-                        to.getStatus(StatusFrozen.class).orElseThrow().setDuration(2);
+                        to.getStatus(StatusFrozen.class).orElseThrow().duration(2);
                     } else {
                         to.removeStatus(StatusFrozen.class);
                         StatusDeepFrozen.install(belongTo, to);

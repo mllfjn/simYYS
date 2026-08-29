@@ -132,13 +132,13 @@ class Skill3 extends Skill {
     static class StatusEffectResist extends Status implements AttributeModifier {
         private StatusEffectResist(Character from, Character belongTo) {
             super(from, belongTo, StatusType.BUFF, StatusForm.ZHUANG_TAI);
-            setDurationType(StatusDurationType.CHI_XU, 2);
+            duration(StatusDurationType.CHI_XU, 2);
         }
 
         private static void install(Character from, Character belongTo) {
             belongTo.getStatus(StatusEffectResist.class)
                     .ifPresentOrElse(
-                            status -> status.setDuration(2),
+                            status -> status.duration(2),
                             () -> belongTo.addStatus(new StatusEffectResist(from, belongTo))
                     );
         }

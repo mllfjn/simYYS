@@ -10,7 +10,7 @@ public class StatusConfusion extends Status implements CrowdControl, Displayable
 
     public StatusConfusion(Character from, Character belongTo, int duration) {
         super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
-        setDurationType(StatusDurationType.CHI_XU, duration);
+        duration(StatusDurationType.CHI_XU, duration);
     }
 
     public static StatusSupplier getSupplier(int duration) {
@@ -18,7 +18,7 @@ public class StatusConfusion extends Status implements CrowdControl, Displayable
                 to.getStatus(StatusConfusion.class).ifPresentOrElse(
                         status -> {
                             if (status.getDuration() < duration) {
-                                status.setDuration(duration);
+                                status.duration(duration);
                             }
                         },
                         () -> to.addStatus(new StatusConfusion(from, to, duration))

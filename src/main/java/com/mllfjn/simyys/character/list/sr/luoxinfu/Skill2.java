@@ -25,7 +25,7 @@ class Skill2 extends PassiveSkill {
                                     (from, to) ->
                                             to.getStatus(StatusZhuYin.class)
                                                     .ifPresentOrElse(
-                                                            status -> status.setDuration(2),
+                                                            status -> status.duration(2),
                                                             () -> to.addStatus(new StatusZhuYin(getBelongTo(), to))
                                                     )
                             )
@@ -44,7 +44,7 @@ class Skill2 extends PassiveSkill {
 
         private StatusZhuYin(Character from, Character belongTo) {
             super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
-            setDurationType(StatusDurationType.CHI_XU, 2);
+            duration(StatusDurationType.CHI_XU, 2);
         }
 
         @Override
@@ -68,7 +68,7 @@ class Skill2 extends PassiveSkill {
         static class StatusReduceSpeed extends Status implements AttributeModifier {
             public StatusReduceSpeed(Character from, Character belongTo) {
                 super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
-                setDurationType(StatusDurationType.CHI_XU, 1);
+                duration(StatusDurationType.CHI_XU, 1);
             }
 
             @Override

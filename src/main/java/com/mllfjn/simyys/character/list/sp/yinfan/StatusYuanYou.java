@@ -9,13 +9,13 @@ class StatusYuanYou extends Status implements AttributeModifier, Displayable {
 
     private StatusYuanYou(Character from, Character belongTo) {
         super(from, belongTo, StatusType.BUFF, StatusForm.YIN_JI);
-        setDurationType(StatusDurationType.CHI_XU, 1);
+        duration(StatusDurationType.CHI_XU, 1);
     }
 
     public static void install(Character from, Character belongTo) {
         belongTo.getStatus(StatusYuanYou.class)
                 .ifPresentOrElse(
-                        status -> status.setDuration(1),
+                        status -> status.duration(1),
                         () -> belongTo.addStatus(new StatusYuanYou(from, belongTo)));
     }
 

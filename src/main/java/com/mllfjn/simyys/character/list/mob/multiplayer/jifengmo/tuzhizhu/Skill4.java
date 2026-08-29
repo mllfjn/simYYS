@@ -43,7 +43,6 @@ class Skill4 extends Skill {
                 .filterEnemy()
                 .getList();
 
-        // 因为有可能回合外释放，保险起见用doInteractive
         belongTo.doInteractive(interactive -> {
             interactive.attackTypical(this, list, 100, AttackType.QUN_TI);
 
@@ -63,11 +62,15 @@ class Skill4 extends Skill {
         return Optional.empty();
     }
 
-    static class StatusTZZReduceSpeed extends Status implements AttributeModifier, Displayable {
+    static class StatusTZZReduceSpeed extends Status {
         private static final String StatusName = "减速";
 
         private StatusTZZReduceSpeed(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
+            super(StatusName, from, belongTo);
+            type(StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
+            attribute(Attribute.SPEED, _ -> -20.0);
+            duration(StatusDurationType.CHI_XU, 1);
+            displayName();
         }
 
         static StatusSupplier getSupplier() {
@@ -78,21 +81,6 @@ class Skill4 extends Skill {
                         }
                     }
             );
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.SPEED;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return -20;
-        }
-
-        @Override
-        public String getDisplayText() {
-            return StatusName;
         }
     }
 }

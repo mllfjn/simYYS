@@ -55,13 +55,13 @@ class Skill2ForMob extends PassiveSkill {
     static class StatusEffectResist extends Status implements AttributeModifier {
         public StatusEffectResist(Character character) {
             super(character, character, StatusType.BUFF, StatusForm.ZHUANG_TAI);
-            setDurationType(StatusDurationType.CHI_XU, 1);
+            duration(StatusDurationType.CHI_XU, 1);
         }
 
         public static void install(Character character) {
             character.getStatus(StatusEffectResist.class)
                     .ifPresentOrElse(
-                            status -> status.setDuration(1),
+                            status -> status.duration(1),
                             () -> character.addStatus(new StatusEffectResist(character))
                     );
         }

@@ -35,18 +35,11 @@ class Skill5 extends PassiveSkill {
             CharacterBX c = new CharacterBX(bp, "部下", team, 150000);
             c.setStatusHKLZHBuff(statusHKLZHBuff);
             bp.addCharacter(c);
+            // 中间那个比较肉
             if (i == 2) {
-                c.addStatus(new StatusModifyAttribute(c, c, StatusType.SPECIAL, StatusForm.SPECIAL) {
-                    @Override
-                    public boolean isAffectAttribute(Attribute attribute) {
-                        return attribute == Attribute.JIAN_SHANG;
-                    }
-
-                    @Override
-                    public double getInfluence(Attribute attribute, StatusModifyParam param) {
-                        return 400;
-                    }
-                });
+                Status.of("减伤", c, c)
+                        .attribute(Attribute.JIAN_SHANG, _ -> 400.0)
+                        .addTo();
             }
         }
     }
@@ -79,22 +72,18 @@ class Skill5 extends PassiveSkill {
         return SkillName;
     }
 
-    static class StatusHKLRecordDamage extends StatusRecordDamage implements Displayable {
+    static class StatusHKLRecordDamage extends StatusRecordDamage {
         private final DisplayDamageRecord infoDisplay;
 
         public StatusHKLRecordDamage(Character character, DisplayDamageRecord infoDisplay) {
             super(character);
             this.infoDisplay = infoDisplay;
+            display(() -> "真");
         }
 
         @Override
         protected void addDamage(double damage) {
             infoDisplay.addDamage(damage);
-        }
-
-        @Override
-        public String getDisplayText() {
-            return "真";
         }
     }
 

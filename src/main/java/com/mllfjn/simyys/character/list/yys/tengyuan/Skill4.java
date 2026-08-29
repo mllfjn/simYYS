@@ -65,7 +65,7 @@ class Skill4 extends Skill {
 
         public StatusZouLv(Character character, int duration) {
             super(character, character, StatusType.BUFF, StatusForm.YIN_JI);
-            setDurationType(StatusDurationType.WEI_CHI, duration);
+            duration(StatusDurationType.WEI_CHI, duration);
         }
 
         @Override
@@ -94,7 +94,7 @@ class Skill4 extends Skill {
             super(from, belongTo, StatusType.BUFF, StatusForm.ZHUANG_TAI);
             this.ratio = ratio;
 
-            setDurationType(StatusDurationType.WEI_CHI, duration);
+            duration(StatusDurationType.WEI_CHI, duration);
         }
 
         @Override

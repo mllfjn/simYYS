@@ -14,7 +14,7 @@ class StatusFenHuo extends Status implements Displayable {
         this.skill = skill;
         this.multiplier = multiplier;
 
-        setDurationType(StatusDurationType.CHI_XU, 1);
+        duration(StatusDurationType.CHI_XU, 1);
     }
 
     static void install(Character from, Character belongTo, Skill skill, int multiplier) {

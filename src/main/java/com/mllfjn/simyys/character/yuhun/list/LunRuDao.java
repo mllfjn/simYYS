@@ -59,7 +59,7 @@ public class LunRuDao extends YuHun implements YuHunSealResponse {
         static class StatusLRDMark extends Status {
             public StatusLRDMark(Character character) {
                 super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-                setDurationType(StatusDurationType.CHI_XU, 2);
+                duration(StatusDurationType.CHI_XU, 2);
             }
         }
     }

@@ -718,7 +718,6 @@ public abstract class Character implements Serializable {
 
     public void beHeal(HealInfo healInfo) {
         setHp(getHp() + healInfo.getTraceableNumber().getNumber());
-        statusRun(Trigger.AFTER_HEAL, new ParamHealInfo(healInfo));
     }
 
     /**

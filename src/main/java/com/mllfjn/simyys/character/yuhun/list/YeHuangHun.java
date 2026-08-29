@@ -91,7 +91,7 @@ public class YeHuangHun extends YuHun implements YuHunSealResponse, YuHunUnfullM
                 super(from, belongTo, StatusType.BUFF, StatusForm.ZHUANG_TAI);
                 this.speed = speed;
 
-                setDurationType(StatusDurationType.WEI_CHI, 1);
+                duration(StatusDurationType.WEI_CHI, 1);
             }
 
             @Override

@@ -65,7 +65,7 @@ class Skill3 extends Skill {
 
         public StatusJF(Character from, Character belongTo, int percent) {
             super(from, belongTo, StatusType.BUFF, StatusForm.ZHUANG_TAI);
-            setDurationType(StatusDurationType.CHI_XU, 1);
+            duration(StatusDurationType.CHI_XU, 1);
             this.percent = percent;
         }
 

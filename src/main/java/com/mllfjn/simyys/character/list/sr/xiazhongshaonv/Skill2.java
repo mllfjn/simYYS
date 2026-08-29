@@ -98,7 +98,7 @@ class Skill2 extends PassiveSkill {
         private static class StatusXZShield extends StatusShield {
             public StatusXZShield(Character from, Character belongTo, double shield) {
                 super(from, belongTo, shield);
-                setDurationType(StatusDurationType.CHI_XU, 2);
+                duration(StatusDurationType.CHI_XU, 2);
             }
         }
     }
@@ -111,7 +111,7 @@ class Skill2 extends PassiveSkill {
         ) {
             super(from, belongTo, statusType, StatusForm.ZHUANG_TAI);
             this.randomStatus = randomStatus;
-            setDurationType(StatusDurationType.CHI_XU, duration);
+            duration(StatusDurationType.CHI_XU, duration);
         }
 
         static StatusSupplier getSupplier(RandomStatus randomStatus) {
@@ -128,7 +128,7 @@ class Skill2 extends PassiveSkill {
                         && srs.randomStatus == randomStatus
                         && status.statusType == statusType
                 ) {
-                    status.setDuration(duration);
+                    status.duration(duration);
                     return;
                 }
             }

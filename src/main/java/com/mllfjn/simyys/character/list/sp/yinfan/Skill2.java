@@ -66,7 +66,7 @@ class Skill2 extends Skill {
             this.skill2Level = skill2Level;
             this.skill3Level = skill3Level;
             this.getYuanLiBeforeRound = skill2Level >= 3;
-            setDurationType(StatusDurationType.WEI_CHI, duration);
+            duration(StatusDurationType.WEI_CHI, duration);
 
             adder = belongTo.bp.addStatusAdder(c ->
                     c.team == character.team && c != character && !c.isYYS()
@@ -78,7 +78,7 @@ class Skill2 extends Skill {
         public static void create(Character character, int skill2Level, int skill3Level) {
             int duration = skill2Level >= 4 ? 2 : 1;
             character.getStatus(StatusHuanJing.class).ifPresentOrElse(
-                    status -> status.setDuration(duration)
+                    status -> status.duration(duration)
                     , () -> character.addStatus(new StatusHuanJing(character, duration, skill2Level, skill3Level))
             );
         }

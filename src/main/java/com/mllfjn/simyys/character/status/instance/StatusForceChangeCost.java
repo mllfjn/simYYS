@@ -10,7 +10,7 @@ public class StatusForceChangeCost extends Status implements ForceChangeCost {
         super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
         this.reduce = reduce;
 
-        setDurationType(StatusDurationType.CHI_XU, 1);
+        duration(StatusDurationType.CHI_XU, 1);
     }
 
     @Override

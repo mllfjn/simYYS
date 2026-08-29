@@ -118,13 +118,13 @@ class QiLingTiHun {
 
             private StatusTHZengShang(Character from, Character belongTo) {
                 super(from, belongTo, StatusType.BUFF, StatusForm.ZHUANG_TAI);
-                setDurationType(StatusDurationType.CHI_XU, 2);
+                duration(StatusDurationType.CHI_XU, 2);
             }
 
             public static void install(Character from, Character belongTo) {
                 belongTo.getStatus(StatusTHZengShang.class)
                         .ifPresentOrElse(
-                                status -> status.setDuration(2),
+                                status -> status.duration(2),
                                 () -> belongTo.addStatus(new StatusTHZengShang(from, belongTo))
                         );
             }

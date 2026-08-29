@@ -152,7 +152,7 @@ class Skill3 extends Skill {
             }
 
             public void refresh() {
-                setDurationType(StatusDurationType.CHI_XU, 2);
+                duration(StatusDurationType.CHI_XU, 2);
             }
         }
     }

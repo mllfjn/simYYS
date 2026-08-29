@@ -11,7 +11,7 @@ public class StatusRuMeng extends Status implements Displayable, ConditionalRedu
 
     public StatusRuMeng(ShenWuYue from, Character belongTo) {
         super(from, belongTo, StatusType.BUFF, StatusForm.YIN_JI);
-        setDurationType(StatusDurationType.WEI_CHI, 2);
+        duration(StatusDurationType.WEI_CHI, 2);
         from.setRuMeng(this, true);
     }
 

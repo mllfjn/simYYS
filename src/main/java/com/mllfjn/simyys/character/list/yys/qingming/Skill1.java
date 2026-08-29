@@ -50,7 +50,7 @@ class Skill1 extends Skill1PuGongBase {
             super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
             this.bonus = (100 - num) / 100;
 
-            setDurationType(StatusDurationType.CHI_XU, 2);
+            duration(StatusDurationType.CHI_XU, 2);
         }
 
         public static StatusSupplier getSupplier(double num) {
@@ -58,7 +58,7 @@ class Skill1 extends Skill1PuGongBase {
                     to.getStatus(StatusLuan.class).ifPresentOrElse(
                             status -> {
                                 if (status.getDuration() < 2) {
-                                    status.setDuration(2);
+                                    status.duration(2);
                                 }
                             },
                             () -> to.addStatus(new StatusLuan(from, to, num))

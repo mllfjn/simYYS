@@ -71,7 +71,7 @@ public class TuFo extends YuHun implements YuHunSealResponse {
 
         public StatusTF(Character from, Character belongTo) {
             super(from, belongTo, StatusType.BUFF, StatusForm.ZHUANG_TAI);
-            setDurationType(StatusDurationType.WEI_CHI, 2);
+            duration(StatusDurationType.WEI_CHI, 2);
         }
 
         public static void install(Character character) {
@@ -81,7 +81,7 @@ public class TuFo extends YuHun implements YuHunSealResponse {
 
             for (Character target : list) {
                 target.getStatus(StatusTF.class).ifPresentOrElse(
-                        status -> status.setDuration(2),
+                        status -> status.duration(2),
                         () -> target.addStatus(new StatusTF(character, target))
                 );
             }

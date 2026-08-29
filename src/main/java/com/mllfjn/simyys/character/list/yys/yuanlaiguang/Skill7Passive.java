@@ -111,7 +111,7 @@ class Skill7Passive extends PassiveSkill {
         private StatusEvolution(Character character, int duration) {
             super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
 
-            setDurationType(StatusDurationType.CHI_XU, duration);
+            duration(StatusDurationType.CHI_XU, duration);
         }
 
         public static void addEvolution(Character character, int duration) {

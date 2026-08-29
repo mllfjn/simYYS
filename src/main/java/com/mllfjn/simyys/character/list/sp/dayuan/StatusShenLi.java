@@ -4,13 +4,16 @@ import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
 
-class StatusShenLi extends Status implements AttributeModifier, Displayable {
+class StatusShenLi extends Status {
     // 上限5层,每层提升自身20%效果抵抗,并根据已有层数强化与世结缘(3)效果
     private int stack;
 
     private StatusShenLi(Character character) {
-        super(character, character, StatusType.BUFF, StatusForm.YIN_JI);
-        character.addStatus(this);
+        super("神力", character);
+        type(StatusType.BUFF, StatusForm.YIN_JI);
+        attribute(Attribute.EFFECT_RESIST_RATE, _ -> 20.0 * stack);
+        display(() -> "神力" + stack);
+        addTo();
     }
 
     public static void addStack(Character character, int count) {
@@ -23,20 +26,5 @@ class StatusShenLi extends Status implements AttributeModifier, Displayable {
 
     public int getStack() {
         return stack;
-    }
-
-    @Override
-    public boolean isAffectAttribute(Attribute attribute) {
-        return attribute == Attribute.EFFECT_RESIST_RATE;
-    }
-
-    @Override
-    public double getInfluence(Attribute attribute, StatusModifyParam param) {
-        return stack * 20;
-    }
-
-    @Override
-    public String getDisplayText() {
-        return "神力" + stack;
     }
 }

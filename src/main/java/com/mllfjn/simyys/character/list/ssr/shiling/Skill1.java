@@ -33,7 +33,7 @@ class Skill1 extends Skill1PuGongBase {
 
         public StatusZhuoShang(Character from, Character belongTo) {
             super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
-            setDurationType(StatusDurationType.CHI_XU, 2);
+            duration(StatusDurationType.CHI_XU, 2);
         }
 
         @Override

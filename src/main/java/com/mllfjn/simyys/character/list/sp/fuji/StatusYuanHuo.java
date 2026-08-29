@@ -13,7 +13,7 @@ class StatusYuanHuo extends Status implements StatusRunnable {
 
     public StatusYuanHuo(Character from, Character belongTo) {
         super(from, belongTo, StatusType.DEBUFF, StatusForm.YIN_JI);
-        setDurationType(StatusDurationType.CHI_XU, 1);
+        duration(StatusDurationType.CHI_XU, 1);
     }
 
     @Override

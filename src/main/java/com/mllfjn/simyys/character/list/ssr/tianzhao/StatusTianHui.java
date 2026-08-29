@@ -24,7 +24,7 @@ class StatusTianHui extends Status implements AttributeModifier, Displayable, St
         this.skill2 = skill2;
         this.skill3 = skill3;
 
-        setDurationType(StatusDurationType.WEI_CHI, 2);
+        duration(StatusDurationType.WEI_CHI, 2);
         skill3.statusTianHui = this;
     }
 

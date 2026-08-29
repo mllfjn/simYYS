@@ -10,14 +10,14 @@ class StatusReduceSpeed extends Status implements Displayable, AttributeModifier
 
     private StatusReduceSpeed(Character from, Character belongTo) {
         super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
-        setDurationType(StatusDurationType.CHI_XU, 2);
+        duration(StatusDurationType.CHI_XU, 2);
     }
 
     static StatusSupplier getSupplier() {
         return new StatusSupplier(StatusName, StatusReduceSpeed.class, (from, to) -> {
             to.getStatus(StatusReduceSpeed.class)
                     .ifPresentOrElse(
-                            status -> status.setDuration(2),
+                            status -> status.duration(2),
                             () -> to.addStatus(new StatusReduceSpeed(from, to))
                     );
         });

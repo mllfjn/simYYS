@@ -54,12 +54,12 @@ class StatusYun extends Status implements Displayable {
         public StatusIncreaseNonCrit(Character from, Character belongTo, int stack, int duration) {
             super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
             this.stack = stack;
-            setDurationType(StatusDurationType.CHI_XU, duration);
+            duration(StatusDurationType.CHI_XU, duration);
         }
 
         void add(int addStack, int duration) {
             stack = Math.min(stack + addStack, 5);
-            setDuration(duration);
+            duration(duration);
         }
 
         @Override

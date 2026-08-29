@@ -76,7 +76,7 @@ public class ELou extends YuHun implements YuHunSealResponse {
 
         private StatusELLock(Character character) {
             super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-            setDurationType(StatusDurationType.CHI_XU, 8);
+            duration(StatusDurationType.CHI_XU, 8);
         }
 
         @Override

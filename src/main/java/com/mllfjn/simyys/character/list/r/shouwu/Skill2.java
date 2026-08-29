@@ -29,13 +29,18 @@ class Skill2 extends PassiveSkill {
         return SkillName;
     }
 
-    static class StatusStealCritRate extends Status implements AttributeModifier {
+    static class StatusStealCritRate extends Status {
         private StatusBeStolen statusBeStolen;
 
         public StatusStealCritRate(Character character, Character target) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-            setDurationType(StatusDurationType.CHI_XU, 1);
-
+            super(SkillName, character);
+            duration(StatusDurationType.CHI_XU, 1);
+            beforeDelete(() -> {
+                if (statusBeStolen != null) {
+                    statusBeStolen.delete();
+                }
+            });
+            attribute(Attribute.CRIT_RATE, _ -> 40.0);
             statusBeStolen = new StatusStealCritRate.StatusBeStolen(character, target);
         }
 
@@ -45,44 +50,15 @@ class Skill2 extends PassiveSkill {
                 statusBeStolen = new StatusBeStolen(belongTo, target);
                 target.addStatus(statusBeStolen);
             }
-            setDuration(1);
+            duration(1);
         }
 
-        @Override
-        public void beforeDelete() {
-            if (statusBeStolen != null) {
-                statusBeStolen.delete();
-            }
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.CRIT_RATE;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return 40;
-        }
-
-        static class StatusBeStolen extends Status implements AttributeModifier, Displayable {
+        static class StatusBeStolen extends Status {
             public StatusBeStolen(Character from, Character belongTo) {
-                super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
-            }
-
-            @Override
-            public boolean isAffectAttribute(Attribute attribute) {
-                return attribute == Attribute.CRIT_RATE;
-            }
-
-            @Override
-            public double getInfluence(Attribute attribute, StatusModifyParam param) {
-                return -40;
-            }
-
-            @Override
-            public String getDisplayText() {
-                return "暴击率降低";
+                super("暴击率降低", from, belongTo);
+                type(StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
+                displayName();
+                attribute(Attribute.CRIT_RATE, _ -> -40.0);
             }
         }
     }

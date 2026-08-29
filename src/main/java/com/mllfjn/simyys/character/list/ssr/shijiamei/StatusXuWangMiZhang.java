@@ -10,13 +10,13 @@ class StatusXuWangMiZhang extends Status implements Displayable, InfluenceDamage
 
     private StatusXuWangMiZhang(Character from, Character belongTo) {
         super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-        setDurationType(StatusDurationType.CHI_XU, 2);
+        duration(StatusDurationType.CHI_XU, 2);
     }
 
     static void install(Character from, Character belongTo) {
         belongTo.getStatus(StatusXuWangMiZhang.class)
                 .ifPresentOrElse(
-                        status -> status.setDuration(2),
+                        status -> status.duration(2),
                         () -> belongTo.addStatus(new StatusXuWangMiZhang(from, belongTo))
                 );
     }

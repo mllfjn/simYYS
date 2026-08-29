@@ -1,25 +1,41 @@
 package com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.tuzhizhu;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.battleevent.BattleActionListener;
 import com.mllfjn.simyys.battleevent.BattleEvent;
 import com.mllfjn.simyys.battleevent.EventActionDone;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.ratecontroller.RateController;
 
 class Skill3 extends PassiveSkill {
     private static final String SkillName = "天罗地网";
 
-    private final Skill4 skill4;
+    private boolean use;
 
     public Skill3(Character belongTo, Skill4 skill4) {
         super(belongTo, -1, 3);
-        this.skill4 = skill4;
 
-        belongTo.addStatus(new StatusTLDWListener(belongTo));
+        Status.of(SkillName + "监听器", belongTo)
+                .runOn(Trigger.AFTER_ATTACK, _ -> {
+                    if (!use) {
+                        if (RateController.otherWhether(SkillName, "使用", belongTo.bp().calc, 35)) {
+                            use = true;
+                            belongTo.bp.addActionListener(new BattleActionListener(belongTo) {
+                                @Override
+                                public boolean onBattleAction(BattleEvent event) {
+                                    if (event instanceof EventActionDone) {
+                                        skill4.useWithoutCost();
+                                        use = false;
+                                        return true;
+                                    }
+                                    return false;
+                                }
+                            });
+                        }
+                    }
+
+                }).addTo();
     }
 
     @Override
@@ -30,39 +46,5 @@ class Skill3 extends PassiveSkill {
     @Override
     public String getName() {
         return SkillName;
-    }
-
-    class StatusTLDWListener extends Status implements StatusRunnable {
-        private boolean use = false;
-
-        public StatusTLDWListener(Character c) {
-            super(c, c, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return (!use && trigger == Trigger.AFTER_ATTACK);
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            if (trigger == Trigger.AFTER_ATTACK) {
-                if (RateController.otherWhether(SkillName, "使用", bp.calc, 35)) {
-                    use = true;
-                    belongTo.bp.addActionListener(new BattleActionListener(belongTo) {
-                        @Override
-                        public boolean onBattleAction(BattleEvent event) {
-                            if (event instanceof EventActionDone) {
-                                Skill3.this.skill4.useWithoutCost();
-                                use = false;
-                                return true;
-                            }
-                            return false;
-                        }
-                    });
-                }
-            }
-            return false;
-        }
     }
 }

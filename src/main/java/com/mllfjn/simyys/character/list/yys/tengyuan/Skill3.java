@@ -79,13 +79,13 @@ class Skill3 extends Skill {
             super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
             this.ratio = ratio;
 
-            setDurationType(StatusDurationType.CHI_XU, 2);
+            duration(StatusDurationType.CHI_XU, 2);
         }
 
         public static void install(Character from, Character belongTo, double ratio) {
             belongTo.getStatus(StatusReduceAttack.class)
                     .ifPresentOrElse(
-                            status -> status.setDuration(2),
+                            status -> status.duration(2),
                             () -> belongTo.addStatus(new StatusReduceAttack(from, belongTo, ratio))
                     );
         }
@@ -113,13 +113,13 @@ class Skill3 extends Skill {
             super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
             this.ratio = ratio;
 
-            setDurationType(StatusDurationType.CHI_XU, 2);
+            duration(StatusDurationType.CHI_XU, 2);
         }
 
         public static void install(Character from, Character belongTo, double ratio) {
             belongTo.getStatus(StatusReduceDefense.class)
                     .ifPresentOrElse(
-                            status -> status.setDuration(2),
+                            status -> status.duration(2),
                             () -> belongTo.addStatus(new StatusReduceDefense(from, belongTo, ratio))
                     );
         }

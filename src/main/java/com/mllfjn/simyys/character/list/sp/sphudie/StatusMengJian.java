@@ -19,7 +19,7 @@ class StatusMengJian extends StatusShield implements Displayable, AttributeModif
         super(from, belongTo, shield);
         this.skill2 = skill2;
 
-        setDurationType(StatusDurationType.CHI_XU, 2);
+        duration(StatusDurationType.CHI_XU, 2);
     }
 
     static void install(Character from, Character belongTo, double shield, Skill2 skill2) {

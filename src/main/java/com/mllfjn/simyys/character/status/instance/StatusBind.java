@@ -9,7 +9,7 @@ public class StatusBind extends Status implements CrowdControl, Displayable {
 
     public StatusBind(Character from, Character belongTo, int duration) {
         super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
-        setDurationType(StatusDurationType.CHI_XU, duration);
+        duration(StatusDurationType.CHI_XU, duration);
     }
 
     public static StatusSupplier getSupplier(int duration) {
@@ -17,7 +17,7 @@ public class StatusBind extends Status implements CrowdControl, Displayable {
                 to.getStatus(StatusBind.class).ifPresentOrElse(
                         status -> {
                             if (status.getDuration() < duration) {
-                                status.setDuration(duration);
+                                status.duration(duration);
                             }
                         },
                         () -> to.addStatus(new StatusBind(from, to, duration))

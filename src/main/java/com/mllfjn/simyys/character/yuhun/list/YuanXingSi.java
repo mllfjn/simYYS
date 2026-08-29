@@ -90,7 +90,7 @@ public class YuanXingSi extends YuHun implements YuHunSealResponse {
 
             public StatusYXS(Character from, Character belongTo) {
                 super(from, belongTo, StatusType.BUFF, StatusForm.ZHUANG_TAI);
-                setDurationType(StatusDurationType.CHI_XU, 2);
+                duration(StatusDurationType.CHI_XU, 2);
             }
 
             public static void add(Character from, Character belongTo, int addStack) {
@@ -129,7 +129,7 @@ public class YuanXingSi extends YuHun implements YuHunSealResponse {
                         StatusYXS statusYXS = new StatusYXS(from, belongTo);
                         statusYXS.stack = Math.min(addStack, duration2CanAdd);
                         if (from == belongTo) {
-                            statusYXS.setDuration(3);
+                            statusYXS.duration(3);
                         }
                         belongTo.addStatus(statusYXS);
                     }

@@ -47,7 +47,7 @@ class Skill3 extends Skill {
 
         public StatusJieJieContainer(Character character, int level) {
             super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-            setDurationType(StatusDurationType.WEI_CHI, 3);
+            duration(StatusDurationType.WEI_CHI, 3);
             adder = character.bp.addStatusAdder(c ->
                     c.team == character.team
                             ? new StatusJieJieEffect(Skill3.this, this, character, c)
@@ -59,7 +59,7 @@ class Skill3 extends Skill {
         }
 
         void refresh() {
-            setDuration(3);
+            duration(3);
             for (StatusJieJieEffect statusJieJieEffect : adder.getList()) {
                 statusJieJieEffect.lastSkill = null;
             }

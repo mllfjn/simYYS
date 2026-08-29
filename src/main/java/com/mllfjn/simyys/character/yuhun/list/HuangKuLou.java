@@ -30,7 +30,7 @@ public class HuangKuLou extends YuHun implements YuHunUnfullMark, YuHunAttack, Y
     static class StatusHKLMark extends Status implements Displayable {
         private StatusHKLMark(Character character) {
             super(character, character, StatusType.BUFF, StatusForm.ZHUANG_TAI);
-            setDurationType(StatusDurationType.CHI_XU, 1);
+            duration(StatusDurationType.CHI_XU, 1);
         }
 
         public static void enable(Character character) {

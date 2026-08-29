@@ -94,7 +94,7 @@ class Skill2 extends Skill {
             implements AttributeModifier, InfluenceDamageWhenAttack, Displayable, StatusRunnable {
         public StatusBJZL(Character from, Character belongTo) {
             super(from, belongTo, StatusType.BUFF, StatusForm.YIN_JI);
-            setDurationType(StatusDurationType.WEI_CHI, 2);
+            duration(StatusDurationType.WEI_CHI, 2);
         }
 
         @Override

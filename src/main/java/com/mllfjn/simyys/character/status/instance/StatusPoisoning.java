@@ -15,7 +15,7 @@ public class StatusPoisoning extends Status implements Displayable, AttributeMod
         super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
         this.stack = stack;
 
-        setDurationType(StatusDurationType.CHI_XU, duration);
+        duration(StatusDurationType.CHI_XU, duration);
     }
 
     public static void add(Character from, Character belongTo, int stack, int duration) {

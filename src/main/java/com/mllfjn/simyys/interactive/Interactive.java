@@ -8,6 +8,7 @@ import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.Trigger;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAddCrowdControl;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
+import com.mllfjn.simyys.character.status.triggerParam.ParamHealInfo;
 import com.mllfjn.simyys.character.yuhun.YuHunAfterBeingAttack;
 import com.mllfjn.simyys.character.yuhun.YuHunAfterCauseAttack;
 import com.mllfjn.simyys.character.yuhun.YuHunAttack;
@@ -355,18 +356,19 @@ public class Interactive {
             traceableNumber.mul(0.01 * multiplier, "技能系数");
         }
 
+        ParamHealInfo paramHealInfo = new ParamHealInfo(healInfo);
+        target.statusRun(Trigger.WHEN_HEAL, paramHealInfo);
+
         // 暴击
         if (healInfo.isCrit()) {
             traceableNumber.mul(owner.getCritPower() * 0.01, "爆伤");
         }
 
-        owner.forEachYuHun(yuHun -> {
-            if (yuHun instanceof ZhenZhu zz) {
-                zz.doInteractive(target, traceableNumber);
-            }
-        });
+        // 珍珠
+        owner.getYuHun(ZhenZhu.class).ifPresent(zhenZhu -> zhenZhu.doInteractive(target, traceableNumber));
 
         target.beHeal(healInfo);
+        target.statusRun(Trigger.AFTER_HEAL, paramHealInfo);
 
         CustomText customText = new CustomText(traceableNumber.getNumberString() + " ",
                 type, TextFlowLog.TextColor.HEAL, size

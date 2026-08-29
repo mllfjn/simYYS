@@ -47,7 +47,7 @@ class Skill3 extends Skill {
 
         public StatusRecordHp(Character from, Character belongTo, int recordPercent) {
             super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-            setDurationType(StatusDurationType.WEI_CHI, 2);
+            duration(StatusDurationType.WEI_CHI, 2);
             recordHp = belongTo.getHp() * recordPercent / 100;
         }
 

@@ -99,12 +99,12 @@ class Skill3 extends Skill {
             super(from, belongTo, StatusType.BUFF, StatusForm.ZHUANG_TAI);
             this.skill = skill;
 
-            setDurationType(StatusDurationType.CHI_XU, 2);
+            duration(StatusDurationType.CHI_XU, 2);
         }
 
         public static void install(Character from, Character belongTo, Skill3 skill) {
             belongTo.getStatus(StatusBaoYan.class).ifPresentOrElse(
-                    status -> status.setDuration(2),
+                    status -> status.duration(2),
                     () -> belongTo.addStatus(new StatusBaoYan(from, belongTo, skill))
             );
         }

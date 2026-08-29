@@ -80,7 +80,7 @@ class Skill7 extends PassiveSkill {
             this.zengShang = zengShang;
             this.speed = speed;
 
-            setDurationType(StatusDurationType.CHI_XU, duration);
+            duration(StatusDurationType.CHI_XU, duration);
         }
 
         @Override

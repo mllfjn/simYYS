@@ -104,13 +104,13 @@ class Skill2 extends PassiveSkill {
 
         private StatusGuangDi(Character from, Character belongTo) {
             super(from, belongTo, StatusType.DEBUFF, StatusForm.YIN_JI);
-            setDurationType(StatusDurationType.CHI_XU, 1);
+            duration(StatusDurationType.CHI_XU, 1);
         }
 
         private static void install(Character from, Character belongTo) {
             belongTo.getStatus(StatusGuangDi.class)
                     .ifPresentOrElse(
-                            status -> status.setDuration(1),
+                            status -> status.duration(1),
                             () -> belongTo.addStatus(new StatusGuangDi(from, belongTo))
                     );
         }

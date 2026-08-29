@@ -12,7 +12,6 @@ import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.AttackType;
 
-import java.util.ArrayList;
 import java.util.Optional;
 
 class Skill2 extends Skill {
@@ -54,7 +53,7 @@ class Skill2 extends Skill {
         int duration = level >= 4 ? 3 : 2;
 
         belongTo.getStatus(StatusYuHun.class).ifPresentOrElse(
-                status -> status.setDuration(duration),
+                status -> status.duration(duration),
                 () -> belongTo.addStatus(new StatusYuHun(belongTo, duration, level))
         );
         return Optional.empty();
@@ -75,7 +74,7 @@ class Skill2 extends Skill {
             super(character, character, StatusType.BUFF, StatusForm.ZHUANG_TAI);
 
             reduceDamage = level >= 2;
-            setDurationType(StatusDurationType.WEI_CHI, duration);
+            duration(StatusDurationType.WEI_CHI, duration);
 
             listener = new BattleActionListener(character) {
                 @Override

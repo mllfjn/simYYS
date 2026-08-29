@@ -51,7 +51,7 @@ class Skill1 extends Skill1PuGongBase {
     private static class StatusEffectResist extends Status implements AttributeModifier {
         public StatusEffectResist(Character character) {
             super(character, character, StatusType.BUFF, StatusForm.ZHUANG_TAI);
-            setDurationType(StatusDurationType.CHI_XU, 2);
+            duration(StatusDurationType.CHI_XU, 2);
         }
 
         @Override

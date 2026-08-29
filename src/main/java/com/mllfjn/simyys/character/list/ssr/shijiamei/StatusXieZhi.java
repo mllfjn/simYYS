@@ -10,7 +10,7 @@ class StatusXieZhi extends Status implements Displayable, StatusRunnable {
 
     public StatusXieZhi(Character from, Character belongTo) {
         super(from, belongTo, StatusType.GENERAL, StatusForm.YIN_JI);
-        setDurationType(StatusDurationType.CHI_XU, 1);
+        duration(StatusDurationType.CHI_XU, 1);
     }
 
     @Override

@@ -66,7 +66,7 @@ class Skill3 extends Skill {
 
         private StatusSXDY(Character from, Character belongTo) {
             super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
-            setDurationType(StatusDurationType.CHI_XU, 1);
+            duration(StatusDurationType.CHI_XU, 1);
         }
 
         @Override

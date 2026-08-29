@@ -54,12 +54,15 @@ class Skill3 extends Skill {
         return Optional.empty();
     }
 
-    static class StatusDefense extends Status implements AttributeModifier, Displayable {
+    static class StatusDefense extends Status {
         private static final String StatusName = "破防";
 
         public StatusDefense(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
-            setDurationType(StatusDurationType.CHI_XU, 2);
+            super(StatusName, from, belongTo);
+            type(StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
+            duration(StatusDurationType.CHI_XU, 2);
+            displayNameAndDuration();
+            attribute(Attribute.DEFENCE, _ -> -0.5 * belongTo.getInitDefense());
         }
 
         public static StatusSupplier getSupplier() {
@@ -67,27 +70,12 @@ class Skill3 extends Skill {
                     to.getStatus(StatusDefense.class).ifPresentOrElse(
                             status -> {
                                 if (status.getDuration() < 2) {
-                                    status.setDuration(2);
+                                    status.duration(2);
                                 }
                             },
                             () -> to.addStatus(new StatusDefense(from, to))
                     )
             );
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.DEFENCE;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return belongTo.getInitDefense() * 0.5;
-        }
-
-        @Override
-        public String getDisplayText() {
-            return StatusName + getDuration();
         }
     }
 }

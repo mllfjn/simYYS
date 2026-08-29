@@ -62,7 +62,7 @@ class Skill2 extends Skill {
             super(from, belongTo, StatusType.BUFF, StatusForm.ZHUANG_TAI);
             this.num = num;
 
-            setDurationType(StatusDurationType.CHI_XU, 1);
+            duration(StatusDurationType.CHI_XU, 1);
         }
 
         @Override

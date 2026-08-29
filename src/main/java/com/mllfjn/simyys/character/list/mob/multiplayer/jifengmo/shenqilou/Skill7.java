@@ -1,57 +1,35 @@
 package com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.shenqilou;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
-import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.Status;
-import com.mllfjn.simyys.character.status.StatusForm;
-import com.mllfjn.simyys.character.status.StatusType;
 import com.mllfjn.simyys.character.status.Trigger;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 
 class Skill7 extends PassiveSkill {
     private static final String SkillName = "蜃气升腾";
+    private int count = 0;
 
     public Skill7(Character belongTo) {
         super(belongTo, 0, 7);
-        belongTo.addStatus(new StatusBeAttack(belongTo));
+        // 蜃气楼每受到3次非暴击伤害，获得[蜃雾笼罩]
+        Status.of(SkillName, belongTo)
+                .runOn(Trigger.AFTER_ATTACK, triggerParam -> {
+                    AttackInfo attackInfo = ((ParamAttackInfo) triggerParam).getAttackInfo();
+                    double number = attackInfo.getTraceableNumber().getNumber();
+                    if (!attackInfo.isCrit() && number > 0) {
+                        count++;
+                        if (count == 3) {
+                            count = 0;
+                            StatusShenWuHuDun.get(belongTo);
+                        }
+                    }
+                }).addTo();
     }
 
     @Override
     public String getName() {
         return SkillName;
-    }
-
-    static class StatusBeAttack extends Status implements StatusRunnable {
-        private int count = 0;
-
-        public StatusBeAttack(Character character) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.AFTER_ATTACK;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            if (trigger == Trigger.AFTER_ATTACK) {
-                AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
-                double number = attackInfo.getTraceableNumber().getNumber();
-                if (!attackInfo.isCrit() && number > 0) {
-                    // 蜃气楼每受到3次非暴击伤害，获得[蜃雾笼罩]
-                    count++;
-                    if (count == 3) {
-                        count = 0;
-                        StatusShenWuHuDun.get(belongTo);
-                    }
-                }
-            }
-            return false;
-        }
     }
 }

@@ -14,7 +14,7 @@ public class StatusYuHunTransfer extends Status implements Displayable {
 
     public StatusYuHunTransfer(Character from, Character belongTo, Class<? extends YuHun> yClass) {
         super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-        setDurationType(StatusDurationType.WEI_CHI, 1);
+        duration(StatusDurationType.WEI_CHI, 1);
 
         for (YuHun yuHun : belongTo.getYuHunSet()) {
             if (yuHun.getClass() == yClass) {
