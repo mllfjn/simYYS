@@ -1,93 +1,74 @@
 package com.mllfjn.simyys.character.list.ssr.xunxiangxing;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.battleevent.StatusAdder;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.interactive.AttackInfo;
 
-class StatusHuanJing extends Status implements Displayable, InfluenceDamageWhenAttack {
+class StatusHuanJing extends Status {
     private static final String StatusName = "明香境";
 
     private final boolean isAwakening;
     private final Skill2 skill2;
-    private final StatusAdder<?> adder;
 
     private StatusHuanJing(Skill2 skill2, Character character) {
-        super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
+        super(StatusName, character);
         this.skill2 = skill2;
-        setDurationType(StatusDurationType.WEI_CHI, 3);
-        adder = character.bp.addStatusAdder(c ->
+        duration(StatusDurationType.WEI_CHI, 3);
+        displayNameAndDuration();
+        // 除自身外非召唤物友方
+        StatusAdder<?> adder = character.bp.addStatusAdder(c ->
                 // 除自身外非召唤物友方
                 c.team == character.team && c != character && !c.isSummon()
                         ? new StatusAfterRound(character, c)
                         : null
         );
+        beforeDelete(adder::deleteAndRemove);
         isAwakening = ((XunXiangXing) character).awakening;
-    }
-
-    @Override
-    public void beforeDelete() {
-        adder.deleteAndRemove();
+        runOn(Trigger.WHEN_ATTACK, triggerParam -> {
+            AttackInfo attackInfo = ((ParamAttackInfo) triggerParam).getAttackInfo();
+            Character target = attackInfo.getTarget();
+            if (target.team != belongTo.team) {
+                double targetDefence = target.getDefence();
+                double xxxDefence = belongTo.getDefence();
+                if (xxxDefence > targetDefence) {
+                    // 敌方防御每比寻香行低1%,寻香行造成的伤害提升1%(以1%为最小单位)
+                    int percent = (int) ((xxxDefence - targetDefence) / xxxDefence * 100);
+                    attackInfo.getTraceableNumber().mul(1 + (0.01 * percent), StatusName);
+                }
+                // 由于是攻击时,interactive一定是belongTo的
+                if (isAwakening && attackInfo.getSkill() instanceof Skill3) {
+                    StatusFuHunXiang.addStack(belongTo, target);
+                } else {
+                    belongTo.bp.interactive.
+                            effect(skill2, target, 40, true, StatusFuHunXiang.getSupplier());
+                }
+            }
+        });
     }
 
     void usedSkill3() {
         if (skill2.getLevel() >= 2) {
-            setDuration(getDuration() + 1);
+            duration(getDuration() + 1);
         }
     }
 
     static void install(Skill2 skill2, Character character) {
         character.getStatus(StatusHuanJing.class)
                 .ifPresentOrElse(
-                        status -> status.setDuration(3),
+                        status -> status.duration(3),
                         () -> character.addStatus(new StatusHuanJing(skill2, character))
                 );
     }
 
-    @Override
-    public String getDisplayText() {
-        return StatusName + getDuration();
-    }
-
-    @Override
-    public void doInfluenceWhenAttack(AttackInfo attackInfo) {
-        Character target = attackInfo.getTarget();
-        if (target.team != belongTo.team) {
-            double targetDefence = target.getDefence();
-            double xxxDefence = belongTo.getDefence();
-            if (xxxDefence > targetDefence) {
-                // 敌方防御每比寻香行低1%,寻香行造成的伤害提升1%(以1%为最小单位)
-                int percent = (int) ((xxxDefence - targetDefence) / xxxDefence * 100);
-                attackInfo.getTraceableNumber().mul(1 + (0.01 * percent), StatusName);
-            }
-            // 由于是攻击时,interactive一定是belongTo的
-            if (isAwakening && attackInfo.getSkill() instanceof Skill3) {
-                StatusFuHunXiang.addStack(belongTo, target);
-            } else {
-                belongTo.bp.interactive.
-                        effect(skill2, target, 40, 0, true, StatusFuHunXiang.getSupplier());
-            }
-        }
-    }
-
     // 该状态在友方身上，回合结束后寻香行获得1层心香
-    class StatusAfterRound extends Status implements StatusRunnable {
+    class StatusAfterRound extends Status {
         public StatusAfterRound(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.AFTER_ROUND;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            Skill2.StatusXinXiang.addStack(from, StatusHuanJing.this.skill2);
-            return false;
+            super("回合结束获得心香", from, belongTo);
+            runOn(Trigger.AFTER_ROUND, _ ->
+                    Skill2.StatusXinXiang.addStack(from, StatusHuanJing.this.skill2)
+            );
         }
     }
 }

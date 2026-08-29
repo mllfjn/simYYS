@@ -6,7 +6,7 @@ import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.StatusSupplier;
 
-class StatusFuHunXiang extends Status implements Displayable, AttributeModifier {
+class StatusFuHunXiang extends Status {
     static final String StatusName = "缚魂香";
 
     private final double percent;
@@ -15,10 +15,21 @@ class StatusFuHunXiang extends Status implements Displayable, AttributeModifier 
     private int damageStack = 1;
 
     private StatusFuHunXiang(Character from, Character belongTo) {
-        super(from, belongTo, StatusType.DEBUFF, StatusForm.YIN_JI);
+        super(StatusName, from, belongTo);
+        type(StatusType.DEBUFF, StatusForm.YIN_JI);
         XunXiangXing xxx = (XunXiangXing) from;
         skill2 = xxx.getSkill2();
         percent = (xxx).getPercent();
+
+        display(() -> {
+            StringBuilder sb = new StringBuilder("减防");
+            sb.append(defenseStack);
+            if (damageStack > 0) {
+                sb.append(Status.DELIMITER).append(StatusName).append(damageStack);
+            }
+            return sb.toString();
+        });
+        attribute(Attribute.DEFENCE, _ -> -defenseStack * percent * belongTo.getInitDefense());
     }
 
     static StatusSupplier getSupplier() {
@@ -48,25 +59,4 @@ class StatusFuHunXiang extends Status implements Displayable, AttributeModifier 
             damageStack++;
         }
     }
-
-    @Override
-    public String getDisplayText() {
-        StringBuilder sb = new StringBuilder("减防");
-        sb.append(defenseStack);
-        if (damageStack > 0) {
-            sb.append(Displayable.DELIMITER).append(StatusName).append(damageStack);
-        }
-        return sb.toString();
-    }
-
-    @Override
-    public boolean isAffectAttribute(Attribute attribute) {
-        return attribute == Attribute.DEFENCE;
-    }
-
-    @Override
-    public double getInfluence(Attribute attribute, StatusModifyParam param) {
-        return -defenseStack * percent * belongTo.getInitDefense();
-    }
-
 }

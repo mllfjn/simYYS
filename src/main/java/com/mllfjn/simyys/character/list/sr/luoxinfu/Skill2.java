@@ -20,7 +20,7 @@ class Skill2 extends PassiveSkill {
     void madeAttack(Character target) {
         if (isActive()) {
             getBelongTo().doInteractive(interactive ->
-                    interactive.effect(this, target, 60, 0, true,
+                    interactive.effect(this, target, 60, true,
                             new StatusSupplier(StatusZhuYin.StatusName, StatusZhuYin.class,
                                     (from, to) ->
                                             to.getStatus(StatusZhuYin.class)

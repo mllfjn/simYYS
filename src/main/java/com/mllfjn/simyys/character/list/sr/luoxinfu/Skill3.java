@@ -51,7 +51,7 @@ class Skill3 extends Skill {
                 baseRate += (int) ((belongToSpeed - speed) / 3);
             }
             EffectInfo effectInfo = interactive
-                    .effect(this, character, baseRate, 0, true, StatusStun.getSupplier(1));
+                    .effect(this, character, baseRate, true, StatusStun.getSupplier(1));
             if (!effectInfo.isHit() && level5) {
                 if (!character.isHaveStatus(StatusSXDY.class)) {
                     character.addStatus(new StatusSXDY(belongTo, character));

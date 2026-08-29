@@ -67,7 +67,7 @@ class Skill2 extends PassiveSkill {
                     v -> v.attribute.getText(), belongTo.bp.calc
             );
             belongTo.doInteractive(interactive -> interactive.effect(Skill2.this, attacker,
-                    100, 0, true,
+                    100, true,
                     StatusRandomStatus.getSupplier(choose)
             ));
             return false;

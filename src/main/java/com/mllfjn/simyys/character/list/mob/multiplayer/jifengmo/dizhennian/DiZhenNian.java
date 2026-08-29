@@ -13,7 +13,6 @@ import com.mllfjn.simyys.character.propertygetter.*;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.instance.StatusUnselectable;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
 import java.util.List;
 
@@ -119,7 +118,7 @@ public class DiZhenNian extends CharacterJiFengMoBase {
         return tryUseSkill(4) || tryUseSkill(5) || tryUseSkill(1);
     }
 
-    private void setBuffType(StatusBuff.BuffType buffType) {
+    void setBuffType(StatusBuff.BuffType buffType) {
         if (this.buffType == null) {
             this.buffType = buffType;
             List<Character> list = new CharacterFinder(this)
@@ -163,25 +162,5 @@ public class DiZhenNian extends CharacterJiFengMoBase {
 
     boolean canNingShi() {
         return canNingShi;
-    }
-
-    static class StatusBuffSetter extends Status implements StatusRunnable {
-        private final StatusBuff.BuffType buffType;
-
-        public StatusBuffSetter(Character from, Character belongTo, StatusBuff.BuffType buffType) {
-            super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-            this.buffType = buffType;
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.DIE;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            ((DiZhenNian) from).setBuffType(buffType);
-            return false;
-        }
     }
 }

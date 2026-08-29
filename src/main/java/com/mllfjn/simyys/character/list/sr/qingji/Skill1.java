@@ -21,7 +21,7 @@ class Skill1 extends Skill1PuGongBase {
     @Override
     public void usePrivate(Interactive interactive, Character target) {
         interactive.attackTypical(this, target, multiplier[getLevel()], AttackType.DAN_TI);
-        EffectInfo effectInfo = interactive.effect(this, target, 100, 0, true,
+        EffectInfo effectInfo = interactive.effect(this, target, 100, true,
                 StatusPoisoning.getSupplier(3, 5)
         );
         if (effectInfo.isHit()) {

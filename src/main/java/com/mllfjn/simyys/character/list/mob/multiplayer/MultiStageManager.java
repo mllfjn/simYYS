@@ -5,7 +5,7 @@ import com.mllfjn.simyys.battleevent.BattleEvent;
 import com.mllfjn.simyys.battleevent.EventActionDone;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.EventHandlerContainer;
-import com.mllfjn.simyys.character.status.instance.StatusDieHandler;
+import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.utils.serializable.SerialConsumer;
 import com.mllfjn.simyys.utils.serializable.SerialRunnable;
 import javafx.scene.Node;
@@ -59,6 +59,8 @@ public class MultiStageManager implements Serializable, EventHandlerContainer {
     public void addSummon(Character character) {
         summonList.add(character);
         character.bp.addCharacter(character);
+        Status.of("特殊-死亡监听", character)
+                .beforeDelete()
         character.addStatus(new StatusDieHandler(character, () -> summonDie(character)));
     }
 

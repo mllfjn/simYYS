@@ -6,7 +6,6 @@ import com.mllfjn.simyys.character.TraversalOrderManager;
 import com.mllfjn.simyys.character.list.ssr.sijinshen.SkillQiMeng;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.Trigger;
-import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAddCrowdControl;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.yuhun.YuHunAfterBeingAttack;
@@ -224,13 +223,7 @@ public class Interactive {
         if (traceableNumber.getNumber() > 0) {
             if (attackInfo.isCanInfluenceAttack()) {
                 // 攻击者身上状态类影响
-                for (Status status : owner.getStatuses()) {
-                    if (status instanceof InfluenceDamageWhenAttack iwa) {
-                        iwa.doInfluenceWhenAttack(attackInfo);
-                        删除
-                    }
-                }
-                owner.statusRun(Trigger.);
+                owner.statusRun(Trigger.WHEN_ATTACK, paramAttackInfo);
 
                 // 被攻击者身上状态类影响
                 target.statusRun(Trigger.BEING_ATTACKED, paramAttackInfo);
@@ -409,6 +402,12 @@ public class Interactive {
         return infos;
     }
 
+    public EffectInfo[] effect(Skill skill, List<Character> targets, int baseRate, boolean calHit,
+                               StatusSupplier statusSupplier
+    ) {
+        return effect(skill, targets, baseRate, 0, calHit, statusSupplier);
+    }
+
     public EffectInfo effect(Skill skill, Character target, int baseRate, int additionRate, boolean calHit
             , StatusSupplier statusSupplier) {
 
@@ -417,6 +416,12 @@ public class Interactive {
 
         effectBase(info, target, statusSupplier);
         return info;
+    }
+
+    public EffectInfo effect(Skill skill, Character target, int baseRate, boolean calHit,
+                             StatusSupplier statusSupplier
+    ) {
+        return effect(skill, target, baseRate, 0, calHit, statusSupplier);
     }
 
     private void effectBase(EffectInfo effectInfo, Character target, StatusSupplier statusSupplier) {

@@ -23,14 +23,14 @@ public class XueYouHun extends YuHun implements YuHunAfterCauseAttack, YuHunHitF
     @Override
     public void action(AttackInfo attackInfo, Interactive interactive) {
         Character target = attackInfo.getTarget();
-        interactive.effect(skill, target, isHaveReduceSpeed(target) ? 30 : 15, 0, true,
+        interactive.effect(skill, target, isHaveReduceSpeed(target) ? 30 : 15, true,
                 StatusFrozen.getSupplier(1)
         );
     }
 
     public static boolean isHaveReduceSpeed(Character character) {
         for (Status status : character.getStatuses()) {
-            if (status instanceof AttributeModifier am && am.getInfluence(Attribute.SPEED, null) < 0) {
+            if (status.getAttribute(Attribute.SPEED, null) < 0) {
                 return true;
             }
         }
@@ -42,33 +42,21 @@ public class XueYouHun extends YuHun implements YuHunAfterCauseAttack, YuHunHitF
         StatusReduceSpeed.install(character, info.getAttacker());
     }
 
-    static class StatusReduceSpeed extends Status implements Displayable, AttributeModifier {
+    static class StatusReduceSpeed extends Status {
         private StatusReduceSpeed(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
-            setDurationType(StatusDurationType.CHI_XU, 1);
+            super(YuHunName + "减速", from, belongTo);
+            type(StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
+            duration(StatusDurationType.CHI_XU, 1);
+            attribute(Attribute.SPEED, _ -> -30.0);
+            displayName();
         }
 
         static void install(Character from, Character belongTo) {
             belongTo.getStatus(StatusReduceSpeed.class)
                     .ifPresentOrElse(
-                            status -> status.setDuration(1),
+                            status -> status.duration(1),
                             () -> belongTo.addStatus(new StatusReduceSpeed(from, belongTo))
                     );
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.SPEED;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return -30;
-        }
-
-        @Override
-        public String getDisplayText() {
-            return YuHunName + "减速";
         }
     }
 }

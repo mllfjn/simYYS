@@ -80,7 +80,7 @@ class Skill2 extends PassiveSkill {
                 if (reduceSpeed) {
                     from.doInteractive(interactive ->
                             interactive.effect(Skill2.this, interactiveInfo.getAttacker(),
-                                    reduceSpeedRate, 0, true, StatusReduceSpeed.getSupplier()
+                                    reduceSpeedRate, true, StatusReduceSpeed.getSupplier()
                             )
                     );
                 }

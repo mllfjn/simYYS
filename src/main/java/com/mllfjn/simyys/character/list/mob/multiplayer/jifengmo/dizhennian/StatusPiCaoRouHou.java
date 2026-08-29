@@ -1,25 +1,45 @@
 package com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.dizhennian;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.AttackType;
 
-class StatusPiCaoRouHou extends Status implements StatusRunnable, Displayable {
+class StatusPiCaoRouHou extends Status {
     private static final String StatusName = "皮糙肉厚";
-
-    private final double breakDamage;
 
     private int stack = 10;
 
     public StatusPiCaoRouHou(Character character, double breakDamage) {
-        super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-        this.breakDamage = breakDamage;
+        super(StatusName, character);
+        display(() -> StatusName + stack);
+        beforeDelete(() -> {
+            for (Character c : belongTo.bp.situation.characters) {
+                c.removeStatus(StatusPiCaoRouHouReduceDamage.class);
+            }
+            Character enemyYYS = new CharacterFinder(belongTo)
+                    .filterEnemy()
+                    .filterYYS(true)
+                    .getFirst();
+            Skill skill = Skill.getInstance(StatusName);
+            AttackInfo attackInfo = AttackInfo.createRealAttack(enemyYYS, skill, belongTo, 5000000);
+            enemyYYS.doInteractive(interactive -> interactive.attack(attackInfo));
+        });
+        runOn(Trigger.AFTER_ATTACK, triggerParam -> {
+            AttackInfo attackInfo = ((ParamAttackInfo) triggerParam).getAttackInfo();
+            if (attackInfo.getAttackType() == AttackType.DAN_TI) {
+                double number = attackInfo.getTraceableNumber().getNumber();
+                if (number > breakDamage) {
+                    stack--;
+                    if (stack == 0) {
+                        delete();
+                    }
+                }
+            }
+        });
 
         belongTo.bp.addPriorityMove(belongTo, () -> {
             for (Character target : belongTo.bp.situation.characters) {
@@ -28,59 +48,15 @@ class StatusPiCaoRouHou extends Status implements StatusRunnable, Displayable {
         });
     }
 
-    @Override
-    public String getDisplayText() {
-        return StatusName + stack;
-    }
-
-    @Override
-    public boolean runnable(Trigger trigger) {
-        return trigger == Trigger.AFTER_ATTACK;
-    }
-
-    @Override
-    public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-        if (trigger == Trigger.AFTER_ATTACK) {
-            double number = ((ParamAttackInfo) param).getAttackInfo().getTraceableNumber().getNumber();
-            if (number > breakDamage) {
-                stack--;
-                return stack == 0;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public void beforeDelete() {
-        for (Character character : belongTo.bp.situation.characters) {
-            character.removeStatus(StatusPiCaoRouHouReduceDamage.class);
-        }
-        Character enemyYYS = new CharacterFinder(belongTo)
-                .filterEnemy()
-                .getFirst();
-        Skill skill = Skill.getInstance(StatusName);
-        AttackInfo attackInfo = AttackInfo.createRealAttack(enemyYYS, skill, belongTo, 5000000);
-        enemyYYS.doInteractive(interactive -> interactive.attack(attackInfo));
-    }
-
-    static class StatusPiCaoRouHouReduceDamage extends Status implements StatusRunnable {
+    static class StatusPiCaoRouHouReduceDamage extends Status {
         public StatusPiCaoRouHouReduceDamage(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.BEING_ATTACKED;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
-            if (attackInfo.getAttackType() != AttackType.ZHEN_SHI) {
-                attackInfo.getTraceableNumber().mul(0.3, StatusPiCaoRouHou.StatusName);
-            }
-
-            return false;
+            super("皮糙肉厚削减伤害", from, belongTo);
+            runOn(Trigger.BEING_ATTACKED, triggerParam -> {
+                AttackInfo attackInfo = ((ParamAttackInfo) triggerParam).getAttackInfo();
+                if (attackInfo.getAttackType() != AttackType.CHUAN_DAO) {
+                    attackInfo.getTraceableNumber().mul(0.3, StatusPiCaoRouHou.StatusName);
+                }
+            });
         }
     }
 }

@@ -56,8 +56,8 @@ class Skill4 extends Skill {
                 }
             }
 
-            interactive.effect(this, list, 100, 0, true, StatusTZZReduceSpeed.getSupplier());
-            interactive.effect(this, list, 20, 0, true, StatusBind.getSupplier(1));
+            interactive.effect(this, list, 100, true, StatusTZZReduceSpeed.getSupplier());
+            interactive.effect(this, list, 20, true, StatusBind.getSupplier(1));
         });
 
         return Optional.empty();

@@ -12,7 +12,8 @@ public enum Trigger {
     MAKING_CROWD_CONTROL, // 要对其他角色造成控制时
     ADDING_CROWD_CONTROL, // 要被控制时
     ADDING_DEBUFF, // 被添加DEBUFF时
-    CAUSE_ATTACK, // 造成伤害时
+    WHEN_ATTACK, // 造成伤害时
+    CAUSE_ATTACK, // 造成伤害后
     WILL_USE_SKILL, // 将要使用技能
     USED_SKILL, // 使用了技能（不包括普攻）
     WILL_USE_PU_GONG, // 将要使用普攻

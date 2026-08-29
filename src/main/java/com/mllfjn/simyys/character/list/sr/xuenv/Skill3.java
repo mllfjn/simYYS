@@ -45,7 +45,7 @@ class Skill3 extends Skill {
             }
         }
 
-        interactive.effect(this, charactersWithFrozen, 30, 0, false,
+        interactive.effect(this, charactersWithFrozen, 30, false,
                 new StatusSupplier("再次攻击冰冻", StatusFrozen.class, (from, to) -> {
                     if (to.isMob()) {
                         to.getStatus(StatusFrozen.class).orElseThrow().setDuration(2);
@@ -76,12 +76,12 @@ class Skill3 extends Skill {
             interactive.attackTypical(this, list, multiplier[getLevel()], AttackType.QUN_TI);
 
             // 无减速,非怪物,8%基础概率冰冻
-            interactive.effect(this, charactersWithoutReduceSpeed, 8, 0, true,
+            interactive.effect(this, charactersWithoutReduceSpeed, 8, true,
                     StatusFrozen.getSupplier(1)
             );
 
             // 有减速,怪物,基础概率25%
-            interactive.effect(this, charactersMobWithReduceSpeed, 25, 0, true,
+            interactive.effect(this, charactersMobWithReduceSpeed, 25, true,
                     StatusFrozen.getSupplier(1)
             );
 
@@ -93,7 +93,7 @@ class Skill3 extends Skill {
         }
 
         if (getLevel() >= 3) {
-            interactive.effect(this, list, getLevel() >= 5 ? 16 : 8, 0, true,
+            interactive.effect(this, list, getLevel() >= 5 ? 16 : 8, true,
                     StatusReduceSpeed.getSupplier()
             );
         }

@@ -11,7 +11,6 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.function.Function;
 
 public class Status implements Serializable {
     // 状态名称
@@ -31,25 +30,32 @@ public class Status implements Serializable {
         this.belongTo = belongTo;
     }
 
+    protected Status(String name, Character character) {
+        this.name = name;
+        this.from = character;
+        this.belongTo = character;
+    }
+
     public static Status of(String name, Character character) {
-        return new Status(name, character, character);
+        return new Status(name, character);
     }
 
     public static Status of(String name, Character from, Character belongTo) {
         return new Status(name, from, belongTo);
     }
 
-    public Character belongTo() {
+    public final Character belongTo() {
         return belongTo;
     }
 
-    public Character from() {
+    public final Character from() {
         return from;
     }
 
-    public void type(StatusType statusType, StatusForm statusForm) {
+    public final Status type(StatusType statusType, StatusForm statusForm) {
         this.statusType = statusType;
         this.statusForm = statusForm;
+        return this;
     }
 
     public final String getName() {
@@ -63,11 +69,11 @@ public class Status implements Serializable {
     // ====================可运行的状态===============================
     private Map<Trigger, SerialConsumer<TriggerParam>> actions = Collections.emptyMap();
 
-    public boolean runnable(Trigger trigger) {
+    public final boolean runnable(Trigger trigger) {
         return actions.containsKey(trigger);
     }
 
-    public Status runOn(Trigger trigger, SerialConsumer<TriggerParam> action) {
+    public final Status runOn(Trigger trigger, SerialConsumer<TriggerParam> action) {
         if (actions == Collections.EMPTY_MAP) {
             actions = new EnumMap<>(Trigger.class);
         }
@@ -75,11 +81,11 @@ public class Status implements Serializable {
         return this;
     }
 
-    public void removeAction(Trigger trigger) {
+    public final void removeAction(Trigger trigger) {
         actions.remove(trigger);
     }
 
-    public void run(Trigger trigger, TriggerParam param) {
+    public final void run(Trigger trigger, TriggerParam param) {
         actions.get(trigger).accept(param);
     }
 
@@ -87,7 +93,7 @@ public class Status implements Serializable {
     private StatusDurationType durationType = StatusDurationType.NONE;
     private int duration = 0;
 
-    public Status duration(StatusDurationType durationType, int duration) {
+    public final Status duration(StatusDurationType durationType, int duration) {
         this.durationType = durationType;
         this.duration = duration;
 
@@ -99,7 +105,7 @@ public class Status implements Serializable {
         return this;
     }
 
-    public void duration(int num) {
+    public final void duration(int num) {
         if (durationType == StatusDurationType.NONE) {
             throw new RuntimeException("需要先设置持续方式");
         }
@@ -118,13 +124,9 @@ public class Status implements Serializable {
     }
 
     // ========================影响属性============================
-    private Map<Attribute, Function<StatusModifyParam, Double>> attributeModifier = Collections.emptyMap();
+    private Map<Attribute, SerialFunction<StatusModifyParam, Double>> attributeModifier = Collections.emptyMap();
 
-    public boolean isAffectAttribute(Attribute attribute) {
-        return attributeModifier.containsKey(attribute);
-    }
-
-    public Status attribute(Attribute attribute, Function<StatusModifyParam, Double> getter) {
+    public final Status attribute(Attribute attribute, SerialFunction<StatusModifyParam, Double> getter) {
         if (attributeModifier == Collections.EMPTY_MAP) {
             attributeModifier = new EnumMap<>(Attribute.class);
         }
@@ -133,7 +135,12 @@ public class Status implements Serializable {
     }
 
     public double getAttribute(Attribute attribute, StatusModifyParam param) {
-        return attributeModifier.get(attribute).apply(param);
+        SerialFunction<StatusModifyParam, Double> function = attributeModifier.get(attribute);
+        if (function == null) {
+            return 0;
+        } else {
+            return function.apply(param);
+        }
     }
 
     public record StatusModifyParam(Character target, AttackType attackType) {
@@ -142,7 +149,7 @@ public class Status implements Serializable {
     // =======================删除状态===========================
     private SerialRunnable beforeDelete;
 
-    public Status beforeDelete(SerialRunnable beforeDelete) {
+    public final Status beforeDelete(SerialRunnable beforeDelete) {
         this.beforeDelete = beforeDelete;
         return this;
     }
@@ -155,14 +162,18 @@ public class Status implements Serializable {
     }
 
     // ====================显示在状态栏===========================
+    public static final String DELIMITER = " ";
+
     private SerialSupplier<String> displayTextSupplier;
     private transient Color displayColor;
+    private boolean displayNameAndDuration;
+    private boolean displayName;
 
     private Double colorR;
     private Double colorG;
     private Double colorB;
 
-    public Status display(SerialSupplier<String> textSupplier) {
+    public final Status display(SerialSupplier<String> textSupplier) {
         displayTextSupplier = textSupplier;
         if (textSupplier != null) {
             if (statusType == StatusType.DEBUFF) {
@@ -177,9 +188,19 @@ public class Status implements Serializable {
         return this;
     }
 
-    public Status display(SerialSupplier<String> textSupplier, Color color) {
+    public final Status display(SerialSupplier<String> textSupplier, Color color) {
         displayTextSupplier = textSupplier;
         setColor(color);
+        return this;
+    }
+
+    public final Status displayName() {
+        displayName = true;
+        return this;
+    }
+
+    public final Status displayNameAndDuration() {
+        displayNameAndDuration = true;
         return this;
     }
 
@@ -187,8 +208,14 @@ public class Status implements Serializable {
         return displayTextSupplier != null;
     }
 
-    public String getDisplayText() {
-        return displayTextSupplier.get();
+    public final String getDisplayText() {
+        if (displayNameAndDuration) {
+            return name + getDuration();
+        } else if (displayName) {
+            return name;
+        } else {
+            return displayTextSupplier.get();
+        }
     }
 
     public Color getDisplayColor() {
@@ -212,7 +239,7 @@ public class Status implements Serializable {
     // ========================改变鬼火消耗===============================
     private int forceChangeSkillCost;
 
-    public Status forceChangeSkillCost(int changeSkillCost) {
+    public final Status forceChangeSkillCost(int changeSkillCost) {
         this.forceChangeSkillCost = changeSkillCost;
         return this;
     }
@@ -226,7 +253,7 @@ public class Status implements Serializable {
     private boolean retainAfterChangeWave = false;
     private SerialRunnable changeAction;
 
-    public Status retainAfterDie() {
+    public final Status retainAfterDie() {
         retainAfterDie = true;
         return this;
     }
@@ -235,22 +262,56 @@ public class Status implements Serializable {
         return retainAfterDie;
     }
 
-    public Status retainAfterChangeWave() {
+    public final Status retainAfterChangeWave() {
         retainAfterChangeWave = true;
         return this;
     }
 
-    public Status retainAfterChangeWave(SerialRunnable changeAction) {
+    public final Status retainAfterChangeWave(SerialRunnable changeAction) {
         retainAfterChangeWave = true;
         this.changeAction = changeAction;
         return this;
     }
 
-    public void changeWave() {
+    public final void changeWave() {
         if (!retainAfterChangeWave) {
             delete();
         } else if (changeAction != null) {
             changeAction.run();
         }
+    }
+
+    // =============================免死===================================
+
+    private SerialSupplier<Boolean> preventDieEffective;
+    private SerialConsumer<Double> preventDieAction;
+
+    public final Status preventDie() {
+        preventDieEffective = SerialSupplier.ALWAYS_TRUE;
+        return this;
+    }
+
+    public final Status preventDie(SerialConsumer<Double> preventDieAction) {
+        this.preventDieAction = preventDieAction;
+        return preventDie();
+    }
+
+    public final void preventDie(SerialSupplier<Boolean> preventDieEffective, SerialConsumer<Double> preventDieAction) {
+        this.preventDieEffective = preventDieEffective;
+        this.preventDieAction = preventDieAction;
+    }
+
+    public final void removePreventDie() {
+        preventDieEffective = SerialSupplier.ALWAYS_FALSE;
+    }
+
+    public final void doPreventDie(double excessDamage) {
+        if (preventDieAction != null) {
+            preventDieAction.accept(excessDamage);
+        }
+    }
+
+    public final boolean isPreventDie() {
+        return preventDieEffective.get();
     }
 }

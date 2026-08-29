@@ -32,7 +32,7 @@ class Skill4 extends Skill {
         // 对群体造成攻击400%的伤害
         interactive.attackTypical(this, targets, 400, AttackType.QUN_TI);
         // 有50%概率眩晕目标1回合
-        interactive.effect(this, targets, 50, 0, false, StatusStun.getSupplier(1));
+        interactive.effect(this, targets, 50, false, StatusStun.getSupplier(1));
         return Optional.empty();
     }
 

@@ -5,7 +5,7 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.instance.StatusShield;
 
-public class StatusYuanLi extends Status implements Displayable {
+public class StatusYuanLi extends Status {
     public static final String StatusName = "愿力";
 
     private final int skill2Level;
@@ -14,13 +14,16 @@ public class StatusYuanLi extends Status implements Displayable {
     private int stack;
 
     public StatusYuanLi(Character character, int skill2Level, int skill3Level) {
-        super(character, character, StatusType.GENERAL, StatusForm.YIN_JI);
+        super(StatusName, character);
+        type(StatusType.GENERAL, StatusForm.YIN_JI);
+        beforeDelete(() -> belongTo.bp.getGuiHuoInstance(belongTo.team).setYuanLi(null));
+        display(() -> StatusName + stack);
         this.skill2Level = skill2Level;
         this.skill3Level = skill3Level;
         character.bp.getGuiHuoInstance(character.team).setYuanLi(this);
     }
 
-    public static void addYuanLi(com.mllfjn.simyys.character.Character character, int num, int skill2Level, int skill3Level) {
+    public static void addYuanLi(Character character, int num, int skill2Level, int skill3Level) {
         StatusYuanLi status = character.getStatus(StatusYuanLi.class).orElseGet(() -> {
             StatusYuanLi newStatus = new StatusYuanLi(character, skill2Level, skill3Level);
             character.addStatus(newStatus);
@@ -28,16 +31,6 @@ public class StatusYuanLi extends Status implements Displayable {
         });
 
         status.stack = Math.min(8, status.stack + num);
-    }
-
-    @Override
-    public void beforeDelete() {
-        belongTo.bp.getGuiHuoInstance(belongTo.team).setYuanLi(null);
-    }
-
-    @Override
-    public String getDisplayText() {
-        return StatusName + stack;
     }
 
     public int getGuiHuo(int num, boolean isFromYuHun) {
@@ -69,14 +62,16 @@ public class StatusYuanLi extends Status implements Displayable {
         }
     }
 
-    static class StatusYuanLiCritPower extends Status implements AttributeModifier {
+    static class StatusYuanLiCritPower extends Status {
         private int stack = 0;
 
-        public StatusYuanLiCritPower(com.mllfjn.simyys.character.Character character) {
-            super(character, character, StatusType.BUFF, StatusForm.YIN_JI);
+        public StatusYuanLiCritPower(Character character) {
+            super("因幡自身加爆伤", character);
+            type(StatusType.BUFF, StatusForm.YIN_JI);
+            attribute(Attribute.CRIT_POWER, _ -> 5.0 * stack);
         }
 
-        public static void addStack(com.mllfjn.simyys.character.Character character, int num) {
+        public static void addStack(Character character, int num) {
             StatusYuanLiCritPower status = character.getStatus(StatusYuanLiCritPower.class).orElseGet(() -> {
                 StatusYuanLiCritPower newStatus = new StatusYuanLiCritPower(character);
                 character.addStatus(newStatus);
@@ -85,23 +80,13 @@ public class StatusYuanLi extends Status implements Displayable {
 
             status.stack = Math.min(24, status.stack + num);
         }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.CRIT_POWER;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return stack * 5;
-        }
     }
 
     static class StatusYuanLiShield extends StatusShield {
 
-        public StatusYuanLiShield(com.mllfjn.simyys.character.Character character, double shield) {
+        public StatusYuanLiShield(Character character, double shield) {
             super(character, character, shield);
-            setDurationType(StatusDurationType.CHI_XU, 2);
+            duration(StatusDurationType.CHI_XU, 2);
         }
 
         public static void addShield(Character character) {
