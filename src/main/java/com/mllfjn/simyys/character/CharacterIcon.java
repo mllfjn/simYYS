@@ -258,10 +258,19 @@ public class CharacterIcon implements Serializable {
                     character.setInitAdditionAttack(number);
                     update();
                 }),
-                CustomInputMenuItem.of("防御", number -> {
+                CustomInputMenuItem.of("初始防御力", number -> {
                     character.setInitDefense(number);
                     update();
-                }));
+                }),
+                CustomInputMenuItem.of("绝对行动条", number -> {
+                    character.forceSetLocation(number);
+                    update();
+                }),
+                CustomInputMenuItem.of("相对行动条", number -> {
+                    character.forceSetLocation(character.getLocation() + number);
+                    update();
+                })
+        );
 
         ContextMenu menu = new ContextMenu(menuSetAttributeVisible, menuSetAttribute);
         bottom.setOnContextMenuRequested(event ->
