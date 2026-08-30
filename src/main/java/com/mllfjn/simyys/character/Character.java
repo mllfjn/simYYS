@@ -408,10 +408,11 @@ public abstract class Character implements Serializable {
         return location;
     }
 
-    public void setLocation(double newLocation, boolean isFromIncrease) {
+    public void setLocation(double newLocation, boolean isFromIncrease, boolean isFromDecrease) {
         if (newLocation != location) {
-            ParamLocationChange paramLocationChange = new ParamLocationChange(location, newLocation, isFromIncrease);
-            statusRun(Trigger.LOCATION_CHANGE, paramLocationChange);
+            ParamLocationChange paramLocationChange =
+                    new ParamLocationChange(location, newLocation, isFromIncrease, isFromDecrease);
+            statusRun(Trigger.LOCATION_CHANGED, paramLocationChange);
             if (!paramLocationChange.isCanceled()) {
                 this.location = paramLocationChange.newLocation;
             }
@@ -854,7 +855,23 @@ public abstract class Character implements Serializable {
     }
 
     public <T extends Status> boolean addStatus(T newStatus) {
-        // 拒绝添加所有状态:堕落之剑和青女房
+        if (newStatus.statusType != StatusType.SPECIAL || newStatus.statusForm != StatusForm.SPECIAL) {
+            for (Status status : getStatuses()) {
+                // 拒绝添加所有状态:堕落之剑和青女房
+                if (status instanceof RejectAllStatuses) {
+                    return false;
+                }
+
+                // 无视debuff
+                if (
+                        newStatus.statusType == StatusType.DEBUFF
+                                && newStatus.statusForm == StatusForm.ZHUANG_TAI
+                                && status instanceof IgnoreDebuff id && id.ignoreDebuffEffective()
+                ) {
+                    return false;
+                }
+            }
+        }
         for (Status status : getStatuses()) {
             if (status instanceof RejectAllStatuses ||
                     (newStatus.statusType == StatusType.DEBUFF

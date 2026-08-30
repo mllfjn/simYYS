@@ -1,38 +1,19 @@
 package com.mllfjn.simyys.character.status.instance;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.StatusRunnable;
-import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
 // TODO 无法动作和受到伤害时自动移除效果没有写
-public class StatusSleep extends Status implements Displayable, CrowdControl, StatusRunnable {
+public class StatusSleep extends Status implements CrowdControl {
 
     public StatusSleep(Character from, Character belongTo) {
-        super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
+        super("沉睡", from, belongTo);
+        type(StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
+        displayNameAndDuration();
+        runOn(Trigger.AFTER_ATTACK, _ -> delete());
     }
 
     public static void removeSleep(Character character) {
         character.removeStatus(StatusSleep.class);
-    }
-
-    @Override
-    public String getDisplayText() {
-        return "沉睡" + getDuration();
-    }
-
-    @Override
-    public boolean runnable(Trigger trigger) {
-        return trigger == Trigger.AFTER_ATTACK;
-    }
-
-    @Override
-    public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-        if (trigger == Trigger.AFTER_ATTACK) {
-            return ((ParamAttackInfo) param).getAttackInfo().getTraceableNumber().getNumber() > 0;
-        }
-        return false;
     }
 }

@@ -59,22 +59,18 @@ class Skill2 extends Skill {
         return Optional.empty();
     }
 
-    class StatusYuHun extends Status implements AttributeModifier, Displayable, StatusRunnable {
+    class StatusYuHun extends Status {
         private static final String StatusName = "驭魂";
 
         private final BattleActionListener listener;
         private final StatusAdder<?> adder;
 
-        private final boolean reduceDamage;
-
         // true:监听单位死亡事件,false:回合结束后变身 能跑就行
         private boolean listenerType = true;
 
         public StatusYuHun(Character character, int duration, int level) {
-            super(character, character, StatusType.BUFF, StatusForm.ZHUANG_TAI);
-
-            reduceDamage = level >= 2;
-            duration(StatusDurationType.WEI_CHI, duration);
+            super(StatusName, character);
+            type(StatusType.BUFF, StatusForm.ZHUANG_TAI);
 
             listener = new BattleActionListener(character) {
                 @Override
@@ -96,11 +92,28 @@ class Skill2 extends Skill {
 
             adder = belongTo.bp.addStatusAdder(c ->
                     c.team == belongTo.team && c != belongTo
-                            ? new StatusLuWanUseSkillListener(character, c)
+                            ? Status.of(SkillName + "监听技能", character, c)
+                            .runOn(Trigger.USED_SKILL, _ -> StatusLuZe.addStack(character))
                             : null
             );
 
             character.bp.addActionListener(listener);
+
+            duration(StatusDurationType.WEI_CHI, duration);
+            beforeDelete(() -> {
+                belongTo.bp.removeActionListener(listener);
+                adder.deleteAndRemove();
+            });
+            attribute(Attribute.EFFECT_RESIST_RATE, _ -> 100.0);
+            displayNameAndDuration();
+            if (level >= 2) {
+                runOn(Trigger.BEING_ATTACKED, triggerParam -> {
+                    AttackInfo attackInfo = ((ParamAttackInfo) triggerParam).getAttackInfo();
+                    if (attackInfo.getAttackType() == AttackType.DAN_TI) {
+                        attackInfo.getTraceableNumber().mul(0.5, StatusName);
+                    }
+                });
+            }
         }
 
         private void transform() {
@@ -131,60 +144,6 @@ class Skill2 extends Skill {
                         count++;
                     }
                 }
-            }
-        }
-
-        @Override
-        public void beforeDelete() {
-            belongTo.bp.removeActionListener(listener);
-            adder.deleteAndRemove();
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.EFFECT_RESIST_RATE;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return 100;
-        }
-
-        @Override
-        public String getDisplayText() {
-            return StatusName + getDuration();
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return reduceDamage && trigger == Trigger.BEING_ATTACKED;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
-            if (attackInfo.getAttackType() == AttackType.DAN_TI) {
-                attackInfo.getTraceableNumber().mul(0.5, StatusName);
-            }
-
-            return false;
-        }
-
-        static class StatusLuWanUseSkillListener extends Status implements StatusRunnable {
-
-            public StatusLuWanUseSkillListener(Character from, Character belongTo) {
-                super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-            }
-
-            @Override
-            public boolean runnable(Trigger trigger) {
-                return trigger == Trigger.USED_SKILL;
-            }
-
-            @Override
-            public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-                StatusLuZe.addStack(from);
-                return false;
             }
         }
     }

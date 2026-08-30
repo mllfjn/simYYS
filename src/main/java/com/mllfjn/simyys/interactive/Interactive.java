@@ -9,6 +9,7 @@ import com.mllfjn.simyys.character.status.Trigger;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAddCrowdControl;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.ParamHealInfo;
+import com.mllfjn.simyys.character.status.triggerParam.ParamLocationChange;
 import com.mllfjn.simyys.character.yuhun.YuHunAfterBeingAttack;
 import com.mllfjn.simyys.character.yuhun.YuHunAfterCauseAttack;
 import com.mllfjn.simyys.character.yuhun.YuHunAttack;
@@ -84,7 +85,7 @@ public class Interactive {
     }
 
     private void addNumberRecord(Character character, CustomText text) {
-        currentNumberLog.computeIfAbsent(character, k -> {
+        currentNumberLog.computeIfAbsent(character, _ -> {
             List<CustomText> list = new ArrayList<>();
             list.add(new CustomText("\t" + character.name + "：", type, TextFlowLog.TextColor.NORMAL, size));
             return list;
@@ -258,7 +259,7 @@ public class Interactive {
 
         final double currentHp = target.getHp();
         final int currentCount = ++attackCountTotal;
-        final int currentOwnerCount = attackCountMap.merge(owner, 1, (old, val) -> old + 1);
+        final int currentOwnerCount = attackCountMap.merge(owner, 1, (old, _) -> old + 1);
         final String currentName = owner.name;
         CustomText customText = new CustomText(traceableNumber.getNumberString() + " ", type,
                 attackInfo.isCrit() ? TextFlowLog.TextColor.CRITICAL : TextFlowLog.TextColor.ATTACK, size);
@@ -318,7 +319,7 @@ public class Interactive {
         }
 
         RateController.baoJi(skill.getName(), owner, bp.calc
-                , (c) -> owner.getCritRate(), targets, healInfos);
+                , _ -> owner.getCritRate(), targets, healInfos);
 
         for (int i = 0; i < targets.size(); i++) {
             healBase(targets.get(i), healInfos[i]);
@@ -335,7 +336,7 @@ public class Interactive {
         }
 
         RateController.baoJi(skill.getName(), owner, bp.calc
-                , (c) -> owner.getCritRate(), targets, healInfos);
+                , _ -> owner.getCritRate(), targets, healInfos);
 
         for (int i = 0; i < targets.size(); i++) {
             healBase(targets.get(i), healInfos[i]);
@@ -461,27 +462,27 @@ public class Interactive {
             sb.append("(实际提前").append((int) (100 - location)).append("%)");
         }
 
-        target.setLocation(Math.min(100, location + increase), true);
+        target.setLocation(Math.min(100, location + increase), true, false);
         increaseLog.add(sb.toString());
     }
 
     public void decreaseLocation(Character target, double decrease) {
+        double location = target.getLocation();
+        double newLocation = Math.max(0, location - decrease);
         // 免疫行动条提升效果
-        for (Status status : target.getStatuses()) {
-            if (status instanceof IgnoreActionDecrease iad) {
-                increaseLog.add(target.name + "免疫行动条改变");
-                iad.takeEffectFeedBack();
-                return;
-            }
+        ParamLocationChange param = new ParamLocationChange(location, newLocation, false, true);
+        target.statusRun(Trigger.LOCATION_WILL_CHANGE, param);
+        if (param.isCanceled()) {
+            increaseLog.add(target.name + "免疫行动条击退");
         }
+
         StringBuilder sb = new StringBuilder();
         sb.append(target.name).append("行动推后").append((int) decrease).append("%");
-        double location = target.getLocation();
         if (location - decrease < 0) {
             sb.append("(实际推后").append((int) location).append("%)");
         }
 
-        target.setLocation(Math.max(0, location - decrease), false);
+        target.setLocation(newLocation, false, true);
         increaseLog.add(sb.toString());
     }
 
@@ -492,7 +493,7 @@ public class Interactive {
     }
 
     public void addYuHunEffectLog(Character character, String yuHunName) {
-        yuHunEffect.computeIfAbsent(character, k -> new LinkedHashSet<>()).add(yuHunName);
+        yuHunEffect.computeIfAbsent(character, _ -> new LinkedHashSet<>()).add(yuHunName);
     }
 
     public void qiMengCheck(Skill skill) {

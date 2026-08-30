@@ -66,7 +66,7 @@ public class Status implements Serializable {
         belongTo.addStatus(this);
     }
 
-    // ====================可运行的状态===============================
+    // ====================可运行===============================
     private Map<Trigger, SerialConsumer<TriggerParam>> actions = Collections.emptyMap();
 
     public final boolean runnable(Trigger trigger) {
@@ -87,40 +87,6 @@ public class Status implements Serializable {
 
     public final void run(Trigger trigger, TriggerParam param) {
         actions.get(trigger).accept(param);
-    }
-
-    // ====================持续方式和回合数============================
-    private StatusDurationType durationType = StatusDurationType.NONE;
-    private int duration = 0;
-
-    public final Status duration(StatusDurationType durationType, int duration) {
-        this.durationType = durationType;
-        this.duration = duration;
-
-        if (durationType == StatusDurationType.WEI_CHI) {
-            from.addMaintainedStatus(this);
-        } else if (durationType == StatusDurationType.CHI_XU && belongTo.isInRound()) {
-            this.duration++;
-        }
-        return this;
-    }
-
-    public final void duration(int num) {
-        if (durationType == StatusDurationType.NONE) {
-            throw new RuntimeException("需要先设置持续方式");
-        }
-        duration = num;
-        if (durationType == StatusDurationType.CHI_XU && belongTo.isInRound()) {
-            this.duration++;
-        }
-    }
-
-    public StatusDurationType getDurationType() {
-        return durationType;
-    }
-
-    public int getDuration() {
-        return duration;
     }
 
     // ========================影响属性============================
@@ -144,21 +110,6 @@ public class Status implements Serializable {
     }
 
     public record StatusModifyParam(Character target, AttackType attackType) {
-    }
-
-    // =======================删除状态===========================
-    private SerialRunnable beforeDelete;
-
-    public final Status beforeDelete(SerialRunnable beforeDelete) {
-        this.beforeDelete = beforeDelete;
-        return this;
-    }
-
-    public final void delete() {
-        if (beforeDelete != null) {
-            beforeDelete.run();
-        }
-        belongTo.getStatuses().remove(this);
     }
 
     // ====================显示在状态栏===========================
@@ -249,6 +200,39 @@ public class Status implements Serializable {
     }
 
     // =========================状态留存===============================
+    private StatusDurationType durationType = StatusDurationType.NONE;
+    private int duration = 0;
+
+    public final Status duration(StatusDurationType durationType, int duration) {
+        this.durationType = durationType;
+        this.duration = duration;
+
+        if (durationType == StatusDurationType.WEI_CHI) {
+            from.addMaintainedStatus(this);
+        } else if (durationType == StatusDurationType.CHI_XU && belongTo.isInRound()) {
+            this.duration++;
+        }
+        return this;
+    }
+
+    public final void duration(int num) {
+        if (durationType == StatusDurationType.NONE) {
+            throw new RuntimeException("需要先设置持续方式");
+        }
+        duration = num;
+        if (durationType == StatusDurationType.CHI_XU && belongTo.isInRound()) {
+            this.duration++;
+        }
+    }
+
+    public StatusDurationType getDurationType() {
+        return durationType;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
     private boolean retainAfterDie = false;
     private boolean retainAfterChangeWave = false;
     private SerialRunnable changeAction;
@@ -279,6 +263,21 @@ public class Status implements Serializable {
         } else if (changeAction != null) {
             changeAction.run();
         }
+    }
+
+
+    private SerialRunnable beforeDelete;
+
+    public final Status beforeDelete(SerialRunnable beforeDelete) {
+        this.beforeDelete = beforeDelete;
+        return this;
+    }
+
+    public final void delete() {
+        if (beforeDelete != null) {
+            beforeDelete.run();
+        }
+        belongTo.getStatuses().remove(this);
     }
 
     // =============================免死===================================
@@ -313,5 +312,10 @@ public class Status implements Serializable {
 
     public final boolean isPreventDie() {
         return preventDieEffective.get();
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

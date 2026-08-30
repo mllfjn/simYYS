@@ -46,37 +46,22 @@ class Skill3 extends Skill {
             multi += 8 * shuYin;
         }
 
-        target.addStatus(new StatusJF(belongTo, target, multi));
+        int finalMulti = multi;
+        Status.of("疾风", belongTo, target)
+                .type(StatusType.BUFF, StatusForm.ZHUANG_TAI)
+                .duration(StatusDurationType.CHI_XU, 1)
+                .attribute(Attribute.ATTACK, _ -> target.getInitBaseAttack() * finalMulti / 100)
+                .addTo();
 
         if (mobBattle) {
             // 与怪物战斗时,使目标获得1个回合
             belongTo.getInteractive().getNewRound(target);
         } else {
             // 与阴阳师战斗时,交换神乐与目标的行动条位置
-            belongTo.setLocation(target.getLocation(), false);
-            target.setLocation(100, false);
+            belongTo.setLocation(target.getLocation(), false, false);
+            target.setLocation(100, false, false);
         }
 
         return Optional.of(target);
-    }
-
-    public static class StatusJF extends Status implements AttributeModifier {
-        private final int percent;
-
-        public StatusJF(Character from, Character belongTo, int percent) {
-            super(from, belongTo, StatusType.BUFF, StatusForm.ZHUANG_TAI);
-            duration(StatusDurationType.CHI_XU, 1);
-            this.percent = percent;
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.ATTACK;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return belongTo.getInitBaseAttack() * percent / 100;
-        }
     }
 }

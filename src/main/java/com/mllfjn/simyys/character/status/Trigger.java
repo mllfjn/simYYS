@@ -18,7 +18,8 @@ public enum Trigger {
     USED_SKILL, // 使用了技能（不包括普攻）
     WILL_USE_PU_GONG, // 将要使用普攻
     USED_PU_GONG, // 使用普攻
-    LOCATION_CHANGE, // 行动条位置改变,发生在跑条,推条,拉条.必须发生实际行动条位置改变
+    LOCATION_WILL_CHANGE, // 行动条位置将要改变,用于拦截改变事件
+    LOCATION_CHANGED, // 行动条位置改变,发生在跑条,推条,拉条.必须发生实际行动条位置改变
     WHEN_HEAL, // 治疗,用于禁疗或减疗
     AFTER_HEAL, // 被治疗后
     HP_CHANGE, // 生命值改变，发生在受到伤害且打破护盾，失去生命，受到治疗和恢复并且不是满血
