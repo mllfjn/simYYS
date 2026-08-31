@@ -7,7 +7,6 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
 import java.util.Optional;
 
@@ -59,18 +58,17 @@ class Skill3 extends Skill {
     }
 
     static class StatusHuanJingListener extends Status {
-        private final StatusAdder<?> adder;
-
         private StatusHuanJingListener(Character character, int duration, boolean gainGuiHuo
                 , Skill2.StatusMengShen statusMengShen) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
+            super(SkillName + "幻境容器", character);
             duration(StatusDurationType.CHI_XU, duration);
 
-            adder = belongTo.bp.addStatusAdder(c ->
+            StatusAdder<?> adder = belongTo.bp.addStatusAdder(c ->
                     c.team == belongTo.team
                             ? new StatusHuanJing(belongTo, c, gainGuiHuo, statusMengShen)
                             : null
             );
+            beforeDelete(adder::deleteAndRemove);
         }
 
         public static void add(Character character, int duration, boolean gainGuiHuo
@@ -82,70 +80,30 @@ class Skill3 extends Skill {
                     )
             );
         }
-
-        @Override
-        public void beforeDelete() {
-            adder.deleteAndRemove();
-        }
     }
 
-    static class StatusHuanJing extends Status implements StatusRunnable, AttributeModifier {
-        private final boolean gainGuiHuo;
-
-        private final Skill2.StatusMengShen statusMengShen;
-
+    static class StatusHuanJing extends Status {
         public StatusHuanJing(Character from, Character belongTo, boolean gainGuiHuo
                 , Skill2.StatusMengShen statusMengShen) {
-            super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-            this.gainGuiHuo = gainGuiHuo;
-            this.statusMengShen = statusMengShen;
-        }
+            super(SkillName + "幻境增伤", from, belongTo);
 
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.ZENG_SHANG;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return statusMengShen.getIncrease();
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return gainGuiHuo
-                    && trigger == Trigger.BEFORE_ROUND
-                    && (belongTo == from || belongTo == ((ShenWuYue) from).getRuMengCarrier());
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            belongTo.bp.gainGuiHuo(belongTo, 1);
-            return false;
+            attribute(Attribute.ZENG_SHANG, _ -> statusMengShen.getIncrease());
+            if (gainGuiHuo && (belongTo == from || belongTo == ((ShenWuYue) from).getRuMengCarrier())) {
+                runOn(Trigger.BEFORE_ROUND, _ -> belongTo.bp.gainGuiHuo(belongTo, 1));
+            }
         }
     }
 
-    static class StatusMeiMengJiangCheng extends Status implements StatusRunnable, Displayable {
+    static class StatusMeiMengJiangCheng extends Status {
         private static final String StatusName = "美梦将成";
 
         public StatusMeiMengJiangCheng(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public String getDisplayText() {
-            return StatusName;
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.BEFORE_ROUND;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            belongTo.addStatus(new StatusMeiMengBiCheng(from, belongTo));
-            return true;
+            super(StatusName, from, belongTo);
+            displayName();
+            runOn(Trigger.BEFORE_ROUND, _ -> {
+                belongTo.addStatus(new StatusMeiMengBiCheng(from, belongTo));
+                delete();
+            });
         }
     }
 }

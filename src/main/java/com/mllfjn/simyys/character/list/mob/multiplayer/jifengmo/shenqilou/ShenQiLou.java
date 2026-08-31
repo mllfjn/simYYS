@@ -123,7 +123,7 @@ public class ShenQiLou extends CharacterJiFengMoBase {
                         getInfoDisplay().addDamage(damage);
                     }
                 };
-                statusRecordDamage.display(() -> "真").addTo();
+                statusRecordDamage.display("真").addTo();
             }
             summonList.add(first);
             multiStageManager.setSummonDieCallback(c -> {

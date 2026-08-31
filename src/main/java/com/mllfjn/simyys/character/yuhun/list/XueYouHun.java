@@ -47,7 +47,7 @@ public class XueYouHun extends YuHun implements YuHunAfterCauseAttack, YuHunHitF
             super(YuHunName + "减速", from, belongTo);
             type(StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
             duration(StatusDurationType.CHI_XU, 1);
-            attribute(Attribute.SPEED, _ -> -30.0);
+            attribute(Attribute.SPEED, -30.0);
             displayName();
         }
 

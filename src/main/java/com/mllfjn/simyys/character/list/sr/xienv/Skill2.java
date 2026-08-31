@@ -1,6 +1,5 @@
 package com.mllfjn.simyys.character.list.sr.xienv;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
@@ -8,7 +7,6 @@ import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.InteractiveInfo;
 
 import java.util.List;
@@ -18,7 +16,7 @@ class Skill2 extends PassiveSkill {
 
     private final StatusXieDuSpecialOnXieNv status;
 
-    public Skill2(Character belongTo, int level) {
+    public Skill2(XieNv belongTo, int level) {
         super(belongTo, level, 2);
         status = new StatusXieDuSpecialOnXieNv(belongTo);
     }
@@ -52,24 +50,23 @@ class Skill2 extends PassiveSkill {
     }
 
     public boolean canCount() {
-        return isActive() && getLevel() >= 5;
+        return getLevel() >= 5;
     }
 
-    class StatusXieDuSpecialOnXieNv extends Status implements StatusRunnable, AttributeModifier {
+    class StatusXieDuSpecialOnXieNv extends Status {
         private static final Skill SKILL = Skill.getInstance(SkillName);
 
-        public StatusXieDuSpecialOnXieNv(Character character) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.CAUSE_ATTACK && belongTo.alive;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            if (trigger == Trigger.CAUSE_ATTACK) {
+        public StatusXieDuSpecialOnXieNv(XieNv character) {
+            super(SkillName, character);
+            attribute(Attribute.ATTACK, _ -> {
+                StatusXieDu xieDu = character.getXieDu();
+                if (xieDu != null) {
+                    return belongTo.getInitAttack() * 0.2 * xieDu.getStack();
+                } else {
+                    return 0.0;
+                }
+            });
+            runOn(Trigger.CAUSE_ATTACK, param -> {
                 InteractiveInfo info = ((ParamAttackInfo) param).getAttackInfo();
                 Skill skill = info.getSkill();
                 if (skill == StatusXieDu.SKILL
@@ -90,31 +87,15 @@ class Skill2 extends PassiveSkill {
                                         .getList();
                                 if (!list.isEmpty()) {
                                     double averageOverflow = (maxRecovery - loseHP) / list.size();
-                                    for (Character character : list) {
-                                        interactive.recovery(SKILL, character, averageOverflow);
+                                    for (Character c : list) {
+                                        interactive.recovery(SKILL, c, averageOverflow);
                                     }
                                 }
                             }
                         });
                     }
                 }
-            }
-            return false;
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.ATTACK;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            StatusXieDu xieDu = ((XieNv) belongTo).getXieDu();
-            if (xieDu != null) {
-                return belongTo.getInitAttack() * 0.2 * xieDu.getStack();
-            } else {
-                return 0;
-            }
+            });
         }
     }
 }

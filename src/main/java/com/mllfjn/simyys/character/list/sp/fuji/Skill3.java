@@ -65,7 +65,7 @@ class Skill3 extends Skill {
             display(() -> StatusName + stack);
             duration(StatusDurationType.WEI_CHI, 1);
             if (prohibitIncrease) {
-                runOn(Trigger.LOCATION_CHANGE, triggerParam -> {
+                runOn(Trigger.LOCATION_WILL_CHANGE, triggerParam -> {
                     ParamLocationChange plc = (ParamLocationChange) triggerParam;
                     if (plc.isFromIncrease) {
                         plc.cancel();

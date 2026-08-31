@@ -13,7 +13,6 @@ import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.determinant.IgnoreDebuff;
 import com.mllfjn.simyys.battleevent.EventUseGuiHuo;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 
 import java.util.List;
@@ -91,61 +90,44 @@ class HaiYuanBeiJi extends CharacterSummonBase {
         return true;
     }
 
-    static class StatusJianShang extends Status implements StatusRunnable {
+    static class StatusJianShang extends Status {
 
         public StatusJianShang(Character character) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.BEING_ATTACKED;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            ((ParamAttackInfo) param).getAttackInfo().getTraceableNumber().mul(0.7, "千姬减伤");
-            return false;
+            super("千姬减伤", character);
+            runOn(Trigger.BEING_ATTACKED, param ->
+                    ((ParamAttackInfo) param).getAttackInfo().getTraceableNumber().mul(0.7, getName())
+            );
         }
     }
 
-    static class StatusRecovery extends Status implements StatusRunnable {
+    static class StatusRecovery extends Status {
 
         public StatusRecovery(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return belongTo.alive || trigger == Trigger.AFTER_ATTACK;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            if (trigger == Trigger.AFTER_ATTACK) {
+            super(HaiYuanBeiJi.CharacterName + "受到伤害后恢复", from, belongTo);
+            runOn(Trigger.AFTER_ATTACK, param -> {
                 AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
                 double number = attackInfo.getTraceableNumber().getNumber();
                 if (number > 0) {
                     from.doInteractive(interactive ->
                             interactive.recovery(skill, belongTo, number * 0.3));
                 }
-            }
-            return false;
+            });
         }
     }
 }
 
-class StatusChaoSheng extends Status implements Displayable, IgnoreDebuff {
+class StatusChaoSheng extends Status implements IgnoreDebuff {
     private final static String StatusName = "潮声";
     private int stack;
 
     public StatusChaoSheng(Character character, int level) {
-        super(character, character, StatusType.BUFF, StatusForm.YIN_JI);
+        super(StatusName, character, character, StatusType.BUFF, StatusForm.YIN_JI);
 
         // lv5-海原贝戟被召唤时,立刻获得3层潮声
         if (level >= 5) {
             stack = 3;
         }
+        display(() -> StatusName + stack);
     }
 
     public void addStack(int count) {
@@ -161,20 +143,15 @@ class StatusChaoSheng extends Status implements Displayable, IgnoreDebuff {
             }
         }
     }
-
-
-    @Override
-    public String getDisplayText() {
-        return StatusName + stack;
-    }
 }
 
-class StatusQianJiZengShang extends Status implements AttributeModifier, Displayable {
-    // 这个状态游戏里没显示来源,不知道会不会有影响
+class StatusQianJiZengShang extends Status {
     private int stack = 1;
 
     public StatusQianJiZengShang(Character character) {
-        super(null, character, StatusType.BUFF, StatusForm.YIN_JI);
+        super("金剑", character, character, StatusType.BUFF, StatusForm.YIN_JI);
+        attribute(Attribute.ZENG_SHANG, _ -> 15.0 * stack);
+        display(() -> "金剑" + stack);
     }
 
     public static void addStack(Character character) {
@@ -189,20 +166,5 @@ class StatusQianJiZengShang extends Status implements AttributeModifier, Display
         if (stack < 5) {
             stack++;
         }
-    }
-
-    @Override
-    public boolean isAffectAttribute(Attribute attribute) {
-        return attribute == Attribute.ZENG_SHANG;
-    }
-
-    @Override
-    public double getInfluence(Attribute attribute, StatusModifyParam param) {
-        return stack * 15;
-    }
-
-    @Override
-    public String getDisplayText() {
-        return "金剑" + stack;
     }
 }

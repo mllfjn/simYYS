@@ -131,7 +131,7 @@ class Skill2 extends Skill {
             duration(StatusDurationType.CHI_XU, 3);
             displayNameAndDuration();
             // 不知道降多少随便填的
-            attribute(Attribute.EFFECT_RESIST_RATE, _ -> -20.0);
+            attribute(Attribute.EFFECT_RESIST_RATE, -20.0);
         }
 
         public static StatusSupplier getSupplier() {
@@ -183,7 +183,7 @@ class Skill2 extends Skill {
             duration(StatusDurationType.CHI_XU, 3);
             displayNameAndDuration();
             // 不知道降多少随便填的
-            attribute(Attribute.SPEED, _ -> -30.0);
+            attribute(Attribute.SPEED, -30.0);
         }
 
         public static StatusSupplier getSupplier() {

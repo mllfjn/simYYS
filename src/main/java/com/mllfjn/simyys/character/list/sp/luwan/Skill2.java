@@ -8,7 +8,6 @@ import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.determinant.IgnoreDebuff;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.AttackType;
 
@@ -104,7 +103,7 @@ class Skill2 extends Skill {
                 belongTo.bp.removeActionListener(listener);
                 adder.deleteAndRemove();
             });
-            attribute(Attribute.EFFECT_RESIST_RATE, _ -> 100.0);
+            attribute(Attribute.EFFECT_RESIST_RATE, 100.0);
             displayNameAndDuration();
             if (level >= 2) {
                 runOn(Trigger.BEING_ATTACKED, triggerParam -> {
@@ -148,41 +147,22 @@ class Skill2 extends Skill {
         }
     }
 
-    class StatusGuiHai extends Status
-            implements AttributeModifier, IgnoreDebuff, StatusRunnable {
+    class StatusGuiHai extends Status implements IgnoreDebuff {
         private static final String StatusName = "归骸形态";
 
         public StatusGuiHai(Character character) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.SPEED;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return 100;
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.CAUSE_ATTACK || trigger == Trigger.BEING_ATTACKED;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
-            if (trigger == Trigger.CAUSE_ATTACK) {
-                double number = attackInfo.getTraceableNumber().getNumber();
+            super(StatusName, character);
+            attribute(Attribute.SPEED, 100.0);
+            displayName();
+            runOn(Trigger.CAUSE_ATTACK, triggerParam -> {
+                double number = ((ParamAttackInfo) triggerParam).getAttackInfo().getTraceableNumber().getNumber();
                 belongTo.doInteractive(interactive ->
                         interactive.recovery(Skill2.this, belongTo, number * 0.12)
                 );
-            } else {
-                attackInfo.getTraceableNumber().mul(0.5, StatusName);
-            }
-            return false;
+            });
+            runOn(Trigger.BEING_ATTACKED, triggerParam ->
+                    ((ParamAttackInfo) triggerParam).getAttackInfo().getTraceableNumber().mul(0.5, StatusName)
+            );
         }
     }
 }

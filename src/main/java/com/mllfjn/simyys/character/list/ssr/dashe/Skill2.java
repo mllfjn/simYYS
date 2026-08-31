@@ -9,12 +9,8 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
-import com.mllfjn.simyys.interactive.AttackInfo;
 
-import java.util.List;
 import java.util.Optional;
 
 class Skill2 extends Skill {
@@ -26,17 +22,14 @@ class Skill2 extends Skill {
             @Override
             public boolean onBattleAction(BattleEvent event) {
                 if (event instanceof EventCharacterDie ecd && ecd.getCharacter().team == belongTo.team) {
-                    List<Character> list = new CharacterFinder(belongTo)
+                    Character target = new CharacterFinder(belongTo)
                             .filterTeammate()
-                            .filterShiShen()
-                            .filterSelf()
-                            .getList();
-                    if (list.size() == 1) {
-                        if (list.get(0).isYYS()) {
-                            convert(list.get(0));
-                            return !skill3.needListener();
-                        }
-                    } else if (skill3.needListener() && list.isEmpty()) {
+                            .filterYYS(true)
+                            .getFirst();
+                    if (target != null) {
+                        convert(target);
+                        return !skill3.needListener();
+                    } else if (skill3.needListener()) {
                         skill3.convert();
                         return true;
                     }
@@ -90,47 +83,19 @@ class Skill2 extends Skill {
         return getLevel() >= 4;
     }
 
-    private class StatusBJZL extends Status
-            implements AttributeModifier, InfluenceDamageWhenAttack, Displayable, StatusRunnable {
+    private class StatusBJZL extends Status {
         public StatusBJZL(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.BUFF, StatusForm.YIN_JI);
+            super("不洁之力", from, belongTo, StatusType.BUFF, StatusForm.YIN_JI);
             duration(StatusDurationType.WEI_CHI, 2);
-        }
-
-        @Override
-        public void beforeDelete() {
-            Skill2.this.convertSheMo(belongTo);
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.SPEED;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return 30;
-        }
-
-        @Override
-        public void doInfluenceWhenAttack(AttackInfo attackInfo) {
-            attackInfo.getTraceableNumber().mul(1.3, SkillName);
-        }
-
-        @Override
-        public String getDisplayText() {
-            return SkillName + getDuration();
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.BEING_ATTACKED;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            ((ParamAttackInfo) param).getAttackInfo().setCancel(true);
-            return false;
+            displayNameAndDuration();
+            beforeDelete(() -> Skill2.this.convertSheMo(belongTo));
+            attribute(Attribute.SPEED, 30.0);
+            runOn(Trigger.WHEN_ATTACK, param ->
+                    ((ParamAttackInfo) param).getAttackInfo().getTraceableNumber().mul(1.3, SkillName)
+            );
+            runOn(Trigger.BEING_ATTACKED, param ->
+                    ((ParamAttackInfo) param).getAttackInfo().setCancel(true)
+            );
         }
     }
 }

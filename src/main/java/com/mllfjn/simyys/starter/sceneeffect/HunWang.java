@@ -223,7 +223,7 @@ public class HunWang {
                             if (attackInfo.getSkill() instanceof GuiLingGeJi.SkillGLGJ) {
                                 attacker.getStatus(StatusJieJieEffect.class).ifPresent(
                                         status -> {
-                                            if (status.isCreaseNonCritDamage(aInfo)) {
+                                            if (status.isIncreaseNonCritDamage(aInfo)) {
                                                 aInfo.getTraceableNumber().mul(0.8, "不知道为什么歌姬溅射不吃不见岳结界");
                                             }
                                         }

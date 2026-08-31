@@ -5,16 +5,25 @@ import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.interactive.AttackInfo;
 
-class StatusFenHuo extends Status implements Displayable {
+class StatusFenHuo extends Status {
     private Skill skill;
     private int multiplier;
 
     private StatusFenHuo(Character from, Character belongTo, Skill skill, int multiplier) {
-        super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
+        super("焚火", from, belongTo);
+        type(StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
         this.skill = skill;
         this.multiplier = multiplier;
 
         duration(StatusDurationType.CHI_XU, 1);
+        // 这个状态在技能里显示焚火,但是在状态栏显示蛇袭
+        display("蛇袭");
+        beforeDelete(() -> from.doInteractive(interactive -> {
+            AttackInfo attackInfo = AttackInfo.createJianJieAttack(from, skill, belongTo, from.getAttack());
+            attackInfo.setMultiplier(multiplier);
+            interactive.attack(attackInfo);
+            this.skill.useDone();
+        }));
     }
 
     static void install(Character from, Character belongTo, Skill skill, int multiplier) {
@@ -30,21 +39,5 @@ class StatusFenHuo extends Status implements Displayable {
             skill = newSkill;
             multiplier = newMultiplier;
         }
-    }
-
-    @Override
-    public void beforeDelete() {
-        from.doInteractive(interactive -> {
-            AttackInfo attackInfo = AttackInfo.createJianJieAttack(from, skill, belongTo, from.getAttack());
-            attackInfo.setMultiplier(multiplier);
-            interactive.attack(attackInfo);
-            skill.useDone();
-        });
-    }
-
-    @Override
-    public String getDisplayText() {
-        // 这个状态在技能里显示焚火,但是在状态栏显示蛇袭
-        return "蛇袭";
     }
 }

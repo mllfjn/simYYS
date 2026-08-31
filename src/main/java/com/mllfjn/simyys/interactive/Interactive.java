@@ -18,9 +18,6 @@ import com.mllfjn.simyys.character.yuhun.list.ZhenZhu;
 import com.mllfjn.simyys.customnode.CustomText;
 import com.mllfjn.simyys.customnode.TextFlowLog;
 import com.mllfjn.simyys.ratecontroller.RateController;
-import com.mllfjn.simyys.character.status.Status;
-import com.mllfjn.simyys.character.status.determinant.IgnoreActionDecrease;
-import com.mllfjn.simyys.character.status.determinant.IgnoreActionIncrease;
 import com.mllfjn.simyys.utils.DecimalFormatUtil;
 
 import java.util.*;
@@ -447,30 +444,31 @@ public class Interactive {
     }
 
     public void increaseLocation(Character target, double increase) {
+        double location = target.getLocation();
+        double newLocation = Math.min(100, location + increase);
+        ParamLocationChange param = ParamLocationChange.increase(location, newLocation, owner);
+        target.statusRun(Trigger.LOCATION_WILL_CHANGE, param);
         // 免疫行动条提升效果
-        for (Status status : target.getStatuses()) {
-            if (status instanceof IgnoreActionIncrease fi && fi.effective(owner)) {
-                increaseLog.add(target.name + "免疫行动条改变");
-                return;
-            }
+        if (param.isCanceled()) {
+            increaseLog.add(target.name + "免疫行动条改变");
+            return;
         }
 
         StringBuilder sb = new StringBuilder();
         sb.append(target.name).append("行动提前").append((int) increase).append("%");
-        double location = target.getLocation();
         if (location + increase > 100) {
             sb.append("(实际提前").append((int) (100 - location)).append("%)");
         }
 
-        target.setLocation(Math.min(100, location + increase), true, false);
+        target.setLocation(param);
         increaseLog.add(sb.toString());
     }
 
     public void decreaseLocation(Character target, double decrease) {
         double location = target.getLocation();
         double newLocation = Math.max(0, location - decrease);
-        // 免疫行动条提升效果
-        ParamLocationChange param = new ParamLocationChange(location, newLocation, false, true);
+        // 免疫行动条击退效果
+        ParamLocationChange param = ParamLocationChange.decrease(location, newLocation, owner);
         target.statusRun(Trigger.LOCATION_WILL_CHANGE, param);
         if (param.isCanceled()) {
             increaseLog.add(target.name + "免疫行动条击退");
@@ -482,7 +480,7 @@ public class Interactive {
             sb.append("(实际推后").append((int) location).append("%)");
         }
 
-        target.setLocation(newLocation, false, true);
+        target.setLocation(param);
         increaseLog.add(sb.toString());
     }
 

@@ -7,7 +7,6 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
 import java.util.Optional;
 
@@ -76,70 +75,31 @@ class Skill2 extends Skill {
         return SkillName;
     }
 
-    class StatusHpChangeListener extends Status implements StatusRunnable {
-        private final boolean increaseCritPower;
-
+    class StatusHpChangeListener extends Status {
         public StatusHpChangeListener(Character from, Character belongTo, boolean increaseCritPower) {
-            super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-            this.increaseCritPower = increaseCritPower;
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.HP_CHANGE;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            if (belongTo.getHp() == 1) {
-                belongTo.addStatus(new StatusNaMeiSpeed(from, belongTo));
-                if (increaseCritPower) {
-                    belongTo.addStatus(new StatusNaMeiCritPower(from, belongTo));
+            super(SkillName + "血量监听", from, belongTo);
+            runOn(Trigger.HP_CHANGE, _ -> {
+                if (belongTo.getHp() == 1) {
+                    belongTo.addStatus(new StatusNaMeiBuff(from, belongTo, increaseCritPower));
+                    if (Skill2.this.times == 1) {
+                        Skill2.this.adder.deleteAndRemove();
+                        delete();
+                    } else {
+                        Skill2.this.times--;
+                    }
                 }
-                if (Skill2.this.times == 1) {
-                    Skill2.this.adder.deleteAndRemove();
-                    return false;
-                } else {
-                    Skill2.this.times--;
-                    return true;
-                }
+            });
+        }
+    }
+
+    static class StatusNaMeiBuff extends Status {
+        public StatusNaMeiBuff(Character from, Character belongTo, boolean increaseCritPower) {
+            super(SkillName + "1血BUFF", from, belongTo);
+            duration(StatusDurationType.CHI_XU, 2);
+            attribute(Attribute.SPEED, _ -> belongTo.getInitSpeed() * 0.5);
+            if (increaseCritPower) {
+                attribute(Attribute.CRIT_POWER, 50.0);
             }
-            return false;
-        }
-    }
-
-    static class StatusNaMeiSpeed extends Status implements AttributeModifier {
-        public StatusNaMeiSpeed(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-            duration(StatusDurationType.CHI_XU, 2);
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.SPEED;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return belongTo.getInitSpeed() * 0.5;
-        }
-    }
-
-    static class StatusNaMeiCritPower extends Status implements AttributeModifier {
-        public StatusNaMeiCritPower(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-            duration(StatusDurationType.CHI_XU, 2);
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.CRIT_POWER;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            // 这里没测试是加50还是50%
-            return 50;
         }
     }
 }

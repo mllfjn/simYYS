@@ -7,7 +7,7 @@ import com.mllfjn.simyys.character.skill.Skill;
 import java.util.Optional;
 
 class SkillHeShou extends Skill {
-    private static final String SkillName = "合守";
+    static final String SkillName = "合守";
 
     private final GeYe geYe;
     private final boolean isIncreaseSpeed;

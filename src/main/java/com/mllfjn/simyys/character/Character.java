@@ -27,6 +27,7 @@ import com.mllfjn.simyys.guihuo.MobGuiHuo;
 import com.mllfjn.simyys.collections.SerializableObservableList;
 import com.mllfjn.simyys.ratecontroller.RateController;
 import javafx.collections.ObservableList;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 import java.util.*;
@@ -408,15 +409,9 @@ public abstract class Character implements Serializable {
         return location;
     }
 
-    public void setLocation(double newLocation, boolean isFromIncrease, boolean isFromDecrease) {
-        if (newLocation != location) {
-            ParamLocationChange paramLocationChange =
-                    new ParamLocationChange(location, newLocation, isFromIncrease, isFromDecrease);
-            statusRun(Trigger.LOCATION_CHANGED, paramLocationChange);
-            if (!paramLocationChange.isCanceled()) {
-                this.location = paramLocationChange.newLocation;
-            }
-        }
+    public void setLocation(@NotNull ParamLocationChange paramLocationChange) {
+        this.location = paramLocationChange.newLocation;
+        statusRun(Trigger.LOCATION_CHANGED, paramLocationChange);
     }
 
     public void forceSetLocation(double newLocation) {

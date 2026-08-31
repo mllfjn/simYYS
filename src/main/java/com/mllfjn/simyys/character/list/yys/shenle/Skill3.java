@@ -6,6 +6,7 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
+import com.mllfjn.simyys.character.status.triggerParam.ParamLocationChange;
 
 import java.util.Optional;
 
@@ -58,8 +59,10 @@ class Skill3 extends Skill {
             belongTo.getInteractive().getNewRound(target);
         } else {
             // 与阴阳师战斗时,交换神乐与目标的行动条位置
-            belongTo.setLocation(target.getLocation(), false, false);
-            target.setLocation(100, false, false);
+            double targetLocation = target.getLocation();
+            double belongToLocation = belongTo.getLocation();
+            belongTo.setLocation(ParamLocationChange.normal(belongToLocation, targetLocation));
+            target.setLocation(ParamLocationChange.normal(targetLocation, 100));
         }
 
         return Optional.of(target);

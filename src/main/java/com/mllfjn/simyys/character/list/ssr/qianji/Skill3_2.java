@@ -5,8 +5,6 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.StatusRunnable;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.character.status.Trigger;
@@ -49,35 +47,22 @@ class Skill3_2 extends Skill {
     }
 }
 
-class StatusBeiGe extends Status implements StatusRunnable, Displayable {
+class StatusBeiGe extends Status {
     private static final String StatusName = "悲歌";
     private int stack;
 
     public StatusBeiGe(Character character) {
-        super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-    }
-
-    @Override
-    public boolean runnable(Trigger trigger) {
-        return trigger == Trigger.BEFORE_ROUND;
-    }
-
-    @Override
-    public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
+        super(StatusName, character);
         // 千姬回合开始时获得1层悲歌(没写,但是上限应该是5层)
-        if (stack < 5) {
+        runOn(Trigger.BEFORE_ROUND, _ -> {
             stack++;
-        }
-        return false;
-    }
 
-    @Override
-    public String getDisplayText() {
-        if (stack == 0) {
-            return null;
-        } else {
-            return StatusName + stack;
-        }
+            if (stack == 1) {
+                display(() -> StatusName + stack);
+            } else if (stack == 5) {
+                removeAction(Trigger.BEFORE_ROUND);
+            }
+        });
     }
 
     public int getStack() {

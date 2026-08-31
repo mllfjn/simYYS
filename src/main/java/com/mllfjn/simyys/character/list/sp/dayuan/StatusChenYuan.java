@@ -80,7 +80,7 @@ class StatusQing extends Status {
             }
             // 并使自身减伤提升50%
             Status.of(StatusQing.StatusName + "减伤", from, belongTo)
-                    .attribute(Attribute.JIAN_SHANG, _ -> 50.0)
+                    .attribute(Attribute.JIAN_SHANG, 50.0)
                     .duration(StatusDurationType.WEI_CHI, 1)
                     .addTo();
             // lv2-回合开始时立即获得1点鬼火

@@ -1,15 +1,13 @@
 package com.mllfjn.simyys.character.list.ssr.geye;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAddCrowdControl;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
-class StatusHZBH extends Status implements StatusRunnable, Displayable {
+class StatusHZBH extends Status {
     private static final String StatusName = "狐族庇护";
 
     private int stack;
@@ -17,10 +15,23 @@ class StatusHZBH extends Status implements StatusRunnable, Displayable {
     private boolean continueEffective;
 
     private StatusHZBH(Character from, Character belongTo, int stack) {
-        super(from, belongTo, StatusType.BUFF, StatusForm.YIN_JI);
+        super(StatusName, from, belongTo, StatusType.BUFF, StatusForm.YIN_JI);
         this.stack = stack;
 
         duration(StatusDurationType.CHI_XU, 1);
+        display(() -> StatusName + stack);
+
+        runOn(Trigger.BEING_ATTACKED, param -> {
+            ParamAttackInfo pai = (ParamAttackInfo) param;
+            pai.getAttackInfo().setCancel(true);
+            setContinueEffective(pai.getAttackInfo().getSkill());
+        });
+
+        runOn(Trigger.ADDING_CROWD_CONTROL, param -> {
+            ParamAddCrowdControl pac = (ParamAddCrowdControl) param;
+            pac.getEffectInfo().setCancel(true);
+            setContinueEffective(pac.getEffectInfo().getSkill());
+        });
     }
 
     static void addStack(Character from, Character belongTo, int stack, boolean isIncreaseSpeed) {
@@ -41,53 +52,30 @@ class StatusHZBH extends Status implements StatusRunnable, Displayable {
         }
     }
 
-    @Override
-    public String getDisplayText() {
-        return StatusName + stack;
-    }
-
-    @Override
-    public boolean runnable(Trigger trigger) {
-        return trigger == Trigger.BEING_ATTACKED || trigger == Trigger.ADDING_CROWD_CONTROL;
-    }
-
-    @Override
-    public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-        if (param instanceof ParamAttackInfo pai) {
-            pai.getAttackInfo().setCancel(true);
-            if (!continueEffective) {
-                setContinueEffective(pai.getAttackInfo().getSkill());
-            }
-        } else {
-            ParamAddCrowdControl pac = (ParamAddCrowdControl) param;
-            pac.getEffectInfo().setCancel(true);
-            if (!continueEffective) {
-                setContinueEffective(pac.getEffectInfo().getSkill());
-            }
-        }
-        return false;
-    }
-
     private void setContinueEffective(Skill skill) {
-        continueEffective = true;
-        skill.addSkillEndListener(() -> {
-            if (stack > 1) {
-                stack--;
-            } else {
-                delete();
-            }
-            continueEffective = false;
-        });
+        if (!continueEffective) {
+            continueEffective = true;
+            skill.addSkillEndListener(() -> {
+                if (stack > 1) {
+                    stack--;
+                } else {
+                    delete();
+                }
+                continueEffective = false;
+            });
+        }
     }
 
-    static class StatusHZBHSpeed extends Status implements Displayable, AttributeModifier {
+    static class StatusHZBHSpeed extends Status {
         private static final String StatusName = "加速";
 
         private int stack = 1;
 
         private StatusHZBHSpeed(Character character, int duration) {
-            super(character, character, StatusType.BUFF, StatusForm.ZHUANG_TAI);
+            super(StatusHZBH.StatusName + StatusName, character, character, StatusType.BUFF, StatusForm.ZHUANG_TAI);
             duration(StatusDurationType.CHI_XU, duration);
+            display(() -> StatusName + stack);
+            attribute(Attribute.SPEED, _ -> 75.0 * stack);
         }
 
         static void addStack(Character character) {
@@ -111,21 +99,6 @@ class StatusHZBH extends Status implements StatusRunnable, Displayable {
             } else {
                 character.addStatus(new StatusHZBHSpeed(character, shouldDuration));
             }
-        }
-
-        @Override
-        public String getDisplayText() {
-            return StatusName + stack;
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.SPEED;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return 75 * stack;
         }
     }
 }

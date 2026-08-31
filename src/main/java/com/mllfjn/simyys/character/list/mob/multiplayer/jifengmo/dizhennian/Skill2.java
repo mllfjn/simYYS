@@ -34,7 +34,8 @@ class Skill2 extends Skill {
                     target.doInteractive(interactive -> interactive.attack(info));
                     // 红凝
                     Status.of("红凝", diZhenNian, target)
-                            .display(() -> "红凝", Color.RED)
+                            .display(() -> "红凝")
+                            .setColor(Color.RED)
                             .addTo();
                     diZhenNian.setHongNing(target);
                 },

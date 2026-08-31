@@ -4,10 +4,8 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.Status;
-import com.mllfjn.simyys.character.status.StatusForm;
-import com.mllfjn.simyys.character.status.StatusType;
-import com.mllfjn.simyys.character.status.determinant.IgnoreActionDecrease;
-import com.mllfjn.simyys.character.status.determinant.IgnoreActionIncrease;
+import com.mllfjn.simyys.character.status.Trigger;
+import com.mllfjn.simyys.character.status.triggerParam.ParamLocationChange;
 
 import java.util.Optional;
 
@@ -20,7 +18,15 @@ class Skill2 extends Skill {
 
     public static void addStatus(Character belongTo) {
         // 免疫来源于其他目标的行动条改变效果
-        belongTo.addStatus(new StatusIgnoreOtherActionChange(belongTo));
+        Status.of(SKillName + "免疫行动条改变", belongTo)
+                .runOn(Trigger.LOCATION_WILL_CHANGE, triggerParam -> {
+                    ParamLocationChange param = (ParamLocationChange) triggerParam;
+                    if (param.isFromDecrease || param.isFromIncrease) {
+                        if (param.from != belongTo) {
+                            param.cancel();
+                        }
+                    }
+                }).addTo();
     }
 
     @Override
@@ -44,16 +50,5 @@ class Skill2 extends Skill {
     @Override
     public boolean canUse(BattlePane bp) {
         return super.canUse(bp) && getBelongTo().isHaveStatus(StatusCombined.class);
-    }
-
-    static class StatusIgnoreOtherActionChange extends Status implements IgnoreActionIncrease, IgnoreActionDecrease {
-        public StatusIgnoreOtherActionChange(Character character) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public boolean effective(Character from) {
-            return from != belongTo;
-        }
     }
 }

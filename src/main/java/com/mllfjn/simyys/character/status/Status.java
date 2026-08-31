@@ -36,6 +36,14 @@ public class Status implements Serializable {
         this.belongTo = character;
     }
 
+    protected Status(String name, Character from, Character belongTo, StatusType statusType, StatusForm statusForm) {
+        this.name = name;
+        this.from = from;
+        this.belongTo = belongTo;
+        this.statusType = statusType;
+        this.statusForm = statusForm;
+    }
+
     public static Status of(String name, Character character) {
         return new Status(name, character);
     }
@@ -91,6 +99,7 @@ public class Status implements Serializable {
 
     // ========================影响属性============================
     private Map<Attribute, SerialFunction<StatusModifyParam, Double>> attributeModifier = Collections.emptyMap();
+    private Map<Attribute, Double> simpleAttribute = Collections.emptyMap();
 
     public final Status attribute(Attribute attribute, SerialFunction<StatusModifyParam, Double> getter) {
         if (attributeModifier == Collections.EMPTY_MAP) {
@@ -100,7 +109,20 @@ public class Status implements Serializable {
         return this;
     }
 
+    public final Status attribute(Attribute attribute, double value) {
+        if (simpleAttribute == Collections.EMPTY_MAP) {
+            simpleAttribute = new EnumMap<>(Attribute.class);
+        }
+        simpleAttribute.put(attribute, value);
+        return this;
+    }
+
     public double getAttribute(Attribute attribute, StatusModifyParam param) {
+        Double simpleValue = simpleAttribute.get(attribute);
+        if (simpleValue != null) {
+            return simpleValue;
+        }
+
         SerialFunction<StatusModifyParam, Double> function = attributeModifier.get(attribute);
         if (function == null) {
             return 0;
@@ -115,10 +137,9 @@ public class Status implements Serializable {
     // ====================显示在状态栏===========================
     public static final String DELIMITER = " ";
 
+    private String displayText;
     private SerialSupplier<String> displayTextSupplier;
     private transient Color displayColor;
-    private boolean displayNameAndDuration;
-    private boolean displayName;
 
     private Double colorR;
     private Double colorG;
@@ -126,44 +147,30 @@ public class Status implements Serializable {
 
     public final Status display(SerialSupplier<String> textSupplier) {
         displayTextSupplier = textSupplier;
-        if (textSupplier != null) {
-            if (statusType == StatusType.DEBUFF) {
-                setColor(Color.RED);
-            } else {
-                setColor(Color.BLACK);
-            }
-        } else {
-            setColor(null);
-        }
-
         return this;
     }
 
-    public final Status display(SerialSupplier<String> textSupplier, Color color) {
-        displayTextSupplier = textSupplier;
-        setColor(color);
+    public final Status display(String text) {
+        displayText = text;
         return this;
     }
 
     public final Status displayName() {
-        displayName = true;
-        return this;
+        return display(name);
     }
 
     public final Status displayNameAndDuration() {
-        displayNameAndDuration = true;
+        displayTextSupplier = () -> name + getDuration();
         return this;
     }
 
     public boolean isDisplayText() {
-        return displayTextSupplier != null;
+        return displayText != null || displayTextSupplier != null;
     }
 
     public final String getDisplayText() {
-        if (displayNameAndDuration) {
-            return name + getDuration();
-        } else if (displayName) {
-            return name;
+        if (displayText != null) {
+            return displayText;
         } else {
             return displayTextSupplier.get();
         }
@@ -171,12 +178,24 @@ public class Status implements Serializable {
 
     public Color getDisplayColor() {
         if (displayColor == null) {
-            displayColor = Color.color(colorR, colorG, colorB);
+            if (colorR != null) {
+                displayColor = Color.color(colorR, colorG, colorB);
+            } else {
+                generateColor();
+            }
         }
         return displayColor;
     }
 
-    private void setColor(Color color) {
+    private void generateColor() {
+        if (statusType == StatusType.DEBUFF) {
+            setColor(Color.RED);
+        } else {
+            setColor(Color.BLACK);
+        }
+    }
+
+    public Status setColor(Color color) {
         displayColor = color;
         if (color != null) {
             colorR = color.getRed();
@@ -185,6 +204,7 @@ public class Status implements Serializable {
         } else {
             colorR = null;
         }
+        return this;
     }
 
     // ========================改变鬼火消耗===============================

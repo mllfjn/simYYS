@@ -52,10 +52,11 @@ class Skill2ForMob extends PassiveSkill {
         return SkillName;
     }
 
-    static class StatusEffectResist extends Status implements AttributeModifier {
+    static class StatusEffectResist extends Status {
         public StatusEffectResist(Character character) {
-            super(character, character, StatusType.BUFF, StatusForm.ZHUANG_TAI);
+            super(SkillName + "效果抵抗", character, character, StatusType.BUFF, StatusForm.ZHUANG_TAI);
             duration(StatusDurationType.CHI_XU, 1);
+            attribute(Attribute.EFFECT_RESIST_RATE, 50.0);
         }
 
         public static void install(Character character) {
@@ -64,16 +65,6 @@ class Skill2ForMob extends PassiveSkill {
                             status -> status.duration(1),
                             () -> character.addStatus(new StatusEffectResist(character))
                     );
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.EFFECT_RESIST_RATE;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return 50;
         }
     }
 }

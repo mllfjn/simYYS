@@ -55,7 +55,7 @@ class Skill2 extends PassiveSkill {
             super(SkillName, from, belongTo);
             type(StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
             duration(StatusDurationType.CHI_XU, 2);
-            attribute(Attribute.YI_SHANG, _ -> yiShang);
+            attribute(Attribute.YI_SHANG, yiShang);
             displayNameAndDuration();
         }
 

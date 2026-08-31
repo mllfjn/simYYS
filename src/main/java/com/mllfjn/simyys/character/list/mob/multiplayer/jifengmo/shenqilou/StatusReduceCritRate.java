@@ -12,6 +12,6 @@ class StatusReduceCritRate extends Status {
         type(StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
         duration(StatusDurationType.CHI_XU, 2);
         displayNameAndDuration();
-        attribute(Attribute.CRIT_RATE, _ -> -num);
+        attribute(Attribute.CRIT_RATE, -num);
     }
 }

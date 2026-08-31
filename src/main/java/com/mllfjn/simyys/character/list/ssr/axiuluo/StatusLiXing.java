@@ -3,26 +3,34 @@ package com.mllfjn.simyys.character.list.ssr.axiuluo;
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
-import com.mllfjn.simyys.character.status.determinant.RetainAfterChangeWave;
-import com.mllfjn.simyys.character.status.determinant.RetainAfterDie;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAddCrowdControl;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 
-class StatusLiXing extends Status
-        implements Displayable, RetainAfterDie, RetainAfterChangeWave, InfluenceDamageWhenAttack, StatusRunnable {
+class StatusLiXing extends Status {
     private static final String StatusName = "理性";
 
     private final double suppressPerStack;
-    private final boolean reduceDamage;
     private int stack = 9;
 
     public StatusLiXing(Character character, double suppressPerStack, boolean reduceDamage) {
-        super(character, character, StatusType.GENERAL, StatusForm.YIN_JI);
+        super(StatusName, character, character, StatusType.GENERAL, StatusForm.YIN_JI);
         this.suppressPerStack = suppressPerStack;
-        this.reduceDamage = reduceDamage;
+        display(() -> StatusName + stack);
+        retainAfterDie();
+        retainAfterChangeWave(() -> stack = 9);
+        // 减伤
+        if (reduceDamage) {
+            runOn(Trigger.BEING_ATTACKED, param ->
+                    ((ParamAttackInfo) param).getAttackInfo().getTraceableNumber().mul(1 - 0.06 * (9 - stack),
+                            StatusName)
+            );
+        }
+        // 免控
+        runOn(Trigger.ADDING_CROWD_CONTROL, param ->
+                ((ParamAddCrowdControl) param).getEffectInfo().setCancel(true)
+        );
     }
 
     void consume(int useStack) {
@@ -31,16 +39,6 @@ class StatusLiXing extends Status
 
     int getStack() {
         return stack;
-    }
-
-    @Override
-    public void changeWaveAction() {
-        stack = 9;
-    }
-
-    @Override
-    public String getDisplayText() {
-        return StatusName + stack;
     }
 
     @Override
@@ -55,21 +53,11 @@ class StatusLiXing extends Status
     }
 
     @Override
-    public boolean runnable(Trigger trigger) {
-        return stack < 9 && ( // 理性小于9是前提
-                (reduceDamage && trigger == Trigger.BEING_ATTACKED) // 减伤
-                        || (trigger == Trigger.ADDING_CROWD_CONTROL) // 免控
-        );
-    }
-
-    @Override
-    public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-        if (trigger == Trigger.BEING_ATTACKED) {
-            ((ParamAttackInfo) param).getAttackInfo().getTraceableNumber()
-                    .mul(1 - 0.06 * (9 - stack), StatusName);
+    public final boolean runnable(Trigger trigger) {
+        if (stack < 9) {
+            return super.runnable(trigger);
         } else {
-            ((ParamAddCrowdControl) param).getEffectInfo().setCancel(true);
+            return false;
         }
-        return false;
     }
 }

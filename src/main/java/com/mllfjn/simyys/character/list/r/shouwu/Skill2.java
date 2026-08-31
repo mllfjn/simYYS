@@ -40,7 +40,7 @@ class Skill2 extends PassiveSkill {
                     statusBeStolen.delete();
                 }
             });
-            attribute(Attribute.CRIT_RATE, _ -> 40.0);
+            attribute(Attribute.CRIT_RATE, 40.0);
             statusBeStolen = new StatusStealCritRate.StatusBeStolen(character, target);
         }
 
@@ -58,7 +58,7 @@ class Skill2 extends PassiveSkill {
                 super("暴击率降低", from, belongTo);
                 type(StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
                 displayName();
-                attribute(Attribute.CRIT_RATE, _ -> -40.0);
+                attribute(Attribute.CRIT_RATE, -40.0);
             }
         }
     }

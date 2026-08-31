@@ -32,7 +32,8 @@ public class StatusHuiMie extends Status {
             }
 
             return sb.toString();
-        }, Color.ORANGE);
+        });
+        setColor(Color.ORANGE);
         runOn(Trigger.BEFORE_ROUND, _ -> {
             if (stack < 6) {
                 stack++;

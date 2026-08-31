@@ -61,17 +61,13 @@ class Skill3 extends Skill {
         return Optional.empty();
     }
 
-    class StatusSXDY extends Status implements Displayable {
-        private static final String StatusName = "噬心毒液";
-
+    class StatusSXDY extends Status {
         private StatusSXDY(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
+            super("噬心毒液", from, belongTo);
+            type(StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
             duration(StatusDurationType.CHI_XU, 1);
-        }
-
-        @Override
-        public void beforeDelete() {
-            from.doInteractive(interactive -> {
+            displayName();
+            beforeDelete(() -> from.doInteractive(interactive -> {
                 AttackInfo attackInfo = AttackInfo
                         .createJianJieAttack(from, Skill3.this, belongTo, from.getAttack());
                 double fromSpeed = from.getSpeed();
@@ -84,12 +80,7 @@ class Skill3 extends Skill {
                 attackInfo.setMultiplier(baseMultiplier);
                 interactive.attack(attackInfo);
                 Skill3.this.useDone();
-            });
-        }
-
-        @Override
-        public String getDisplayText() {
-            return StatusName;
+            }));
         }
     }
 }

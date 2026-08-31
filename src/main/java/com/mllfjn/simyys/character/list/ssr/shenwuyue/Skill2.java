@@ -41,7 +41,7 @@ class Skill2 extends PassiveSkill {
         return SkillName;
     }
 
-    static class StatusMengShen extends Status implements Displayable {
+    static class StatusMengShen extends Status {
         private static final String StatusName = "梦神";
 
         private final int perStack;
@@ -49,60 +49,28 @@ class Skill2 extends PassiveSkill {
         private int stack;
 
         private StatusMengShen(Character character, int perStack) {
-            super(character, character, StatusType.BUFF, StatusForm.YIN_JI);
+            super(StatusName, character, character, StatusType.BUFF, StatusForm.YIN_JI);
             this.perStack = perStack;
+            display(() -> StatusName + stack);
         }
 
         public void addStack(int addStack) {
             stack = Math.min(addStack + stack, 5);
         }
 
-        public int getIncrease() {
+        public double getIncrease() {
             return perStack * stack;
-        }
-
-        @Override
-        public String getDisplayText() {
-            return StatusName + stack;
         }
     }
 
     static class JianShangContainer extends Status {
-        private final StatusAdder<?> adder;
-
         public JianShangContainer(Character character) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-            adder = character.bp.addStatusAdder(c ->
-                    c.team == belongTo.team
-                            ? new StatusJianShang(belongTo, c)
-                            : null
-            );
-        }
-
-        @Override
-        public void beforeDelete() {
-            adder.deleteAndRemove();
-        }
-    }
-
-    static class StatusJianShang extends Status implements AttributeModifier {
-
-        public StatusJianShang(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.JIAN_SHANG;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            if (from == belongTo) {
-                return 40;
-            } else {
-                return 20;
-            }
+            super(SkillName + "减伤监听", character);
+            StatusAdder<?> adder = character.bp.addStatusAdder(c -> c.team == belongTo.team
+                    ? Status.of(SkillName + "减伤", from, belongTo)
+                    .attribute(Attribute.JIAN_SHANG, from == belongTo ? 40 : 20)
+                    : null);
+            beforeDelete(adder::deleteAndRemove);
         }
     }
 }

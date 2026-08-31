@@ -1,6 +1,5 @@
 package com.mllfjn.simyys.character.list.sp.spjin;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.list.ssr.bujianyue.StatusJieJieEffect;
@@ -11,6 +10,7 @@ import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.ParamUseSkill;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackType;
+import com.mllfjn.simyys.utils.serializable.SerialConsumer;
 
 import java.util.List;
 import java.util.Optional;
@@ -34,7 +34,8 @@ class Skill2 extends PassiveSkill {
     public Skill2(Character belongTo, int level) {
         super(belongTo, level, 2);
         this.skill = Skill.getInstance(StatusXX.StatusName);
-        listener = new StatusXXListener(belongTo, this);
+        listener = Status.of("会合后唤醒玄象", belongTo)
+                .runOn(Trigger.AFTER_ROUND, _ -> wakeUp());
     }
 
     @Override
@@ -69,57 +70,27 @@ class Skill2 extends PassiveSkill {
             target.addStatus(new StatusXX(belongTo, target));
         }
 
-        switch (Math.min(getLevel(), 4)) {
-            case 4:
+        int level = getLevel();
+        if (level >= 2) {
+            StatusXXSelfBuff.install(belongTo, level >= 3);
+            if (level >= 4) {
                 StatusXXDefence.install(belongTo);
-            case 3:
-                StatusXXEffectResist.install(belongTo);
-            case 2:
-                StatusXXCritResist.install(belongTo);
+            }
         }
     }
 
-    static class StatusXXListener extends Status implements StatusRunnable {
-        private final Skill2 skill2;
-
-        public StatusXXListener(Character character, Skill2 skill2) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-            this.skill2 = skill2;
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.AFTER_ROUND;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            skill2.wakeUp();
-            return false;
-        }
-    }
-
-    class StatusXX extends Status implements StatusRunnable, Displayable {
+    class StatusXX extends Status {
         private static final String StatusName = "玄象";
 
         public StatusXX(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
+            super(StatusName, from, belongTo);
+            displayName();
+            SerialConsumer<TriggerParam> action = param -> {
+                if (!belongTo.isInRound()) {
+                    return;
+                }
 
-        @Override
-        public String getDisplayText() {
-            return StatusName;
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return (trigger == Trigger.USED_SKILL || trigger == Trigger.USED_PU_GONG)
-                    && belongTo.isInRound();
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            if (param instanceof ParamUseSkill pus) {
+                ParamUseSkill pus = (ParamUseSkill) param;
                 Character target;
                 Optional<Character> oTarget = pus.getTarget();
                 if (oTarget.isPresent() && oTarget.get().team != belongTo.team && oTarget.get().alive) {
@@ -166,69 +137,40 @@ class Skill2 extends PassiveSkill {
                         from.removeStatus(status);
                     }
 
-
-                    return true;
+                    delete();
                 }
-            }
-            return false;
+            };
+            runOn(Trigger.USED_SKILL, action);
+            runOn(Trigger.USED_PU_GONG, action);
         }
     }
 
-    static class StatusXXCritResist extends Status implements AttributeModifier {
-
-        private StatusXXCritResist(Character character) {
-            super(character, character, StatusType.BUFF, StatusForm.ZHUANG_TAI);
+    static class StatusXXSelfBuff extends Status {
+        private StatusXXSelfBuff(Character character, boolean effectResist) {
+            super(StatusXX.StatusName + "自身BUFF", character);
+            type(StatusType.BUFF, StatusForm.ZHUANG_TAI);
             duration(StatusDurationType.CHI_XU, 2);
+            attribute(Attribute.CRIT_RESIST, 100.0);
+            if (effectResist) {
+                attribute(Attribute.EFFECT_RESIST_RATE, 100.0);
+            }
+            addTo();
         }
 
-        public static void install(Character character) {
-            character.getStatus(StatusXXCritResist.class).orElseGet(() -> {
-                StatusXXCritResist status = new StatusXXCritResist(character);
-                character.addStatus(status);
-                return status;
-            }).duration(2);
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.CRIT_RESIST;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return 100;
+        public static void install(Character character, boolean effectResist) {
+            character.getStatus(StatusXXSelfBuff.class).orElseGet(() ->
+                    new StatusXXSelfBuff(character, effectResist)
+            ).duration(2);
         }
     }
 
-    static class StatusXXEffectResist extends Status implements AttributeModifier {
-
-        private StatusXXEffectResist(Character character) {
-            super(character, character, StatusType.BUFF, StatusForm.ZHUANG_TAI);
-        }
-
-        public static void install(Character character) {
-            character.getStatus(StatusXXEffectResist.class).orElseGet(() -> {
-                StatusXXEffectResist status = new StatusXXEffectResist(character);
-                character.addStatus(status);
-                return status;
-            }).duration(2);
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.EFFECT_RESIST_RATE;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return 100;
-        }
-    }
-
-    static class StatusXXDefence extends Status implements AttributeModifier {
+    static class StatusXXDefence extends Status {
 
         public StatusXXDefence(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.BUFF, StatusForm.ZHUANG_TAI);
+            super(StatusXX.StatusName + "全队防御", from, belongTo);
+            type(StatusType.BUFF, StatusForm.ZHUANG_TAI);
+            attribute(Attribute.DEFENCE, 160.0);
+            addTo();
         }
 
         public static void install(Character from) {
@@ -237,22 +179,10 @@ class Skill2 extends PassiveSkill {
                     .getList();
 
             for (Character to : list) {
-                to.getStatus(StatusXXDefence.class).orElseGet(() -> {
-                    StatusXXDefence status = new StatusXXDefence(from, to);
-                    to.addStatus(status);
-                    return status;
-                }).duration(2);
+                to.getStatus(StatusXXDefence.class).orElseGet(() ->
+                        new StatusXXDefence(from, to)
+                ).duration(2);
             }
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.DEFENCE;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return 160;
         }
     }
 }

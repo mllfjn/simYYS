@@ -9,6 +9,7 @@ import com.mllfjn.simyys.character.propertygetter.FlagChangeInfo;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.Status;
+import com.mllfjn.simyys.character.status.triggerParam.ParamLocationChange;
 import com.mllfjn.simyys.customnode.CustomTextField;
 import com.mllfjn.simyys.customnode.TextFlowLog;
 import com.mllfjn.simyys.guihuo.GuiHuo;
@@ -553,9 +554,10 @@ public class BattlePane {
 
         if (ttaMin > 0) {
             for (int i = 0; i < characters.size(); i++) {
-                characters.get(i).setLocation(characters.get(i).getLocation() + speeds[i] * ttaMin,
-                        false, false
-                );
+                characters.get(i).setLocation(ParamLocationChange.normal(
+                        characters.get(i).getLocation(),
+                        characters.get(i).getLocation() + speeds[i] * ttaMin
+                ));
             }
         }
 

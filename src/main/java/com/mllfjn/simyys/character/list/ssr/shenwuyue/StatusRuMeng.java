@@ -4,15 +4,18 @@ import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
 
-public class StatusRuMeng extends Status implements Displayable, ConditionalReduceCost, AttributeModifier {
+public class StatusRuMeng extends Status implements ConditionalReduceCost {
     private static final String StatusName = "入梦";
 
     private int stack = 2;
 
     public StatusRuMeng(ShenWuYue from, Character belongTo) {
-        super(from, belongTo, StatusType.BUFF, StatusForm.YIN_JI);
+        super(StatusName, from, belongTo, StatusType.BUFF, StatusForm.YIN_JI);
         duration(StatusDurationType.WEI_CHI, 2);
         from.setRuMeng(this, true);
+        display(() -> StatusName + stack + "-" + getDuration());
+        beforeDelete(() -> from.setRuMeng(null, false));
+        attribute(Attribute.JIAN_SHANG, 20);
     }
 
     public void deleteAndRemoveMaintained() {
@@ -32,25 +35,5 @@ public class StatusRuMeng extends Status implements Displayable, ConditionalRedu
         } else {
             stack--;
         }
-    }
-
-    @Override
-    public String getDisplayText() {
-        return StatusName + stack + "-" + getDuration();
-    }
-
-    @Override
-    public void beforeDelete() {
-        ((ShenWuYue) from).setRuMeng(null, false);
-    }
-
-    @Override
-    public boolean isAffectAttribute(Attribute attribute) {
-        return attribute == Attribute.JIAN_SHANG;
-    }
-
-    @Override
-    public double getInfluence(Attribute attribute, StatusModifyParam param) {
-        return 20;
     }
 }

@@ -1,23 +1,20 @@
 package com.mllfjn.simyys.character.list.sp.shenshe;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.battleevent.BattleActionListener;
 import com.mllfjn.simyys.battleevent.BattleEvent;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.character.status.determinant.IgnoreChangeMaxHp;
 import com.mllfjn.simyys.character.status.determinant.IgnoreDebuff;
-import com.mllfjn.simyys.character.status.determinant.PreventDie;
 import com.mllfjn.simyys.battleevent.EventActionDone;
 
 // 无法改变生命上限,免疫减益和 TODO 放逐
-public class StatusSheShen extends Status implements IgnoreChangeMaxHp, IgnoreDebuff, PreventDie, StatusRunnable, Displayable {
-    private static final String text = "蛇神";
+public class StatusSheShen extends Status implements IgnoreChangeMaxHp, IgnoreDebuff {
+    private static final String StatusName = "蛇神";
     // 变身前的血量和上限
     private final double originalMaxHp;
     private final double originalHp;
@@ -29,7 +26,7 @@ public class StatusSheShen extends Status implements IgnoreChangeMaxHp, IgnoreDe
     private boolean die = false;
 
     public StatusSheShen(Character character, int skillLevel, double attack) {
-        super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
+        super(StatusName, character);
 
         originalHp = character.getHp();
         originalMaxHp = character.getMaxHp();
@@ -39,36 +36,44 @@ public class StatusSheShen extends Status implements IgnoreChangeMaxHp, IgnoreDe
 
         // 生命为神堕八岐大蛇攻击200%
         character.setMaxHp(character.getAttack() * (skillLevel == 1 ? 2 : 3.8), true);
+
+        displayName();
+
+        if (level >= 3) {
+            runOn(Trigger.BEING_ATTACKED, triggerParam -> {
+                AttackInfo attackInfo = ((ParamAttackInfo) triggerParam).getAttackInfo();
+                if (attackInfo.getAttackType() == AttackType.QUN_TI) {
+                    attackInfo.getTraceableNumber().mul(0.7, StatusName);
+                }
+            });
+        }
+
+        preventDie(_ -> {
+            if (!die) {
+                belongTo.bp.addActionListener(new BattleActionListener(belongTo) {
+                    @Override
+                    public boolean onBattleAction(BattleEvent event) {
+                        if (event instanceof EventActionDone) {
+                            backToNormal();
+                            // lv4-蛇神被击败时,自身提升100点速度,持续1个回合
+                            if (level >= 4) {
+                                Status.of("神蛇速度", belongTo)
+                                        .attribute(Attribute.SPEED, 100.0)
+                                        .duration(StatusDurationType.CHI_XU, 1)
+                                        .addTo();
+                            }
+                            return true;
+                        }
+                        return false;
+                    }
+                });
+                die = true;
+            }
+        });
     }
 
     public double getAttack() {
         return attack;
-    }
-
-    @Override
-    public void preventDie(double excessDamage) {
-        if (!die) {
-            belongTo.bp.addActionListener(new BattleActionListener(belongTo) {
-                @Override
-                public boolean onBattleAction(BattleEvent event) {
-                    if (event instanceof EventActionDone) {
-                        backToNormal();
-                        // lv4-蛇神被击败时,自身提升100点速度,持续1个回合
-                        if (level >= 4) {
-                            belongTo.addStatus(new StatusSheShenSpeed(belongTo));
-                        }
-                        return true;
-                    }
-                    return false;
-                }
-            });
-            die = true;
-        }
-    }
-
-    @Override
-    public String getName() {
-        return text;
     }
 
     public void backToNormal() {
@@ -76,43 +81,6 @@ public class StatusSheShen extends Status implements IgnoreChangeMaxHp, IgnoreDe
         delete();
         belongTo.setMaxHp(originalMaxHp, false);
         belongTo.setHp(originalHp);
-    }
-
-    @Override
-    public String getDisplayText() {
-        return text;
-    }
-
-    @Override
-    public boolean runnable(Trigger trigger) {
-        return level >= 3 && trigger == Trigger.BEING_ATTACKED;
-    }
-
-    @Override
-    public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-        AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
-        if (attackInfo.getAttackType() == AttackType.QUN_TI) {
-            attackInfo.getTraceableNumber().mul(0.7, text);
-        }
-
-        return false;
-    }
-
-    static class StatusSheShenSpeed extends Status implements AttributeModifier {
-        public StatusSheShenSpeed(Character character) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-            this.duration(StatusDurationType.CHI_XU, 1);
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.SPEED;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return 100;
-        }
     }
 }
 

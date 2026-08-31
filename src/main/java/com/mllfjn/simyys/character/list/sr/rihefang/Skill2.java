@@ -1,6 +1,5 @@
 package com.mllfjn.simyys.character.list.sr.rihefang;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.battleevent.*;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
@@ -9,7 +8,6 @@ import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.ParamHealInfo;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.HealInfo;
 import com.mllfjn.simyys.ratecontroller.RateController;
 
@@ -123,7 +121,7 @@ class Skill2 extends PassiveSkill {
                         ? null
                         : c.team == belongTo.team
                         ? new StatusToTeammate(belongTo, c)
-                        : new StatusToEnemy(belongTo, c)
+                          : new StatusHealListener(belongTo, c)
         );
         belongTo.bp.addActionListener(listener);
     }
@@ -141,41 +139,22 @@ class Skill2 extends PassiveSkill {
         return SkillName;
     }
 
-    private class StatusToEnemy extends Status implements StatusRunnable {
-        public StatusToEnemy(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.AFTER_HEAL || trigger == Trigger.AFTER_ROUND;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            if (trigger == Trigger.AFTER_HEAL) {
-                Skill2.this.addStore(((ParamHealInfo) param).healInfo.getTraceableNumber().getNumber() * 0.2);
-            } else {
-                Skill2.this.heal();
-            }
-            return false;
+    private class StatusHealListener extends Status {
+        public StatusHealListener(Character from, Character belongTo) {
+            super(SkillName + "治疗监听", from, belongTo);
+            runOn(Trigger.AFTER_HEAL, param ->
+                    Skill2.this.addStore(((ParamHealInfo) param).healInfo.getTraceableNumber().getNumber() * 0.2)
+            );
+            runOn(Trigger.AFTER_ROUND, _ -> Skill2.this.heal());
         }
     }
 
-    private class StatusToTeammate extends Status implements StatusRunnable {
+    private class StatusToTeammate extends Status {
         public StatusToTeammate(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.BEFORE_ATTACK;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            Skill2.this.addStore(((ParamAttackInfo) param).getAttackInfo().getTraceableNumber().getNumber() * 0.25);
-            return false;
+            super(SkillName + "受到伤害监听", from, belongTo);
+            runOn(Trigger.BEFORE_ATTACK, param ->
+                    Skill2.this.addStore(((ParamAttackInfo) param).getAttackInfo().getTraceableNumber().getNumber() * 0.25)
+            );
         }
     }
 }

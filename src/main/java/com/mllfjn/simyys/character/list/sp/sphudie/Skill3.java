@@ -68,20 +68,12 @@ class Skill3 extends Skill {
         return Optional.of(target);
     }
 
-    private static class StatusZengShang extends Status implements AttributeModifier {
+    private static class StatusZengShang extends Status {
         public StatusZengShang(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.BUFF, StatusForm.ZHUANG_TAI);
+            super(SkillName + "增伤", from, belongTo);
+            type(StatusType.BUFF, StatusForm.ZHUANG_TAI);
             duration(StatusDurationType.CHI_XU, 1);
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.ZENG_SHANG;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return 20;
+            attribute(Attribute.ZENG_SHANG, 20.0);
         }
     }
 }

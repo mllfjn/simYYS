@@ -4,12 +4,9 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
-import com.mllfjn.simyys.character.status.AttributeModifier;
 import com.mllfjn.simyys.character.status.Status;
-import com.mllfjn.simyys.character.status.StatusForm;
-import com.mllfjn.simyys.character.status.StatusType;
-import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
-import com.mllfjn.simyys.interactive.AttackInfo;
+import com.mllfjn.simyys.character.status.Trigger;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 
 import java.util.Optional;
 
@@ -37,30 +34,13 @@ class Skill2Special extends Skill {
         target.die();
         skill2.convert(belongTo);
         belongTo.getInteractive().getNewRound(belongTo);
-        belongTo.addStatus(new StatusBQZY(belongTo));
+        Status.of(SkillName, belongTo)
+                .attribute(Attribute.SPEED, 30.0)
+                .runOn(Trigger.WHEN_ATTACK, param ->
+                        ((ParamAttackInfo) param).getAttackInfo().getTraceableNumber().mul(1.3, SkillName)
+                ).addTo();
         belongTo.removeSkill(this);
 
         return Optional.of(target);
-    }
-
-    static class StatusBQZY extends Status implements AttributeModifier, InfluenceDamageWhenAttack {
-        public StatusBQZY(Character character) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.SPEED;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return 30;
-        }
-
-        @Override
-        public void doInfluenceWhenAttack(AttackInfo attackInfo) {
-            attackInfo.getTraceableNumber().mul(1.3, SkillName);
-        }
     }
 }

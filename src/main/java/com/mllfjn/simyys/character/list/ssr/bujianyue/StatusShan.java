@@ -10,13 +10,14 @@ import com.mllfjn.simyys.ratecontroller.RateController;
 import java.util.ArrayList;
 import java.util.List;
 
-class StatusShan extends Status implements Displayable {
+class StatusShan extends Status {
     static final String StatusName = "峦纹·山";
 
     private int stack = 1;
 
     private StatusShan(Character character) {
-        super(character, character, StatusType.GENERAL, StatusForm.YIN_JI);
+        super(StatusName, character, character, StatusType.GENERAL, StatusForm.YIN_JI);
+        display(() -> StatusName + stack);
     }
 
     static void addStack(Character character) {
@@ -84,10 +85,5 @@ class StatusShan extends Status implements Displayable {
                 status.delete();
             }
         }
-    }
-
-    @Override
-    public String getDisplayText() {
-        return StatusName + stack;
     }
 }

@@ -68,7 +68,7 @@ class Skill4 extends Skill {
         private StatusTZZReduceSpeed(Character from, Character belongTo) {
             super(StatusName, from, belongTo);
             type(StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
-            attribute(Attribute.SPEED, _ -> -20.0);
+            attribute(Attribute.SPEED, -20.0);
             duration(StatusDurationType.CHI_XU, 1);
             displayName();
         }

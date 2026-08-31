@@ -3,7 +3,6 @@ package com.mllfjn.simyys.character.list.sr.qingji;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
-import com.mllfjn.simyys.character.status.AttributeModifier;
 import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.character.status.StatusForm;
 import com.mllfjn.simyys.character.status.StatusType;
@@ -26,11 +25,12 @@ class Skill2 extends PassiveSkill {
         return SkillName;
     }
 
-    static class StatusQingJiReduceDefense extends Status implements AttributeModifier {
+    static class StatusQingJiReduceDefense extends Status {
         private int stack = 1;
 
         private StatusQingJiReduceDefense(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
+            super(SkillName + "减防", from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
+            attribute(Attribute.DEFENCE, _ -> -20.0 * stack);
         }
 
         static void addStack(Character from, Character belongTo) {
@@ -43,16 +43,6 @@ class Skill2 extends PassiveSkill {
                             },
                             () -> belongTo.addStatus(new StatusQingJiReduceDefense(from, belongTo))
                     );
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.DEFENCE;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return -stack * 20;
         }
     }
 }

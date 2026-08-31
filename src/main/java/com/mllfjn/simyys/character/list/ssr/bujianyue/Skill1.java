@@ -48,20 +48,11 @@ class Skill1 extends Skill1PuGongBase {
         return SkillName;
     }
 
-    private static class StatusEffectResist extends Status implements AttributeModifier {
+    private static class StatusEffectResist extends Status {
         public StatusEffectResist(Character character) {
-            super(character, character, StatusType.BUFF, StatusForm.ZHUANG_TAI);
+            super(SkillName + "效果抵抗", character, character, StatusType.BUFF, StatusForm.ZHUANG_TAI);
             duration(StatusDurationType.CHI_XU, 2);
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.EFFECT_RESIST_RATE;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return 50;
+            attribute(Attribute.EFFECT_RESIST_RATE, 50.0);
         }
     }
 }
