@@ -1,11 +1,10 @@
 package com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.shenqilou;
 
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.character.status.Displayable;
 import com.mllfjn.simyys.interactive.InteractiveInfo;
-import com.mllfjn.simyys.character.status.StatusShield;
+import com.mllfjn.simyys.character.status.instance.StatusShield;
 
-class StatusShenWuHuDun extends StatusShield implements Displayable {
+class StatusShenWuHuDun extends StatusShield {
     private static final String StatusName = "蜃气护盾";
 
     private int count = 3;
@@ -13,6 +12,7 @@ class StatusShenWuHuDun extends StatusShield implements Displayable {
     private StatusShenWuHuDun(Character character) {
         // 获得最大生命值100%蜃雾护盾
         super(character, character, character.getMaxHp());
+        display(() -> StatusName + count);
     }
 
     public static void get(Character character) {
@@ -34,10 +34,5 @@ class StatusShenWuHuDun extends StatusShield implements Displayable {
             count--;
         }
         return count == 0;
-    }
-
-    @Override
-    public String getDisplayText() {
-        return StatusName + count;
     }
 }

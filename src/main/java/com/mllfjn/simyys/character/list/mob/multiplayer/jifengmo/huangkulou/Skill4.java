@@ -34,7 +34,7 @@ class Skill4 extends Skill {
         // 对全体玩家造成1段伤害
         interactive.attackTypical(this, targets, 150, AttackType.QUN_TI);
         // 并附带20%的概率眩晕玩家
-        interactive.effect(this, targets, 20, 0, true, StatusStun.getSupplier(1));
+        interactive.effect(this, targets, 20, true, StatusStun.getSupplier(1));
         // 当场上有部下时,邀战所有部下
         List<Character> bx = new CharacterFinder(belongTo)
                 .filterTeammate()

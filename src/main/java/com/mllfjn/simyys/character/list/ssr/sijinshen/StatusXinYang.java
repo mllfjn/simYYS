@@ -3,22 +3,26 @@ package com.mllfjn.simyys.character.list.ssr.sijinshen;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.status.*;
+import com.mllfjn.simyys.character.status.instance.StatusShield;
 
 import java.util.List;
 
-class StatusXinYang extends Status implements Displayable {
+class StatusXinYang extends Status {
     private int stack;
 
     private final boolean getNewRoundWhenXinYangRemoved;
 
-    StatusXinYang(Character character, boolean getNewRoundWhenXinYangRemoved) {
-        super(character, character, StatusType.BUFF, StatusForm.YIN_JI);
+    StatusXinYang(SiJinShen character, boolean getNewRoundWhenXinYangRemoved) {
+        super("信仰", character, character, StatusType.BUFF, StatusForm.YIN_JI);
         this.getNewRoundWhenXinYangRemoved = getNewRoundWhenXinYangRemoved;
-    }
-
-    @Override
-    public void beforeDelete() {
-        ((SiJinShen) belongTo).statusXinYang = null;
+        beforeDelete(() -> character.statusXinYang = null);
+        display(() -> {
+            if (stack != 0) {
+                return getName() + stack;
+            } else {
+                return null;
+            }
+        });
     }
 
     void addStack() {
@@ -36,15 +40,6 @@ class StatusXinYang extends Status implements Displayable {
                         belongTo.doInteractive(interactive -> interactive.getNewRound(c))
                 );
             }
-        }
-    }
-
-    @Override
-    public String getDisplayText() {
-        if (stack != 0) {
-            return "信仰" + stack;
-        } else {
-            return null;
         }
     }
 }

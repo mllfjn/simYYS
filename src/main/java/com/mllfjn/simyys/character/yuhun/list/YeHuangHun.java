@@ -1,12 +1,10 @@
 package com.mllfjn.simyys.character.yuhun.list;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAddCrowdControl;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunSealResponse;
 import com.mllfjn.simyys.character.yuhun.YuHunUnfullMark;
@@ -40,68 +38,51 @@ public class YeHuangHun extends YuHun implements YuHunSealResponse, YuHunUnfullM
         character.removeStatus(status);
     }
 
-    class StatusYHHListener extends Status implements StatusRunnable {
-        private boolean counting = false;
+    class StatusYHHListener extends Status {
         private final Set<Character> effected = new HashSet<>();
 
         public StatusYHHListener(Character character) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.BEFORE_ROUND
-                    || (counting && trigger == Trigger.MAKING_CROWD_CONTROL)
-                    || trigger == Trigger.AFTER_ROUND;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            // 回合开始时开始计算
-            // 造成伤害时加一层并且计入已生效名单
+            super(YuHunName + "监听", character);
+            // 回合开始时开始监听控制
+            runOn(Trigger.BEFORE_ROUND, _ -> enableAction(Trigger.MAKING_CROWD_CONTROL));
+            // 造成控制时加一层并且计入已生效名单
+            runOnAndDisable(Trigger.MAKING_CROWD_CONTROL, param ->
+                    effected.add(((ParamAddCrowdControl) param).getEffectInfo().getTarget())
+            );
             // 回合结束时添加状态并且清除名单
-            if (trigger == Trigger.BEFORE_ROUND) {
-                counting = true;
-            } else if (trigger == Trigger.MAKING_CROWD_CONTROL && param instanceof ParamAddCrowdControl pac) {
-                effected.add(pac.getEffectInfo().getTarget());
-            } else {
-                counting = false;
+            runOn(Trigger.AFTER_ROUND, _ -> {
                 if (!effected.isEmpty()) {
-                    int speed = 15 * Math.min(6, effected.size());
                     List<Character> targets = new CharacterFinder(belongTo)
                             .filterTeammate()
                             .filterSummon(false)
                             .getList();
 
                     for (Character target : targets) {
-                        target.addStatus(new StatusYHH(from, target, speed));
+                        StatusYHH.addStack(from, target, effected.size());
                     }
 
                     effected.clear();
                     YeHuangHun.this.yuHunEffect();
                 }
-            }
-            return false;
+                disableAction(Trigger.MAKING_CROWD_CONTROL);
+            });
         }
 
-        static class StatusYHH extends Status implements AttributeModifier {
-            private final int speed;
+        static class StatusYHH extends Status {
+            private int stack;
 
-            public StatusYHH(Character from, Character belongTo, int speed) {
-                super(from, belongTo, StatusType.BUFF, StatusForm.ZHUANG_TAI);
-                this.speed = speed;
+            private StatusYHH(Character from, Character belongTo) {
+                super(YuHunName, from, belongTo, StatusType.BUFF, StatusForm.ZHUANG_TAI);
 
-                setDurationType(StatusDurationType.WEI_CHI, 1);
+                duration(StatusDurationType.WEI_CHI, 1);
+                addTo();
             }
 
-            @Override
-            public boolean isAffectAttribute(Attribute attribute) {
-                return attribute == Attribute.SPEED;
-            }
-
-            @Override
-            public double getInfluence(Attribute attribute, StatusModifyParam param) {
-                return speed;
+            static void addStack(Character from, Character belongTo, int stack) {
+                StatusYHH statusYHH = belongTo.getStatus(StatusYHH.class)
+                        .orElseGet(() -> new StatusYHH(from, belongTo));
+                statusYHH.stack = Math.min(6, statusYHH.stack + stack);
+                statusYHH.attribute(Attribute.SPEED, 15 * statusYHH.stack);
             }
         }
     }

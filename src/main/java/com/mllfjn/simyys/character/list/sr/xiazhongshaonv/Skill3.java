@@ -6,9 +6,6 @@ import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.character.status.StatusDurationType;
-import com.mllfjn.simyys.character.status.StatusForm;
-import com.mllfjn.simyys.character.status.StatusType;
-import com.mllfjn.simyys.character.status.determinant.PreventDie;
 
 import java.util.List;
 import java.util.Optional;
@@ -42,33 +39,22 @@ class Skill3 extends Skill {
         return Optional.empty();
     }
 
-    private class StatusRecordHp extends Status implements PreventDie {
+    private class StatusRecordHp extends Status {
         private final double recordHp;
 
         public StatusRecordHp(Character from, Character belongTo, int recordPercent) {
-            super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-            setDurationType(StatusDurationType.WEI_CHI, 2);
+            super(SkillName + "免死", from, belongTo);
+            duration(StatusDurationType.WEI_CHI, 2);
             recordHp = belongTo.getHp() * recordPercent / 100;
-        }
-
-        @Override
-        public void beforeDelete() {
-            double needRecovery = recordHp - belongTo.getHp();
-            if (needRecovery > 0) {
-                from.doInteractive(interactive ->
-                        interactive.recovery(Skill3.this, belongTo, needRecovery)
-                );
-            }
-        }
-
-        @Override
-        public void preventDie(double excessDamage) {
-            delete();
-        }
-
-        @Override
-        public String getName() {
-            return SkillName;
+            preventDie(_ -> delete());
+            beforeDelete(() -> {
+                double needRecovery = recordHp - belongTo.getHp();
+                if (needRecovery > 0) {
+                    from.doInteractive(interactive ->
+                            interactive.recovery(Skill3.this, belongTo, needRecovery)
+                    );
+                }
+            });
         }
     }
 }

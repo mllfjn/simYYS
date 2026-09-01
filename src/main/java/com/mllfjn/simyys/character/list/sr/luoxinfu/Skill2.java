@@ -1,12 +1,10 @@
 package com.mllfjn.simyys.character.list.sr.luoxinfu;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.ParamUseSkill;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.StatusSupplier;
 
@@ -20,12 +18,12 @@ class Skill2 extends PassiveSkill {
     void madeAttack(Character target) {
         if (isActive()) {
             getBelongTo().doInteractive(interactive ->
-                    interactive.effect(this, target, 60, 0, true,
+                    interactive.effect(this, target, 60, true,
                             new StatusSupplier(StatusZhuYin.StatusName, StatusZhuYin.class,
-                                    (from, to) ->
+                                    (_, to) ->
                                             to.getStatus(StatusZhuYin.class)
                                                     .ifPresentOrElse(
-                                                            status -> status.setDuration(2),
+                                                            status -> status.duration(2),
                                                             () -> to.addStatus(new StatusZhuYin(getBelongTo(), to))
                                                     )
                             )
@@ -39,47 +37,28 @@ class Skill2 extends PassiveSkill {
         return SkillName;
     }
 
-    private class StatusZhuYin extends Status implements StatusRunnable {
+    private class StatusZhuYin extends Status {
         private static final String StatusName = "蛛印";
 
         private StatusZhuYin(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
-            setDurationType(StatusDurationType.CHI_XU, 2);
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.USED_SKILL;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            if (param instanceof ParamUseSkill pus && pus.getCost() > 0) {
-                from.doInteractive(interactive ->
-                        interactive.attack(AttackInfo
-                                .createJianJieAttack(from, Skill2.this, belongTo, from.getAttack())
-                        )
-                );
-                belongTo.addStatus(new StatusZhuYin.StatusReduceSpeed(from, belongTo));
-            }
-            return false;
-        }
-
-        static class StatusReduceSpeed extends Status implements AttributeModifier {
-            public StatusReduceSpeed(Character from, Character belongTo) {
-                super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
-                setDurationType(StatusDurationType.CHI_XU, 1);
-            }
-
-            @Override
-            public boolean isAffectAttribute(Attribute attribute) {
-                return attribute == Attribute.SPEED;
-            }
-
-            @Override
-            public double getInfluence(Attribute attribute, StatusModifyParam param) {
-                return -20;
-            }
+            super(StatusName, from, belongTo);
+            type(StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
+            duration(StatusDurationType.CHI_XU, 2);
+            runOn(Trigger.USED_SKILL, param -> {
+                ParamUseSkill pus = (ParamUseSkill) param;
+                if (pus.getCost() > 0) {
+                    from.doInteractive(interactive ->
+                            interactive.attack(AttackInfo
+                                    .createJianJieAttack(from, Skill2.this, belongTo, from.getAttack())
+                            )
+                    );
+                    Status.of(StatusName + "减速", from, belongTo)
+                            .type(StatusType.DEBUFF, StatusForm.ZHUANG_TAI)
+                            .duration(StatusDurationType.CHI_XU, 1)
+                            .attribute(Attribute.SPEED, -20.0)
+                            .addTo();
+                }
+            });
         }
     }
 }

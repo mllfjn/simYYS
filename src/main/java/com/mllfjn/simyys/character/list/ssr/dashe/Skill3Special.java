@@ -21,8 +21,8 @@ class Skill3Special extends Skill3Base {
     @Override
     int getCommandSheMoTimes() {
         Character belongTo = getBelongTo();
-        int guiHuoCount = belongTo.getBp().getGuiHuoCount(belongTo);
-        belongTo.getBp().useGuiHuo(belongTo, guiHuoCount);
+        int guiHuoCount = belongTo.bp().getGuiHuoCount(belongTo);
+        belongTo.bp().useGuiHuo(belongTo, guiHuoCount);
         return guiHuoCount;
     }
 

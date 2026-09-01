@@ -7,12 +7,9 @@ import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.skill.Skill1PuGongBase;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
-import com.mllfjn.simyys.character.status.triggerParam.ParamUseSkill;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.Interactive;
-import com.mllfjn.simyys.interactive.InteractiveInfo;
 import com.mllfjn.simyys.ratecontroller.RateController;
 
 import java.util.List;
@@ -40,17 +37,20 @@ class Skill3 extends Skill {
         this.increase = 1 + level * 0.1;
     }
 
-    private void doInfluence(InteractiveInfo interactiveInfo) {
+    private void addRunOn(Status status) {
         if (increase == 1) {
             return;
         }
-        Skill fromSkill = interactiveInfo.getSkill();
-        if (fromSkill instanceof Skill1PuGongBase) {
-            interactiveInfo.getTraceableNumber().mul(increase, SkillName);
-        }
+        status.runOn(Trigger.WHEN_ATTACK, param -> {
+            AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
+            Skill fromSkill = attackInfo.getSkill();
+            if (fromSkill instanceof Skill1PuGongBase) {
+                attackInfo.getTraceableNumber().mul(increase, SkillName);
+            }
+        });
     }
 
-    private void doWhenAttack(ParamUseSkill pus) {
+    private void doWhenAttack() {
         BoYa boYa = (BoYa) getBelongTo();
         if (!boYa.alive) {
             return;
@@ -89,57 +89,24 @@ class Skill3 extends Skill {
         return Optional.empty();
     }
 
-    static class StatusBaoYan extends Status implements Displayable, AttributeModifier
-            , InfluenceDamageWhenAttack, StatusRunnable {
+    static class StatusBaoYan extends Status {
         private static final String StatusName = "豹眼";
 
-        private final Skill3 skill;
-
         public StatusBaoYan(Character from, Character belongTo, Skill3 skill) {
-            super(from, belongTo, StatusType.BUFF, StatusForm.ZHUANG_TAI);
-            this.skill = skill;
+            super(StatusName, from, belongTo, StatusType.BUFF, StatusForm.ZHUANG_TAI);
 
-            setDurationType(StatusDurationType.CHI_XU, 2);
+            duration(StatusDurationType.CHI_XU, 2);
+            displayNameAndDuration();
+            attribute(Attribute.CRIT_POWER, skill.critPower);
+            runOn(Trigger.USED_SKILL, Trigger.USED_PU_GONG, _ -> skill.doWhenAttack());
+            skill.addRunOn(this);
         }
 
         public static void install(Character from, Character belongTo, Skill3 skill) {
             belongTo.getStatus(StatusBaoYan.class).ifPresentOrElse(
-                    status -> status.setDuration(2),
+                    status -> status.duration(2),
                     () -> belongTo.addStatus(new StatusBaoYan(from, belongTo, skill))
             );
-        }
-
-        @Override
-        public String getDisplayText() {
-            return StatusName + getDuration();
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.CRIT_POWER;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return skill.critPower;
-        }
-
-        @Override
-        public void doInfluenceWhenAttack(AttackInfo attackInfo) {
-            skill.doInfluence(attackInfo);
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.USED_SKILL || trigger == Trigger.USED_PU_GONG;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            if (param instanceof ParamUseSkill pus) {
-                skill.doWhenAttack(pus);
-            }
-            return false;
         }
     }
 }

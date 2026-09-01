@@ -7,12 +7,11 @@ import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.skill.SkillAuto;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunFactory;
-import com.mllfjn.simyys.character.status.Displayable;
 import com.mllfjn.simyys.character.status.Status;
-import com.mllfjn.simyys.character.status.StatusShield;
+import com.mllfjn.simyys.character.status.instance.StatusShield;
 import com.mllfjn.simyys.customnode.CustomInputMenuItem;
 import com.mllfjn.simyys.utils.DecimalFormatUtil;
-import com.mllfjn.simyys.utils.SerializableConsumer;
+import com.mllfjn.simyys.utils.serializable.SerialConsumer;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -47,7 +46,7 @@ public class CharacterIcon implements Serializable {
                     } else {
                         if (skill instanceof PassiveSkill) {
                             // 被动技能不可点击
-                            setOnMousePressed(event -> {
+                            setOnMousePressed(_ -> {
                             });
                             setText("被动 " + skill.getName());
                             String skillDesc = skill.getSkillDesc();
@@ -92,9 +91,9 @@ public class CharacterIcon implements Serializable {
     private transient VBox bottom;
 
     // 视觉效果
-    private SerializableConsumer<Node> visualEffectTop;
-    private SerializableConsumer<Node> visualEffectCenter;
-    private SerializableConsumer<Node> visualEffectBottom;
+    private SerialConsumer<Node> visualEffectTop;
+    private SerialConsumer<Node> visualEffectCenter;
+    private SerialConsumer<Node> visualEffectBottom;
 
     // 状态栏
     private transient TextFlow statuses;
@@ -153,11 +152,11 @@ public class CharacterIcon implements Serializable {
         MenuItem autoToGreen = new MenuItem(FlagChangeInfo.FlagType.GREEN.type);
         MenuItem autoToRed = new MenuItem(FlagChangeInfo.FlagType.RED.type);
 
-        autoToGreen.setOnAction(e -> {
+        autoToGreen.setOnAction(_ -> {
             character.bp.situation.setAuto(character, FlagChangeInfo.FlagType.GREEN);
             character.bp.characterSetFlag(FlagChangeInfo.FlagType.GREEN, character);
         });
-        autoToRed.setOnAction(e -> {
+        autoToRed.setOnAction(_ -> {
             character.bp.situation.setAuto(character, FlagChangeInfo.FlagType.RED);
             character.bp.characterSetFlag(FlagChangeInfo.FlagType.RED, character);
         });
@@ -215,7 +214,7 @@ public class CharacterIcon implements Serializable {
         ObservableList<Skill> skills = character.getReadOnlySkillList();
         skillBox = new ComboBox<>(skills);
         selectLockSkill();
-        skillBox.valueProperty().addListener((obs, old, val) -> {
+        skillBox.valueProperty().addListener((_, _, val) -> {
             int skillID = val.getSkillID();
             character.setLockSkill(skillID);
 
@@ -368,14 +367,12 @@ public class CharacterIcon implements Serializable {
 
     private void refreshStatusLabel() {
         statuses.getChildren().clear();
-//        StringJoiner sj = new StringJoiner(Displayable.DELIMITER);
         for (Status status : character.getStatuses()) {
-            if (status instanceof Displayable d) {
-                String text = d.getDisplayText();
+            if (status.isDisplayText()) {
+                String text = status.getDisplayText();
                 if (text != null) {
-//                    sj.add(text);
-                    Text t = new Text(text + Displayable.DELIMITER);
-                    Color color = d.getColor(status.statusType);
+                    Text t = new Text(text + Status.DELIMITER);
+                    Color color = status.getDisplayColor();
                     if (color != null) {
                         t.setFill(color);
                     }
@@ -383,7 +380,6 @@ public class CharacterIcon implements Serializable {
                 }
             }
         }
-//        this.status.setText(sj.toString());
     }
 
     private void refreshProperties() {
@@ -423,17 +419,17 @@ public class CharacterIcon implements Serializable {
         }
     }
 
-    public void setVisualEffectTop(SerializableConsumer<Node> consumer) {
+    public void setVisualEffectTop(SerialConsumer<Node> consumer) {
         consumer.accept(top);
         visualEffectTop = consumer;
     }
 
-    public void setVisualEffectCenter(SerializableConsumer<Node> consumer) {
+    public void setVisualEffectCenter(SerialConsumer<Node> consumer) {
         consumer.accept(center);
         visualEffectCenter = consumer;
     }
 
-    public void setVisualEffectBottom(SerializableConsumer<Node> consumer) {
+    public void setVisualEffectBottom(SerialConsumer<Node> consumer) {
         consumer.accept(bottom);
         visualEffectBottom = consumer;
     }
@@ -497,7 +493,7 @@ public class CharacterIcon implements Serializable {
             if (displaying) {
                 item.setSelected(true);
             }
-            item.selectedProperty().addListener((obs, old, val) -> {
+            item.selectedProperty().addListener((_, _, val) -> {
                 if (val) {
                     start();
                     setLabelText();

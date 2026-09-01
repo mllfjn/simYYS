@@ -1,13 +1,11 @@
 package com.mllfjn.simyys.character.list.ssr.sijinshen;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.battleevent.BattleActionListener;
 import com.mllfjn.simyys.battleevent.BattleEvent;
 import com.mllfjn.simyys.battleevent.EventActionDone;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
 class Skill2 extends PassiveSkill {
     private static final String SkillName = "警醒";
@@ -51,20 +49,10 @@ class Skill2 extends PassiveSkill {
         return SkillName;
     }
 
-    private class StatusUseSkillListener extends Status implements StatusRunnable {
+    private class StatusUseSkillListener extends Status {
         public StatusUseSkillListener(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.WILL_USE_SKILL;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            Skill2.this.teammateUsedSkill = true;
-            return false;
+            super(SkillName + "使用技能监听", from, belongTo);
+            runOn(Trigger.WILL_USE_SKILL, _ -> Skill2.this.teammateUsedSkill = true);
         }
     }
 }

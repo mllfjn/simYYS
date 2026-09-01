@@ -7,7 +7,6 @@ import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.ParamLocationChange;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
 
@@ -55,17 +54,24 @@ class Skill3 extends Skill {
         return Optional.of(target);
     }
 
-    static class StatusTongGu extends Status implements Displayable, StatusRunnable {
+    static class StatusTongGu extends Status {
         private static final String StatusName = "瞳蛊";
-
-        private final boolean prohibitIncrease;
 
         private int stack = 1;
 
         private StatusTongGu(Character from, Character belongTo, boolean prohibitIncrease) {
-            super(from, belongTo, StatusType.DEBUFF, StatusForm.YIN_JI);
-            this.prohibitIncrease = prohibitIncrease;
-            setDurationType(StatusDurationType.WEI_CHI, 1);
+            super(StatusName, from, belongTo);
+            type(StatusType.DEBUFF, StatusForm.YIN_JI);
+            display(() -> StatusName + stack);
+            duration(StatusDurationType.WEI_CHI, 1);
+            if (prohibitIncrease) {
+                runOn(Trigger.LOCATION_WILL_CHANGE, triggerParam -> {
+                    ParamLocationChange plc = (ParamLocationChange) triggerParam;
+                    if (plc.isFromIncrease) {
+                        plc.cancel();
+                    }
+                });
+            }
         }
 
         static void addStack(Character from, Character belongTo, boolean prohibitIncrease) {
@@ -80,27 +86,6 @@ class Skill3 extends Skill {
             if (stack < 3) {
                 stack++;
             }
-        }
-
-        @Override
-        public String getDisplayText() {
-            return StatusName + stack;
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return prohibitIncrease && trigger == Trigger.LOCATION_CHANGE;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            if (trigger == Trigger.LOCATION_CHANGE) {
-                ParamLocationChange plc = (ParamLocationChange) param;
-                if (plc.isFromIncrease) {
-                    plc.cancel();
-                }
-            }
-            return false;
         }
     }
 }

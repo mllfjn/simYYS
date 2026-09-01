@@ -1,42 +1,20 @@
 package com.mllfjn.simyys.character.list.sr.huajing;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 
 import java.util.List;
 
-class StatusChiJia extends Status implements StatusRunnable, Displayable {
-
-    private final Skill2 skill2;
+class StatusChiJia extends Status {
     private int stack = 3;
 
-    public StatusChiJia(Character from, Character belongTo, Skill2 skill2) {
-        super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-        this.skill2 = skill2;
-    }
-
-    @Override
-    public void beforeDelete() {
-        ((HuaJing) from).statusChiJia = null;
-    }
-
-    @Override
-    public String getDisplayText() {
-        return Skill2.SkillName + stack;
-    }
-
-    @Override
-    public boolean runnable(Trigger trigger) {
-        return trigger == Trigger.AFTER_ACTION || trigger == Trigger.AFTER_ROUND;
-    }
-
-    @Override
-    public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-        if (trigger == Trigger.AFTER_ACTION) {
+    public StatusChiJia(HuaJing from, Character belongTo, Skill2 skill2) {
+        super(Skill2.SkillName, from, belongTo);
+        display(() -> Skill2.SkillName + stack);
+        beforeDelete(() -> from.statusChiJia = null);
+        runOn(Trigger.AFTER_ACTION, _ -> {
             List<Character> list = new CharacterFinder(belongTo)
                     .filterEnemy()
                     .getList();
@@ -59,14 +37,11 @@ class StatusChiJia extends Status implements StatusRunnable, Displayable {
             stack--;
             skill2.useDone();
             if (stack == 1) {
-                return true;
-            } else {
-                stack--;
+                delete();
             }
-        } else {
-            from.doInteractive(interactive -> interactive.increaseLocation(belongTo, 20));
-        }
-
-        return false;
+        });
+        runOn(Trigger.AFTER_ROUND, _ ->
+                from.doInteractive(interactive -> interactive.increaseLocation(belongTo, 20))
+        );
     }
 }

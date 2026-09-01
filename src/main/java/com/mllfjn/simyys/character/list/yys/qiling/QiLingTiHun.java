@@ -1,14 +1,11 @@
 package com.mllfjn.simyys.character.list.yys.qiling;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.battleevent.StatusAdder;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.determinant.PreventDie;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.AttackType;
 
@@ -22,18 +19,31 @@ class QiLingTiHun {
         character.addStatus(new StatusQLTHListener(character));
     }
 
-    private static class StatusQLTHListener extends Status implements StatusRunnable {
-        private final StatusAdder<?> adder;
+    private static class StatusQLTHListener extends Status {
         private int cooling = 0;
         private int remainingTimes = 3;
 
         public StatusQLTHListener(Character character) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-            adder = character.bp.addStatusAdder(c ->
+            super(QiLingName + "监听", character);
+            StatusAdder<?> adder = character.bp.addStatusAdder(c ->
                     c.team == character.team && c != character
                             ? new StatusTHPreventDie(character, c)
                             : null
             );
+            beforeDelete(adder::deleteAndRemove);
+            // 未在冷却时血量改变时触发
+            runOn(Trigger.HP_CHANGE, _ -> check());
+
+            // 使用后计算冷却
+            runOnAndDisable(Trigger.AFTER_ROUND, _ -> {
+                cooling--;
+                if (cooling == 0) {
+                    check();
+                } else {
+                    enableAction(Trigger.HP_CHANGE);
+                    disableAction(Trigger.AFTER_ROUND);
+                }
+            });
         }
 
         public void takeEffect() {
@@ -44,104 +54,57 @@ class QiLingTiHun {
             }
         }
 
-        @Override
-        public void beforeDelete() {
-            adder.deleteAndRemove();
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            if (cooling == 0) {
-                // 未在冷却时血量改变时触发
-                return trigger == Trigger.HP_CHANGE;
-            } else {
-                // 冷却时回合后触发
-                return trigger == Trigger.AFTER_ROUND;
-            }
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            if (trigger == Trigger.HP_CHANGE) {
-                if (belongTo.getHp() <= (belongTo.getMaxHp() / 2)) {
-                    // 阴阳师生命小于等于50%时,薙魂攻击敌方全体,造成100%的伤害
-                    action();
+        private void check() {
+            // 阴阳师生命小于等于50%时,薙魂攻击敌方全体,造成100%的伤害
+            if (belongTo.getHpPercent() < 0.5) {
+                QiLingFactory.yuHunEffect(belongTo, QiLingName);
+                List<Character> enemies = new CharacterFinder(belongTo)
+                        .filterEnemy()
+                        .getList();
+                belongTo.doInteractive(interactive ->
+                        interactive.attackTypical(SKILL, enemies, 100, AttackType.QUN_TI)
+                );
+                // 并提升友方全体30%伤害,持续2回合
+                List<Character> teammates = new CharacterFinder(belongTo)
+                        .filterTeammate()
+                        .getList();
+                for (Character teammate : teammates) {
+                    StatusTHZengShang.install(belongTo, teammate);
                 }
-            } else {
-                cooling--;
-                if (cooling == 0) {
-                    action();
-                }
+                // 冷却2回合,好像实际是3回合
+                cooling = 3;
+                disableAction(Trigger.HP_CHANGE);
+                enableAction(Trigger.AFTER_ROUND);
             }
-            return false;
         }
 
-        private void action() {
-            QiLingFactory.yuHunEffect(belongTo, QiLingName);
-            List<Character> enemies = new CharacterFinder(belongTo)
-                    .filterEnemy()
-                    .getList();
-            belongTo.doInteractive(interactive ->
-                    interactive.attackTypical(SKILL, enemies, 100, AttackType.QUN_TI)
-            );
-            // 并提升友方全体30%伤害,持续2回合
-            List<Character> teammates = new CharacterFinder(belongTo)
-                    .filterTeammate()
-                    .getList();
-            for (Character teammate : teammates) {
-                StatusTHZengShang.install(belongTo, teammate);
-            }
-            // 冷却2回合,好像实际是3回合
-            cooling = 3;
-        }
-
-        class StatusTHPreventDie extends Status implements PreventDie {
+        class StatusTHPreventDie extends Status {
 
             public StatusTHPreventDie(Character from, Character belongTo) {
-                super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-            }
-
-            @Override
-            public void preventDie(double excessDamage) {
-                StatusQLTHListener.this.takeEffect();
-                belongTo.setHp(belongTo.getMaxHp() * 0.2);
-                from.beHurt(AttackInfo.createRealAttack(from, SKILL, from, excessDamage));
-            }
-
-            @Override
-            public String getName() {
-                return QiLingName;
+                super(QiLingName + "免死", from, belongTo);
+                preventDie(excessDamage -> {
+                    StatusQLTHListener.this.takeEffect();
+                    belongTo.setHp(belongTo.getMaxHp() * 0.2);
+                    from.beHurt(AttackInfo.createRealAttack(from, SKILL, from, excessDamage));
+                });
             }
         }
 
-        static class StatusTHZengShang extends Status implements AttributeModifier, Displayable {
+        static class StatusTHZengShang extends Status {
 
             private StatusTHZengShang(Character from, Character belongTo) {
-                super(from, belongTo, StatusType.BUFF, StatusForm.ZHUANG_TAI);
-                setDurationType(StatusDurationType.CHI_XU, 2);
+                super("契薙", from, belongTo, StatusType.BUFF, StatusForm.ZHUANG_TAI);
+                duration(StatusDurationType.CHI_XU, 2);
+                attribute(Attribute.ZENG_SHANG, 30);
+                displayNameAndDuration();
             }
 
             public static void install(Character from, Character belongTo) {
                 belongTo.getStatus(StatusTHZengShang.class)
                         .ifPresentOrElse(
-                                status -> status.setDuration(2),
+                                status -> status.duration(2),
                                 () -> belongTo.addStatus(new StatusTHZengShang(from, belongTo))
                         );
-            }
-
-            @Override
-            public boolean isAffectAttribute(Attribute attribute) {
-                return attribute == Attribute.ZENG_SHANG;
-            }
-
-            @Override
-            public double getInfluence(Attribute attribute, StatusModifyParam param) {
-                return 30;
-            }
-
-            @Override
-            public String getDisplayText() {
-                return "契薙" + getDuration();
             }
         }
     }

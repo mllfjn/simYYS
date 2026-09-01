@@ -1,9 +1,13 @@
 package com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.dizhennian;
 
 import com.mllfjn.simyys.BattlePane;
+import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
+import com.mllfjn.simyys.character.status.Status;
+import com.mllfjn.simyys.character.status.StatusDurationType;
 import com.mllfjn.simyys.interactive.AttackInfo;
+import javafx.scene.paint.Color;
 
 import java.util.Optional;
 
@@ -20,7 +24,7 @@ class Skill2 extends Skill {
             skill4.setCooling(2);
         }
 
-        target.getStatus(Skill4.StatusNingShiRecordDamage.StatusDZNBuffsDebuff.class).ifPresentOrElse(
+        target.getStatus(StatusDZNReduceDefense.class).ifPresentOrElse(
                 statusDebuff -> {
                     // 已经有了虚弱状态
                     int duration = statusDebuff.getDuration();
@@ -29,13 +33,26 @@ class Skill2 extends Skill {
                     info.setCanThroughShield(true);
                     target.doInteractive(interactive -> interactive.attack(info));
                     // 红凝
-                    target.addStatus(new Skill4.StatusNingShiRecordDamage.StatusHongNing(diZhenNian, target));
+                    Status.of("红凝", diZhenNian, target)
+                            .display(() -> "红凝")
+                            .setColor(Color.RED)
+                            .addTo();
+                    diZhenNian.setHongNing(target);
                 },
-                () -> target.addStatus(new Skill4.StatusNingShiRecordDamage.StatusDZNBuffsDebuff(diZhenNian, target)));
+                () -> target.addStatus(new StatusDZNReduceDefense(diZhenNian, target)));
         log(target);
         Optional<StatusBuff> oSBuff = target.getStatus(StatusBuff.class);
         if (oSBuff.isEmpty()) {
             target.addStatus(new StatusBuff(diZhenNian, target, diZhenNian.getBuffType(), 7));
+        }
+    }
+
+    static class StatusDZNReduceDefense extends Status {
+        public StatusDZNReduceDefense(Character from, Character belongTo) {
+            super("地震鲶-减防", from, belongTo);
+            duration(StatusDurationType.CHI_XU, 7);
+            attribute(Attribute.DEFENCE, _ -> -belongTo.getInitDefense());
+            displayNameAndDuration();
         }
     }
 

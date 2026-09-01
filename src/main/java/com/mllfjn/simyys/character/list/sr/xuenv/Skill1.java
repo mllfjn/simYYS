@@ -17,7 +17,7 @@ class Skill1 extends Skill1PuGongBase {
     public void usePrivate(Interactive interactive, Character target) {
         interactive.attackTypical(this, target, multiplier[getLevel()], AttackType.DAN_TI);
         if (getLevel() >= 3) {
-            interactive.effect(this, target, getLevel() >= 5 ? 50 : 25, 0, true,
+            interactive.effect(this, target, getLevel() >= 5 ? 50 : 25, true,
                     StatusReduceSpeed.getSupplier()
             );
         }

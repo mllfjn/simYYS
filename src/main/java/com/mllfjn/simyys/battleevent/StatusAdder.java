@@ -3,7 +3,7 @@ package com.mllfjn.simyys.battleevent;
 import com.mllfjn.simyys.SerializableItems;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.Status;
-import com.mllfjn.simyys.utils.SerialFunction;
+import com.mllfjn.simyys.utils.serializable.SerialFunction;
 
 import java.io.Serializable;
 import java.util.ArrayList;

@@ -1,13 +1,10 @@
 package com.mllfjn.simyys.character.yuhun.list;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunUnfullMark;
 import com.mllfjn.simyys.interactive.AttackInfo;
@@ -30,35 +27,27 @@ public class TuZhiZhu extends YuHun implements YuHunUnfullMark {
         character.addStatus(new StatusTZZListener(character));
     }
 
-    class StatusTZZListener extends Status implements StatusRunnable {
+    class StatusTZZListener extends Status {
         private final Map<Character, Double> map = new LinkedHashMap<>();
 
         private Skill causeSkill;
 
         public StatusTZZListener(Character character) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.CAUSE_ATTACK;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            if (trigger == Trigger.CAUSE_ATTACK) {
+            super(YuHunName + "造成伤害监听", character);
+            runOn(Trigger.CAUSE_ATTACK, param -> {
                 AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
                 if (attackInfo.isCalEffectYuHun()) {
                     Character target = attackInfo.getTarget();
                     // 对怪物造成伤害时
                     if (!target.isMob()) {
-                        return false;
+                        return;
                     }
 
-                    // 如果没有实际造成伤害，则返回
                     double number = attackInfo.getTraceableNumber().getNumber();
+
+                    // 如果没有实际造成伤害，则返回
                     if (number <= 0) {
-                        return false;
+                        return;
                     }
 
                     if (causeSkill == null) {
@@ -75,18 +64,30 @@ public class TuZhiZhu extends YuHun implements YuHunUnfullMark {
 
                     map.put(target, map.getOrDefault(target, 0.0) + number);
                 }
-            }
-            return false;
+            });
         }
     }
 
-    static class StatusTuZhiZhu extends Status implements Displayable, StatusRunnable, AttributeModifier {
+    static class StatusTuZhiZhu extends Status {
         private final Skill skill = Skill.getInstance(TuZhiZhu.YuHunName);
         private final TuZhiZhuRecord[] records = new TuZhiZhuRecord[3];
         private int count = 0;
 
         private StatusTuZhiZhu(Character belongTo) {
-            super(null, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
+            super(null, belongTo);
+            display(() -> "土" + getCount());
+            attribute(Attribute.SPEED, _ -> -0.1 * count * belongTo.getInitSpeed());
+            runOn(Trigger.AFTER_ROUND_FIRST, _ -> {
+                for (TuZhiZhuRecord record : records) {
+                    if (record == null) {
+                        break;
+                    }
+                    record.from.doInteractive(interactive ->
+                            interactive.attack(AttackInfo.createJianJieAttack(record.from, skill, belongTo, record.num))
+                    );
+                }
+                delete();
+            });
         }
 
         public static void enable(Character from, Character target, double num) {
@@ -112,39 +113,6 @@ public class TuZhiZhu extends YuHun implements YuHunUnfullMark {
 
         public int getCount() {
             return count;
-        }
-
-        @Override
-        public String getDisplayText() {
-            return "土" + getCount();
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.AFTER_ROUND_FIRST;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            for (TuZhiZhuRecord record : records) {
-                if (record == null) {
-                    break;
-                }
-                record.from.doInteractive(interactive ->
-                        interactive.attack(AttackInfo.createJianJieAttack(record.from, skill, belongTo, record.num))
-                );
-            }
-            return true;
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.SPEED;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return -belongTo.getInitSpeed() * 0.1 * count;
         }
 
         record TuZhiZhuRecord(Character from, double num) implements Serializable {

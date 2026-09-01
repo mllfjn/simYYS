@@ -6,7 +6,6 @@ import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
 import java.util.Optional;
 
@@ -54,78 +53,33 @@ class Skill2 extends Skill {
         return Optional.empty();
     }
 
-    static class StatusHuanJing extends Status implements StatusRunnable, AttributeModifier {
-        private final boolean getYuanLiBeforeRound;
-
-        private final int skill2Level;
-        private final int skill3Level;
-        private final StatusAdder<?> adder;
-
+    static class StatusHuanJing extends Status {
         public StatusHuanJing(Character character, int duration, int skill2Level, int skill3Level) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-            this.skill2Level = skill2Level;
-            this.skill3Level = skill3Level;
-            this.getYuanLiBeforeRound = skill2Level >= 3;
-            setDurationType(StatusDurationType.WEI_CHI, duration);
+            super(SkillName + "幻境", character);
+            duration(StatusDurationType.WEI_CHI, duration);
 
-            adder = belongTo.bp.addStatusAdder(c ->
+            StatusAdder<?> adder = belongTo.bp.addStatusAdder(c ->
                     c.team == character.team && c != character && !c.isYYS()
-                            ? new StatusUseSkillListener(character, c)
+                            ? Status.of(SkillName + "释放技能监听", character, c)
+                            .runOn(Trigger.WILL_USE_SKILL, _ -> StatusYuanYou.install(from, belongTo))
                             : null
             );
+            beforeDelete(adder::deleteAndRemove);
+            attribute(Attribute.EFFECT_RESIST_RATE, 80.0);
+
+            if (skill2Level >= 3) {
+                runOn(Trigger.BEFORE_ROUND, _ ->
+                        StatusYuanLi.addYuanLi(belongTo, 3, skill2Level, skill3Level)
+                );
+            }
         }
 
         public static void create(Character character, int skill2Level, int skill3Level) {
             int duration = skill2Level >= 4 ? 2 : 1;
             character.getStatus(StatusHuanJing.class).ifPresentOrElse(
-                    status -> status.setDuration(duration)
+                    status -> status.duration(duration)
                     , () -> character.addStatus(new StatusHuanJing(character, duration, skill2Level, skill3Level))
             );
         }
-
-        @Override
-        public void beforeDelete() {
-            adder.deleteAndRemove();
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.BEFORE_ROUND && getYuanLiBeforeRound;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            StatusYuanLi.addYuanLi(belongTo, 3, skill2Level, skill3Level);
-            return false;
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.EFFECT_RESIST_RATE;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return 80;
-        }
-
-        static class StatusUseSkillListener extends Status implements StatusRunnable {
-
-            public StatusUseSkillListener(Character from, Character belongTo) {
-                super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-            }
-
-            @Override
-            public boolean runnable(Trigger trigger) {
-                return trigger == Trigger.WILL_USE_SKILL;
-            }
-
-            @Override
-            public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-                StatusYuanYou.install(from, belongTo);
-                return false;
-            }
-        }
     }
-
 }

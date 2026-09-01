@@ -1,22 +1,23 @@
 package com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.tuzhizhu;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
 class Skill7 extends PassiveSkill {
     private static final String SkillName = "坚韧";
 
-    private final StatusTZZJRReduceDamage status;
+    private final Status status;
 
     private int count = 0;
 
     Skill7(Character belongTo) {
         super(belongTo, -1, 7);
-        status = new StatusTZZJRReduceDamage(belongTo);
+        status = Status.of(SkillName, belongTo);
+        status.runOn(Trigger.BEING_ATTACKED, triggerParam ->
+                ((ParamAttackInfo) triggerParam).getAttackInfo().getTraceableNumber().mul(0.3, SkillName)
+        );
     }
 
     void tZZReduceEnable() {
@@ -41,23 +42,5 @@ class Skill7 extends PassiveSkill {
     @Override
     public String getName() {
         return SkillName;
-    }
-
-    static class StatusTZZJRReduceDamage extends Status implements StatusRunnable {
-        public StatusTZZJRReduceDamage(Character character) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.BEING_ATTACKED;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            ((ParamAttackInfo) param).getAttackInfo().getTraceableNumber().mul(0.3, SkillName);
-
-            return false;
-        }
     }
 }

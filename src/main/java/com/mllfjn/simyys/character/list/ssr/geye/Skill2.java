@@ -6,7 +6,6 @@ import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.ParamUseSkill;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
 import java.util.Optional;
 
@@ -67,37 +66,25 @@ class Skill2 extends Skill {
         return Optional.of(target);
     }
 
-    static class StatusUseSkillListener extends Status implements StatusRunnable {
+    static class StatusUseSkillListener extends Status {
         public StatusUseSkillListener(Character character) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.USED_SKILL;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            if (!(((ParamUseSkill) param).getSkill() instanceof Skill3)) {
-                return StatusJiuWei.addStack(belongTo);
-            }
-            return false;
+            super(SkillName + "释放技能监听", character);
+            runOn(Trigger.USED_SKILL, param -> {
+                if (!(((ParamUseSkill) param).getSkill() instanceof Skill3)) {
+                    if (StatusJiuWei.addStack(belongTo)) {
+                        delete();
+                    }
+                }
+            });
         }
     }
 
     static class HeShouContainer extends Status {
-        private final Skill skill;
-
         public HeShouContainer(GeYe from, Character belongTo, boolean isIncreaseSpeed) {
-            super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-            skill = new SkillHeShou(from, belongTo, isIncreaseSpeed);
+            super(SkillHeShou.SkillName, from, belongTo);
+            Skill skill = new SkillHeShou(from, belongTo, isIncreaseSpeed);
             belongTo.addSkill(skill);
-        }
-
-        @Override
-        public void beforeDelete() {
-            belongTo.removeSkill(skill);
+            beforeDelete(() -> belongTo.removeSkill(skill));
         }
     }
 

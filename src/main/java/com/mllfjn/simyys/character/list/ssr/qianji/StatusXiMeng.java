@@ -1,31 +1,17 @@
 package com.mllfjn.simyys.character.list.ssr.qianji;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.Trigger;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
-class StatusXiMeng extends Status implements StatusRunnable, Displayable {
+class StatusXiMeng extends Status {
     public StatusXiMeng(Character from, Character belongTo) {
-        super(from, belongTo, StatusType.DEBUFF, StatusForm.YIN_JI);
-    }
-
-    @Override
-    public String getDisplayText() {
-        return "汐梦";
-    }
-
-    @Override
-    public boolean runnable(Trigger trigger) {
+        super("汐梦", from, belongTo, StatusType.DEBUFF, StatusForm.YIN_JI);
+        displayName();
         // 行动后消耗
-        return trigger == Trigger.AFTER_ROUND;
-    }
-
-    @Override
-    public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-        // TODO 扣除3点鬼火,对怪物不生效
-        return true;
+        runOn(Trigger.AFTER_ROUND, _ -> {
+            // TODO 扣除3点鬼火,对怪物不生效
+            delete();
+        });
     }
 }

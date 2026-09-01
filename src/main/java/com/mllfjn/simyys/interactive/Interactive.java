@@ -6,9 +6,10 @@ import com.mllfjn.simyys.character.TraversalOrderManager;
 import com.mllfjn.simyys.character.list.ssr.sijinshen.SkillQiMeng;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.Trigger;
-import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAddCrowdControl;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
+import com.mllfjn.simyys.character.status.triggerParam.ParamHealInfo;
+import com.mllfjn.simyys.character.status.triggerParam.ParamLocationChange;
 import com.mllfjn.simyys.character.yuhun.YuHunAfterBeingAttack;
 import com.mllfjn.simyys.character.yuhun.YuHunAfterCauseAttack;
 import com.mllfjn.simyys.character.yuhun.YuHunAttack;
@@ -17,9 +18,6 @@ import com.mllfjn.simyys.character.yuhun.list.ZhenZhu;
 import com.mllfjn.simyys.customnode.CustomText;
 import com.mllfjn.simyys.customnode.TextFlowLog;
 import com.mllfjn.simyys.ratecontroller.RateController;
-import com.mllfjn.simyys.character.status.Status;
-import com.mllfjn.simyys.character.status.determinant.IgnoreActionDecrease;
-import com.mllfjn.simyys.character.status.determinant.IgnoreActionIncrease;
 import com.mllfjn.simyys.utils.DecimalFormatUtil;
 
 import java.util.*;
@@ -84,7 +82,7 @@ public class Interactive {
     }
 
     private void addNumberRecord(Character character, CustomText text) {
-        currentNumberLog.computeIfAbsent(character, k -> {
+        currentNumberLog.computeIfAbsent(character, _ -> {
             List<CustomText> list = new ArrayList<>();
             list.add(new CustomText("\t" + character.name + "：", type, TextFlowLog.TextColor.NORMAL, size));
             return list;
@@ -221,19 +219,17 @@ public class Interactive {
             target.checkShield(attackInfo);
         }
 
-        if (attackInfo.isCanInfluenceAttack()) {
-            // 攻击者身上状态类影响
-            for (Status status : owner.getStatuses()) {
-                if (status instanceof InfluenceDamageWhenAttack iwa) {
-                    iwa.doInfluenceWhenAttack(attackInfo);
+        if (traceableNumber.getNumber() > 0) {
+            if (attackInfo.isCanInfluenceAttack()) {
+                // 攻击者身上状态类影响
+                owner.statusRun(Trigger.WHEN_ATTACK, paramAttackInfo);
+
+                // 被攻击者身上状态类影响
+                target.statusRun(Trigger.BEING_ATTACKED, paramAttackInfo);
+
+                if (attackInfo.isCancel()) {
+                    return;
                 }
-            }
-
-            // 被攻击者身上状态类影响
-            target.statusRun(Trigger.BEING_ATTACKED, paramAttackInfo);
-
-            if (attackInfo.isCancel()) {
-                return;
             }
         }
 
@@ -260,7 +256,7 @@ public class Interactive {
 
         final double currentHp = target.getHp();
         final int currentCount = ++attackCountTotal;
-        final int currentOwnerCount = attackCountMap.merge(owner, 1, (old, val) -> old + 1);
+        final int currentOwnerCount = attackCountMap.merge(owner, 1, (old, _) -> old + 1);
         final String currentName = owner.name;
         CustomText customText = new CustomText(traceableNumber.getNumberString() + " ", type,
                 attackInfo.isCrit() ? TextFlowLog.TextColor.CRITICAL : TextFlowLog.TextColor.ATTACK, size);
@@ -280,29 +276,31 @@ public class Interactive {
         });
         addNumberRecord(target, customText);
 
-        // 触发攻击的目标身上的状态
-        target.statusRun(Trigger.AFTER_ATTACK, paramAttackInfo);
-
-        // 触发攻击者身上的攻击监听
-        owner.statusRun(Trigger.CAUSE_ATTACK, paramAttackInfo);
-
         // 部分造成伤害后生效的御魂(日女歌姬等)
-        if (traceableNumber.getNumber() > 0 && attackInfo.isCalEffectYuHun()) {
-            owner.forEachYuHun(yuHun -> {
-                if (yuHun instanceof YuHunAfterCauseAttack yca) {
-                    yca.action(attackInfo, this);
-                }
-            });
+        if (traceableNumber.getNumber() > 0) {
+            // 触发攻击的目标身上的状态
+            target.statusRun(Trigger.AFTER_ATTACK, paramAttackInfo);
 
-            if (target.alive) {
-                Character temp = owner;
-                setOwner(target);
-                target.forEachYuHun(yuHun -> {
-                    if (yuHun instanceof YuHunAfterBeingAttack yaa) {
-                        yaa.action(attackInfo, this);
+            // 触发攻击者身上的攻击监听
+            owner.statusRun(Trigger.CAUSE_ATTACK, paramAttackInfo);
+
+            if (attackInfo.isCalEffectYuHun()) {
+                owner.forEachYuHun(yuHun -> {
+                    if (yuHun instanceof YuHunAfterCauseAttack yca) {
+                        yca.action(attackInfo, this);
                     }
                 });
-                setOwner(temp);
+
+                if (target.alive) {
+                    Character temp = owner;
+                    setOwner(target);
+                    target.forEachYuHun(yuHun -> {
+                        if (yuHun instanceof YuHunAfterBeingAttack yaa) {
+                            yaa.action(attackInfo, this);
+                        }
+                    });
+                    setOwner(temp);
+                }
             }
         }
     }
@@ -318,7 +316,7 @@ public class Interactive {
         }
 
         RateController.baoJi(skill.getName(), owner, bp.calc
-                , (c) -> owner.getCritRate(), targets, healInfos);
+                , _ -> owner.getCritRate(), targets, healInfos);
 
         for (int i = 0; i < targets.size(); i++) {
             healBase(targets.get(i), healInfos[i]);
@@ -335,7 +333,7 @@ public class Interactive {
         }
 
         RateController.baoJi(skill.getName(), owner, bp.calc
-                , (c) -> owner.getCritRate(), targets, healInfos);
+                , _ -> owner.getCritRate(), targets, healInfos);
 
         for (int i = 0; i < targets.size(); i++) {
             healBase(targets.get(i), healInfos[i]);
@@ -356,18 +354,19 @@ public class Interactive {
             traceableNumber.mul(0.01 * multiplier, "技能系数");
         }
 
+        ParamHealInfo paramHealInfo = new ParamHealInfo(healInfo);
+        target.statusRun(Trigger.WHEN_HEAL, paramHealInfo);
+
         // 暴击
         if (healInfo.isCrit()) {
             traceableNumber.mul(owner.getCritPower() * 0.01, "爆伤");
         }
 
-        owner.forEachYuHun(yuHun -> {
-            if (yuHun instanceof ZhenZhu zz) {
-                zz.doInteractive(target, traceableNumber);
-            }
-        });
+        // 珍珠
+        owner.getYuHun(ZhenZhu.class).ifPresent(zhenZhu -> zhenZhu.doInteractive(target, traceableNumber));
 
         target.beHeal(healInfo);
+        target.statusRun(Trigger.AFTER_HEAL, paramHealInfo);
 
         CustomText customText = new CustomText(traceableNumber.getNumberString() + " ",
                 type, TextFlowLog.TextColor.HEAL, size
@@ -403,6 +402,12 @@ public class Interactive {
         return infos;
     }
 
+    public EffectInfo[] effect(Skill skill, List<Character> targets, int baseRate, boolean calHit,
+                               StatusSupplier statusSupplier
+    ) {
+        return effect(skill, targets, baseRate, 0, calHit, statusSupplier);
+    }
+
     public EffectInfo effect(Skill skill, Character target, int baseRate, int additionRate, boolean calHit
             , StatusSupplier statusSupplier) {
 
@@ -411,6 +416,12 @@ public class Interactive {
 
         effectBase(info, target, statusSupplier);
         return info;
+    }
+
+    public EffectInfo effect(Skill skill, Character target, int baseRate, boolean calHit,
+                             StatusSupplier statusSupplier
+    ) {
+        return effect(skill, target, baseRate, 0, calHit, statusSupplier);
     }
 
     private void effectBase(EffectInfo effectInfo, Character target, StatusSupplier statusSupplier) {
@@ -433,42 +444,43 @@ public class Interactive {
     }
 
     public void increaseLocation(Character target, double increase) {
+        double location = target.getLocation();
+        double newLocation = Math.min(100, location + increase);
+        ParamLocationChange param = ParamLocationChange.increase(location, newLocation, owner);
+        target.statusRun(Trigger.LOCATION_WILL_CHANGE, param);
         // 免疫行动条提升效果
-        for (Status status : target.getStatuses()) {
-            if (status instanceof IgnoreActionIncrease fi && fi.effective(owner)) {
-                increaseLog.add(target.name + "免疫行动条改变");
-                return;
-            }
+        if (param.isCanceled()) {
+            increaseLog.add(target.name + "免疫行动条改变");
+            return;
         }
 
         StringBuilder sb = new StringBuilder();
         sb.append(target.name).append("行动提前").append((int) increase).append("%");
-        double location = target.getLocation();
         if (location + increase > 100) {
             sb.append("(实际提前").append((int) (100 - location)).append("%)");
         }
 
-        target.setLocation(Math.min(100, location + increase), true);
+        target.setLocation(param);
         increaseLog.add(sb.toString());
     }
 
     public void decreaseLocation(Character target, double decrease) {
-        // 免疫行动条提升效果
-        for (Status status : target.getStatuses()) {
-            if (status instanceof IgnoreActionDecrease iad) {
-                increaseLog.add(target.name + "免疫行动条改变");
-                iad.takeEffectFeedBack();
-                return;
-            }
+        double location = target.getLocation();
+        double newLocation = Math.max(0, location - decrease);
+        // 免疫行动条击退效果
+        ParamLocationChange param = ParamLocationChange.decrease(location, newLocation, owner);
+        target.statusRun(Trigger.LOCATION_WILL_CHANGE, param);
+        if (param.isCanceled()) {
+            increaseLog.add(target.name + "免疫行动条击退");
         }
+
         StringBuilder sb = new StringBuilder();
         sb.append(target.name).append("行动推后").append((int) decrease).append("%");
-        double location = target.getLocation();
         if (location - decrease < 0) {
             sb.append("(实际推后").append((int) location).append("%)");
         }
 
-        target.setLocation(Math.max(0, location - decrease), false);
+        target.setLocation(param);
         increaseLog.add(sb.toString());
     }
 
@@ -479,7 +491,7 @@ public class Interactive {
     }
 
     public void addYuHunEffectLog(Character character, String yuHunName) {
-        yuHunEffect.computeIfAbsent(character, k -> new LinkedHashSet<>()).add(yuHunName);
+        yuHunEffect.computeIfAbsent(character, _ -> new LinkedHashSet<>()).add(yuHunName);
     }
 
     public void qiMengCheck(Skill skill) {

@@ -6,10 +6,7 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.list.r.chounv.CaoRen;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
-import com.mllfjn.simyys.character.status.AttributeModifier;
 import com.mllfjn.simyys.character.status.Status;
-import com.mllfjn.simyys.character.status.StatusForm;
-import com.mllfjn.simyys.character.status.StatusType;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
 
@@ -88,8 +85,9 @@ class Skill3 extends Skill {
         int times = (int) (((target.getMaxHp() / belongTo.getMaxHp()) - 1) * 10);
         int zengShang = Math.min(times * 3, maxZengShang);
 
-        StatusSkill3ZengShang status = new StatusSkill3ZengShang(belongTo, zengShang);
-        belongTo.addStatus(status);
+        Status status = Status.of(SkillName + "增伤", belongTo)
+                .attribute(Attribute.ZENG_SHANG, zengShang)
+                .addTo();
 
         for (int i = 0; i < 6; i++) {
             interactive.attackTypical(this, target, multiplier, AttackType.DAN_TI);
@@ -98,24 +96,5 @@ class Skill3 extends Skill {
         belongTo.removeStatus(status);
 
         return Optional.of(target);
-    }
-
-    static class StatusSkill3ZengShang extends Status implements AttributeModifier {
-        private final double zengShang;
-
-        public StatusSkill3ZengShang(Character character, double zengShang) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-            this.zengShang = zengShang;
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.ZENG_SHANG;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return zengShang;
-        }
     }
 }

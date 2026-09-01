@@ -1,19 +1,19 @@
 package com.mllfjn.simyys.character.list.ssr.geye;
 
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.character.status.Displayable;
 import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.character.status.StatusForm;
 import com.mllfjn.simyys.character.status.StatusType;
 
 import java.util.Optional;
 
-class StatusJiuWei extends Status implements Displayable {
+class StatusJiuWei extends Status {
     private static final String StatusName = "九尾";
     private int stack = 1;
 
     private StatusJiuWei(Character character) {
-        super(character, character, StatusType.GENERAL, StatusForm.YIN_JI);
+        super(StatusName, character, character, StatusType.GENERAL, StatusForm.YIN_JI);
+        display(() -> StatusName + stack);
     }
 
     int getStack() {
@@ -30,10 +30,5 @@ class StatusJiuWei extends Status implements Displayable {
             character.addStatus(new StatusJiuWei(character));
             return false;
         }
-    }
-
-    @Override
-    public String getDisplayText() {
-        return StatusName + stack;
     }
 }

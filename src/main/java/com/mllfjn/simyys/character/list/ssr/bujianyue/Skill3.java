@@ -46,31 +46,29 @@ class Skill3 extends Skill {
         final boolean increaseAttack;
 
         public StatusJieJieContainer(Character character, int level) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-            setDurationType(StatusDurationType.WEI_CHI, 3);
-            adder = character.bp.addStatusAdder(c ->
-                    c.team == character.team
-                            ? new StatusJieJieEffect(Skill3.this, this, character, c)
-                            : null
-            );
+            super(StatusJieJieEffect.StatusName, character);
+            duration(StatusDurationType.WEI_CHI, 3);
+
             reduceCritDamage = level >= 2;
             increaseNonCritDamage = level >= 3;
             increaseAttack = level >= 4;
+            adder = character.bp.addStatusAdder(c ->
+                    c.team == character.team
+                            ? new StatusJieJieEffect(Skill3.this, character, c, this)
+                            : null
+            );
+            beforeDelete(() -> {
+                adder.deleteAndRemove();
+                Skill3.this.status = null;
+            });
         }
 
         void refresh() {
-            setDuration(3);
+            duration(3);
             for (StatusJieJieEffect statusJieJieEffect : adder.getList()) {
                 statusJieJieEffect.lastSkill = null;
             }
         }
-
-        @Override
-        public void beforeDelete() {
-            adder.deleteAndRemove();
-            Skill3.this.status = null;
-        }
-
     }
 
 }

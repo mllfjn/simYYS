@@ -55,7 +55,7 @@ public class DaShe extends CharacterShiShenBase {
 
     @Override
     protected boolean useSkillAuto() {
-        return skill3.tryUse(getBp()) || skill2.tryUse(getBp());
+        return skill3.tryUse(bp()) || skill2.tryUse(bp());
     }
 
     @Override

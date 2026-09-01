@@ -35,18 +35,11 @@ class Skill5 extends PassiveSkill {
             CharacterBX c = new CharacterBX(bp, "部下", team, 150000);
             c.setStatusHKLZHBuff(statusHKLZHBuff);
             bp.addCharacter(c);
+            // 中间那个比较肉
             if (i == 2) {
-                c.addStatus(new StatusModifyAttribute(c, c, StatusType.SPECIAL, StatusForm.SPECIAL) {
-                    @Override
-                    public boolean isAffectAttribute(Attribute attribute) {
-                        return attribute == Attribute.JIAN_SHANG;
-                    }
-
-                    @Override
-                    public double getInfluence(Attribute attribute, StatusModifyParam param) {
-                        return 400;
-                    }
-                });
+                Status.of("减伤", c, c)
+                        .attribute(Attribute.JIAN_SHANG, 400.0)
+                        .addTo();
             }
         }
     }
@@ -79,27 +72,23 @@ class Skill5 extends PassiveSkill {
         return SkillName;
     }
 
-    static class StatusHKLRecordDamage extends StatusRecordDamage implements Displayable {
+    static class StatusHKLRecordDamage extends StatusRecordDamage {
         private final DisplayDamageRecord infoDisplay;
 
         public StatusHKLRecordDamage(Character character, DisplayDamageRecord infoDisplay) {
             super(character);
             this.infoDisplay = infoDisplay;
+            display("真");
         }
 
         @Override
         protected void addDamage(double damage) {
             infoDisplay.addDamage(damage);
         }
-
-        @Override
-        public String getDisplayText() {
-            return "真";
-        }
     }
 
     static class CharacterBX extends CharacterSummonBase {
-        private BXDieHandler statusHKLZHBuff;
+        private StatusHKLZHBuff statusHKLZHBuff;
 
         public CharacterBX(BattlePane bp, String name, int team, double hp) {
             super(bp, name, team);
@@ -121,7 +110,7 @@ class Skill5 extends PassiveSkill {
             });
         }
 
-        private void setStatusHKLZHBuff(BXDieHandler statusHKLZHBuff) {
+        private void setStatusHKLZHBuff(StatusHKLZHBuff statusHKLZHBuff) {
             this.statusHKLZHBuff = statusHKLZHBuff;
         }
 
@@ -133,38 +122,21 @@ class Skill5 extends PassiveSkill {
         }
     }
 
-    private interface BXDieHandler {
-        void bxDie();
-    }
-
-    static class StatusHKLZHBuff extends Status implements AttributeModifier, BXDieHandler {
+    static class StatusHKLZHBuff extends Status {
         private int count;
 
         public StatusHKLZHBuff(Character character, int count) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
+            super("荒骷髅部下BUFF", character);
             this.count = count;
+            attribute(Attribute.ZENG_SHANG, 40.0);
+            attribute(Attribute.JIAN_SHANG, 70.0);
         }
 
-        @Override
         public void bxDie() {
             if (count == 1) {
                 delete();
             } else {
                 count--;
-            }
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.ZENG_SHANG || attribute == Attribute.JIAN_SHANG;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            if (attribute == Attribute.ZENG_SHANG) {
-                return 40;
-            } else {
-                return 70;
             }
         }
     }

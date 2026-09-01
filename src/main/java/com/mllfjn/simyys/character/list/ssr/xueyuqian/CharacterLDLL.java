@@ -8,7 +8,6 @@ import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.AttackType;
 
@@ -19,7 +18,7 @@ class CharacterLDLL extends CharacterSummonBase {
 
     private int repeatCount = 0;
 
-    private StatusImmuneAttack status;
+    private Status status;
 
     public CharacterLDLL(XueYuQian xueYuQian, double initHpMultiplier, double location) {
         super(xueYuQian.bp, "龙胆蓝璃", xueYuQian.team);
@@ -33,8 +32,14 @@ class CharacterLDLL extends CharacterSummonBase {
         setInitSpeed(xueYuQian.getInitSpeed() * 0.95);
         forceSetLocation(location);
 
-        status = new StatusImmuneAttack(xueYuQian);
-        xueYuQian.addStatus(status);
+        status = Status.of("免疫伤害", xueYuQian);
+        status.beforeDelete(() -> {
+                    status = null;
+                    die();
+                })
+                .runOn(Trigger.BEING_ATTACKED, param ->
+                        ((ParamAttackInfo) param).getAttackInfo().setCancel(true)
+                ).addTo();
     }
 
     void repeatSummon(double location, boolean forceChangeLocation) {
@@ -102,29 +107,6 @@ class CharacterLDLL extends CharacterSummonBase {
             attackInfo.setFluctuationLimit(0);
             belongTo.getInteractive().attack(attackInfo);
             return Optional.of(target);
-        }
-    }
-
-    private class StatusImmuneAttack extends Status implements StatusRunnable {
-        public StatusImmuneAttack(Character character) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public void beforeDelete() {
-            CharacterLDLL.this.status = null;
-            CharacterLDLL.this.die();
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.BEING_ATTACKED;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            ((ParamAttackInfo) param).getAttackInfo().setCancel(true);
-            return false;
         }
     }
 }

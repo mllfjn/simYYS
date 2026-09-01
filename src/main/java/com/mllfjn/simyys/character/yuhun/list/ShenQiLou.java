@@ -1,10 +1,8 @@
 package com.mllfjn.simyys.character.yuhun.list;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.instance.StatusBiHu;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunUnfullMark;
 
@@ -30,39 +28,23 @@ public class ShenQiLou extends YuHun implements YuHunUnfullMark {
 
 
     static class StatusBiHuSQL extends StatusBiHu {
-        private boolean isEffective = true;
         private int cooling = 0;
 
         public StatusBiHuSQL(Character character) {
             super(character, character);
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            if (isEffective) {
-                return super.runnable(trigger);
-            } else {
-                return trigger == Trigger.AFTER_ROUND;
-            }
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            if (isEffective) {
-                return super.run(trigger, bp, param);
-            } else {
+            runOnAndDisable(Trigger.AFTER_ROUND, _ -> {
                 if (cooling == 1) {
-                    isEffective = true;
+                    enableAction(Trigger.ADDING_CROWD_CONTROL);
+                    disableAction(Trigger.AFTER_ROUND);
                 } else {
                     cooling--;
                 }
-                return false;
-            }
+            });
         }
 
         @Override
         protected void used() {
-            isEffective = false;
+            disableAction(Trigger.ADDING_CROWD_CONTROL);
             cooling = 5;
         }
     }

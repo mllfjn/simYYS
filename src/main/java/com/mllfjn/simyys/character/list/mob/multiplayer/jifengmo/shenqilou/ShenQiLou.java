@@ -12,7 +12,6 @@ import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.instance.StatusUnselectable;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.ratecontroller.RateController;
 
 import java.util.ArrayList;
@@ -23,9 +22,14 @@ public class ShenQiLou extends CharacterJiFengMoBase {
 
     private boolean diving = false;
 
-    private final StatusSQLPF status = new StatusSQLPF(this);
+    private final Status status;
 
     private final List<CharacterMirror> mirrors = new ArrayList<>();
+
+    public ShenQiLou() {
+        status = Status.of("蜃气楼减防", this)
+                .attribute(Attribute.DEFENCE, _ -> -0.88 * getInitDefense());
+    }
 
     @Override
     public void init(PropertiesHolder propertiesHolder, BattlePane bp) {
@@ -110,10 +114,16 @@ public class ShenQiLou extends CharacterJiFengMoBase {
 
             // 想不通第一个不是真这种BUG是怎么出的
             List<Character> summonList = multiStageManager.getSummonList();
-            Character first = summonList.remove(0);
+            Character first = summonList.removeFirst();
             List<Character> choose = RateController.choose("镜像-真", summonList, Character::getName, bp.calc, 2);
             for (Character character : choose) {
-                character.addStatus(new StatusTrueMirror(character, getInfoDisplay()));
+                StatusRecordDamage statusRecordDamage = new StatusRecordDamage(character) {
+                    @Override
+                    protected void addDamage(double damage) {
+                        getInfoDisplay().addDamage(damage);
+                    }
+                };
+                statusRecordDamage.display("真").addTo();
             }
             summonList.add(first);
             multiStageManager.setSummonDieCallback(c -> {
@@ -175,56 +185,12 @@ public class ShenQiLou extends CharacterJiFengMoBase {
         return "200";
     }
 
-    static class StatusTrueMirror extends StatusRecordDamage implements Displayable {
-        private final DisplayDamageRecord displayDamageRecord;
-
-        public StatusTrueMirror(Character character, DisplayDamageRecord displayDamageRecord) {
-            super(character);
-            this.displayDamageRecord = displayDamageRecord;
-        }
-
-        @Override
-        protected void addDamage(double damage) {
-            displayDamageRecord.addDamage(damage);
-        }
-
-        @Override
-        public String getDisplayText() {
-            return "真";
-        }
-    }
-
-    static class StatusSQLPF extends Status implements AttributeModifier {
-
-        public StatusSQLPF(Character character) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.DEFENCE;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return -belongTo.getInitDefense() * 0.88;
-        }
-    }
-
-    static class StatusFullyChargeGuiHuo extends Status implements StatusRunnable {
+    static class StatusFullyChargeGuiHuo extends Status {
         public StatusFullyChargeGuiHuo(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.BEFORE_ROUND;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            bp.getGuiHuoInstance(belongTo.team).fullyCharge();
-            return false;
+            super("回火", from, belongTo);
+            runOn(Trigger.BEFORE_ROUND, _ ->
+                    belongTo.bp().getGuiHuoInstance(belongTo.team).fullyCharge()
+            );
         }
     }
 }

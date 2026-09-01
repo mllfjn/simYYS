@@ -1,11 +1,9 @@
 package com.mllfjn.simyys.character.yuhun.list;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.battleevent.StatusAdder;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunSealResponse;
 import com.mllfjn.simyys.interactive.AttackInfo;
@@ -37,51 +35,33 @@ public class FengHaiTu extends YuHun implements YuHunSealResponse {
         }
     }
 
-    class StatusHTListener extends Status implements StatusRunnable {
+    class StatusHTListener extends Status {
 
         public StatusHTListener(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.BEFORE_ATTACK;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            if (trigger == Trigger.BEFORE_ATTACK) {
-                belongTo.getStatus(StatusHaiTuShouHu.class)
-                        .orElseGet(
-                                () -> {
-                                    StatusHaiTuShouHu status = new StatusHaiTuShouHu(from, belongTo);
-                                    belongTo.addStatus(status);
-                                    return status;
-                                }
-                        ).reduce(((ParamAttackInfo) param).getAttackInfo());
-            }
-            return false;
+            super(YuHunName + "受到伤害监听", from, belongTo);
+            runOn(Trigger.BEFORE_ATTACK, param ->
+                    belongTo.getStatus(StatusHaiTuShouHu.class)
+                            .orElseGet(
+                                    () -> {
+                                        StatusHaiTuShouHu status = new StatusHaiTuShouHu(from, belongTo);
+                                        belongTo.addStatus(status);
+                                        return status;
+                                    }
+                            ).reduce(((ParamAttackInfo) param).getAttackInfo())
+            );
         }
     }
 
-    class StatusHaiTuShouHu extends Status implements Displayable {
+    class StatusHaiTuShouHu extends Status {
         private static final String StatusName = "海图守护";
 
         private double record;
 
         public StatusHaiTuShouHu(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-            setDurationType(StatusDurationType.CHI_XU, 1);
-        }
-
-        @Override
-        public void beforeDelete() {
-            belongTo.lostHP(record);
-        }
-
-        @Override
-        public String getDisplayText() {
-            return StatusName + ((int) record);
+            super(StatusName, from, belongTo);
+            duration(StatusDurationType.CHI_XU, 1);
+            beforeDelete(() -> belongTo.lostHP(record));
+            display(() -> StatusName + ((int) record));
         }
 
         private void reduce(AttackInfo attackInfo) {

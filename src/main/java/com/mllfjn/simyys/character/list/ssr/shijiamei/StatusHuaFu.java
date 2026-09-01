@@ -1,21 +1,21 @@
 package com.mllfjn.simyys.character.list.ssr.shijiamei;
 
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.character.status.Displayable;
 import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.character.status.StatusForm;
 import com.mllfjn.simyys.character.status.StatusType;
 
 import java.util.Optional;
 
-class StatusHuaFu extends Status implements Displayable {
+class StatusHuaFu extends Status {
     private static final String StatusName = "花祓";
 
     private int stack;
 
     private StatusHuaFu(Character character, int stack) {
-        super(character, character, StatusType.GENERAL, StatusForm.YIN_JI);
+        super(StatusName, character, character, StatusType.GENERAL, StatusForm.YIN_JI);
         this.stack = stack;
+        display(() -> StatusName + stack);
     }
 
     static void addStack(Character character, int stack) {
@@ -45,10 +45,5 @@ class StatusHuaFu extends Status implements Displayable {
         if (stack < 5) {
             stack = Math.min(stack + addStack, 5);
         }
-    }
-
-    @Override
-    public String getDisplayText() {
-        return StatusName + stack;
     }
 }

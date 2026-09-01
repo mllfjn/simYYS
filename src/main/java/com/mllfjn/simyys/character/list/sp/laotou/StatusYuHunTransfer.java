@@ -5,7 +5,7 @@ import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunFactory;
 
-public class StatusYuHunTransfer extends Status implements Displayable {
+public class StatusYuHunTransfer extends Status {
     private final YuHun addedYuHun;
 
     private boolean transfer = true;
@@ -13,8 +13,8 @@ public class StatusYuHunTransfer extends Status implements Displayable {
     private StatusYuHunBeingTransfer beingTransfer;
 
     public StatusYuHunTransfer(Character from, Character belongTo, Class<? extends YuHun> yClass) {
-        super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-        setDurationType(StatusDurationType.WEI_CHI, 1);
+        super("转移御魂", from, belongTo);
+        duration(StatusDurationType.WEI_CHI, 1);
 
         for (YuHun yuHun : belongTo.getYuHunSet()) {
             if (yuHun.getClass() == yClass) {
@@ -31,18 +31,13 @@ public class StatusYuHunTransfer extends Status implements Displayable {
         } else {
             addedYuHun = null;
         }
-    }
 
-    @Override
-    public void beforeDelete() {
-        if (transfer && addedYuHun != null) {
-            belongTo.removeYuHun(addedYuHun);
-            beingTransfer.delete();
-        }
-    }
-
-    @Override
-    public String getDisplayText() {
-        return "转移御魂";
+        beforeDelete(() -> {
+            if (transfer && addedYuHun != null) {
+                belongTo.removeYuHun(addedYuHun);
+                beingTransfer.delete();
+            }
+        });
+        displayName();
     }
 }

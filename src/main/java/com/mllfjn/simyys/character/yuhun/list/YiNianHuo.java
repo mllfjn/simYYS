@@ -1,10 +1,8 @@
 package com.mllfjn.simyys.character.yuhun.list;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunSealResponse;
 
@@ -35,24 +33,17 @@ public class YiNianHuo extends YuHun implements YuHunSealResponse {
         character.removeStatus(status);
     }
 
-    static class StatusNianHuo extends Status implements Displayable, AttributeModifier, StatusRunnable
-            , ConditionalReduceCost {
+    static class StatusNianHuo extends Status implements ConditionalReduceCost {
         public static final String StatusName = "念火";
 
         private int stack;
 
         public StatusNianHuo(Character character) {
-            super(character, character, StatusType.BUFF, StatusForm.YIN_JI);
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return stack > 0 && attribute == Attribute.EFFECT_RESIST_RATE;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return stack * 15;
+            super(StatusName, character, character, StatusType.BUFF, StatusForm.YIN_JI);
+            runOn(Trigger.BEFORE_ROUND, _ -> {
+                stack++;
+                stackChange();
+            });
         }
 
         @Override
@@ -65,23 +56,20 @@ public class YiNianHuo extends YuHun implements YuHunSealResponse {
             stack -= usedCount;
         }
 
-        @Override
-        public String getDisplayText() {
-            if (stack == 0) {
-                return null;
+        private void stackChange() {
+            if (stack != 0) {
+                display(StatusName + stack);
+                attribute(Attribute.EFFECT_RESIST_RATE, 15 * stack);
+            } else {
+                stopDisplay();
+                attribute(Attribute.EFFECT_RESIST_RATE, 0);
             }
-            return StatusName + stack;
-        }
 
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.BEFORE_ROUND && stack < 3;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            stack++;
-            return false;
+            if (stack < 3) {
+                enableAction(Trigger.BEFORE_ROUND);
+            } else {
+                disableAction(Trigger.BEFORE_ROUND);
+            }
         }
     }
 }

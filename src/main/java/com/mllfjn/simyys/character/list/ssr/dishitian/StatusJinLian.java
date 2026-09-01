@@ -1,63 +1,43 @@
 package com.mllfjn.simyys.character.list.ssr.dishitian;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 
-abstract class StatusJinLian extends Status implements Displayable {
+abstract class StatusJinLian extends Status {
     private static final String StatusName = "金莲";
 
-    protected StatusJinLian(com.mllfjn.simyys.character.Character from, Character belongTo, StatusType statusType, StatusForm statusForm) {
-        super(from, belongTo, statusType, statusForm);
-    }
-
-    @Override
-    public void beforeDelete() {
-        ((DiShiTian) from).removeJinLian();
-    }
-
-    @Override
-    public String getDisplayText() {
-        return StatusName;
+    protected StatusJinLian(DiShiTian from, Character belongTo, StatusType statusType, StatusForm statusForm) {
+        super(StatusName, from, belongTo, statusType, statusForm);
+        beforeDelete(from::removeJinLian);
+        displayName();
     }
 }
 
-class StatusJinLianForMob extends StatusJinLian implements StatusRunnable {
-    private final boolean extraDamage;
-    private final Skill2 skill2;
+class StatusJinLianForMob extends StatusJinLian {
 
-    public StatusJinLianForMob(Character from, Character belongTo, boolean extraDamage, Skill2 skill2) {
+    public StatusJinLianForMob(DiShiTian from, Character belongTo, boolean extraDamage, Skill2 skill2) {
         super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-        this.extraDamage = extraDamage;
-        this.skill2 = skill2;
-    }
 
-    @Override
-    public boolean runnable(Trigger trigger) {
-        return trigger == Trigger.AFTER_ATTACK;
-    }
-
-    @Override
-    public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-        if (param instanceof ParamAttackInfo pai && pai.getAttackInfo().getSkill() != skill2) {
-            double number = pai.getAttackInfo().getTraceableNumber().getNumber() * 0.4;
-            if (extraDamage) {
-                number += from.getAttack() * 0.7;
+        runOn(Trigger.AFTER_ATTACK, param -> {
+            ParamAttackInfo pai = (ParamAttackInfo) param;
+            if (pai.getAttackInfo().getSkill() != skill2) {
+                double number = pai.getAttackInfo().getTraceableNumber().getNumber() * 0.4;
+                if (extraDamage) {
+                    number += from.getAttack() * 0.7;
+                }
+                double finalNumber = number;
+                AttackInfo attackInfo = AttackInfo.createRealAttack(from, skill2, belongTo, finalNumber);
+                attackInfo.setNotCalYuHun();
+                from.doInteractive(interactive -> interactive.attack(attackInfo));
             }
-            double finalNumber = number;
-            AttackInfo attackInfo = AttackInfo.createRealAttack(from, skill2, belongTo, finalNumber);
-            attackInfo.setNotCalYuHun();
-            from.doInteractive(interactive -> interactive.attack(attackInfo));
-        }
-        return false;
+        });
     }
 }
 
 class StatusJinLianNormal extends StatusJinLian {
-    public StatusJinLianNormal(Character from, Character belongTo) {
+    public StatusJinLianNormal(DiShiTian from, Character belongTo) {
         super(from, belongTo, StatusType.DEBUFF, StatusForm.YIN_JI);
     }
 }

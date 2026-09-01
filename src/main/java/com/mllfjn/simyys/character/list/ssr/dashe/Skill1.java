@@ -3,10 +3,7 @@ package com.mllfjn.simyys.character.list.ssr.dashe;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill1PuGongBase;
-import com.mllfjn.simyys.character.status.AttributeModifier;
 import com.mllfjn.simyys.character.status.Status;
-import com.mllfjn.simyys.character.status.StatusForm;
-import com.mllfjn.simyys.character.status.StatusType;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
 
@@ -44,26 +41,17 @@ class Skill1 extends Skill1PuGongBase {
         return SkillName;
     }
 
-    private static class StatusIgnoreDefense extends Status implements AttributeModifier {
+    private static class StatusIgnoreDefense extends Status {
         private double ignoreDefense;
 
         public StatusIgnoreDefense(Character character) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
+            super(SkillName, character);
+            attribute(Attribute.IGNORE_DEFENCE, _ -> ignoreDefense);
         }
 
         void add(Character target) {
             ignoreDefense = target.getDefence() * 0.2;
-            belongTo.addStatus(this);
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.IGNORE_DEFENCE;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return ignoreDefense;
+            addTo();
         }
     }
 }

@@ -1,12 +1,10 @@
 package com.mllfjn.simyys.character.list.r.chounv;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.CharacterSummonBase;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 
 public class CaoRen extends CharacterSummonBase {
@@ -16,17 +14,30 @@ public class CaoRen extends CharacterSummonBase {
 
     private final Character bind;
 
-    public CaoRen(Character chouNv, Character bind, int level) {
-        super(chouNv.bp, CharacterName, bind.team);
-        this.bind = bind;
+    public CaoRen(Character chouNv, Character target, int level) {
+        super(chouNv.bp, CharacterName, target.team);
+        this.bind = target;
         this.isSummon = true;
 
-        this.setInitSpeed(bind.getSpeed());
+        this.setInitSpeed(target.getSpeed());
 
-        this.setInitDefense(bind.getDefence() * 0.5);
-        this.forceSetMaxHp(bind.getHp() * hpPercent[level], true);
+        this.setInitDefense(target.getDefence() * 0.5);
+        this.forceSetMaxHp(target.getHp() * hpPercent[level], true);
 
-        this.addStatus(new StatusAfterAttack(chouNv, this, bind));
+        final Skill skill = Skill.getInstance(CharacterName);
+
+        Status status = Status.of(CharacterName, chouNv, this);
+        status.duration(StatusDurationType.CHI_XU, 3)
+                .runOn(Trigger.AFTER_ATTACK, triggerParam -> {
+                    double number = ((ParamAttackInfo) triggerParam).getAttackInfo().getTraceableNumber().getNumber();
+                    chouNv.doInteractive(interactive -> {
+                        interactive.attack(AttackInfo.createChuanDaoAttack(chouNv, skill, bind, number));
+                        skill.useDone();
+                    });
+                })
+                .display(() -> "剩余回合" + status.getDuration())
+                .beforeDelete(this::die)
+                .addTo();
     }
 
     public Character getBind() {
@@ -36,47 +47,5 @@ public class CaoRen extends CharacterSummonBase {
     @Override
     public boolean isUncontrollable() {
         return true;
-    }
-
-    static class StatusAfterAttack extends Status implements StatusRunnable, Displayable {
-        private final Character bind;
-
-        // from是丑女 belongTo是草人 bind是连接的目标
-        public StatusAfterAttack(Character from, Character belongTo, Character bind) {
-            super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-            this.bind = bind;
-
-            setDurationType(StatusDurationType.CHI_XU, 3);
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.AFTER_ATTACK;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            if (trigger == Trigger.AFTER_ATTACK) {
-                double number = ((ParamAttackInfo) param).getAttackInfo().getTraceableNumber().getNumber();
-                from.doInteractive(interactive -> {
-                    interactive.attack(AttackInfo.createChuanDaoAttack(from, skill, bind, number));
-                            skill.useDone();
-                        }
-                );
-            }
-            return false;
-        }
-
-        private static final Skill skill = Skill.getInstance(CharacterName);
-
-        @Override
-        public String getDisplayText() {
-            return "剩余回合" + getDuration();
-        }
-
-        @Override
-        public void beforeDelete() {
-            belongTo.die();
-        }
     }
 }

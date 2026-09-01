@@ -1,12 +1,11 @@
 package com.mllfjn.simyys.character.list.yys.tengyuan;
 
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.character.status.Displayable;
 import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.character.status.StatusForm;
 import com.mllfjn.simyys.character.status.StatusType;
 
-class StatusLvYin extends Status implements Displayable {
+class StatusLvYin extends Status {
     private static final String StatusName = "律音";
 
     private int maxStack = 6;
@@ -15,7 +14,8 @@ class StatusLvYin extends Status implements Displayable {
     private Skill7 skill7;
 
     public StatusLvYin(Character character) {
-        super(character, character, StatusType.GENERAL, StatusForm.YIN_JI);
+        super(StatusName, character, character, StatusType.GENERAL, StatusForm.YIN_JI);
+        display(() -> StatusName + stack);
     }
 
     void setSkill6(Skill6 skill6) {
@@ -53,10 +53,5 @@ class StatusLvYin extends Status implements Displayable {
         if (skill7 != null) {
             skill7.useLvYin(count);
         }
-    }
-
-    @Override
-    public String getDisplayText() {
-        return StatusName + stack;
     }
 }

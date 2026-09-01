@@ -36,7 +36,7 @@ class Skill3 extends Skill {
 
     @Override
     public boolean canUse(BattlePane bp) {
-        return TengYuanDaoZhang.getLvYin(getBelongTo()).canUse(costLvYin) && super.canUse(bp);
+        return ((TengYuanDaoZhang) getBelongTo()).getLvYin().canUse(costLvYin) && super.canUse(bp);
     }
 
     @Override
@@ -57,10 +57,10 @@ class Skill3 extends Skill {
         interactive.decreaseLocation(target, 50);
 
         if (level >= 2) {
-            StatusReduceAttack.install(belongTo, target, level >= 4 ? 0.5 : 0.25);
-            if (level >= 3) {
-                StatusReduceDefense.install(belongTo, target, level >= 5 ? 0.5 : 0.25);
-            }
+            StatusReduceAttack.install(belongTo, target,
+                    level >= 4 ? 0.5 : 0.25,
+                    level >= 5 ? 0.5 : level >= 3 ? 0.25 : 0
+            );
         }
 
         StatusLvYin lvYin = belongTo.getLvYin();
@@ -72,71 +72,24 @@ class Skill3 extends Skill {
         return Optional.of(target);
     }
 
-    static class StatusReduceAttack extends Status implements AttributeModifier, Displayable {
-        private final double ratio;
+    static class StatusReduceAttack extends Status {
+        public StatusReduceAttack(Character from, Character belongTo, double attackRatio, double defenseRatio) {
+            super(SkillName + "降低属性", from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
 
-        public StatusReduceAttack(Character from, Character belongTo, double ratio) {
-            super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
-            this.ratio = ratio;
-
-            setDurationType(StatusDurationType.CHI_XU, 2);
+            duration(StatusDurationType.CHI_XU, 2);
+            displayNameAndDuration();
+            attribute(Attribute.ATTACK, _ -> -belongTo.getInitAttack() * attackRatio);
+            if (defenseRatio > 0) {
+                attribute(Attribute.DEFENCE, _ -> -belongTo.getInitDefense() * defenseRatio);
+            }
         }
 
-        public static void install(Character from, Character belongTo, double ratio) {
+        public static void install(Character from, Character belongTo, double attackRatio, double defenseRatio) {
             belongTo.getStatus(StatusReduceAttack.class)
                     .ifPresentOrElse(
-                            status -> status.setDuration(2),
-                            () -> belongTo.addStatus(new StatusReduceAttack(from, belongTo, ratio))
+                            status -> status.duration(2),
+                            () -> belongTo.addStatus(new StatusReduceAttack(from, belongTo, attackRatio, defenseRatio))
                     );
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.ATTACK;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return -belongTo.getInitAttack() * ratio;
-        }
-
-        @Override
-        public String getDisplayText() {
-            return "攻击降低" + getDuration();
-        }
-    }
-
-    static class StatusReduceDefense extends Status implements AttributeModifier, Displayable {
-        private final double ratio;
-
-        public StatusReduceDefense(Character from, Character belongTo, double ratio) {
-            super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
-            this.ratio = ratio;
-
-            setDurationType(StatusDurationType.CHI_XU, 2);
-        }
-
-        public static void install(Character from, Character belongTo, double ratio) {
-            belongTo.getStatus(StatusReduceDefense.class)
-                    .ifPresentOrElse(
-                            status -> status.setDuration(2),
-                            () -> belongTo.addStatus(new StatusReduceDefense(from, belongTo, ratio))
-                    );
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.DEFENCE;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return -belongTo.getInitDefense() * ratio;
-        }
-
-        @Override
-        public String getDisplayText() {
-            return "防御降低" + getDuration();
         }
     }
 }

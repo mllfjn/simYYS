@@ -8,8 +8,8 @@ import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.character.status.Trigger;
 import com.mllfjn.simyys.character.status.instance.StatusUnselectable;
 import com.mllfjn.simyys.collections.SafeList;
-import com.mllfjn.simyys.utils.SerialFunction;
-import com.mllfjn.simyys.utils.SerializableRunnable;
+import com.mllfjn.simyys.utils.serializable.SerialFunction;
+import com.mllfjn.simyys.utils.serializable.SerialRunnable;
 
 import java.io.Serializable;
 import java.util.*;
@@ -181,7 +181,7 @@ public class SerializableItems implements Serializable {
         }
     }
 
-    public void addPriorityMove(Character character, SerializableRunnable runnable) {
+    public void addPriorityMove(Character character, SerialRunnable runnable) {
         priorityMoves.add(new PriorityMove(character, runnable));
     }
 
@@ -216,6 +216,6 @@ public class SerializableItems implements Serializable {
         return team == 0 ? team0DeadCharacters : team1DeadCharacters;
     }
 
-    private record PriorityMove(Character character, SerializableRunnable runnable) implements Serializable {
+    private record PriorityMove(Character character, SerialRunnable runnable) implements Serializable {
     }
 }

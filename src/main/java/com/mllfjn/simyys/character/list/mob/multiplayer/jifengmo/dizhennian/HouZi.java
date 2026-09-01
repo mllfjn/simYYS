@@ -1,6 +1,5 @@
 package com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.dizhennian;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.battleevent.StatusAdder;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.CharacterSummonBase;
@@ -9,9 +8,8 @@ import com.mllfjn.simyys.character.list.mob.multiplayer.StatusRecordDamage;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill1PuGongBase;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.ParamLocationChange;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.ratecontroller.RateController;
@@ -38,7 +36,17 @@ public class HouZi extends CharacterSummonBase {
 
         adder = bp.addStatusAdder(c ->
                 c.team != team
-                        ? new StatusIncreaseActionListener(this, c)
+                        ? Status.of("猴子-拉条检测", this, c)
+                        .runOn(Trigger.LOCATION_CHANGED, triggerParam -> {
+                            if (((ParamLocationChange) triggerParam).isFromIncrease) {
+                                doInteractive(interactive ->
+                                        getPuGong().ifPresent(skill1 -> {
+                                            skill1.usePrivate(interactive, c);
+                                            skill1.log(c);
+                                        })
+                                );
+                            }
+                        })
                         : null
         );
 
@@ -69,12 +77,18 @@ public class HouZi extends CharacterSummonBase {
 
         // 移除拉条踢一次的效果，添加增伤
         adder.deleteAndRemove();
-        for (Character target : targets) {
-            if (bonus != 1) {
-                target.addStatus(new StatusHouZiBonus(this, target, bonus));
+        if (bonus != 1) {
+            String s = "猴子-伤害加成";
+            final double finalBonus = bonus;
+            for (Character target : targets) {
+                Status.of(s, this, target)
+                        .runOn(Trigger.WHEN_ATTACK, triggerParam ->
+                                ((ParamAttackInfo) triggerParam)
+                                        .getAttackInfo().getTraceableNumber().mul(finalBonus, s)
+                        )
+                        .addTo();
             }
         }
-
         owner.houZiDie();
     }
 
@@ -109,31 +123,6 @@ public class HouZi extends CharacterSummonBase {
         }
     }
 
-    static class StatusIncreaseActionListener extends Status implements StatusRunnable {
-
-        public StatusIncreaseActionListener(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.LOCATION_CHANGE;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            if (((ParamLocationChange) param).isFromIncrease) {
-                from.doInteractive(interactive ->
-                        from.getPuGong().ifPresent(skill1 -> {
-                            skill1.usePrivate(interactive, belongTo);
-                            skill1.log(belongTo);
-                        })
-                );
-            }
-            return false;
-        }
-    }
-
     static class StatusDamageRecord extends StatusRecordDamage {
         private double houZiDamage;
 
@@ -149,22 +138,6 @@ public class HouZi extends CharacterSummonBase {
         protected void addDamage(double damage) {
             houZiDamage += damage;
             ((HouZi) belongTo).owner.getInfoDisplay().addDamage(damage);
-        }
-    }
-
-    static class StatusHouZiBonus extends Status implements InfluenceDamageWhenAttack {
-        private static final String StatusName = "猴子伤害加成";
-
-        private final double bonus;
-
-        public StatusHouZiBonus(Character from, Character belongTo, double bonus) {
-            super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-            this.bonus = bonus;
-        }
-
-        @Override
-        public void doInfluenceWhenAttack(AttackInfo attackInfo) {
-            attackInfo.getTraceableNumber().mul(bonus, StatusName);
         }
     }
 }

@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class SkillQiMeng extends Skill {
-    private static final String SkillName = "启蒙";
+    static final String SkillName = "启蒙";
 
     private final List<Character> zSZHCarriers = new ArrayList<>();
     private final double coefficient;
@@ -30,7 +30,7 @@ public class SkillQiMeng extends Skill {
         this.coefficient = coefficient;
         maxDamage = belongTo.getInitAttack() * 24;
 
-        belongTo.getBp().addStatusAdder(c ->
+        belongTo.bp().addStatusAdder(c ->
                 c.team == belongTo.team && c != belongTo && CharacterFactory.FIRE_CHARACTER.contains(c.getClass())
                         ? new StatusQMCauseAttackListener(this, belongTo, c)
                         : null
@@ -39,7 +39,7 @@ public class SkillQiMeng extends Skill {
 
     void start(Skill skill) {
         this.skill = skill;
-        getBelongTo().getBp().interactive.qiMeng[getBelongTo().team] = this;
+        getBelongTo().bp().interactive.qiMeng[getBelongTo().team] = this;
     }
 
     void log() {
@@ -66,7 +66,7 @@ public class SkillQiMeng extends Skill {
     public void useDone() {
         takeAction();
         skill = null;
-        getBelongTo().getBp().interactive.qiMeng[getBelongTo().team] = null;
+        getBelongTo().bp().interactive.qiMeng[getBelongTo().team] = null;
         super.useDone();
     }
 

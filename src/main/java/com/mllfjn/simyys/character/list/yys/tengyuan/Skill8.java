@@ -1,21 +1,18 @@
 package com.mllfjn.simyys.character.list.yys.tengyuan;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.determinant.PreventDie;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAddCrowdControl;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
 import java.util.List;
 
 class Skill8 extends PassiveSkill {
     static final String SkillName = "余音入梦";
 
-    public Skill8(Character belongTo, int level, int shuYin) {
+    public Skill8(TengYuanDaoZhang belongTo, int level, int shuYin) {
         super(belongTo, level, 8);
         belongTo.addStatus(new StatusPreventDie(belongTo, level >= 6 ? 6 : level - 1, shuYin));
     }
@@ -36,84 +33,48 @@ class Skill8 extends PassiveSkill {
         return SkillName;
     }
 
-    class StatusPreventDie extends Status implements PreventDie {
-        private final int getLvYin;
-        private final int shuYin;
+    class StatusPreventDie extends Status {
 
-        public StatusPreventDie(Character character, int getLvYin, int shuYin) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-            this.getLvYin = getLvYin;
-            this.shuYin = shuYin;
+        public StatusPreventDie(TengYuanDaoZhang character, int getLvYin, int shuYin) {
+            super(SkillName, character);
+            preventDie(_ -> {
+                belongTo.removeAllDeBuff();
+                belongTo.addStatus(new StatusDeadLine(belongTo));
+                if (getLvYin > 0) {
+                    character.getLvYin().addStack(getLvYin);
+                }
+                if (shuYin > 0) {
+                    List<Character> list = new CharacterFinder(belongTo)
+                            .filterTeammate()
+                            .getList();
+                    belongTo.doInteractive(interactive ->
+                            interactive.healTypical(Skill8.this, list, 10 * shuYin)
+                    );
+                }
+                delete();
+            });
+            displayName();
         }
 
-        @Override
-        public void preventDie(double excessDamage) {
-            belongTo.removeAllDeBuff();
-            belongTo.addStatus(new StatusDeadLine(belongTo));
-            if (getLvYin > 0) {
-                TengYuanDaoZhang.getLvYin(belongTo).addStack(getLvYin);
-            }
-            if (shuYin > 0) {
-                List<Character> list = new CharacterFinder(belongTo)
-                        .filterTeammate()
-                        .getList();
-                belongTo.doInteractive(interactive -> {
-                    interactive.healTypical(Skill8.this, list, 10 * shuYin);
-                });
-            }
-            delete();
-        }
-
-        @Override
-        public String getName() {
-            return SkillName;
-        }
-
-        static class StatusDeadLine extends Status implements StatusRunnable, Displayable, PreventDie {
+        static class StatusDeadLine extends Status {
             private static final String StatusName = "梦境意识";
 
             public StatusDeadLine(Character character) {
-                super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
+                super(StatusName, character);
                 int duration = new CharacterFinder(character, true)
                         .filterTeammate()
                         .filterShiShen()
                         .getCount();
-                setDurationType(StatusDurationType.CHI_XU, duration);
-            }
-
-            @Override
-            public void beforeDelete() {
-                belongTo.die();
-            }
-
-            @Override
-            public boolean runnable(Trigger trigger) {
-                return trigger == Trigger.ADDING_CROWD_CONTROL || trigger == Trigger.BEING_ATTACKED;
-            }
-
-            @Override
-            public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-                if (param instanceof ParamAddCrowdControl pac) {
-                    pac.getEffectInfo().setCancel(true);
-                } else {
-                    ((ParamAttackInfo) param).getAttackInfo().setCancel(true);
-                }
-                return false;
-            }
-
-            @Override
-            public String getDisplayText() {
-                return StatusName + getDuration();
-            }
-
-            @Override
-            public void preventDie(double excessDamage) {
-
-            }
-
-            @Override
-            public String getName() {
-                return StatusName;
+                duration(StatusDurationType.CHI_XU, duration);
+                runOn(Trigger.ADDING_CROWD_CONTROL, param ->
+                        ((ParamAddCrowdControl) param).getEffectInfo().setCancel(true)
+                );
+                runOn(Trigger.BEING_ATTACKED, param ->
+                        ((ParamAttackInfo) param).getAttackInfo().setCancel(true)
+                );
+                beforeDelete(() -> belongTo().die());
+                displayNameAndDuration();
+                preventDie();
             }
         }
     }

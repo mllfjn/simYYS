@@ -1,14 +1,7 @@
 package com.mllfjn.simyys.character.yuhun.list;
 
-import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.battleevent.BattleActionListener;
-import com.mllfjn.simyys.battleevent.BattleEvent;
-import com.mllfjn.simyys.battleevent.EventActionDone;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.StatusRunnable;
-import com.mllfjn.simyys.character.status.instance.StatusForceChangeCost;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunSealResponse;
 
@@ -38,46 +31,30 @@ public class HuoZhiChe extends YuHun implements YuHunSealResponse {
         character.removeStatus(statusAfterRound);
     }
 
-    static class StatusAfterRound extends Status implements StatusRunnable, Displayable {
+    static class StatusAfterRound extends Status {
         private int stack;
 
         public StatusAfterRound(Character character) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public String getDisplayText() {
-            if (stack == 0) {
-                return null;
-            }
-            return "墓火" + stack;
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.AFTER_ROUND;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            // 携带者回合结束时,获得1层墓火
-            stack++;
-            // 累计4层时清空层数并获得1个回合,且该回合鬼火消耗减少1点
-            if (stack == 4) {
-                stack = 0;
-                belongTo.getInteractive().getNewRound(belongTo);
-                belongTo.bp.addActionListener(new BattleActionListener(belongTo) {
-                    @Override
-                    public boolean onBattleAction(BattleEvent event) {
-                        if (event instanceof EventActionDone) {
-                            belongTo.addStatus(new StatusForceChangeCost(belongTo, 1));
-                            return true;
-                        }
-                        return false;
-                    }
-                });
-            }
-            return false;
+            super(YuHunName, character);
+            display(() -> {
+                if (stack == 0) {
+                    return null;
+                }
+                return "墓火" + stack;
+            });
+            runOn(Trigger.AFTER_ROUND, _ -> {
+                // 携带者回合结束时,获得1层墓火
+                stack++;
+                // 累计4层时清空层数并获得1个回合,且该回合鬼火消耗减少1点
+                if (stack == 4) {
+                    stack = 0;
+                    belongTo.getInteractive().getNewRound(belongTo);
+                    Status.of(YuHunName + "鬼火消耗减少", belongTo)
+                            .duration(StatusDurationType.CHI_XU, 1)
+                            .forceChangeSkillCost(-1)
+                            .addTo();
+                }
+            });
         }
     }
 }
