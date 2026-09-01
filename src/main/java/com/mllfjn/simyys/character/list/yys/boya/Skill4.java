@@ -5,7 +5,6 @@ import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.CharacterSummonBase;
 import com.mllfjn.simyys.character.skill.Skill;
-import com.mllfjn.simyys.character.status.AttributeModifier;
 import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.character.status.StatusForm;
 import com.mllfjn.simyys.character.status.StatusType;
@@ -49,9 +48,12 @@ class Skill4 extends Skill {
         int level = getLevel();
 
         if (level >= 2) {
-            belongTo.addStatus(new StatusCritRate(belongTo));
+            Status status = Status.of(SkillName + "提升属性", belongTo)
+                    .type(StatusType.BUFF, StatusForm.ZHUANG_TAI)
+                    .attribute(Attribute.CRIT_RATE, 30)
+                    .addTo();
             if (level >= 4) {
-                belongTo.addStatus(new StatusSpeed(belongTo));
+                status.attribute(Attribute.SPEED, 30);
                 if (level >= 5) {
                     belongTo.doInteractive(interactive ->
                             interactive.increaseLocation(belongTo, 70));
@@ -63,40 +65,6 @@ class Skill4 extends Skill {
         belongTo.setYinFenShen(new YinFenShen(belongTo, level >= 3 ? 1 : 0.9, extraMultiplier));
 
         return Optional.empty();
-    }
-
-    static class StatusCritRate extends Status implements AttributeModifier {
-
-        public StatusCritRate(Character character) {
-            super(character, character, StatusType.BUFF, StatusForm.ZHUANG_TAI);
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.CRIT_RATE;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return 30;
-        }
-    }
-
-    static class StatusSpeed extends Status implements AttributeModifier {
-
-        public StatusSpeed(Character character) {
-            super(character, character, StatusType.BUFF, StatusForm.ZHUANG_TAI);
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.SPEED;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return 30;
-        }
     }
 
     static class YinFenShen extends CharacterSummonBase {

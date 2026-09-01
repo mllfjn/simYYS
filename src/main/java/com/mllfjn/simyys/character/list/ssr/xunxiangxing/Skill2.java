@@ -49,7 +49,7 @@ class Skill2 extends Skill {
         return Optional.empty();
     }
 
-    static class StatusXinXiang extends Status implements Displayable {
+    static class StatusXinXiang extends Status {
         private static final String StatusName = "心香";
 
         private final Skill2 skill2;
@@ -57,8 +57,14 @@ class Skill2 extends Skill {
         private int stack;
 
         public StatusXinXiang(Character character, Skill2 skill2) {
-            super(character, character, StatusType.BUFF, StatusForm.YIN_JI);
+            super(StatusName, character, character, StatusType.BUFF, StatusForm.YIN_JI);
             this.skill2 = skill2;
+            display(() -> {
+                if (stack == 0) {
+                    return null;
+                }
+                return StatusName + stack;
+            });
         }
 
         static void addStack(Character character, Skill2 skill2) {
@@ -85,14 +91,6 @@ class Skill2 extends Skill {
             } else {
                 stack++;
             }
-        }
-
-        @Override
-        public String getDisplayText() {
-            if (stack == 0) {
-                return null;
-            }
-            return StatusName + stack;
         }
     }
 }

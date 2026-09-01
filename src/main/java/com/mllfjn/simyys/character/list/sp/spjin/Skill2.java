@@ -8,9 +8,7 @@ import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.ParamUseSkill;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackType;
-import com.mllfjn.simyys.utils.serializable.SerialConsumer;
 
 import java.util.List;
 import java.util.Optional;
@@ -85,7 +83,7 @@ class Skill2 extends PassiveSkill {
         public StatusXX(Character from, Character belongTo) {
             super(StatusName, from, belongTo);
             displayName();
-            SerialConsumer<TriggerParam> action = param -> {
+            runOn(Trigger.USED_SKILL, Trigger.USED_PU_GONG, param -> {
                 if (!belongTo.isInRound()) {
                     return;
                 }
@@ -139,9 +137,7 @@ class Skill2 extends PassiveSkill {
 
                     delete();
                 }
-            };
-            runOn(Trigger.USED_SKILL, action);
-            runOn(Trigger.USED_PU_GONG, action);
+            });
         }
     }
 

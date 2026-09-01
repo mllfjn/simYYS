@@ -3,7 +3,7 @@ package com.mllfjn.simyys.character.list.yys.qingming;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill1PuGongBase;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.interactive.*;
 
 class Skill1 extends Skill1PuGongBase {
@@ -41,16 +41,17 @@ class Skill1 extends Skill1PuGongBase {
         return SkillName;
     }
 
-    static class StatusLuan extends Status implements InfluenceDamageWhenAttack, Displayable {
+    static class StatusLuan extends Status {
         private static final String StatusName = "符咒·乱";
 
-        private final double bonus;
-
         public StatusLuan(Character from, Character belongTo, double num) {
-            super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
-            this.bonus = (100 - num) / 100;
+            super(StatusName, from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
 
             duration(StatusDurationType.CHI_XU, 2);
+            displayNameAndDuration();
+            runOn(Trigger.WHEN_ATTACK, param ->
+                    ((ParamAttackInfo) param).getAttackInfo().getTraceableNumber().mul((100 - num) / 100, StatusName)
+            );
         }
 
         public static StatusSupplier getSupplier(double num) {
@@ -64,16 +65,6 @@ class Skill1 extends Skill1PuGongBase {
                             () -> to.addStatus(new StatusLuan(from, to, num))
                     )
             );
-        }
-
-        @Override
-        public String getDisplayText() {
-            return StatusName + getDuration();
-        }
-
-        @Override
-        public void doInfluenceWhenAttack(AttackInfo attackInfo) {
-            attackInfo.getTraceableNumber().mul(bonus, StatusName);
         }
     }
 }

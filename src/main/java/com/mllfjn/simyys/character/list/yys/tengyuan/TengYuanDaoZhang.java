@@ -110,10 +110,6 @@ public class TengYuanDaoZhang extends Character {
         return statusLvYin;
     }
 
-    static StatusLvYin getLvYin(Character character) {
-        return ((TengYuanDaoZhang) character).getLvYin();
-    }
-
     @Override
     public boolean isUncontrollable() {
         if (isHaveStatus(Skill4.StatusZouLv.class)) {

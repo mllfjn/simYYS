@@ -24,10 +24,6 @@ class Skill2 extends Skill {
             status.retainAfterDie()
                     .retainAfterChangeWave()
                     .runOn(Trigger.AFTER_ATTACK, param -> {
-                        if (used) {
-                            return;
-                        }
-
                         double number = ((ParamAttackInfo) param).getAttackInfo().getTraceableNumber().getNumber();
                         damage += number;
                         // TODO 这里有一个初始生命的概念,以后加上
@@ -35,14 +31,15 @@ class Skill2 extends Skill {
                             belongTo.bp.addOutRoundSkill(this, () -> {
                                 huDieSkill2Use();
                                 damage = 0;
-                                used = true;
-                                status.runOn(Trigger.BEFORE_ROUND, _ -> {
-                                    used = false;
-                                    status.removeAction(Trigger.BEFORE_ROUND);
-                                });
+                                status.enableAction(Trigger.AFTER_ATTACK);
                             });
                         }
-                    }).addTo();
+                    })
+                    .runOnAndDisable(Trigger.BEFORE_ROUND, _ -> {
+                        status.enableAction(Trigger.AFTER_ATTACK);
+                        status.disableAction(Trigger.BEFORE_ROUND);
+                    })
+                    .addTo();
         }
         immuneOverDoseDamage = level >= 3;
         reinforcement = level >= 5;

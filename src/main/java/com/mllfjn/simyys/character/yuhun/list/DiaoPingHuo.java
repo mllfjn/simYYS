@@ -1,12 +1,10 @@
 package com.mllfjn.simyys.character.yuhun.list;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunSealResponse;
 import com.mllfjn.simyys.interactive.HealInfo;
@@ -40,31 +38,23 @@ public class DiaoPingHuo extends YuHun implements YuHunSealResponse {
         character.removeStatus(status);
     }
 
-    static class StatusDPHAfterRound extends Status implements StatusRunnable {
+    static class StatusDPHAfterRound extends Status {
         private final Skill skill = Skill.getInstance(YuHunName);
 
         public StatusDPHAfterRound(Character character) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.AFTER_ROUND;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            bp.addGuiHuoProgress(belongTo.team);
-            // 为当前（生命比例最低）的（非召唤物）（友方）目标治疗自身防御700%的生命
-            Character target = new CharacterFinder(belongTo)
-                    .filterTeammate()
-                    .filterSummon(false)
-                    .get(Attribute.HP_PERCENT, CharacterFinder.Criteria.MIN);
-            HealInfo healInfo = HealInfo.createHeal(belongTo, skill, target, belongTo.getDefence());
-            healInfo.setMultiplier(700);
-            belongTo.doInteractive(interactive -> interactive.heal(skill, List.of(target)
-                    , (c) -> healInfo));
-            return false;
+            super(YuHunName + "回合后监听", character);
+            runOn(Trigger.AFTER_ROUND, _ -> {
+                character.bp().addGuiHuoProgress(belongTo.team);
+                // 为当前（生命比例最低）的（非召唤物）（友方）目标治疗自身防御700%的生命
+                Character target = new CharacterFinder(belongTo)
+                        .filterTeammate()
+                        .filterSummon(false)
+                        .get(Attribute.HP_PERCENT, CharacterFinder.Criteria.MIN);
+                HealInfo healInfo = HealInfo.createHeal(belongTo, skill, target, belongTo.getDefence());
+                healInfo.setMultiplier(700);
+                belongTo.doInteractive(interactive -> interactive.heal(skill, List.of(target)
+                        , _ -> healInfo));
+            });
         }
     }
 }

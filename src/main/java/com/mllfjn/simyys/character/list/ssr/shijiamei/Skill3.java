@@ -6,7 +6,6 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
 
@@ -129,10 +128,11 @@ class Skill3 extends Skill {
         }
     }
 
-    static class StatusEffectResist extends Status implements AttributeModifier {
+    static class StatusEffectResist extends Status {
         private StatusEffectResist(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.BUFF, StatusForm.ZHUANG_TAI);
+            super(SkillName + "效果抵抗", from, belongTo, StatusType.BUFF, StatusForm.ZHUANG_TAI);
             duration(StatusDurationType.CHI_XU, 2);
+            attribute(Attribute.EFFECT_RESIST_RATE, 30);
         }
 
         private static void install(Character from, Character belongTo) {
@@ -142,41 +142,15 @@ class Skill3 extends Skill {
                             () -> belongTo.addStatus(new StatusEffectResist(from, belongTo))
                     );
         }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.EFFECT_RESIST_RATE;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return 30;
-        }
     }
 
-    static class StatusIgnoreDefense extends Status implements AttributeModifier, StatusRunnable {
+    static class StatusIgnoreDefense extends Status {
         public StatusIgnoreDefense(Character character) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.IGNORE_DEFENCE;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return param.target().isHaveStatus(StatusXuWangMiZhang.class) ? 100 : 0;
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.AFTER_ACTION;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            return true;
+            super(SkillName + "无视防御", character);
+            attribute(Attribute.IGNORE_DEFENCE, param ->
+                    (double) (param.target().isHaveStatus(StatusXuWangMiZhang.class) ? 100 : 0)
+            );
+            runOn(Trigger.AFTER_ACTION, _ -> delete());
         }
     }
 }

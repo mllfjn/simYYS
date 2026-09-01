@@ -1,12 +1,10 @@
 package com.mllfjn.simyys.character.list.yys.boya;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
 import java.util.List;
 
@@ -31,7 +29,9 @@ class Skill7 extends PassiveSkill {
         this.zengShang = baseZengShang[level];
         this.speed = baseSpeed[level];
 
-        belongTo.addStatus(new StatusWhenDie(belongTo));
+        Status.of(SkillName + "阵亡监听", belongTo)
+                .runOn(Trigger.DIE, _ -> Skill7.this.use())
+                .addTo();
     }
 
     private void use() {
@@ -41,7 +41,13 @@ class Skill7 extends PassiveSkill {
                 .getList();
 
         for (Character character : list) {
-            character.addStatus(new StatusAiHao(belongTo, character, zengShang, speed, getLevel() >= 5 ? 2 : 1));
+            Status.of(SkillName, belongTo, character)
+                    .type(StatusType.BUFF, StatusForm.ZHUANG_TAI)
+                    .duration(StatusDurationType.CHI_XU, getLevel() >= 5 ? 2 : 1)
+                    .attribute(Attribute.ZENG_SHANG, zengShang)
+                    .attribute(Attribute.SPEED, speed)
+                    .displayNameAndDuration()
+                    .addTo();
         }
 
         log(null);
@@ -50,56 +56,5 @@ class Skill7 extends PassiveSkill {
     @Override
     public String getName() {
         return SkillName;
-    }
-
-    class StatusWhenDie extends Status implements StatusRunnable {
-
-        public StatusWhenDie(Character character) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.DIE;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            Skill7.this.use();
-            return false;
-        }
-    }
-
-    static class StatusAiHao extends Status implements AttributeModifier, Displayable {
-
-        private final int zengShang;
-        private final int speed;
-
-        public StatusAiHao(Character from, Character belongTo, int zengShang, int speed, int duration) {
-            super(from, belongTo, StatusType.BUFF, StatusForm.ZHUANG_TAI);
-            this.zengShang = zengShang;
-            this.speed = speed;
-
-            duration(StatusDurationType.CHI_XU, duration);
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.ZENG_SHANG || attribute == Attribute.SPEED;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            if (attribute == Attribute.ZENG_SHANG) {
-                return zengShang;
-            }
-
-            return speed;
-        }
-
-        @Override
-        public String getDisplayText() {
-            return SkillName + getDuration();
-        }
     }
 }

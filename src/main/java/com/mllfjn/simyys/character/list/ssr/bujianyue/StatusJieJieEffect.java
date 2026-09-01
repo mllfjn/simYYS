@@ -7,9 +7,7 @@ import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.instance.StatusShield;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.ParamUseSkill;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
-import com.mllfjn.simyys.utils.serializable.SerialConsumer;
 
 
 // TODO:该类从private static class重构为public,内部引用很乱,有空修改
@@ -38,22 +36,22 @@ public class StatusJieJieEffect extends Status {
                 }
             });
         }
-        SerialConsumer<TriggerParam> action = param -> {
+        runOnAndDisable(Trigger.AFTER_ROUND, _ -> {
+            belongTo.addStatus(new StatusShanSe(from, belongTo));
+            skill3.skill2.getShanSe();
+            disableAction(Trigger.AFTER_ROUND);
+        });
+        runOn(Trigger.WILL_USE_PU_GONG, Trigger.WILL_USE_SKILL, param -> {
             Skill skill = ((ParamUseSkill) param).getSkill();
             if (lastSkill == null || lastSkill == skill) {
                 belongTo.addStatus(getYunYi(from, belongTo));
                 skill3.skill2.getYunYi();
             } else {
-                runOn(Trigger.AFTER_ROUND, _ -> {
-                    belongTo.addStatus(new StatusShanSe(from, belongTo));
-                    skill3.skill2.getShanSe();
-                    removeAction(Trigger.AFTER_ROUND);
-                });
+                enableAction(Trigger.AFTER_ROUND);
             }
             lastSkill = skill;
-        };
-        runOn(Trigger.WILL_USE_PU_GONG, action);
-        runOn(Trigger.WILL_USE_SKILL, action);
+        });
+
         runOn(Trigger.WHEN_ATTACK, param -> {
             AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
             if (isIncreaseNonCritDamage(attackInfo)) {

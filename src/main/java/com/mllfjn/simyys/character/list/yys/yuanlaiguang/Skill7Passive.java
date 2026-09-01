@@ -1,6 +1,5 @@
 package com.mllfjn.simyys.character.list.yys.yuanlaiguang;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.battleevent.BattleActionListener;
 import com.mllfjn.simyys.battleevent.BattleEvent;
 import com.mllfjn.simyys.battleevent.EventActionDone;
@@ -8,8 +7,6 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.StatusRunnable;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackType;
 
 import java.util.List;
@@ -24,7 +21,9 @@ class Skill7Passive extends PassiveSkill {
     public Skill7Passive(Character belongTo, int level, int shuYin) {
         super(belongTo, level, 7);
 
-        belongTo.addStatus(new StatusPZRefresher(belongTo, this));
+        Status.of(SkillName + "回合开始前刷新", belongTo)
+                .runOn(Trigger.BEFORE_ROUND, _ -> refuel())
+                .addTo();
     }
 
     public void piZhan(Character target) {
@@ -109,7 +108,7 @@ class Skill7Passive extends PassiveSkill {
         private int count = 0;
 
         private StatusEvolution(Character character, int duration) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
+            super(SkillName + "进化", character);
 
             duration(StatusDurationType.CHI_XU, duration);
         }
@@ -132,26 +131,6 @@ class Skill7Passive extends PassiveSkill {
 
         public int getCount() {
             return count;
-        }
-    }
-
-    static class StatusPZRefresher extends Status implements StatusRunnable {
-        private final Skill7Passive skill;
-
-        public StatusPZRefresher(Character character, Skill7Passive skill) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-            this.skill = skill;
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.BEFORE_ROUND;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            skill.refuel();
-            return false;
         }
     }
 }

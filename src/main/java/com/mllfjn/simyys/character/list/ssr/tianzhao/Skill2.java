@@ -1,13 +1,10 @@
 package com.mllfjn.simyys.character.list.ssr.tianzhao;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.AttackType;
 
@@ -78,33 +75,32 @@ class Skill2 extends PassiveSkill {
     private record Copy(Character target, double multiplier, AttackType attackType) {
     }
 
-    private static class StatusGDListener extends Status implements StatusRunnable {
+    private static class StatusGDListener extends Status {
         public StatusGDListener(Character character) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.BEING_ATTACKED;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            Character attacker = ((ParamAttackInfo) param).getAttackInfo().getAttacker();
-            if (attacker.team != belongTo.team) {
-                StatusGuangDi.install(belongTo, attacker);
-            }
-            return false;
+            super(StatusGuangDi.StatusName + "伤害监听", character);
+            runOn(Trigger.BEING_ATTACKED, param -> {
+                Character attacker = ((ParamAttackInfo) param).getAttackInfo().getAttacker();
+                if (attacker.team != belongTo.team) {
+                    StatusGuangDi.install(belongTo, attacker);
+                }
+            });
         }
     }
 
-    private static class StatusGuangDi extends Status
-            implements Displayable, InfluenceDamageWhenAttack, AttributeModifier {
+    private static class StatusGuangDi extends Status {
         private static final String StatusName = "光涤";
 
         private StatusGuangDi(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.DEBUFF, StatusForm.YIN_JI);
+            super(StatusName, from, belongTo, StatusType.DEBUFF, StatusForm.YIN_JI);
             duration(StatusDurationType.CHI_XU, 1);
+            displayName();
+            runOn(Trigger.WHEN_ATTACK, param -> {
+                AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
+                if (attackInfo.getTarget() == from) {
+                    attackInfo.getTraceableNumber().mul(0.6, StatusName);
+                }
+            });
+            attribute(Attribute.DEFENCE, -150);
         }
 
         private static void install(Character from, Character belongTo) {
@@ -113,28 +109,6 @@ class Skill2 extends PassiveSkill {
                             status -> status.duration(1),
                             () -> belongTo.addStatus(new StatusGuangDi(from, belongTo))
                     );
-        }
-
-        @Override
-        public String getDisplayText() {
-            return StatusName;
-        }
-
-        @Override
-        public void doInfluenceWhenAttack(AttackInfo attackInfo) {
-            if (attackInfo.getTarget() == from) {
-                attackInfo.getTraceableNumber().mul(0.6, StatusName);
-            }
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.DEFENCE;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return -150;
         }
     }
 }

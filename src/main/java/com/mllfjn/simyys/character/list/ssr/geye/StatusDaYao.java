@@ -7,8 +7,6 @@ import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.determinant.IgnoreDebuff;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
-import com.mllfjn.simyys.utils.serializable.SerialConsumer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,9 +51,9 @@ class StatusDaYao extends Status implements IgnoreDebuff {
 
         display(() -> StatusName + getStack());
 
-        SerialConsumer<TriggerParam> action = _ -> belongTo.bp.gainGuiHuo(belongTo, getStack());
-        runOn(Trigger.OUT_ROUND_ACTION, action);
-        runOn(Trigger.BEFORE_ROUND, action);
+        runOn(Trigger.OUT_ROUND_ACTION, Trigger.BEFORE_ROUND, _ ->
+                belongTo.bp.gainGuiHuo(belongTo, getStack())
+        );
 
         preventDie(_ -> {
             if (!die) {

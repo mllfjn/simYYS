@@ -10,15 +10,26 @@ import javafx.scene.paint.Color;
 public class ELou extends YuHun implements YuHunSealResponse {
     public static final String YuHunName = "恶楼";
 
-    private StatusELLock lock;
+    private StatusELou eLou;
+    private Status lock;
 
     @Override
     public void init(Character character, boolean isInit) {
         super.init(character, isInit);
-        lock = new StatusELLock(character);
-
         character.bp.addPriorityMove(character, () -> {
-            character.addStatus(new StatusELZL(character));
+
+            eLou = new StatusELou(character);
+
+            lock = Status.of("恶楼封印", character);
+            lock.duration(StatusDurationType.CHI_XU, 8)
+                    .displayNameAndDuration()
+                    .setColor(Color.RED)
+                    .beforeDelete(() -> {
+                        eLou.enable();
+                        lock = null;
+                        ELou.this.yuHunEffect();
+                    });
+
             yuHunEffect();
         });
     }
@@ -32,6 +43,7 @@ public class ELou extends YuHun implements YuHunSealResponse {
     public void enable() {
         if (lock != null) {
             character.addStatus(lock);
+            eLou.disable();
         }
     }
 
@@ -39,60 +51,27 @@ public class ELou extends YuHun implements YuHunSealResponse {
     public void disable() {
         if (lock != null) {
             character.removeStatus(lock);
+            eLou.enable();
         }
     }
 
-    static class StatusELZL extends Status implements Displayable, AttributeModifier {
-        private static final String StatusName = "恶楼之力";
-
-        private StatusELZL(Character character) {
-            super(character, character, StatusType.BUFF, StatusForm.SPECIAL);
+    private static class StatusELou extends Status {
+        public StatusELou(Character character) {
+            super("恶楼之力", character);
+            type(StatusType.BUFF, StatusForm.SPECIAL)
+                    .displayName()
+                    .setColor(Color.ORANGE)
+                    .addTo();
         }
 
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return (attribute == Attribute.ZENG_SHANG || attribute == Attribute.JIAN_SHANG)
-                    && !belongTo.isHaveStatus(StatusELLock.class);
+        void enable() {
+            attribute(Attribute.ZENG_SHANG, 80);
+            attribute(Attribute.JIAN_SHANG, 80);
         }
 
-        @Override
-        public Color getColor(StatusType type) {
-            return GOOD_COLOR;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return 80;
-        }
-
-        @Override
-        public String getDisplayText() {
-            return StatusName;
-        }
-    }
-
-    class StatusELLock extends Status implements Displayable {
-        private static final String StatusName = "恶楼封印";
-
-        private StatusELLock(Character character) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-            duration(StatusDurationType.CHI_XU, 8);
-        }
-
-        @Override
-        public Color getColor(StatusType type) {
-            return Displayable.BAD_COLOR;
-        }
-
-        @Override
-        public void beforeDelete() {
-            ELou.this.lock = null;
-            ELou.this.yuHunEffect();
-        }
-
-        @Override
-        public String getDisplayText() {
-            return StatusName + getDuration();
+        void disable() {
+            removeAttribute(Attribute.ZENG_SHANG);
+            removeAttribute(Attribute.JIAN_SHANG);
         }
     }
 }

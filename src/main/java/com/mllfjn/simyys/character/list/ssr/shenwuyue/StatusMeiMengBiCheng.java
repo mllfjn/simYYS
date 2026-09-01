@@ -11,10 +11,6 @@ public class StatusMeiMengBiCheng extends Status {
         super(StatusName, from, belongTo);
         duration(StatusDurationType.CHI_XU, 1);
         displayName();
-    }
-
-    @Override
-    public Color getColor(StatusType type) {
-        return GOOD_COLOR;
+        setColor(Color.ORANGE);
     }
 }

@@ -35,14 +35,13 @@ public class YiNianHuo extends YuHun implements YuHunSealResponse {
         character.removeStatus(status);
     }
 
-    static class StatusNianHuo extends Status implements Displayable, AttributeModifier, StatusRunnable
-            , ConditionalReduceCost {
+    static class StatusNianHuo extends Status implements ConditionalReduceCost {
         public static final String StatusName = "念火";
 
         private int stack;
 
         public StatusNianHuo(Character character) {
-            super(character, character, StatusType.BUFF, StatusForm.YIN_JI);
+            super(StatusName, character, character, StatusType.BUFF, StatusForm.YIN_JI);
         }
 
         @Override
@@ -63,6 +62,10 @@ public class YiNianHuo extends YuHun implements YuHunSealResponse {
         @Override
         public void enable(int usedCount) {
             stack -= usedCount;
+        }
+
+        private void stackChange() {
+            display()
         }
 
         @Override

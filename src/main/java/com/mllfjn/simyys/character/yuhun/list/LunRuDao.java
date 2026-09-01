@@ -1,9 +1,7 @@
 package com.mllfjn.simyys.character.yuhun.list;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunSealResponse;
 import com.mllfjn.simyys.ratecontroller.RateController;
@@ -35,32 +33,22 @@ public class LunRuDao extends YuHun implements YuHunSealResponse {
         character.removeStatus(status);
     }
 
-    class StatusLRD extends Status implements StatusRunnable {
+    class StatusLRD extends Status {
+        private boolean canTrigger = true;
 
         public StatusLRD(Character character) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.AFTER_ROUND && !belongTo.isHaveStatus(StatusLRDMark.class);
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            if (RateController.yuHun(belongTo, LunRuDao.this, RATE)) {
-                belongTo.doInteractive(interactive -> interactive.getNewRound(belongTo));
-                belongTo.addStatus(new StatusLRDMark(belongTo));
-                LunRuDao.this.yuHunEffect();
-            }
-            return false;
-        }
-
-        static class StatusLRDMark extends Status {
-            public StatusLRDMark(Character character) {
-                super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-                duration(StatusDurationType.CHI_XU, 2);
-            }
+            super(YuHunName, character);
+            runOn(Trigger.AFTER_ROUND, _ -> {
+                if (canTrigger) {
+                    if (RateController.yuHun(belongTo, LunRuDao.this, RATE)) {
+                        belongTo.doInteractive(interactive -> interactive.getNewRound(belongTo));
+                        LunRuDao.this.yuHunEffect();
+                        canTrigger = false;
+                    }
+                } else {
+                    canTrigger = true;
+                }
+            });
         }
     }
 }

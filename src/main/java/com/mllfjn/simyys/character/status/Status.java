@@ -8,9 +8,7 @@ import com.mllfjn.simyys.utils.serializable.*;
 import javafx.scene.paint.Color;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.Map;
+import java.util.*;
 
 public class Status implements Serializable {
     // 状态名称
@@ -70,15 +68,17 @@ public class Status implements Serializable {
         return name;
     }
 
-    public void addTo() {
+    public Status addTo() {
         belongTo.addStatus(this);
+        return this;
     }
 
     // ====================可运行===============================
     private Map<Trigger, SerialConsumer<TriggerParam>> actions = Collections.emptyMap();
+    private Set<Trigger> disableTriggers = Collections.emptySet();
 
     public final boolean runnable(Trigger trigger) {
-        return actions.containsKey(trigger);
+        return actions.containsKey(trigger) && !disableTriggers.contains(trigger);
     }
 
     public final Status runOn(Trigger trigger, SerialConsumer<TriggerParam> action) {
@@ -89,8 +89,35 @@ public class Status implements Serializable {
         return this;
     }
 
+    public final Status runOnAndDisable(Trigger trigger, SerialConsumer<TriggerParam> action) {
+        runOn(trigger, action);
+        disableAction(trigger);
+        return this;
+    }
+
+    public final Status runOn(Trigger trigger1, Trigger trigger2, SerialConsumer<TriggerParam> action) {
+        if (actions == Collections.EMPTY_MAP) {
+            actions = new EnumMap<>(Trigger.class);
+        }
+        actions.put(trigger1, action);
+        actions.put(trigger2, action);
+        return this;
+    }
+
     public final void removeAction(Trigger trigger) {
         actions.remove(trigger);
+    }
+
+    public final void disableAction(Trigger trigger) {
+        if (disableTriggers == Collections.EMPTY_SET) {
+            disableTriggers = EnumSet.of(trigger);
+        } else {
+            disableTriggers.add(trigger);
+        }
+    }
+
+    public final void enableAction(Trigger trigger) {
+        disableTriggers.remove(trigger);
     }
 
     public final void run(Trigger trigger, TriggerParam param) {
@@ -115,6 +142,15 @@ public class Status implements Serializable {
         }
         simpleAttribute.put(attribute, value);
         return this;
+    }
+
+    public final void removeAttribute(Attribute attribute) {
+        if (simpleAttribute != Collections.EMPTY_MAP) {
+            simpleAttribute.remove(attribute);
+        }
+        if (attributeModifier != Collections.EMPTY_MAP) {
+            attributeModifier.remove(attribute);
+        }
     }
 
     public double getAttribute(Attribute attribute, StatusModifyParam param) {
@@ -153,6 +189,11 @@ public class Status implements Serializable {
     public final Status display(String text) {
         displayText = text;
         return this;
+    }
+
+    public final void stopDisplay() {
+        displayText = null;
+        displayTextSupplier = null;
     }
 
     public final Status displayName() {

@@ -4,11 +4,10 @@ import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
+import com.mllfjn.simyys.character.skill.Skill1PuGongBase;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
-import com.mllfjn.simyys.utils.serializable.SerialConsumer;
 
 import java.util.List;
 import java.util.Optional;
@@ -48,33 +47,38 @@ public class CiTiao1QiaoJin {
 
         public StatusQJSplash(Character from, Character belongTo) {
             super("巧劲-伤害溅射", from, belongTo);
-            SerialConsumer<TriggerParam> actionSplash = param -> {
+
+            // 普攻伤害溅射，默认关闭
+            runOnAndDisable(Trigger.CAUSE_ATTACK, param -> {
                 AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
-                double number = attackInfo.getTraceableNumber().getNumber();
-                List<Character> targets = new CharacterFinder(belongTo)
-                        .filterEnemy()
-                        .getList();
-                targets.remove(attackInfo.getTarget());
-                belongTo.doInteractive(interactive -> {
-                    for (Character target : targets) {
-                        interactive.attack(
-                                AttackInfo.createRealAttack(belongTo, skill, target, number * 0.4)
-                        );
-                    }
-                });
-                skill.useDone();
-            };
-            SerialConsumer<TriggerParam> actionAfterRound = _ -> {
+                if (attackInfo.getSkill() instanceof Skill1PuGongBase) {
+                    double number = attackInfo.getTraceableNumber().getNumber();
+                    List<Character> targets = new CharacterFinder(belongTo)
+                            .filterEnemy()
+                            .getList();
+                    targets.remove(attackInfo.getTarget());
+                    belongTo.doInteractive(interactive -> {
+                        for (Character target : targets) {
+                            interactive.attack(
+                                    AttackInfo.createRealAttack(belongTo, skill, target, number * 0.4)
+                            );
+                        }
+                    });
+                    skill.useDone();
+                }
+            });
+
+            // 回合后添加巧劲减伤,默认关闭
+            runOnAndDisable(Trigger.AFTER_ROUND, _ -> {
                 StatusQJJianShang.addStack(from, belongTo);
-                removeAction(Trigger.AFTER_ROUND);
-            };
+                disableAction(Trigger.CAUSE_ATTACK);
+                disableAction(Trigger.AFTER_ROUND);
+            });
+
+            // 开始普攻时监听伤害,激活回合后添加状态
             runOn(Trigger.WILL_USE_PU_GONG, _ -> {
-                runOn(Trigger.CAUSE_ATTACK, actionSplash);
-                runOn(Trigger.USED_PU_GONG, _ -> {
-                    removeAction(Trigger.CAUSE_ATTACK);
-                    removeAction(Trigger.USED_PU_GONG);
-                    runOn(Trigger.AFTER_ROUND, actionAfterRound);
-                });
+                enableAction(Trigger.CAUSE_ATTACK);
+                enableAction(Trigger.AFTER_ROUND);
             });
         }
     }

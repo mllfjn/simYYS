@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class SkillQiMeng extends Skill {
-    private static final String SkillName = "启蒙";
+    static final String SkillName = "启蒙";
 
     private final List<Character> zSZHCarriers = new ArrayList<>();
     private final double coefficient;

@@ -5,9 +5,7 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.instance.StatusBiHu;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.ratecontroller.RateController;
-import com.mllfjn.simyys.utils.serializable.SerialConsumer;
 
 class Skill2 extends PassiveSkill {
     private static final String SkillName = "钢铁之羽";
@@ -99,14 +97,13 @@ class Skill2 extends PassiveSkill {
         private boolean active;
         private final boolean useSkill3AfterBiHuUsed;
 
-        private final SerialConsumer<TriggerParam> action = _ -> {
-            active = true;
-            removeAction(Trigger.AFTER_ROUND);
-        };
-
         public StatusGTZYBiHu(Character character, boolean useSkill3AfterBiHuUsed) {
             super(character, character);
             this.useSkill3AfterBiHuUsed = useSkill3AfterBiHuUsed;
+            runOnAndDisable(Trigger.AFTER_ROUND, _ -> {
+                active = true;
+                disableAction(Trigger.AFTER_ROUND);
+            });
             display(() -> {
                 if (active) {
                     return super.getDisplayText();
@@ -128,7 +125,7 @@ class Skill2 extends PassiveSkill {
         @Override
         protected void used() {
             active = false;
-            runOn(Trigger.AFTER_ROUND, action);
+            enableAction(Trigger.AFTER_ROUND);
             if (useSkill3AfterBiHuUsed) {
                 belongTo.bp.addOutRoundSkill(skill3, () -> skill3.useWithoutCost());
             }

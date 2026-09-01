@@ -1,11 +1,9 @@
 package com.mllfjn.simyys.character.yuhun.list;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunSealResponse;
 
@@ -39,39 +37,38 @@ public class TuFo extends YuHun implements YuHunSealResponse {
 
 
     // 回合结束时，若本回合普攻或无法动作，使全体友方提升15%效果抵抗、伤害，维持2回合。自身提升双倍
-    //  预期实现方式:回合开始时开始检测,如果使用技能则标记为false,如果true则回合结束后生效
-    static class StatusTFListener extends Status implements StatusRunnable {
-        private boolean isDetecting = false;
-
+    static class StatusTFListener extends Status {
         public StatusTFListener(Character character) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
+            super(YuHunName, character);
 
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.BEFORE_ROUND // 回合开始时开始检测
-                    || (isDetecting && trigger == Trigger.USED_SKILL)  // 如果释放了技能,则停止检测
-                    || (isDetecting && trigger == Trigger.AFTER_ROUND); // 如果回合结束时还处于检测状态,则生效
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            if (trigger == Trigger.BEFORE_ROUND) {
-                isDetecting = true;
-            } else if (trigger == Trigger.USED_SKILL) {
-                isDetecting = false;
-            } else {
+            // 回合开始时开始检测
+            runOn(Trigger.BEFORE_ROUND, _ -> {
+                enableAction(Trigger.USED_SKILL);
+                enableAction(Trigger.AFTER_ROUND);
+            });
+            // 如果释放了技能,则停止检测
+            runOnAndDisable(Trigger.USED_SKILL, _ -> {
+                disableAction(Trigger.USED_SKILL);
+                disableAction(Trigger.AFTER_ROUND);
+            });
+            // 如果回合结束时还处于检测状态,则生效
+            runOnAndDisable(Trigger.AFTER_ROUND, _ -> {
                 StatusTF.install(belongTo);
-            }
-            return false;
+                disableAction(Trigger.USED_SKILL);
+                disableAction(Trigger.AFTER_ROUND);
+            });
         }
     }
 
-    static class StatusTF extends Status implements AttributeModifier, Displayable {
+    static class StatusTF extends Status {
 
         public StatusTF(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.BUFF, StatusForm.ZHUANG_TAI);
+            super(YuHunName, from, belongTo, StatusType.BUFF, StatusForm.ZHUANG_TAI);
             duration(StatusDurationType.WEI_CHI, 2);
+            int increase = from == belongTo ? 30 : 15;
+            attribute(Attribute.EFFECT_RESIST_RATE, increase);
+            attribute(Attribute.ZENG_SHANG, increase);
+            displayNameAndDuration();
         }
 
         public static void install(Character character) {
@@ -85,25 +82,6 @@ public class TuFo extends YuHun implements YuHunSealResponse {
                         () -> target.addStatus(new StatusTF(character, target))
                 );
             }
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.EFFECT_RESIST_RATE || attribute == Attribute.ZENG_SHANG;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            if (from == belongTo) {
-                return 30;
-            } else {
-                return 15;
-            }
-        }
-
-        @Override
-        public String getDisplayText() {
-            return YuHunName + getDuration();
         }
     }
 }

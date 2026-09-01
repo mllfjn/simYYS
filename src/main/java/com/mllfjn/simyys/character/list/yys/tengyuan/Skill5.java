@@ -69,31 +69,15 @@ class Skill5 extends Skill {
         return Optional.empty();
     }
 
-    static class StatusAttack extends Status implements AttributeModifier, Displayable {
+    static class StatusAttack extends Status {
         private final static String StatusName = "琴月";
 
-        private final double ratio;
-
         public StatusAttack(Character from, Character belongTo, double ratio, int duration) {
-            super(from, belongTo, StatusType.BUFF, StatusForm.ZHUANG_TAI);
-            this.ratio = ratio;
+            super(StatusName, from, belongTo, StatusType.BUFF, StatusForm.ZHUANG_TAI);
 
             duration(StatusDurationType.CHI_XU, duration);
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.ATTACK;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return belongTo.getInitBaseAttack() * ratio;
-        }
-
-        @Override
-        public String getDisplayText() {
-            return StatusName + getDuration();
+            displayNameAndDuration();
+            attribute(Attribute.ATTACK, _ -> belongTo.getInitBaseAttack() * ratio);
         }
     }
 }

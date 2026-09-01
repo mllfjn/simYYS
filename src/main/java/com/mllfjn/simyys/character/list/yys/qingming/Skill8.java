@@ -41,16 +41,18 @@ class Skill8 extends Skill {
         return Optional.empty();
     }
 
-    static class StatusXing extends Status implements AttributeModifier, Displayable {
+    static class StatusXing extends Status {
         private static final String StatusName = "星";
 
         private final int bonus;
 
         private StatusXing(Character from, Character belongTo, int duration, int bonus) {
-            super(from, belongTo, StatusType.BUFF, StatusForm.ZHUANG_TAI);
+            super(StatusName, from, belongTo, StatusType.BUFF, StatusForm.ZHUANG_TAI);
             this.bonus = bonus;
 
             duration(StatusDurationType.CHI_XU, duration);
+            displayNameAndDuration();
+            attribute(Attribute.ZENG_SHANG, bonus);
         }
 
         public static void install(Character from, Character belongTo, int duration, int bonus) {
@@ -62,21 +64,6 @@ class Skill8 extends Skill {
                     status.duration(duration);
                 }
             }, () -> belongTo.addStatus(new StatusXing(from, belongTo, duration, bonus)));
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.ZENG_SHANG;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return bonus;
-        }
-
-        @Override
-        public String getDisplayText() {
-            return StatusName + getDuration();
         }
     }
 }

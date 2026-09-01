@@ -4,12 +4,13 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.interactive.StatusSupplier;
 
-public class StatusBind extends Status implements CrowdControl, Displayable {
+public class StatusBind extends Status implements CrowdControl {
     private static final String StatusName = "束缚";
 
     public StatusBind(Character from, Character belongTo, int duration) {
-        super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
+        super(StatusName, from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
         duration(StatusDurationType.CHI_XU, duration);
+        displayName();
     }
 
     public static StatusSupplier getSupplier(int duration) {
@@ -27,10 +28,5 @@ public class StatusBind extends Status implements CrowdControl, Displayable {
 
     public void doBind() {
         belongTo.getPuGong().ifPresent(skill -> skill.log(null));
-    }
-
-    @Override
-    public String getDisplayText() {
-        return StatusName;
     }
 }

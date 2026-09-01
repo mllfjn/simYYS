@@ -5,7 +5,6 @@ import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
 import java.util.Optional;
 
@@ -55,56 +54,40 @@ class Skill2 extends Skill {
         return Optional.empty();
     }
 
-    static class StatusRenBuff extends Status implements AttributeModifier {
-
-        // skill2-lv2默认获得防御
-        private boolean isIncreaseDefense;
+    static class StatusRenBuff extends Status {
         // skill2-lv4断罪获得无视防御
         private boolean isIgnoreDefense;
-        // 是否解锁断罪之刃
-        private boolean isUnlock = false;
 
         public StatusRenBuff(Character character, int level) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
+            super(SkillName + "BUFF", character);
+            attribute(Attribute.EFFECT_RESIST_RATE, 60);
+
+            // skill2-lv2默认获得防御
+            if (level >= 2) {
+                attribute(Attribute.DEFENCE, 450);
+            }
 
             if (level >= 2) {
-                isIncreaseDefense = true;
                 if (level >= 4) {
                     isIgnoreDefense = true;
                 }
             }
         }
 
+        // 解锁断罪之刃
         void unlock() {
-            isUnlock = true;
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.EFFECT_RESIST_RATE
-                    || isIncreaseDefense && attribute == Attribute.DEFENCE
-                    || isIgnoreDefense && attribute == Attribute.IGNORE_DEFENCE && isUnlock
-                    || attribute == Attribute.CRIT_RATE && isUnlock;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            if (attribute == Attribute.EFFECT_RESIST_RATE) {
-                return 60;
-            } else if (attribute == Attribute.DEFENCE) {
-                return 450;
-            } else if (attribute == Attribute.IGNORE_DEFENCE) {
-                return 350;
-            } else {
-                return 50;
+            attribute(Attribute.CRIT_RATE, 50);
+            if (isIgnoreDefense) {
+                attribute(Attribute.IGNORE_DEFENCE, 350);
             }
         }
     }
 
-    static class StatusSpeed extends StatusModifyAttribute {
+    static class StatusSpeed extends Status {
         private StatusSpeed(Character character) {
-            super(character, character, StatusType.BUFF, StatusForm.ZHUANG_TAI);
-            setDurationType(StatusDurationType.CHI_XU, 2);
+            super(SkillName + "加速", character, character, StatusType.BUFF, StatusForm.ZHUANG_TAI);
+            duration(StatusDurationType.CHI_XU, 2);
+            attribute(Attribute.SPEED, 100);
         }
 
         static void install(Character character) {
@@ -114,32 +97,16 @@ class Skill2 extends Skill {
                             () -> character.addStatus(new StatusSpeed(character))
                     );
         }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.SPEED;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return 100;
-        }
     }
 
-    static class StatusOutRoundActionListener extends Status implements StatusRunnable {
+    static class StatusOutRoundActionListener extends Status {
         public StatusOutRoundActionListener(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.OUT_ROUND_ACTION && StatusHuaFu.consumeStack(from);
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            belongTo.addStatus(new StatusXieZhi(from, belongTo));
-            return false;
+            super(SkillName + "回合外行动监听", from, belongTo);
+            runOn(Trigger.OUT_ROUND_ACTION, _ -> {
+                if (StatusHuaFu.consumeStack(from)) {
+                    belongTo.addStatus(new StatusXieZhi(from, belongTo));
+                }
+            });
         }
     }
 }
