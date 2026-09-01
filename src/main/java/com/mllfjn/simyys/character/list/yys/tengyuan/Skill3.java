@@ -36,7 +36,7 @@ class Skill3 extends Skill {
 
     @Override
     public boolean canUse(BattlePane bp) {
-        return TengYuanDaoZhang.getLvYin(getBelongTo()).canUse(costLvYin) && super.canUse(bp);
+        return ((TengYuanDaoZhang) getBelongTo()).getLvYin().canUse(costLvYin) && super.canUse(bp);
     }
 
     @Override

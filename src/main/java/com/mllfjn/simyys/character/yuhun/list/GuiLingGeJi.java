@@ -4,8 +4,6 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.Status;
-import com.mllfjn.simyys.character.status.StatusForm;
-import com.mllfjn.simyys.character.status.StatusType;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunAfterCauseAttack;
 import com.mllfjn.simyys.character.yuhun.YuHunUnfullMark;
@@ -62,12 +60,8 @@ public class GuiLingGeJi extends YuHun implements YuHunUnfullMark, YuHunAfterCau
         private int count = 0;
 
         public StatusCountRecord(Character character) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public void beforeDelete() {
-            GuiLingGeJi.this.status = null;
+            super("鬼灵歌姬计数器", character);
+            beforeDelete(() -> GuiLingGeJi.this.status = null);
         }
     }
 

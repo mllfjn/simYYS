@@ -37,7 +37,7 @@ public class HouZi extends CharacterSummonBase {
         adder = bp.addStatusAdder(c ->
                 c.team != team
                         ? Status.of("猴子-拉条检测", this, c)
-                        .runOn(Trigger.LOCATION_CHANGE, triggerParam -> {
+                        .runOn(Trigger.LOCATION_CHANGED, triggerParam -> {
                             if (((ParamLocationChange) triggerParam).isFromIncrease) {
                                 doInteractive(interactive ->
                                         getPuGong().ifPresent(skill1 -> {

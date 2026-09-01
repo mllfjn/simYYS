@@ -150,13 +150,13 @@ class Skill2 extends PassiveSkill {
             if (effectResist) {
                 attribute(Attribute.EFFECT_RESIST_RATE, 100.0);
             }
-            addTo();
         }
 
         public static void install(Character character, boolean effectResist) {
-            character.getStatus(StatusXXSelfBuff.class).orElseGet(() ->
-                    new StatusXXSelfBuff(character, effectResist)
-            ).duration(2);
+            character.addStatusOrChange(StatusXXSelfBuff.class,
+                    status -> status.duration(2),
+                    () -> new StatusXXSelfBuff(character, effectResist)
+            );
         }
     }
 
@@ -166,7 +166,7 @@ class Skill2 extends PassiveSkill {
             super(StatusXX.StatusName + "全队防御", from, belongTo);
             type(StatusType.BUFF, StatusForm.ZHUANG_TAI);
             attribute(Attribute.DEFENCE, 160.0);
-            addTo();
+            duration(StatusDurationType.CHI_XU, 2);
         }
 
         public static void install(Character from) {
@@ -175,9 +175,10 @@ class Skill2 extends PassiveSkill {
                     .getList();
 
             for (Character to : list) {
-                to.getStatus(StatusXXDefence.class).orElseGet(() ->
-                        new StatusXXDefence(from, to)
-                ).duration(2);
+                to.addStatusOrChange(StatusXXDefence.class,
+                        status -> status.duration(2),
+                        () -> new StatusXXDefence(from, to)
+                );
             }
         }
     }

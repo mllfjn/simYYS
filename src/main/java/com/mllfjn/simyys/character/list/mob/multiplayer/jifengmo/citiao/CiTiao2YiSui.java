@@ -11,9 +11,9 @@ public class CiTiao2YiSui {
     public static final String CiTiaoName = "易碎";
 
     public static void install(Character character) {
-        new Status(CiTiaoName + "-减防", character)
+        Status.of(CiTiaoName + "-减防", character)
                 // 自身降低35%的防御
-                .attribute(Attribute.DEFENCE, -0.35 * belongTo.getInitDefense())
+                .attribute(Attribute.DEFENCE, -0.35 * character.getInitDefense())
                 // 首领受到的间接伤害降低99%
                 .runOn(Trigger.BEING_ATTACKED, triggerParam -> {
                     AttackInfo attackInfo = ((ParamAttackInfo) triggerParam).getAttackInfo();

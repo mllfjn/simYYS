@@ -8,6 +8,6 @@ public class CiTiao4MengHuo {
 
     public static void install(Character character) {
         // 鬼火消耗降低2点
-        character.bp.addStatusAdder(c -> new Status(CiTiaoName, character, c).forceChangeSkillCost(-2));
+        character.bp.addStatusAdder(c -> Status.of(CiTiaoName, character, c).forceChangeSkillCost(-2));
     }
 }

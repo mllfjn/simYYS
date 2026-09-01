@@ -343,7 +343,7 @@ public class Status implements Serializable {
 
     // =============================免死===================================
 
-    private SerialSupplier<Boolean> preventDieEffective;
+    private SerialSupplier<Boolean> preventDieEffective = SerialSupplier.ALWAYS_FALSE;
     private SerialConsumer<Double> preventDieAction;
 
     public final Status preventDie() {
@@ -359,10 +359,6 @@ public class Status implements Serializable {
     public final void preventDie(SerialSupplier<Boolean> preventDieEffective, SerialConsumer<Double> preventDieAction) {
         this.preventDieEffective = preventDieEffective;
         this.preventDieAction = preventDieAction;
-    }
-
-    public final void removePreventDie() {
-        preventDieEffective = SerialSupplier.ALWAYS_FALSE;
     }
 
     public final void doPreventDie(double excessDamage) {

@@ -7,14 +7,13 @@ import com.mllfjn.simyys.character.status.StatusType;
 
 public class StatusWGJS extends Status {
     public StatusWGJS(Character from, Character belongTo) {
-        super(from, belongTo, StatusType.DEBUFF, StatusForm.YIN_JI);
+        super("五感尽失", from, belongTo, StatusType.DEBUFF, StatusForm.YIN_JI);
         belongTo.sealPassiveSkill();
         belongTo.sealYuHun();
-    }
 
-    @Override
-    public void beforeDelete() {
-        belongTo.unsealPassiveSkill();
-        belongTo.unsealYuHun();
+        beforeDelete(() -> {
+            belongTo.unsealPassiveSkill();
+            belongTo.unsealYuHun();
+        });
     }
 }

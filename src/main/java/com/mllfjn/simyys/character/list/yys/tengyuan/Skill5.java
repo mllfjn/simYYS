@@ -23,7 +23,7 @@ class Skill5 extends Skill {
 
     @Override
     public boolean canUse(BattlePane bp) {
-        return TengYuanDaoZhang.getLvYin(getBelongTo()).canUse(1) && super.canUse(bp);
+        return ((TengYuanDaoZhang) getBelongTo()).getLvYin().canUse(1) && super.canUse(bp);
     }
 
     @Override

@@ -114,15 +114,6 @@ class Skill2 extends PassiveSkill {
         }
 
         @Override
-        public boolean runnable(Trigger trigger) {
-            if (!active) {
-                return false;
-            } else {
-                return super.runnable(trigger);
-            }
-        }
-
-        @Override
         protected void used() {
             active = false;
             enableAction(Trigger.AFTER_ROUND);

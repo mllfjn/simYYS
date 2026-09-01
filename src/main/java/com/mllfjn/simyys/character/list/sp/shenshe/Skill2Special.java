@@ -4,6 +4,8 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
+import com.mllfjn.simyys.character.status.Status;
+import com.mllfjn.simyys.character.status.determinant.IgnoreDebuff;
 import com.mllfjn.simyys.character.yuhun.list.QingNvFang;
 
 import java.util.List;
@@ -11,6 +13,8 @@ import java.util.Optional;
 
 class Skill2Special extends Skill {
     private static final String SkillName = "蛇神之噬";
+
+    private boolean used;
 
     public Skill2Special(Character belongTo) {
         super(belongTo, 0, 0, 0, 2);
@@ -23,7 +27,7 @@ class Skill2Special extends Skill {
 
     @Override
     public boolean canUse(BattlePane bp) {
-        return super.canUse(bp) && !getBelongTo().isHaveStatus(StatusZhongYan.class);
+        return super.canUse(bp) && !used;
     }
 
     @Override
@@ -31,6 +35,7 @@ class Skill2Special extends Skill {
         ShenShe shenShe = (ShenShe) getBelongTo();
         // 展开终焉审判幻境,幻境中,神堕八岐大蛇免疫减益和 TODO 放逐
         shenShe.addStatus(new StatusZhongYan(shenShe));
+        used = true;
         // 夺取阴阳师位进行接下来的战斗
         Character yys = new CharacterFinder(shenShe)
                 .filterTeammate()
@@ -61,4 +66,11 @@ class Skill2Special extends Skill {
         }
         return Optional.empty();
     }
+
+    private static class StatusZhongYan extends Status implements IgnoreDebuff {
+        public StatusZhongYan(Character character) {
+            super("终焉审判幻境", character);
+        }
+    }
+
 }

@@ -1,12 +1,10 @@
 package com.mllfjn.simyys.character.yuhun.list;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.character.yuhun.YuHun;
 import com.mllfjn.simyys.character.yuhun.YuHunUnfullMark;
 import com.mllfjn.simyys.interactive.AttackInfo;
@@ -35,30 +33,21 @@ public class TuZhiZhu extends YuHun implements YuHunUnfullMark {
         private Skill causeSkill;
 
         public StatusTZZListener(Character character) {
-            super(YuHunName, character);
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.CAUSE_ATTACK;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            if (trigger == Trigger.CAUSE_ATTACK) {
+            super(YuHunName + "造成伤害监听", character);
+            runOn(Trigger.CAUSE_ATTACK, param -> {
                 AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
                 if (attackInfo.isCalEffectYuHun()) {
                     Character target = attackInfo.getTarget();
                     // 对怪物造成伤害时
                     if (!target.isMob()) {
-                        return false;
+                        return;
                     }
 
                     double number = attackInfo.getTraceableNumber().getNumber();
 
                     // 如果没有实际造成伤害，则返回
                     if (number <= 0) {
-                        return false;
+                        return;
                     }
 
                     if (causeSkill == null) {
@@ -75,8 +64,7 @@ public class TuZhiZhu extends YuHun implements YuHunUnfullMark {
 
                     map.put(target, map.getOrDefault(target, 0.0) + number);
                 }
-            }
-            return false;
+            });
         }
     }
 

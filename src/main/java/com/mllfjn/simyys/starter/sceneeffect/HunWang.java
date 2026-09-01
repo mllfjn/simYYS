@@ -19,9 +19,7 @@ import com.mllfjn.simyys.character.propertygetter.*;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.character.yuhun.list.ChuShiLuo;
 import com.mllfjn.simyys.character.yuhun.list.GuiLingGeJi;
 import com.mllfjn.simyys.collections.SerializableObservableList;
@@ -153,41 +151,44 @@ public class HunWang {
         list.add(ph);
     }
 
-    private static class StatusHpCheck extends Status implements InfluenceDamageWhenAttack {
+    private static class StatusHpCheck extends Status {
         private boolean addedListener;
 
         private boolean reduceDamage;
 
         public StatusHpCheck(Character character) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public void doInfluenceWhenAttack(AttackInfo attackInfo) {
-            if (!addedListener) {
-                attackInfo.getSkill().addSkillEndListener(() -> {
-                    addedListener = false;
-                    reduceDamage = false;
-                });
-                addedListener = true;
-                if (belongTo.getHpPercent() < 0.7) {
-                    reduceDamage = true;
+            super("血量检查", character);
+            runOn(Trigger.WHEN_ATTACK, param -> {
+                AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
+                if (!addedListener) {
+                    attackInfo.getSkill().addSkillEndListener(() -> {
+                        addedListener = false;
+                        reduceDamage = false;
+                    });
+                    addedListener = true;
+                    if (belongTo.getHpPercent() < 0.7) {
+                        reduceDamage = true;
+                    }
                 }
-            }
 
-            if (reduceDamage) {
-                attackInfo.getTraceableNumber().mul(0.3, "恶之震慑");
-            }
-
+                if (reduceDamage) {
+                    attackInfo.getTraceableNumber().mul(0.3, "恶之震慑");
+                }
+            });
         }
     }
 
-    private static class StatusSplashAttack extends Status implements StatusRunnable {
+    private static class StatusSplashAttack extends Status {
         private final Skill skill = Skill.getInstance("善之祝福");
+        private int count;
+
         private final BattleActionListener listener = new BattleActionListener(belongTo) {
             @Override
             public boolean onBattleAction(BattleEvent event) {
                 if (event instanceof EventActionDone) {
+                    if (count == 7) {
+                        enableAction(Trigger.AFTER_ATTACK);
+                    }
                     count = 0;
                     return true;
                 }
@@ -195,65 +196,54 @@ public class HunWang {
             }
         };
 
-        private int count;
-
         public StatusSplashAttack(Character character) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return count < 7 && trigger == Trigger.AFTER_ATTACK;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
-            if (attackInfo.getAttackType() == AttackType.DAN_TI) {
-                Character attacker = attackInfo.getAttacker();
-                double splashDamage = attackInfo.getTraceableNumber().getNumber() * 0.2;
-                List<Character> list = new CharacterFinder(belongTo)
-                        .filterTeammate()
-                        .filterSelf()
-                        .getList();
-                attacker.doInteractive(interactive ->
-                        interactive.attack(skill, list, c -> {
-                            AttackInfo aInfo = AttackInfo.createGuDingAttack(attacker, skill, c, splashDamage);
-                            aInfo.setNotCalYuHun();
-                            if (attackInfo.getSkill() instanceof GuiLingGeJi.SkillGLGJ) {
-                                attacker.getStatus(StatusJieJieEffect.class).ifPresent(
-                                        status -> {
-                                            if (status.isIncreaseNonCritDamage(aInfo)) {
-                                                aInfo.getTraceableNumber().mul(0.8, "不知道为什么歌姬溅射不吃不见岳结界");
+            super("善之祝福", character);
+            runOn(Trigger.AFTER_ATTACK, param -> {
+                AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
+                if (attackInfo.getAttackType() == AttackType.DAN_TI) {
+                    Character attacker = attackInfo.getAttacker();
+                    double splashDamage = attackInfo.getTraceableNumber().getNumber() * 0.2;
+                    List<Character> list = new CharacterFinder(belongTo)
+                            .filterTeammate()
+                            .filterSelf()
+                            .getList();
+                    attacker.doInteractive(interactive ->
+                            interactive.attack(skill, list, c -> {
+                                AttackInfo aInfo = AttackInfo.createGuDingAttack(attacker, skill, c, splashDamage);
+                                aInfo.setNotCalYuHun();
+                                if (attackInfo.getSkill() instanceof GuiLingGeJi.SkillGLGJ) {
+                                    attacker.getStatus(StatusJieJieEffect.class).ifPresent(
+                                            status -> {
+                                                if (status.isIncreaseNonCritDamage(aInfo)) {
+                                                    aInfo.getTraceableNumber().mul(0.8, "不知道为什么歌姬溅射不吃不见岳结界");
+                                                }
                                             }
-                                        }
-                                );
-                            }
-                            return aInfo;
-                        })
-                );
-                if (count == 0) {
-                    belongTo.bp.addActionListener(listener);
+                                    );
+                                }
+                                return aInfo;
+                            })
+                    );
+                    if (count == 0) {
+                        belongTo.bp.addActionListener(listener);
+                    }
+                    count++;
+                    if (count == 7) {
+                        disableAction(Trigger.AFTER_ATTACK);
+                    }
                 }
-                count++;
-            }
-            return false;
+            });
         }
     }
 
-    private static class StatusAddDefense extends Status implements AttributeModifier {
+    private static class StatusAddDefense extends Status {
         public StatusAddDefense(Character character) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.DEFENCE && belongTo.getHpPercent() < 0.6;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return belongTo.getInitDefense() * 0.2;
+            super("防御力增加", character);
+            runOn(Trigger.HP_CHANGE, _ -> {
+                if (belongTo.getHpPercent() < 0.6) {
+                    removeAction(Trigger.HP_CHANGE);
+                    attribute(Attribute.DEFENCE, _ -> 0.2 * belongTo.getInitDefense());
+                }
+            });
         }
     }
 }

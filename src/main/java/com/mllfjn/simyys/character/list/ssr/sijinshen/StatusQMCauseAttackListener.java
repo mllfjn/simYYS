@@ -10,6 +10,16 @@ class StatusQMCauseAttackListener extends Status {
 
     public StatusQMCauseAttackListener(SkillQiMeng skillQiMeng, Character from, Character belongTo) {
         super(SkillQiMeng.SkillName + "造成伤害监听", from, belongTo);
+        addRunnable(skillQiMeng);
+    }
+
+    protected StatusQMCauseAttackListener(String name, SkillQiMeng skillQiMeng, Character from, Character belongTo) {
+        super(name, from, belongTo);
+        addRunnable(skillQiMeng);
+    }
+
+    private void addRunnable(SkillQiMeng skillQiMeng) {
+
         runOnAndDisable(Trigger.USED_SKILL, _ -> {
             disableAction(Trigger.USED_SKILL);
             disableAction(Trigger.CAUSE_ATTACK);
