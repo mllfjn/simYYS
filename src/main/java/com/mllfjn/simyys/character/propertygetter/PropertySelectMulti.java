@@ -59,8 +59,10 @@ public class PropertySelectMulti  extends PropertyRequire implements Serializabl
         return value;
     }
 
-    public void setValue(String s) {
+    @Override
+    public PropertyRequire setValue(String s) {
         value = s;
+        return this;
     }
 
     private boolean contains(String newValue) {

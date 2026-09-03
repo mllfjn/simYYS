@@ -9,6 +9,7 @@ import com.mllfjn.simyys.character.CharacterFactory;
 import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
 import com.mllfjn.simyys.character.propertygetter.PropertiesMap;
 import com.mllfjn.simyys.character.propertygetter.PropertyRequire;
+import com.mllfjn.simyys.utils.YYXSnapshotLoader;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
@@ -50,8 +51,8 @@ public class Initializer extends Application {
         Scene scene = new Scene(new StackPane(stageRoot));
         getController(stage, scene, stageRoot, borderPane);
 
-        borderPane.addControlButton("添加角色", e -> addCharacter(stage), scene, KeyCode.A);
-        borderPane.addControlButton("删除角色", e -> {
+        borderPane.addControlButton("添加角色", _ -> addCharacter(stage), scene, KeyCode.A);
+        borderPane.addControlButton("删除角色", _ -> {
             int index = customTableView.getSelectionModel().getSelectedIndex();
             if (index >= 0 && index < items.size()) {
                 items.remove(index);
@@ -60,35 +61,35 @@ public class Initializer extends Application {
                 }
             }
         }, scene, KeyCode.D);
-        borderPane.addControlButton("修改角色", e -> {
+        borderPane.addControlButton("修改角色", _ -> {
             PropertiesHolder item = customTableView.getSelectionModel().getSelectedItem();
             if (item != null) {
                 item.show(scene);
                 customTableView.refresh();
             }
         }, scene, KeyCode.E);
-        borderPane.addControlButton("上移", e -> {
+        borderPane.addControlButton("上移", _ -> {
             int index = customTableView.getSelectionModel().getSelectedIndex();
             if (index > 0 && index < items.size()) {
                 items.add(index - 1, items.remove(index));
                 customTableView.getSelectionModel().select(index - 1);
             }
         });
-        borderPane.addControlButton("下移", e -> {
+        borderPane.addControlButton("下移", _ -> {
             int index = customTableView.getSelectionModel().getSelectedIndex();
             if (index < items.size() - 1 && index >= 0) {
                 items.add(index + 1, items.remove(index));
                 customTableView.getSelectionModel().select(index + 1);
             }
         });
-        borderPane.addControlButton("清空", e -> {
+        borderPane.addControlButton("清空", _ -> {
             items.clear();
             prediction.predictionOrder.clear();
             sceneEffectComboBox.getSelectionModel().select(0);
         });
 
-        borderPane.addControlButton("设置预计顺序", e -> prediction.showPrediction(scene, items));
-        borderPane.addControlButton("检查是否符合", e -> prediction.check(items
+        borderPane.addControlButton("设置预计顺序", _ -> prediction.showPrediction(scene, items));
+        borderPane.addControlButton("检查是否符合", _ -> prediction.check(items
                 , stage, () -> stage.setScene(scene), this), scene, KeyCode.C);
 
         // 场景选择器
@@ -102,14 +103,14 @@ public class Initializer extends Application {
         stage.setTitle("配置式神");
         stage.show();
 
-        stage.widthProperty().addListener((obs, old, val) -> {
+        stage.widthProperty().addListener((_, _, val) -> {
             double height = val.doubleValue() / 2;
             if (stage.getHeight() != height) {
                 stage.setHeight(height);
                 setScale(stage, stageRoot);
             }
         });
-        stage.heightProperty().addListener((obs, old, val) -> {
+        stage.heightProperty().addListener((_, _, val) -> {
             double width = val.doubleValue() * 2;
             if (stage.getWidth() != width) {
                 stage.setWidth(width);
@@ -147,7 +148,7 @@ public class Initializer extends Application {
             for (String name : CharacterFactory.characterMap.get(label).keySet()) {
                 Button btn = new Button(name);
                 btn.setPrefWidth(100);
-                btn.setOnAction(event -> {
+                btn.setOnAction(_ -> {
                     PropertiesHolder propertiesHolder = new PropertiesHolder(name,
                             CharacterFactory.getProperties(name),
                             new LinkedHashMap<>(), new LinkedHashMap<>()
@@ -176,11 +177,18 @@ public class Initializer extends Application {
 
         Button saveButton = new Button("保存队伍预设");
         Button loadButton = new Button("读取队伍预设");
+        Button loadDataButton = new Button("读取式神数据");
         Button startButton = new Button("开始");
 
-        saveButton.setOnAction(event -> saveDate(stage));
-        loadButton.setOnAction(event -> loadData(stage));
-        startButton.setOnAction(event -> {
+        int width = 100;
+        saveButton.setPrefWidth(width);
+        loadButton.setPrefWidth(width);
+        loadDataButton.setPrefWidth(width);
+        startButton.setPrefWidth(width);
+
+        saveButton.setOnAction(_ -> saveDate(stage));
+        loadButton.setOnAction(_ -> loadData(stage));
+        startButton.setOnAction(_ -> {
             SceneEffect selectedItem = sceneEffectComboBox.getSelectionModel().getSelectedItem();
             SerializableObservableList<PropertiesHolder> list;
             if (selectedItem != SceneEffect.NULL) {
@@ -201,8 +209,15 @@ public class Initializer extends Application {
             );
             stage.setTitle("战斗中");
         });
+        loadDataButton.setOnAction(_ -> {
+            String result = YYXSnapshotLoader.loadJson(stage);
+            if (result != null) {
+                loadDataButton.setText("已加载");
+                loadDataButton.setTooltip(new Tooltip(result));
+            }
+        });
 
-        controlPane.getChildren().addAll(saveButton, loadButton, startButton);
+        controlPane.getChildren().addAll(saveButton, loadButton, loadDataButton, startButton);
 
         borderPane.setTop(controlPane);
     }
@@ -239,12 +254,6 @@ public class Initializer extends Application {
 
             StringJoiner sj = new StringJoiner("\n");
             for (PropertiesHolder item : readItems) {
-                /*Optional<PropertiesMap> op = CharacterFactory.getProperties(item.name);
-                if (op.isEmpty()) {
-                    sj.add(item.name + "角色不存在");
-                    continue;
-                }
-                PropertiesMap currentProperties = op.get();*/
                 PropertiesMap currentProperties = CharacterFactory.getProperties(item.name);
 
                 for (Map.Entry<String, PropertyRequire> entry : currentProperties.entrySet()) {

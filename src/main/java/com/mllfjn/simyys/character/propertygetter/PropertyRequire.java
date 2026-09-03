@@ -22,5 +22,13 @@ public abstract class PropertyRequire implements Serializable {
     }
     public String getString() {return null;}
 
+    public PropertyRequire setValue(String value) {
+        throw new UnsupportedOperationException();
+    }
+
+    public PropertyRequire setValue(double value) {
+        throw new UnsupportedOperationException();
+    }
+
 //    public abstract void toString(StringBuilder sb);
 }

@@ -12,8 +12,8 @@ public record CharacterNameAndTeam(String name, int team) implements Serializabl
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof CharacterNameAndTeam oc) {
-            return oc.team == team && oc.name.equals(name);
+        if (obj instanceof CharacterNameAndTeam(String name1, int team1)) {
+            return team1 == team && name1.equals(name);
         }
         return false;
     }
