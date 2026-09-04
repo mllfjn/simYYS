@@ -5,13 +5,13 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.instance.StatusFrozen;
-import com.mllfjn.simyys.character.yuhun.YuHun;
+import com.mllfjn.simyys.character.yuhun.Equip;
 import com.mllfjn.simyys.character.yuhun.YuHunAfterCauseAttack;
 import com.mllfjn.simyys.character.yuhun.YuHunHitFeedBack;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.Interactive;
 
-public class XueYouHun extends YuHun implements YuHunAfterCauseAttack, YuHunHitFeedBack {
+public class XueYouHun extends Equip implements YuHunAfterCauseAttack, YuHunHitFeedBack {
     public static final String YuHunName = "雪幽魂";
     private static final Skill skill = Skill.getInstance(YuHunName);
 

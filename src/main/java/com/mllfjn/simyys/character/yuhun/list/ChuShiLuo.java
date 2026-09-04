@@ -4,13 +4,13 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
-import com.mllfjn.simyys.character.yuhun.YuHun;
+import com.mllfjn.simyys.character.yuhun.Equip;
 import com.mllfjn.simyys.character.yuhun.YuHunAfterBeingAttack;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.interactive.TraceableNumber;
 
-public class ChuShiLuo extends YuHun implements YuHunAfterBeingAttack {
+public class ChuShiLuo extends Equip implements YuHunAfterBeingAttack {
     public static final String YuHunName = "出世螺";
     private static final Skill skill = Skill.getInstance(YuHunName);
 

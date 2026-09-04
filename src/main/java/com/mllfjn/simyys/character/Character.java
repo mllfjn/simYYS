@@ -18,8 +18,8 @@ import com.mllfjn.simyys.character.status.instance.StatusBind;
 import com.mllfjn.simyys.character.status.instance.StatusConfusion;
 import com.mllfjn.simyys.character.status.instance.StatusShield;
 import com.mllfjn.simyys.character.status.triggerParam.*;
-import com.mllfjn.simyys.character.yuhun.YuHun;
-import com.mllfjn.simyys.character.yuhun.YuHunFactory;
+import com.mllfjn.simyys.character.yuhun.Equip;
+import com.mllfjn.simyys.character.yuhun.EquipFactory;
 import com.mllfjn.simyys.character.yuhun.YuHunSealResponse;
 import com.mllfjn.simyys.character.list.yys.qiling.QiLingFactory;
 import com.mllfjn.simyys.interactive.*;
@@ -71,7 +71,7 @@ public abstract class Character implements Serializable {
     // 维持的状态
     private final List<Status> maintainedStatuses = new ArrayList<>();
     // 御魂列表
-    private final LinkedHashSet<YuHun> yuHunSet = new LinkedHashSet<>();
+    private final LinkedHashSet<Equip> equipSet = new LinkedHashSet<>();
     // 封印御魂次数
     private int sealYuHunCount = 0;
     // 头像
@@ -89,7 +89,7 @@ public abstract class Character implements Serializable {
         for (String key : PropertyKey.GENERAL_INPUT_KEYS) {
             map.put(key, new PropertyInput());
         }
-        ((PropertyInput) map.get(PropertyKey.GENERAL_WAVE_KEY)).setValue("1");
+        map.get(PropertyKey.GENERAL_WAVE_KEY).setValue("1");
 
         for (String key : PropertyKey.GENERAL_CHECK_KEYS) {
             map.put(key, new PropertyCheck());
@@ -100,7 +100,7 @@ public abstract class Character implements Serializable {
 
     public PropertiesMap getProperties() {
         PropertiesMap map = getDefaultProperties();
-        ((PropertyInput) map.get(PropertyKey.GENERAL_BASE_ATTACK_KEY)).setValue(getDefaultBaseAttack());
+        map.get(PropertyKey.GENERAL_BASE_ATTACK_KEY).setValue(getDefaultBaseAttack());
         return map;
     }
 
@@ -940,63 +940,63 @@ public abstract class Character implements Serializable {
         bp.doInteractive(this, action);
     }
 
-    public void addYuHun(YuHun yuHun) {
-        yuHunSet.add(yuHun);
-        if (yuHun instanceof YuHunSealResponse sr) {
+    public void addYuHun(Equip equip) {
+        equipSet.add(equip);
+        if (equip instanceof YuHunSealResponse sr) {
             sr.enable();
         }
     }
 
-    public void removeYuHun(YuHun yuHun) {
-        if (!yuHunSet.contains(yuHun)) {
+    public void removeYuHun(Equip equip) {
+        if (!equipSet.contains(equip)) {
             return;
         }
-        if (yuHun instanceof YuHunSealResponse sr) {
+        if (equip instanceof YuHunSealResponse sr) {
             sr.disable();
         }
-        yuHunSet.remove(yuHun);
+        equipSet.remove(equip);
     }
 
     public void addAllYuHun(String[] names) {
         for (String s : names) {
-            YuHunFactory.getYuHun(s, this, true).ifPresent(this::addYuHun);
+            EquipFactory.getEquip(s, this, true).ifPresent(this::addYuHun);
         }
     }
 
-    public void forEachYuHun(Consumer<YuHun> action) {
+    public void forEachYuHun(Consumer<Equip> action) {
         if (isYuHunSeal()) {
             return;
         }
-        yuHunSet.forEach(action);
+        equipSet.forEach(action);
     }
 
     public <T> Optional<T> getYuHun(Class<T> tClass) {
         if (isYuHunSeal()) {
             return Optional.empty();
         }
-        return yuHunSet.stream().filter(tClass::isInstance).map(tClass::cast).findFirst();
+        return equipSet.stream().filter(tClass::isInstance).map(tClass::cast).findFirst();
     }
 
     public boolean isYuHunSeal() {
         return sealYuHunCount > 0;
     }
 
-    public <T extends YuHun> YuHun removeYuHun(Class<T> tClass) {
-        Set<YuHun> yuHunSet = getYuHunSet();
-        for (YuHun yuHun : yuHunSet) {
-            if (tClass.isInstance(yuHun)) {
-                if (yuHun instanceof YuHunSealResponse sr) {
+    public <T extends Equip> Equip removeYuHun(Class<T> tClass) {
+        Set<Equip> equipSet = getYuHunSet();
+        for (Equip equip : equipSet) {
+            if (tClass.isInstance(equip)) {
+                if (equip instanceof YuHunSealResponse sr) {
                     sr.disable();
                 }
-                yuHunSet.remove(yuHun);
-                return yuHun;
+                equipSet.remove(equip);
+                return equip;
             }
         }
         return null;
     }
 
-    public LinkedHashSet<YuHun> getYuHunSet() {
-        return yuHunSet;
+    public LinkedHashSet<Equip> getYuHunSet() {
+        return equipSet;
     }
 
     public void sealYuHun() {

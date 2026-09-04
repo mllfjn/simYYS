@@ -1,13 +1,13 @@
 package com.mllfjn.simyys.character.yuhun.list;
 
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.yuhun.YuHun;
+import com.mllfjn.simyys.character.yuhun.Equip;
 import com.mllfjn.simyys.character.yuhun.YuHunAttack;
 import com.mllfjn.simyys.character.yuhun.YuHunHitFeedBack;
 import com.mllfjn.simyys.character.yuhun.YuHunUnfullMark;
 import com.mllfjn.simyys.interactive.AttackInfo;
 
-public class HuangKuLou extends YuHun implements YuHunUnfullMark, YuHunAttack, YuHunHitFeedBack {
+public class HuangKuLou extends Equip implements YuHunUnfullMark, YuHunAttack, YuHunHitFeedBack {
     public static final String YuHunName = "荒骷髅";
 
     private boolean enhanced = false;

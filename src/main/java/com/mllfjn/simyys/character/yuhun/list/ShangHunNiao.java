@@ -5,12 +5,12 @@ import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.yuhun.YuHun;
+import com.mllfjn.simyys.character.yuhun.Equip;
 import com.mllfjn.simyys.character.yuhun.YuHunSealResponse;
 import com.mllfjn.simyys.battleevent.BattleActionListener;
 import com.mllfjn.simyys.battleevent.EventCharacterDie;
 
-public class ShangHunNiao extends YuHun implements YuHunSealResponse {
+public class ShangHunNiao extends Equip implements YuHunSealResponse {
     public static final String YuHunName = "伤魂鸟";
     private BattleActionListener listener;
 

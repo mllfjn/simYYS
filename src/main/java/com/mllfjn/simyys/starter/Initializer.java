@@ -140,17 +140,17 @@ public class Initializer extends Application {
         gp.setPadding(new Insets(20));
         gp.setHgap(10);
         gp.setVgap(10);
-        Set<String> labels = CharacterFactory.characterMap.keySet();
+        Set<String> labels = CharacterFactory.characterMapList.keySet();
 
         int i = 0;
         for (String label : labels) {
             FlowPane tp = new FlowPane();
-            for (String name : CharacterFactory.characterMap.get(label).keySet()) {
-                Button btn = new Button(name);
+            for (CharacterFactory.CharacterMeta value : CharacterFactory.characterMapList.get(label)) {
+                Button btn = new Button(value.name());
                 btn.setPrefWidth(100);
                 btn.setOnAction(_ -> {
-                    PropertiesHolder propertiesHolder = new PropertiesHolder(name,
-                            CharacterFactory.getProperties(name),
+                    PropertiesHolder propertiesHolder = new PropertiesHolder(value.name(),
+                            CharacterFactory.getProperties(value.name()),
                             new LinkedHashMap<>(), new LinkedHashMap<>()
                     );
                     propertiesHolder.show(stageSelect.getScene());
@@ -255,7 +255,6 @@ public class Initializer extends Application {
             StringJoiner sj = new StringJoiner("\n");
             for (PropertiesHolder item : readItems) {
                 PropertiesMap currentProperties = CharacterFactory.getProperties(item.name);
-
                 for (Map.Entry<String, PropertyRequire> entry : currentProperties.entrySet()) {
                     String key = entry.getKey();
                     PropertyRequire require = item.propertiesMap.remove(key);
@@ -273,6 +272,7 @@ public class Initializer extends Application {
                     sj.add(item.name + "的预设中含有当前不存在的属性");
                 }
                 items.add(new PropertiesHolder(item.name, currentProperties, item.lockSkillMap, item.flagChangeMap));
+
             }
 
             String message = sj.toString();

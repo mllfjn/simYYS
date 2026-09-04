@@ -12,7 +12,7 @@ import javafx.scene.control.cell.TextFieldTableCell;
 public class CustomTableView extends TableView<PropertiesHolder> {
     public CustomTableView() {
         super();
-        this.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        this.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
         this.setEditable(true);
 
         TableColumn<PropertiesHolder, String> nameColumn = new TableColumn<>("名称");

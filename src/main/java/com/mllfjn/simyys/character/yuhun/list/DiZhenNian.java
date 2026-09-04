@@ -3,13 +3,13 @@ package com.mllfjn.simyys.character.yuhun.list;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.Status;
-import com.mllfjn.simyys.character.yuhun.YuHun;
+import com.mllfjn.simyys.character.yuhun.Equip;
 import com.mllfjn.simyys.character.yuhun.YuHunHitFeedBack;
 import com.mllfjn.simyys.character.yuhun.YuHunSealResponse;
 import com.mllfjn.simyys.character.yuhun.YuHunUnfullMark;
 import com.mllfjn.simyys.interactive.AttackInfo;
 
-public class DiZhenNian extends YuHun implements YuHunUnfullMark, YuHunSealResponse, YuHunHitFeedBack {
+public class DiZhenNian extends Equip implements YuHunUnfullMark, YuHunSealResponse, YuHunHitFeedBack {
     public static final String YuHunName = "地震鲶";
 
     private StatusDiZhenNian status;

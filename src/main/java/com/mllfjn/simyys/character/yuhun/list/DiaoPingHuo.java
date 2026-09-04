@@ -5,13 +5,13 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.yuhun.YuHun;
+import com.mllfjn.simyys.character.yuhun.Equip;
 import com.mllfjn.simyys.character.yuhun.YuHunSealResponse;
 import com.mllfjn.simyys.interactive.HealInfo;
 
 import java.util.List;
 
-public class DiaoPingHuo extends YuHun implements YuHunSealResponse {
+public class DiaoPingHuo extends Equip implements YuHunSealResponse {
     public static final String YuHunName = "钓瓶火";
 
     private StatusDPHAfterRound status;

@@ -1,6 +1,8 @@
 package com.mllfjn.simyys.utils;
 
-import javafx.scene.control.ChoiceDialog;
+import com.mllfjn.simyys.character.yuhun.EquipFactory;
+import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
 import org.jetbrains.annotations.Nullable;
@@ -12,10 +14,15 @@ import tools.jackson.databind.json.JsonMapper;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class YYXSnapshotLoader {
-    private static final Map<Integer, List<Hero>> index = new HashMap<>();
+    private static boolean loaded = false;
     private static final ObjectMapper mapper = JsonMapper.builder().build();
+
+    private static final Map<Integer, List<Hero>> heroes = new HashMap<>();
+    private static final Map<String, Integer> hero_equips = new HashMap<>();
 
     public static String loadJson(Window ownerWindow) {
         FileChooser fileChooser = new FileChooser();
@@ -33,6 +40,16 @@ public class YYXSnapshotLoader {
                     throw new IOException("data对象不存在");
                 }
 
+                navigateToProperty(parser, "hero_equips");
+                if (parser.nextToken() != JsonToken.START_ARRAY) {
+                    throw new IOException("hero_equips数组不存在");
+                }
+
+                while (parser.nextToken() != JsonToken.END_ARRAY) {
+                    HeroEquip equip = parser.readValueAs(HeroEquip.class);
+                    hero_equips.put(equip.id, equip.suit_id);
+                }
+
                 navigateToProperty(parser, "heroes");
                 if (parser.nextToken() != JsonToken.START_ARRAY) {
                     throw new IOException("heroes数组不存在");
@@ -41,9 +58,10 @@ public class YYXSnapshotLoader {
                 while (parser.nextToken() != JsonToken.END_ARRAY) {
                     Hero hero = parser.readValueAs(Hero.class);
                     if (hero.equips.length > 0) {
-                        index.computeIfAbsent(hero.hero_id, _ -> new ArrayList<>()).add(hero);
+                        heroes.computeIfAbsent(hero.hero_id, _ -> new ArrayList<>()).add(hero);
                     }
                 }
+                loaded = true;
 
             } catch (Exception e) {
                 Utils.throwException("读取导出的数据时发生错误", e);
@@ -55,8 +73,14 @@ public class YYXSnapshotLoader {
     }
 
     public static @Nullable Hero getHero(int hero_id) {
-        List<Hero> heroes = index.get(hero_id);
+        if (!loaded) {
+            Utils.information("未找到有效数据\n请先加载导出文件");
+            return null;
+        }
+
+        List<Hero> heroes = YYXSnapshotLoader.heroes.get(hero_id);
         if (heroes == null) {
+            Utils.information("未找到有效数据\n式神需要至少装备一个御魂");
             return null;
         }
 
@@ -67,15 +91,24 @@ public class YYXSnapshotLoader {
         ChoiceDialog<Hero> dialog = new ChoiceDialog<>(heroes.getFirst(), heroes);
         Optional<Hero> result = dialog.showAndWait();
         return result.orElse(null);
+//        return showSelectionDialog(heroes);
+    }
 
-        /*Stage stage = new Stage();
+    public static void getEquips(String[] equips, Consumer<EquipFactory.EquipMeta> action) {
+        Map<EquipFactory.EquipMeta, Integer> counts = new HashMap<>();
 
-        ListView<Hero> listView = new ListView<>();
-        StackPane stackPane = new StackPane(listView);
-        stackPane.setPadding(new Insets(20));
+        for (String equip : equips) {
+            EquipFactory.EquipMeta equipMeta = EquipFactory.ID_MAP.get(hero_equips.get(equip));
+            if (equipMeta != null) {
+                counts.put(equipMeta, counts.getOrDefault(equipMeta, 0) + 1);
+            }
+        }
 
-        stage.setScene(new Scene(stackPane));
-        stage.showAndWait();*/
+        for (Map.Entry<EquipFactory.EquipMeta, Integer> entry : counts.entrySet()) {
+            if (entry.getValue() >= entry.getKey().setCount()) {
+                action.accept(entry.getKey());
+            }
+        }
     }
 
     private static void navigateToProperty(JsonParser parser, String propertyName) throws IOException {
@@ -93,6 +126,40 @@ public class YYXSnapshotLoader {
         }
     }
 
+    private static Hero showSelectionDialog(List<Hero> heroes) {
+        TableView<Hero> tableView = new TableView<>();
+        tableView.getItems().addAll(heroes);
+
+        tableView.getColumns().addAll(
+                simpleColumn("昵称", hero -> hero.nick_name),
+                simpleColumn("等级", hero -> String.valueOf(hero.level)),
+                simpleColumn("觉醒", hero -> hero.awake ? "√" : "×"),
+                simpleColumn("技能等级", Hero::getSkillLevel)
+        );
+
+        Dialog<Hero> dialog = new Dialog<>();
+        ButtonType confirmButton = new ButtonType("确定");
+        ButtonType cancelButton = new ButtonType("取消");
+
+        dialog.setResultConverter(buttonType -> {
+            if (buttonType == confirmButton) {
+                return null;
+            } else {
+                return null;
+            }
+        });
+
+        return dialog.showAndWait().orElse(null);
+    }
+
+    private static TableColumn<Hero, ?> simpleColumn(String title, Function<Hero, String> getter) {
+        TableColumn<Hero, String> tableColumn = new TableColumn<>(title);
+        tableColumn.setCellValueFactory(heroData ->
+                new ReadOnlyStringWrapper(getter.apply(heroData.getValue()))
+        );
+        return tableColumn;
+    }
+
     public static class Hero {
         public Attrs attrs;
         public boolean awake;
@@ -100,6 +167,7 @@ public class YYXSnapshotLoader {
         public int hero_id;
         public String nick_name;
         public Skill[] skills;
+        public int level;
 
         @Override
         public String toString() {
@@ -137,5 +205,10 @@ public class YYXSnapshotLoader {
 
     public static class Skill {
         public int level;
+    }
+
+    public static class HeroEquip {
+        public String id;
+        public int suit_id;
     }
 }

@@ -5,7 +5,7 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAddCrowdControl;
-import com.mllfjn.simyys.character.yuhun.YuHun;
+import com.mllfjn.simyys.character.yuhun.Equip;
 import com.mllfjn.simyys.character.yuhun.YuHunSealResponse;
 import com.mllfjn.simyys.character.yuhun.YuHunUnfullMark;
 
@@ -13,7 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class YeHuangHun extends YuHun implements YuHunSealResponse, YuHunUnfullMark {
+public class YeHuangHun extends Equip implements YuHunSealResponse, YuHunUnfullMark {
     public static final String YuHunName = "夜荒魂";
     private StatusYHHListener status;
 

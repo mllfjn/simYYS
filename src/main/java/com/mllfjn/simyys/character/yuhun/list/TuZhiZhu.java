@@ -5,7 +5,7 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
-import com.mllfjn.simyys.character.yuhun.YuHun;
+import com.mllfjn.simyys.character.yuhun.Equip;
 import com.mllfjn.simyys.character.yuhun.YuHunUnfullMark;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.character.status.Trigger;
@@ -13,7 +13,7 @@ import com.mllfjn.simyys.character.status.Trigger;
 import java.io.Serializable;
 import java.util.*;
 
-public class TuZhiZhu extends YuHun implements YuHunUnfullMark {
+public class TuZhiZhu extends Equip implements YuHunUnfullMark {
     public static final String YuHunName = "土蜘蛛";
 
     @Override

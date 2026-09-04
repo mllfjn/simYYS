@@ -8,9 +8,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.stage.Window;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 public class PropertyInput extends PropertyRequire implements Serializable {
+    @Serial
+    private static final long serialVersionUID = -629409598346660239L;
+
     private String value = "";
     private transient SimpleStringProperty property;
 

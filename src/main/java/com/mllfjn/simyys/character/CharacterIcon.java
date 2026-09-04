@@ -5,8 +5,8 @@ import com.mllfjn.simyys.character.propertygetter.FlagChangeInfo;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.skill.SkillAuto;
-import com.mllfjn.simyys.character.yuhun.YuHun;
-import com.mllfjn.simyys.character.yuhun.YuHunFactory;
+import com.mllfjn.simyys.character.yuhun.Equip;
+import com.mllfjn.simyys.character.yuhun.EquipFactory;
 import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.character.status.instance.StatusShield;
 import com.mllfjn.simyys.customnode.CustomInputMenuItem;
@@ -405,12 +405,12 @@ public class CharacterIcon implements Serializable {
     }
 
     private void updateYuHunIcon() {
-        Iterator<YuHun> iterator = character.getYuHunSet().iterator();
+        Iterator<Equip> iterator = character.getYuHunSet().iterator();
         for (int i = 0; i < 4; i++) {
             if (iterator.hasNext()) {
-                YuHun yuHun = iterator.next();
+                Equip equip = iterator.next();
                 ImageView imageView = getImagePosition(i);
-                imageView.setImage(YuHunFactory.getImage(yuHun.getName()));
+                imageView.setImage(EquipFactory.getImage(equip.getName()));
             } else {
                 if (yuHunIcon[i] != null) {
                     yuHunIcon[i].setImage(null);
@@ -460,9 +460,9 @@ public class CharacterIcon implements Serializable {
                     AnchorPane.setTopAnchor(imageView, 0.0);
                 }
             }
-            imageView.setClip(new Circle(YuHunFactory.ICON_RADIUS, YuHunFactory.ICON_RADIUS, YuHunFactory.ICON_RADIUS));
-            imageView.setFitHeight(YuHunFactory.ICON_SIZE);
-            imageView.setFitWidth(YuHunFactory.ICON_SIZE);
+            imageView.setClip(new Circle(EquipFactory.ICON_RADIUS, EquipFactory.ICON_RADIUS, EquipFactory.ICON_RADIUS));
+            imageView.setFitHeight(EquipFactory.ICON_SIZE);
+            imageView.setFitWidth(EquipFactory.ICON_SIZE);
             yuHunIcon[index] = imageView;
             imagePane.getChildren().add(imageView);
         }

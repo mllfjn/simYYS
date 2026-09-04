@@ -4,12 +4,12 @@ import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.yuhun.YuHun;
+import com.mllfjn.simyys.character.yuhun.Equip;
 import com.mllfjn.simyys.character.yuhun.YuHunSealResponse;
 
 import java.util.List;
 
-public class TuFo extends YuHun implements YuHunSealResponse {
+public class TuFo extends Equip implements YuHunSealResponse {
     public static final String YuHunName = "涂佛";
 
     private StatusTFListener status;

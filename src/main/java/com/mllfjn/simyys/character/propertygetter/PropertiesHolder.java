@@ -1,6 +1,7 @@
 package com.mllfjn.simyys.character.propertygetter;
 
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.CharacterFactory;
 import com.mllfjn.simyys.starter.Initializer;
 import com.mllfjn.simyys.utils.DecimalFormatUtil;
 import com.mllfjn.simyys.utils.Utils;
@@ -41,8 +42,6 @@ public class PropertiesHolder implements Serializable {
     public final Map<Integer, Integer> lockSkillMap;
     public final Map<Integer, FlagChangeInfo> flagChangeMap;
 
-    public Class<? extends Character> characterClass;
-
     private transient SimpleStringProperty nameProperty;
     private transient StringBinding totalAttackProperty;
 
@@ -59,13 +58,8 @@ public class PropertiesHolder implements Serializable {
     }
 
     public PropertiesHolder(String name, PropertiesMap propertiesMap) {
-        this.name = name;
-        this.propertiesMap = propertiesMap;
-        this.lockSkillMap = new LinkedHashMap<>();
-        this.flagChangeMap = new LinkedHashMap<>();
+        this(name, propertiesMap, new LinkedHashMap<>(), new LinkedHashMap<>());
     }
-
-
 
     public void show(Scene OwnerScent) {
         Stage stage = new Stage();
@@ -118,14 +112,17 @@ public class PropertiesHolder implements Serializable {
         vb.setPadding(new Insets(10, 20, 10, 20));
         vb.setSpacing(10);
 
-        Button buttonLoad = new Button("从导出文件中加载");
-        buttonLoad.setOnAction(_ -> {
-            YYXSnapshotLoader.Hero hero = YYXSnapshotLoader.getHero(364);
-            if (hero != null) {
-                loadPropertiesFromHero(hero);
-            }
-        });
-        vb.getChildren().add(buttonLoad);
+        int hero_id = CharacterFactory.getCharacterMeta(name).id();
+        if (hero_id > 100) {
+            Button buttonLoad = new Button("从导出文件中加载");
+            buttonLoad.setOnAction(_ -> {
+                YYXSnapshotLoader.Hero hero = YYXSnapshotLoader.getHero(hero_id);
+                if (hero != null) {
+                    loadPropertiesFromHero(hero);
+                }
+            });
+            vb.getChildren().add(buttonLoad);
+        }
 
         for (Map.Entry<String, PropertyRequire> entry : propertiesMap.entrySet()) {
             vb.getChildren().add(entry.getValue().getNode(entry.getKey(), owner));
@@ -162,61 +159,14 @@ public class PropertiesHolder implements Serializable {
 
         PropertyInput skill = (PropertyInput) propertiesMap.get(PropertyKey.SKILL_KEY);
         if (skill != null) {
-            YYXSnapshotLoader.Skill[] skills = hero.skills;
             skill.setValue(hero.getSkillLevel());
         }
     }
 
-    /*private void loadPropertiesFromJson(JsonNode node) {
-        JsonNode attrsNode = node.path("attrs");
-        propertiesMap.get(PropertyKey.GENERAL_SPEED_KEY)
-                .setValue(attrsNode.path("speed").path("value").asString());
-
-        double baseAttack = attrsNode.path("attack").path("base").doubleValue();
-        propertiesMap.get(PropertyKey.GENERAL_BASE_ATTACK_KEY)
-                .setValue(String.valueOf(baseAttack));
-
-        double additionAttack = attrsNode.path("attack").path("value").doubleValue() - baseAttack;
-        propertiesMap.get(PropertyKey.GENERAL_YU_HUN_ATTACK_KEY)
-                .setValue(String.valueOf(additionAttack));
-
-        propertiesMap.get(PropertyKey.GENERAL_HP_KEY)
-                .setValue(attrsNode.path("max_hp").path("value").asString());
-
-        propertiesMap.get(PropertyKey.GENERAL_DEFENSE_KEY)
-                .setValue(attrsNode.path("defense").path("value").asString());
-
-        propertiesMap.get(PropertyKey.GENERAL_CRIT_RATE_KEY)
-                .setValue(String.valueOf(100 * attrsNode.path("crit_rate").path("value").doubleValue()));
-
-        propertiesMap.get(PropertyKey.GENERAL_CRIT_POWER_KEY)
-                .setValue(String.valueOf(100 + 100 * attrsNode.path("crit_power").path("value").doubleValue()));
-
-        propertiesMap.get(PropertyKey.GENERAL_EFFECT_HIT_RATE_KEY)
-                .setValue(String.valueOf(100 * attrsNode.path("effect_hit_rate").doubleValue()));
-
-        propertiesMap.get(PropertyKey.GENERAL_EFFECT_RESIST_RATE_KEY)
-                .setValue(String.valueOf(100 * attrsNode.path("effect_resist_rate").doubleValue()));
-
-        PropertyCheck jueXing = (PropertyCheck) propertiesMap.get(PropertyKey.JUE_XING_KEY);
-        if (jueXing != null) {
-            jueXing.setValue(attrsNode.path("awake").asBoolean());
-        }
-
-        PropertyInput skill = (PropertyInput) propertiesMap.get(PropertyKey.SKILL_KEY);
-        if (skill != null) {
-            JsonNode skills = attrsNode.path("skills");
-            int l1 = skills.get(0).path("level").intValue();
-            int l2 = skills.get(1).path("level").intValue();
-            int l3 = skills.get(2).path("level").intValue();
-            skill.setValue(String.valueOf(100 * l1 + 10 * l2 + l3));
-        }
-    }*/
-
     private Node getLockSkillPane(Window owner) {
 
         TableView<Map.Entry<Integer, Integer>> tableView = new TableView<>();
-        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
 
         TableColumn<Map.Entry<Integer, Integer>, Integer> keyColumn = new TableColumn<>("行动回合");
         TableColumn<Map.Entry<Integer, Integer>, Integer> valueColumn = new TableColumn<>("锁定技能");
@@ -312,7 +262,7 @@ public class PropertiesHolder implements Serializable {
         // 创建表格
         ObservableList<Map.Entry<Integer, FlagChangeInfo>> items = FXCollections.observableArrayList(flagChangeMap.entrySet());
         TableView<Map.Entry<Integer, FlagChangeInfo>> tableView = new TableView<>(items);
-        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
 
         TableColumn<Map.Entry<Integer, FlagChangeInfo>, Integer> keyColumn = new TableColumn<>("行动回合");
         TableColumn<Map.Entry<Integer, FlagChangeInfo>, String> flagColumn = new TableColumn<>("标记类型");

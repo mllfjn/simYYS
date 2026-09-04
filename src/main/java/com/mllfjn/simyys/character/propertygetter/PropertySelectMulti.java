@@ -22,8 +22,7 @@ import java.util.StringJoiner;
 public class PropertySelectMulti  extends PropertyRequire implements Serializable {
     @Serial
     private static final long serialVersionUID = -9067275274183631003L;
-
-    public static final String SPLIT_CHAR = ",";
+    private static final String SPLIT_CHAR = ",";
 
     private String value;
     private final StringGroup[] options;

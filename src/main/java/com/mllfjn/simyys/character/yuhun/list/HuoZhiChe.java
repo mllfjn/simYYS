@@ -2,10 +2,10 @@ package com.mllfjn.simyys.character.yuhun.list;
 
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.yuhun.YuHun;
+import com.mllfjn.simyys.character.yuhun.Equip;
 import com.mllfjn.simyys.character.yuhun.YuHunSealResponse;
 
-public class HuoZhiChe extends YuHun implements YuHunSealResponse {
+public class HuoZhiChe extends Equip implements YuHunSealResponse {
     public static final String YuHunName = "火之车";
 
     private StatusAfterRound statusAfterRound;

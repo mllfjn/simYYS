@@ -3,9 +3,13 @@ package com.mllfjn.simyys.character.propertygetter;
 import javafx.scene.Node;
 import javafx.stage.Window;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 public abstract class PropertyRequire implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 8007580173371195463L;
+
     public abstract Node getNode(String desc, Window owner);
 
     // return false if not conformed

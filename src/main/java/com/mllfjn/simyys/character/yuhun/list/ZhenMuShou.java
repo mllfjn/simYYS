@@ -3,10 +3,10 @@ package com.mllfjn.simyys.character.yuhun.list;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.yuhun.YuHun;
+import com.mllfjn.simyys.character.yuhun.Equip;
 import com.mllfjn.simyys.character.yuhun.YuHunSealResponse;
 
-public class ZhenMuShou extends YuHun implements YuHunSealResponse {
+public class ZhenMuShou extends Equip implements YuHunSealResponse {
     public static final String YuHunName = "镇墓兽";
 
     private Status status;

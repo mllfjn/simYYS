@@ -1,7 +1,6 @@
 package com.mllfjn.simyys.character.list.ssr.dishitian;
 
 import com.mllfjn.simyys.character.CharacterShiShenBase;
-import com.mllfjn.simyys.character.status.*;
 
 public class DiShiTian extends CharacterShiShenBase {
     public static final String CharacterName = "帝释天";

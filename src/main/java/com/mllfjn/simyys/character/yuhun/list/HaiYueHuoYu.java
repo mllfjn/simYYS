@@ -3,9 +3,9 @@ package com.mllfjn.simyys.character.yuhun.list;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
-import com.mllfjn.simyys.character.yuhun.YuHun;
+import com.mllfjn.simyys.character.yuhun.Equip;
 
-public class HaiYueHuoYu extends YuHun {
+public class HaiYueHuoYu extends Equip {
     public static final String YuHunName = "海月火玉";
     public static final int EXTRA_USE = 1;
 
