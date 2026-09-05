@@ -66,8 +66,8 @@ public class CharacterFactory {
     public static final Map<String, CharacterMeta> nameMap = new HashMap<>();
 
     private static final Map<String, Image> iconMap = new HashMap<>();
-    public static final List<Class<? extends Character>> FIRE_CHARACTER =
-            List.of(FuJi.class, SPHongYe.class, ShiLing.class, SiJinShen.class, QingJi.class);
+    private static final Set<Class<? extends Character>> FIRE_CHARACTER =
+            Set.of(FuJi.class, SPHongYe.class, ShiLing.class, SiJinShen.class, QingJi.class);
 
     static {
         List<CharacterMeta> yysMap = new ArrayList<>();
@@ -145,6 +145,10 @@ public class CharacterFactory {
         list.add(characterMeta);
         idMap.put(id, characterMeta);
         nameMap.put(name, characterMeta);
+    }
+
+    public static boolean isFireCharacter(Character character) {
+        return FIRE_CHARACTER.contains(character.getClass());
     }
 
     public static Character getCharacter(String name) {

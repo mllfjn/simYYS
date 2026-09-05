@@ -31,7 +31,7 @@ public class SkillQiMeng extends Skill {
         maxDamage = belongTo.getInitAttack() * 24;
 
         belongTo.bp().addStatusAdder(c ->
-                c.team == belongTo.team && c != belongTo && CharacterFactory.FIRE_CHARACTER.contains(c.getClass())
+                c.team == belongTo.team && c != belongTo && CharacterFactory.isFireCharacter(c)
                         ? new StatusQMCauseAttackListener(this, belongTo, c)
                         : null
         );
