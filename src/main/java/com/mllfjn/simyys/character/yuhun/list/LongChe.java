@@ -1,14 +1,13 @@
 package com.mllfjn.simyys.character.yuhun.list;
 
 import com.mllfjn.simyys.character.skill.Skill;
-import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.yuhun.YuHun;
+import com.mllfjn.simyys.character.yuhun.Equip;
 import com.mllfjn.simyys.character.yuhun.YuHunHitFeedBack;
 import com.mllfjn.simyys.character.yuhun.YuHunUnfullMark;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.ratecontroller.RateController;
 
-public class LongChe extends YuHun implements YuHunUnfullMark, YuHunHitFeedBack {
+public class LongChe extends Equip implements YuHunUnfullMark, YuHunHitFeedBack {
     public static final String YuHunName = "胧车";
 
     private boolean triggered = false;

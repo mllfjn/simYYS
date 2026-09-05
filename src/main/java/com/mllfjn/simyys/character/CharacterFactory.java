@@ -60,90 +60,97 @@ import javafx.scene.paint.Color;
 import java.util.*;
 
 public class CharacterFactory {
-    public static final Map<String, Map<String, Class<? extends Character>>> characterMap = new LinkedHashMap<>();
+    public static final Map<String, List<CharacterMeta>> characterMapList = new LinkedHashMap<>();
+    public static final Map<Integer, CharacterMeta> idMap = new HashMap<>();
+    public static final Map<String, CharacterMeta> nameMap = new HashMap<>();
+
     private static final Map<String, Image> iconMap = new HashMap<>();
     public static final List<Class<? extends Character>> FIRE_CHARACTER =
             List.of(FuJi.class, SPHongYe.class, ShiLing.class, SiJinShen.class, QingJi.class);
 
     static {
-        Map<String, Class<? extends Character>> yysMap = new LinkedHashMap<>();
-        characterMap.put("阴阳师", yysMap);
-        yysMap.put(ShenLe.CharacterName, ShenLe.class);
-        yysMap.put(YuanLaiGuang.CharacterName, YuanLaiGuang.class);
-        yysMap.put(QingMing.CharacterName, QingMing.class);
-        yysMap.put(BoYa.CharacterName, BoYa.class);
-        yysMap.put(TengYuanDaoZhang.CharacterName, TengYuanDaoZhang.class);
+        List<CharacterMeta> yysMap = new ArrayList<>();
+        characterMapList.put("阴阳师", yysMap);
+        int index = 1;
+        putCharacterMeta(yysMap, index++, QingMing.CharacterName, QingMing.class);
+        putCharacterMeta(yysMap, index++, ShenLe.CharacterName, ShenLe.class);
+        putCharacterMeta(yysMap, index++, BoYa.CharacterName, BoYa.class);
+        putCharacterMeta(yysMap, index++, YuanLaiGuang.CharacterName, YuanLaiGuang.class);
+        putCharacterMeta(yysMap, index++, TengYuanDaoZhang.CharacterName, TengYuanDaoZhang.class);
 
-        Map<String, Class<? extends Character>> spMap = new LinkedHashMap<>();
-        characterMap.put("SP", spMap);
-        spMap.put(DaYuan.CharacterName, DaYuan.class);
-        spMap.put(ShenShe.CharacterName, ShenShe.class);
-        spMap.put(LaoTou.CharacterName, LaoTou.class);
-//        spMap.put(KongMian.CharacterName, KongMian.class);
-        spMap.put(SpJin.CharacterName, SpJin.class);
-        spMap.put(YinFan.CharacterName, YinFan.class);
-        spMap.put(FuJi.CharacterName, FuJi.class);
-        spMap.put(LuWan.CharacterName, LuWan.class);
-        spMap.put(SPHongYe.CharacterName, SPHongYe.class);
-        spMap.put(SpHuDie.CharacterName, SpHuDie.class);
+        List<CharacterMeta> spMap = new ArrayList<>();
+        characterMapList.put("SP", spMap);
+        putCharacterMeta(spMap, 554, DaYuan.CharacterName, DaYuan.class);
+        putCharacterMeta(spMap, 383, ShenShe.CharacterName, ShenShe.class);
+        putCharacterMeta(spMap, 566, LaoTou.CharacterName, LaoTou.class);
+        putCharacterMeta(spMap, 579, SpJin.CharacterName, SpJin.class);
+        putCharacterMeta(spMap, 372, YinFan.CharacterName, YinFan.class);
+        putCharacterMeta(spMap, 352, FuJi.CharacterName, FuJi.class);
+        putCharacterMeta(spMap, 355, LuWan.CharacterName, LuWan.class);
+        putCharacterMeta(spMap, 388, SPHongYe.CharacterName, SPHongYe.class);
+        putCharacterMeta(spMap, 594, SpHuDie.CharacterName, SpHuDie.class);
 
+        List<CharacterMeta> ssrMap = new ArrayList<>();
+        characterMapList.put("SSR", ssrMap);
+        putCharacterMeta(ssrMap, 557, NaMei.CharacterName, NaMei.class);
+        putCharacterMeta(ssrMap, 356, QianJi.CharacterName, QianJi.class);
+        putCharacterMeta(ssrMap, 369, ShiLing.CharacterName, ShiLing.class);
+        putCharacterMeta(ssrMap, 389, XuZuo.CharacterName, XuZuo.class);
+        putCharacterMeta(ssrMap, 583, BeiMiHu.CharacterName, BeiMiHu.class);
+        putCharacterMeta(ssrMap, 596, ShenWuYue.CharacterName, ShenWuYue.class);
+        putCharacterMeta(ssrMap, 597, GeYe.CharacterName, GeYe.class);
+        putCharacterMeta(ssrMap, 600, ShiJiaMei.CharacterName, ShiJiaMei.class);
+        putCharacterMeta(ssrMap, 363, DiShiTian.CharacterName, DiShiTian.class);
+        putCharacterMeta(ssrMap, 391, XunXiangXing.CharacterName, XunXiangXing.class);
+        putCharacterMeta(ssrMap, 217, DaTianGou.CharacterName, DaTianGou.class);
+        putCharacterMeta(ssrMap, 312, GuiQie.CharacterName, GuiQie.class);
+        putCharacterMeta(ssrMap, 556, TianZhao.CharacterName, TianZhao.class);
+        putCharacterMeta(ssrMap, 591, XueYuQian.CharacterName, XueYuQian.class);
+        putCharacterMeta(ssrMap, 379, BuJianYue.CharacterName, BuJianYue.class);
+        putCharacterMeta(ssrMap, 601, SiJinShen.CharacterName, SiJinShen.class);
+        putCharacterMeta(ssrMap, 364, AXiuLuo.CharacterName, AXiuLuo.class);
+        putCharacterMeta(ssrMap, 325, DaShe.CharacterName, DaShe.class);
 
-        Map<String, Class<? extends Character>> ssrMap = new LinkedHashMap<>();
-        characterMap.put("SSR", ssrMap);
-        ssrMap.put(NaMei.CharacterName, NaMei.class);
-        ssrMap.put(QianJi.CharacterName, QianJi.class);
-        ssrMap.put(ShiLing.CharacterName, ShiLing.class);
-        ssrMap.put(XuZuo.CharacterName, XuZuo.class);
-        ssrMap.put(BeiMiHu.CharacterName, BeiMiHu.class);
-        ssrMap.put(ShenWuYue.CharacterName, ShenWuYue.class);
-//        ssrMap.put(MaoChuan.CharacterName, MaoChuan.class);
-        ssrMap.put(GeYe.CharacterName, GeYe.class);
-        ssrMap.put(ShiJiaMei.CharacterName, ShiJiaMei.class);
-        ssrMap.put(DiShiTian.CharacterName, DiShiTian.class);
-        ssrMap.put(XunXiangXing.CharacterName, XunXiangXing.class);
-        ssrMap.put(DaTianGou.CharacterName, DaTianGou.class);
-        ssrMap.put(GuiQie.CharacterName, GuiQie.class);
-        ssrMap.put(TianZhao.CharacterName, TianZhao.class);
-        ssrMap.put(XueYuQian.CharacterName, XueYuQian.class);
-        ssrMap.put(BuJianYue.CharacterName, BuJianYue.class);
-        ssrMap.put(SiJinShen.CharacterName, SiJinShen.class);
-        ssrMap.put(AXiuLuo.CharacterName, AXiuLuo.class);
-        ssrMap.put(DaShe.CharacterName, DaShe.class);
+        List<CharacterMeta> srMap = new ArrayList<>();
+        characterMapList.put("SR", srMap);
+        putCharacterMeta(srMap, 256, YaoQin.CharacterName, YaoQin.class);
+        putCharacterMeta(srMap, 350, XieNv.CharacterName, XieNv.class);
+        putCharacterMeta(srMap, 247, HaiFangZhu.CharacterName, HaiFangZhu.class);
+        putCharacterMeta(srMap, 260, QingJi.CharacterName, QingJi.class);
+        putCharacterMeta(srMap, 270, LuoXinFu.CharacterName, LuoXinFu.class);
+        putCharacterMeta(srMap, 201, XueNv.CharacterName, XueNv.class);
+        putCharacterMeta(srMap, 324, HuaJing.CharacterName, HuaJing.class);
+        putCharacterMeta(srMap, 297, RiHeFang.CharacterName, RiHeFang.class);
+        putCharacterMeta(srMap, 287, XiaZhongShaoNv.CharacterName, XiaZhongShaoNv.class);
 
-        Map<String, Class<? extends Character>> srMap = new LinkedHashMap<>();
-        characterMap.put("SR", srMap);
-        srMap.put(YaoQin.CharacterName, YaoQin.class);
-        srMap.put(XieNv.CharacterName, XieNv.class);
-        srMap.put(HaiFangZhu.CharacterName, HaiFangZhu.class);
-        srMap.put(QingJi.CharacterName, QingJi.class);
-        srMap.put(LuoXinFu.CharacterName, LuoXinFu.class);
-        srMap.put(XueNv.CharacterName, XueNv.class);
-        srMap.put(HuaJing.CharacterName, HuaJing.class);
-        srMap.put(RiHeFang.CharacterName, RiHeFang.class);
-        srMap.put(XiaZhongShaoNv.CharacterName, XiaZhongShaoNv.class);
+        List<CharacterMeta> rMap = new ArrayList<>();
+        characterMapList.put("R", rMap);
+        putCharacterMeta(rMap, 228, ChouNv.CharacterName, ChouNv.class);
+        putCharacterMeta(rMap, 244, ShouWu.CharacterName, ShouWu.class);
 
-        Map<String, Class<? extends Character>> rMap = new LinkedHashMap<>();
-        characterMap.put("R", rMap);
-        rMap.put(ChouNv.CharacterName, ChouNv.class);
-        rMap.put(ShouWu.CharacterName, ShouWu.class);
+        List<CharacterMeta> mobMap = new ArrayList<>();
+        characterMapList.put("怪物", mobMap);
+        index = 50;
+        putCharacterMeta(mobMap, index++, ShenQiLou.CharacterName, ShenQiLou.class);
+        putCharacterMeta(mobMap, index++, TuZhiZhu.CharacterName, TuZhiZhu.class);
+        putCharacterMeta(mobMap, index++, HuangKuLou.CharacterName, HuangKuLou.class);
+        putCharacterMeta(mobMap, index++, DiZhenNian.CharacterName, DiZhenNian.class);
+    }
 
-        Map<String, Class<? extends Character>> mobMap = new LinkedHashMap<>();
-        characterMap.put("怪物", mobMap);
-        mobMap.put(ShenQiLou.CharacterName, ShenQiLou.class);
-        mobMap.put(TuZhiZhu.CharacterName, TuZhiZhu.class);
-        mobMap.put(HuangKuLou.CharacterName, HuangKuLou.class);
-        mobMap.put(DiZhenNian.CharacterName, DiZhenNian.class);
+    private static void putCharacterMeta(List<CharacterMeta> list,
+                                         int id, String name, Class<? extends Character> clazz) {
+        CharacterMeta characterMeta = new CharacterMeta(id, name, clazz);
+        list.add(characterMeta);
+        idMap.put(id, characterMeta);
+        nameMap.put(name, characterMeta);
     }
 
     public static Character getCharacter(String name) {
-        for (Map<String, Class<? extends Character>> map : characterMap.values()) {
-            if (map.containsKey(name)) {
-                try {
-                    return map.get(name).getDeclaredConstructor().newInstance();
-                } catch (Exception e) {
-                    Utils.throwException("获取角色信息失败", e);
-                }
-
+        if (nameMap.containsKey(name)) {
+            try {
+                return nameMap.get(name).clazz.getDeclaredConstructor().newInstance();
+            } catch (Exception e) {
+                Utils.throwException("获取角色信息失败", e);
             }
         }
         return new EmptyCharacter();
@@ -151,12 +158,9 @@ public class CharacterFactory {
 
     public static Character getCharacter(PropertiesHolder ph, BattlePane bp) {
         try {
-            Character character;
-            if (ph.characterClass != null) {
-                character = ph.characterClass.getDeclaredConstructor().newInstance();
-            } else {
-                character = getCharacter(ph.name);
-            }
+            Character character = getCharacter(ph.name);
+
+
             character.init(ph, bp);
             character.fillSkills();
             ph.created(character);
@@ -191,6 +195,10 @@ public class CharacterFactory {
         );
     }
 
+    public static CharacterMeta getCharacterMeta(String name) {
+        return nameMap.get(name);
+    }
+
     public enum ImageSize {
         CHARACTER_ICON_IMAGE(120),
         BIG(110),
@@ -214,5 +222,8 @@ public class CharacterFactory {
         protected void addOwnSkills() {
 
         }
+    }
+
+    public record CharacterMeta(int id, String name, Class<? extends Character> clazz) {
     }
 }

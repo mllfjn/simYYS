@@ -2,11 +2,11 @@ package com.mllfjn.simyys.character.yuhun.list;
 
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.yuhun.YuHun;
+import com.mllfjn.simyys.character.yuhun.Equip;
 import com.mllfjn.simyys.character.yuhun.YuHunSealResponse;
 import com.mllfjn.simyys.ratecontroller.RateController;
 
-public class LunRuDao extends YuHun implements YuHunSealResponse {
+public class LunRuDao extends Equip implements YuHunSealResponse {
     public static final String YuHunName = "轮入道";
     private static final int RATE = 20;
 

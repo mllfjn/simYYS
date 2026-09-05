@@ -1,10 +1,12 @@
 package com.mllfjn.simyys.character.propertygetter;
 
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.CharacterFactory;
 import com.mllfjn.simyys.starter.Initializer;
 import com.mllfjn.simyys.utils.DecimalFormatUtil;
 import com.mllfjn.simyys.utils.Utils;
 import com.mllfjn.simyys.character.PropertyKey;
+import com.mllfjn.simyys.utils.YYXSnapshotLoader;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
@@ -40,8 +42,6 @@ public class PropertiesHolder implements Serializable {
     public final Map<Integer, Integer> lockSkillMap;
     public final Map<Integer, FlagChangeInfo> flagChangeMap;
 
-    public Class<? extends Character> characterClass;
-
     private transient SimpleStringProperty nameProperty;
     private transient StringBinding totalAttackProperty;
 
@@ -58,13 +58,8 @@ public class PropertiesHolder implements Serializable {
     }
 
     public PropertiesHolder(String name, PropertiesMap propertiesMap) {
-        this.name = name;
-        this.propertiesMap = propertiesMap;
-        this.lockSkillMap = new LinkedHashMap<>();
-        this.flagChangeMap = new LinkedHashMap<>();
+        this(name, propertiesMap, new LinkedHashMap<>(), new LinkedHashMap<>());
     }
-
-
 
     public void show(Scene OwnerScent) {
         Stage stage = new Stage();
@@ -82,7 +77,7 @@ public class PropertiesHolder implements Serializable {
 
         stage.setTitle(name);
         OwnerScent.getRoot().setMouseTransparent(true);
-        stage.setOnCloseRequest(event -> OwnerScent.getRoot().setMouseTransparent(false));
+        stage.setOnCloseRequest(_ -> OwnerScent.getRoot().setMouseTransparent(false));
         /*stage.initOwner(OwnerScent);
         stage.initModality(Modality.WINDOW_MODAL);*/
         Initializer.installScale(stage, tabPane, 600, 800);
@@ -117,6 +112,18 @@ public class PropertiesHolder implements Serializable {
         vb.setPadding(new Insets(10, 20, 10, 20));
         vb.setSpacing(10);
 
+        int hero_id = CharacterFactory.getCharacterMeta(name).id();
+        if (hero_id > 100) {
+            Button buttonLoad = new Button("从导出文件中加载");
+            buttonLoad.setOnAction(_ -> {
+                YYXSnapshotLoader.Hero hero = YYXSnapshotLoader.getHero(hero_id);
+                if (hero != null) {
+                    loadPropertiesFromHero(hero);
+                }
+            });
+            vb.getChildren().add(buttonLoad);
+        }
+
         for (Map.Entry<String, PropertyRequire> entry : propertiesMap.entrySet()) {
             vb.getChildren().add(entry.getValue().getNode(entry.getKey(), owner));
         }
@@ -124,10 +131,47 @@ public class PropertiesHolder implements Serializable {
         return vb;
     }
 
+    private void loadPropertiesFromHero(YYXSnapshotLoader.Hero hero) {
+        propertiesMap.get(PropertyKey.GENERAL_SPEED_KEY).setValue(hero.attrs.speed.value);
+
+        double baseAttack = hero.attrs.attack.base;
+        propertiesMap.get(PropertyKey.GENERAL_BASE_ATTACK_KEY).setValue(baseAttack);
+
+        double additionAttack = hero.attrs.attack.value - baseAttack;
+        propertiesMap.get(PropertyKey.GENERAL_YU_HUN_ATTACK_KEY).setValue(additionAttack);
+
+        propertiesMap.get(PropertyKey.GENERAL_HP_KEY).setValue(hero.attrs.max_hp.value);
+
+        propertiesMap.get(PropertyKey.GENERAL_DEFENSE_KEY).setValue(hero.attrs.defense.value);
+
+        propertiesMap.get(PropertyKey.GENERAL_CRIT_RATE_KEY).setValue(100 * hero.attrs.crit_rate.value);
+
+        propertiesMap.get(PropertyKey.GENERAL_CRIT_POWER_KEY).setValue(100 + 100 * hero.attrs.crit_power.value);
+
+        propertiesMap.get(PropertyKey.GENERAL_EFFECT_HIT_RATE_KEY).setValue(100 * hero.attrs.effect_hit_rate);
+
+        propertiesMap.get(PropertyKey.GENERAL_EFFECT_RESIST_RATE_KEY).setValue(100 * hero.attrs.effect_resist_rate);
+
+        PropertyCheck jueXing = (PropertyCheck) propertiesMap.get(PropertyKey.JUE_XING_KEY);
+        if (jueXing != null) {
+            jueXing.setValue(hero.awake);
+        }
+
+        PropertyInput skill = (PropertyInput) propertiesMap.get(PropertyKey.SKILL_KEY);
+        if (skill != null) {
+            skill.setValue(hero.getSkillLevel());
+        }
+
+        PropertySelectMulti equip = (PropertySelectMulti) propertiesMap.get(PropertyKey.YU_HUN_KEY);
+        if (equip != null) {
+            equip.setValue(hero.getEquip());
+        }
+    }
+
     private Node getLockSkillPane(Window owner) {
 
         TableView<Map.Entry<Integer, Integer>> tableView = new TableView<>();
-        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
 
         TableColumn<Map.Entry<Integer, Integer>, Integer> keyColumn = new TableColumn<>("行动回合");
         TableColumn<Map.Entry<Integer, Integer>, Integer> valueColumn = new TableColumn<>("锁定技能");
@@ -150,12 +194,12 @@ public class PropertiesHolder implements Serializable {
         Button btnAdd = new Button("添加");
         Button btnDelete = new Button("删除");
 
-        btnAdd.setOnAction(e -> {
+        btnAdd.setOnAction(_ -> {
             TextField tfKey = new TextField();
             TextField tfValue = new TextField();
             Button btnConfirm = new Button("确定");
 
-            btnConfirm.setOnAction(e1 -> {
+            btnConfirm.setOnAction(_ -> {
                 int key = Utils.parseIntOrDefault(tfKey.getText(), 0);
                 int value = Utils.parseIntOrDefault(tfValue.getText(), 0);
                 if (!lockSkillMap.containsKey(key)) {
@@ -201,7 +245,7 @@ public class PropertiesHolder implements Serializable {
             Initializer.installScale(stage, gp, 400, 80);
             stage.showAndWait();
         });
-        btnDelete.setOnAction(e -> {
+        btnDelete.setOnAction(_ -> {
             Map.Entry<Integer, Integer> selectedItem = tableView.getSelectionModel().getSelectedItem();
             if (selectedItem != null) {
                 tableView.getItems().remove(selectedItem);
@@ -223,7 +267,7 @@ public class PropertiesHolder implements Serializable {
         // 创建表格
         ObservableList<Map.Entry<Integer, FlagChangeInfo>> items = FXCollections.observableArrayList(flagChangeMap.entrySet());
         TableView<Map.Entry<Integer, FlagChangeInfo>> tableView = new TableView<>(items);
-        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
 
         TableColumn<Map.Entry<Integer, FlagChangeInfo>, Integer> keyColumn = new TableColumn<>("行动回合");
         TableColumn<Map.Entry<Integer, FlagChangeInfo>, String> flagColumn = new TableColumn<>("标记类型");
@@ -253,7 +297,7 @@ public class PropertiesHolder implements Serializable {
         Button btnDelete = new Button("删除");
         Button btnModify = new Button("批量修改");
 
-        btnAdd.setOnAction(event -> {
+        btnAdd.setOnAction(_ -> {
             TextField tfKey = new TextField();
             ComboBox<FlagChangeInfo.FlagType> cbFlagType = new ComboBox<>();
             TextField tfTarget = new TextField();
@@ -263,7 +307,7 @@ public class PropertiesHolder implements Serializable {
 
             Button btnConfirm = new Button("确定");
 
-            btnConfirm.setOnAction(e1 -> {
+            btnConfirm.setOnAction(_ -> {
                 int key = Utils.parseIntOrDefault(tfKey.getText(), 0);
 
                 if (!flagChangeMap.containsKey(key)) {
@@ -312,7 +356,7 @@ public class PropertiesHolder implements Serializable {
             stage.showAndWait();
         });
 
-        btnDelete.setOnAction(event -> {
+        btnDelete.setOnAction(_ -> {
             Map.Entry<Integer, FlagChangeInfo> selectedItem = tableView.getSelectionModel().getSelectedItem();
             if (selectedItem != null) {
                 tableView.getItems().remove(selectedItem);
@@ -320,7 +364,7 @@ public class PropertiesHolder implements Serializable {
             }
         });
 
-        btnModify.setOnAction(event -> {
+        btnModify.setOnAction(_ -> {
             Stage stage = new Stage();
 
             TextField tfTargetOld = new TextField();
@@ -331,7 +375,7 @@ public class PropertiesHolder implements Serializable {
             cbFlagType.getItems().addAll(FlagChangeInfo.FlagType.values());
             cbFlagType.getSelectionModel().select(0);
 
-            btnConfirm.setOnAction(e1 -> {
+            btnConfirm.setOnAction(_ -> {
                 int targetOld = Utils.parseIntOrDefault(tfTargetOld.getText(), 0);
                 int targetNew = Utils.parseIntOrDefault(tfTargetNew.getText(), 0);
                 for (Map.Entry<Integer, FlagChangeInfo> item : items) {

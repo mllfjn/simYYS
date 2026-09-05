@@ -40,6 +40,9 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
 
     compileOnly("org.jetbrains:annotations:26.0.2")
+
+    // Source: https://mvnrepository.com/artifact/tools.jackson.core/jackson-databind
+    implementation("tools.jackson.core:jackson-databind:3.2.2")
 }
 
 tasks.withType<Test> {

@@ -4,7 +4,7 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.Status;
-import com.mllfjn.simyys.character.yuhun.YuHun;
+import com.mllfjn.simyys.character.yuhun.Equip;
 import com.mllfjn.simyys.character.yuhun.YuHunAfterCauseAttack;
 import com.mllfjn.simyys.character.yuhun.YuHunUnfullMark;
 import com.mllfjn.simyys.interactive.AttackInfo;
@@ -12,7 +12,7 @@ import com.mllfjn.simyys.interactive.Interactive;
 
 import java.util.Optional;
 
-public class GuiLingGeJi extends YuHun implements YuHunUnfullMark, YuHunAfterCauseAttack {
+public class GuiLingGeJi extends Equip implements YuHunUnfullMark, YuHunAfterCauseAttack {
     public static final String YuHunName = "鬼灵歌姬";
 
     private SkillGLGJ skill;

@@ -1,11 +1,11 @@
 package com.mllfjn.simyys.character.yuhun.list;
 
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.character.yuhun.YuHun;
+import com.mllfjn.simyys.character.yuhun.Equip;
 import com.mllfjn.simyys.character.yuhun.YuHunAttack;
 import com.mllfjn.simyys.interactive.AttackInfo;
 
-public class XinYan extends YuHun implements YuHunAttack {
+public class XinYan extends Equip implements YuHunAttack {
     public static final String YuHunName = "心眼";
 
     @Override

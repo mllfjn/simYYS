@@ -3,10 +3,10 @@ package com.mllfjn.simyys.character.yuhun.list;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.instance.StatusBiHu;
-import com.mllfjn.simyys.character.yuhun.YuHun;
+import com.mllfjn.simyys.character.yuhun.Equip;
 import com.mllfjn.simyys.character.yuhun.YuHunUnfullMark;
 
-public class ShenQiLou extends YuHun implements YuHunUnfullMark {
+public class ShenQiLou extends Equip implements YuHunUnfullMark {
     public static final String YuHunName = "蜃气楼";
 
     @Override

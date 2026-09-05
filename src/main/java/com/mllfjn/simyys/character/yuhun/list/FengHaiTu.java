@@ -4,11 +4,11 @@ import com.mllfjn.simyys.battleevent.StatusAdder;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
-import com.mllfjn.simyys.character.yuhun.YuHun;
+import com.mllfjn.simyys.character.yuhun.Equip;
 import com.mllfjn.simyys.character.yuhun.YuHunSealResponse;
 import com.mllfjn.simyys.interactive.AttackInfo;
 
-public class FengHaiTu extends YuHun implements YuHunSealResponse {
+public class FengHaiTu extends Equip implements YuHunSealResponse {
     public static final String YuHunName = "奉海图";
 
     private StatusAdder<?> adder;

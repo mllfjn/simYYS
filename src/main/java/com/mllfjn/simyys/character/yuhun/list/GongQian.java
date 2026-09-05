@@ -3,13 +3,13 @@ package com.mllfjn.simyys.character.yuhun.list;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.yuhun.YuHun;
+import com.mllfjn.simyys.character.yuhun.Equip;
 import com.mllfjn.simyys.ratecontroller.RateController;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GongQian extends YuHun {
+public class GongQian extends Equip {
     public static final String YuHunName = "共潜";
 
     @Override

@@ -1,10 +1,10 @@
 package com.mllfjn.simyys.character.yuhun.list;
 
-import com.mllfjn.simyys.character.yuhun.YuHun;
+import com.mllfjn.simyys.character.yuhun.Equip;
 import com.mllfjn.simyys.character.yuhun.YuHunAttack;
 import com.mllfjn.simyys.interactive.AttackInfo;
 
-public class PoShi extends YuHun implements YuHunAttack {
+public class PoShi extends Equip implements YuHunAttack {
     public static final String YuHunName = "破势";
 
     @Override

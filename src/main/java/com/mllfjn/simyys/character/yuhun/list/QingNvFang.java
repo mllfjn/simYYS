@@ -5,9 +5,9 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.determinant.RejectAllStatuses;
-import com.mllfjn.simyys.character.yuhun.YuHun;
+import com.mllfjn.simyys.character.yuhun.Equip;
 
-public class QingNvFang extends YuHun {
+public class QingNvFang extends Equip {
     public static final String YuHunName = "青女房";
 
     public static Class<? extends Status> getStatusClass() {

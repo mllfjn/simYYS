@@ -1,13 +1,13 @@
 package com.mllfjn.simyys.character.yuhun.list;
 
 import com.mllfjn.simyys.character.skill.Skill;
-import com.mllfjn.simyys.character.yuhun.YuHun;
+import com.mllfjn.simyys.character.yuhun.Equip;
 import com.mllfjn.simyys.character.yuhun.YuHunAfterCauseAttack;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.ratecontroller.RateController;
 
-public class ZhenNv extends YuHun implements YuHunAfterCauseAttack {
+public class ZhenNv extends Equip implements YuHunAfterCauseAttack {
     public static final String YuHunName = "针女";
     private static final Skill skill = Skill.getInstance(YuHunName);
 

@@ -5,7 +5,7 @@ import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
-import com.mllfjn.simyys.character.yuhun.YuHun;
+import com.mllfjn.simyys.character.yuhun.Equip;
 import com.mllfjn.simyys.character.yuhun.YuHunUnfullMark;
 import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.ratecontroller.RateController;
@@ -68,16 +68,16 @@ class Skill3 extends Skill {
         return Optional.of(target);
     }
 
-    private void doTransfer(Character target, Class<? extends YuHun> yuHun) {
+    private void doTransfer(Character target, Equip yuHun) {
         target.addStatus(new StatusYuHunTransfer(getBelongTo(), target, yuHun));
     }
 
-    private Optional<Class<? extends YuHun>> getFirstFullYuHun() {
-        for (YuHun yuHun : getBelongTo().getYuHunSet()) {
-            if (yuHun instanceof YuHunUnfullMark) {
+    private Optional<Equip> getFirstFullYuHun() {
+        for (Equip equip : getBelongTo().getYuHunSet()) {
+            if (equip instanceof YuHunUnfullMark) {
                 continue;
             }
-            return Optional.of(yuHun.getClass());
+            return Optional.of(equip);
         }
         return Optional.empty();
     }
