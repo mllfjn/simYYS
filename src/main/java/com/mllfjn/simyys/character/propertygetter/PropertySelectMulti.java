@@ -2,6 +2,7 @@ package com.mllfjn.simyys.character.propertygetter;
 
 import com.mllfjn.simyys.collections.StringGroup;
 import com.mllfjn.simyys.starter.Initializer;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -27,6 +28,8 @@ public class PropertySelectMulti  extends PropertyRequire implements Serializabl
     private String value;
     private final StringGroup[] options;
 
+    private transient SimpleStringProperty property;
+
     public PropertySelectMulti(StringGroup[] options) {
         this.options = options;
     }
@@ -47,7 +50,7 @@ public class PropertySelectMulti  extends PropertyRequire implements Serializabl
                     match = false;
                 }
             }
-            this.value = sj.toString();
+            setValue(sj.toString());
             return match;
         }
         return false;
@@ -60,8 +63,20 @@ public class PropertySelectMulti  extends PropertyRequire implements Serializabl
 
     @Override
     public PropertyRequire setValue(String s) {
-        value = s;
+        if (property == null) {
+            value = s;
+        } else {
+            property.setValue(s);
+        }
         return this;
+    }
+
+    public SimpleStringProperty getProperty() {
+        if (property == null) {
+            property = new SimpleStringProperty(value);
+            property.addListener((_, _, val) -> value = val);
+        }
+        return property;
     }
 
     private boolean contains(String newValue) {
@@ -81,9 +96,10 @@ public class PropertySelectMulti  extends PropertyRequire implements Serializabl
         node.setSpacing(10);
 
         Label descLbl = new Label(desc);
-        Label valueLbl = new Label(value);
+        Label valueLbl = new Label();
+        valueLbl.textProperty().bindBidirectional(getProperty());
         Button selectBtn = new Button("点击选择");
-        selectBtn.setOnAction(e -> openSelectDialog(valueLbl, owner));
+        selectBtn.setOnAction(_ -> openSelectDialog(valueLbl, owner));
 
         node.getChildren().addAll(descLbl, valueLbl, selectBtn);
         return node;
@@ -120,7 +136,7 @@ public class PropertySelectMulti  extends PropertyRequire implements Serializabl
         }
 
         Button confirmBtn = new Button("确定");
-        confirmBtn.setOnAction(e -> {
+        confirmBtn.setOnAction(_ -> {
             StringJoiner sj = new StringJoiner(SPLIT_CHAR);
             for (int i = 0; i < cbs.length; i++) {
                 for (int j = 0; j < cbs[i].length; j++) {
@@ -129,7 +145,7 @@ public class PropertySelectMulti  extends PropertyRequire implements Serializabl
                     }
                 }
             }
-            value = sj.toString();
+            setValue(sj.toString());
             valueLbl.setText(value);
             stage.close();
         });

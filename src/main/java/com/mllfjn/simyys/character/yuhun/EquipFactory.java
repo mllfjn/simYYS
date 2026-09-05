@@ -57,21 +57,21 @@ public class EquipFactory {
         putEquipMeta(300080, GongQian.YuHunName, GongQian.class, EquipType.EFFECT_RESIST);
         putEquipMeta(300090, DiaoPingHuo.YuHunName, DiaoPingHuo.class, EquipType.EFFECT_RESIST);
 
-        putEquipMeta2Set(300077, GuiLingGeJi.YuHunName, GuiLingGeJi.class);
-        putEquipMeta2Set(300054, ShenQiLou.YuHunName, ShenQiLou.class);
-        putEquipMeta2Set(300053, DiZhenNian.YuHunName, DiZhenNian.class);
-        putEquipMeta2Set(300052, HuangKuLou.YuHunName, HuangKuLou.class);
-        putEquipMeta2Set(300051, LongChe.YuHunName, LongChe.class);
-        putEquipMeta2Set(300050, TuZhiZhu.YuHunName, TuZhiZhu.class);
-        putEquipMeta2Set(300091, YeHuangHun.YuHunName, YeHuangHun.class);
+        putEquipMetaSingle(300077, GuiLingGeJi.YuHunName, GuiLingGeJi.class);
+        putEquipMetaSingle(300054, ShenQiLou.YuHunName, ShenQiLou.class);
+        putEquipMetaSingle(300053, DiZhenNian.YuHunName, DiZhenNian.class);
+        putEquipMetaSingle(300052, HuangKuLou.YuHunName, HuangKuLou.class);
+        putEquipMetaSingle(300051, LongChe.YuHunName, LongChe.class);
+        putEquipMetaSingle(300050, TuZhiZhu.YuHunName, TuZhiZhu.class);
+        putEquipMetaSingle(300091, YeHuangHun.YuHunName, YeHuangHun.class);
     }
 
     private static void putEquipMeta(int id, String name, Class<? extends Equip> clazz, EquipType equipType) {
-        EquipMeta equipMeta = new EquipMeta(id, name, clazz, equipType);
+        EquipMeta equipMeta = new EquipMeta(id, name, clazz, equipType, 4);
         putEquipMeta(id, name, equipType, equipMeta);
     }
 
-    private static void putEquipMeta2Set(int id, String name, Class<? extends Equip> clazz) {
+    private static void putEquipMetaSingle(int id, String name, Class<? extends Equip> clazz) {
         EquipMeta equipMeta = new EquipMeta(id, name, clazz, EquipType.SINGLE, 2);
         putEquipMeta(id, name, EquipType.SINGLE, equipMeta);
     }
@@ -110,9 +110,6 @@ public class EquipFactory {
     }
 
     public record EquipMeta(int id, String name, Class<? extends Equip> clazz, EquipType equipType, int setCount) {
-        public EquipMeta(int id, String name, Class<? extends Equip> clazz, EquipType equipType) {
-            this(id, name, clazz, equipType, 4);
-        }
     }
 
     public enum EquipType {

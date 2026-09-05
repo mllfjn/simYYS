@@ -161,6 +161,11 @@ public class PropertiesHolder implements Serializable {
         if (skill != null) {
             skill.setValue(hero.getSkillLevel());
         }
+
+        PropertySelectMulti equip = (PropertySelectMulti) propertiesMap.get(PropertyKey.YU_HUN_KEY);
+        if (equip != null) {
+            equip.setValue(hero.getEquip());
+        }
     }
 
     private Node getLockSkillPane(Window owner) {

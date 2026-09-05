@@ -88,10 +88,10 @@ public class YYXSnapshotLoader {
             return heroes.getFirst();
         }
 
-        ChoiceDialog<Hero> dialog = new ChoiceDialog<>(heroes.getFirst(), heroes);
+        /*ChoiceDialog<Hero> dialog = new ChoiceDialog<>(heroes.getFirst(), heroes);
         Optional<Hero> result = dialog.showAndWait();
-        return result.orElse(null);
-//        return showSelectionDialog(heroes);
+        return result.orElse(null);*/
+        return showSelectionDialog(heroes);
     }
 
     public static void getEquips(String[] equips, Consumer<EquipFactory.EquipMeta> action) {
@@ -134,16 +134,21 @@ public class YYXSnapshotLoader {
                 simpleColumn("昵称", hero -> hero.nick_name),
                 simpleColumn("等级", hero -> String.valueOf(hero.level)),
                 simpleColumn("觉醒", hero -> hero.awake ? "√" : "×"),
-                simpleColumn("技能等级", Hero::getSkillLevel)
+                simpleColumn("技能等级", Hero::getSkillLevel),
+                simpleColumn("御魂", Hero::getEquip)
         );
 
+        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
+
         Dialog<Hero> dialog = new Dialog<>();
-        ButtonType confirmButton = new ButtonType("确定");
-        ButtonType cancelButton = new ButtonType("取消");
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        dialog.getDialogPane().setContent(tableView);
+
+        dialog.setTitle("选择式神，需要至少装备一个御魂才会显示");
 
         dialog.setResultConverter(buttonType -> {
-            if (buttonType == confirmButton) {
-                return null;
+            if (buttonType == ButtonType.OK) {
+                return tableView.getSelectionModel().getSelectedItem();
             } else {
                 return null;
             }
@@ -169,6 +174,8 @@ public class YYXSnapshotLoader {
         public Skill[] skills;
         public int level;
 
+        private String equip;
+
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder();
@@ -184,6 +191,15 @@ public class YYXSnapshotLoader {
 
         public String getSkillLevel() {
             return String.valueOf(100 * skills[0].level + 10 * skills[1].level + skills[2].level);
+        }
+
+        public String getEquip() {
+            if (equip == null) {
+                StringJoiner stringJoiner = new StringJoiner(",");
+                getEquips(equips, equipMeta -> stringJoiner.add(equipMeta.name()));
+                equip = stringJoiner.toString();
+            }
+            return equip;
         }
     }
 
