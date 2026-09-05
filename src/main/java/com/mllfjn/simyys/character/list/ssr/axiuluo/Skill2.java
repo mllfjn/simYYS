@@ -14,8 +14,8 @@ class Skill2 extends Skill {
         super(belongTo, level, 0, 0, 2);
     }
 
-    StatusLiXing getStatusLiXing() {
-        return new StatusLiXing(getBelongTo(), 0.01 * suppress[getLevel()], getLevel() >= 5);
+    StatusLiXing getStatusLiXing(AXiuLuo aXiuLuo) {
+        return new StatusLiXing(aXiuLuo, 0.01 * suppress[getLevel()], getLevel() >= 5);
     }
 
     @Override

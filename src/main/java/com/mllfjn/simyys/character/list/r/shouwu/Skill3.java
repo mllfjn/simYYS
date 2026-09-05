@@ -5,10 +5,7 @@ import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
-import com.mllfjn.simyys.character.status.AttributeModifier;
 import com.mllfjn.simyys.character.status.Status;
-import com.mllfjn.simyys.character.status.StatusForm;
-import com.mllfjn.simyys.character.status.StatusType;
 import com.mllfjn.simyys.interactive.AttackType;
 
 import java.util.Optional;
@@ -35,7 +32,9 @@ class Skill3 extends Skill {
         Character target = new CharacterFinder(belongTo)
                 .filterEnemy()
                 .getPriorAuto(Attribute.HP_PERCENT, CharacterFinder.Criteria.MIN);
-        final StatusTemporarilyIgnoreDefense status = new StatusTemporarilyIgnoreDefense(belongTo, target);
+        Status status = Status.of(SkillName, belongTo);
+        status.attribute(Attribute.IGNORE_DEFENCE, _ -> target.getDefence() * 0.4);
+//        new StatusTemporarilyIgnoreDefense(belongTo, target);
         belongTo.addStatus(status);
         belongTo.getInteractive().attackTypical(this, target, multiplier[getLevel()], AttackType.DAN_TI);
         belongTo.removeStatus(status);
@@ -43,24 +42,5 @@ class Skill3 extends Skill {
         skill2.madeAttack(target);
 
         return Optional.of(target);
-    }
-
-    static class StatusTemporarilyIgnoreDefense extends Status implements AttributeModifier {
-        private final double ignoreDefense;
-
-        public StatusTemporarilyIgnoreDefense(Character character, Character target) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-            ignoreDefense = target.getDefence() * 0.4;
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.IGNORE_DEFENCE;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return ignoreDefense;
-        }
     }
 }

@@ -2,10 +2,8 @@ package com.mllfjn.simyys.character;
 
 import com.mllfjn.simyys.character.list.ssr.namei.StatusHuiMie;
 import com.mllfjn.simyys.character.list.ssr.shenwuyue.StatusRuMeng;
-import com.mllfjn.simyys.character.status.AttributeModifier;
 import com.mllfjn.simyys.character.status.ConditionalReduceCost;
 import com.mllfjn.simyys.character.status.Status;
-import com.mllfjn.simyys.character.status.determinant.PreventDie;
 import com.mllfjn.simyys.character.yuhun.list.YiNianHuo;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.InteractiveInfo;
@@ -23,45 +21,37 @@ public class TraversalOrderManager {
     private final static Comparator<ConditionalReduceCost> CRC_COMPARATOR =
             Comparator.comparingInt(crc -> CRC_MAP.get(crc.getClass()));
 
-    private final static Map<Class<? extends PreventDie>, Integer> PD_MAP = Map.of(
+    private final static Map<Class<? extends Status>, Integer> PD_MAP = Map.of(
             StatusHuiMie.class, 1
     );
-    private final static Comparator<PreventDie> PD_COMPARATOR =
+    private final static Comparator<Status> PD_COMPARATOR =
             Comparator.comparingInt(pd -> PD_MAP.getOrDefault(pd.getClass(), Integer.MAX_VALUE));
 
     public static double getAttribute(Attribute attribute, double base, List<Status> statuses) {
         for (Status status : statuses) {
-            if (status instanceof AttributeModifier a && a.isAffectAttribute(attribute)) {
-                base += a.getInfluence(attribute, null);
-            }
+            base += status.getAttribute(attribute, null);
         }
-        return base < 0 ? 0 : base;
+        return Math.max(0, base);
     }
 
     public static double getActualDefense(Character attacker, Character target, AttackType attackType) {
         double defense = target.getInitDefense();
-        AttributeModifier.StatusModifyParam param = new AttributeModifier.StatusModifyParam(target, attackType);
+        Status.StatusModifyParam param = new Status.StatusModifyParam(target, attackType);
         for (Status status : target.getStatuses()) {
-            if (status instanceof AttributeModifier a && a.isAffectAttribute(Attribute.DEFENCE)) {
-                defense += a.getInfluence(Attribute.DEFENCE, param);
-            }
+            defense += status.getAttribute(Attribute.DEFENCE, param);
         }
 
         for (Status status : attacker.getStatuses()) {
-            if (status instanceof AttributeModifier a && a.isAffectAttribute(Attribute.IGNORE_DEFENCE)) {
-                defense -= a.getInfluence(Attribute.IGNORE_DEFENCE, param);
-            }
+            defense -= status.getAttribute(Attribute.IGNORE_DEFENCE, param);
         }
 
-        return defense < 0 ? 0 : defense;
+        return Math.max(0, defense);
     }
 
     public static double getProbabilityAtLeastOne(Attribute attribute, List<Status> statuses) {
         double noEventProbability = 100;
         for (Status status : statuses) {
-            if (status instanceof AttributeModifier am && am.isAffectAttribute(attribute)) {
-                noEventProbability *= (100 - am.getInfluence(attribute, null)) / 100;
-            }
+            noEventProbability *= (100 - status.getAttribute(attribute, null)) / 100;
         }
         return 100 - noEventProbability;
     }
@@ -75,16 +65,16 @@ public class TraversalOrderManager {
     }
 
     public static boolean preventDie(InteractiveInfo interactiveInfo, double excessDamage, List<Status> statuses) {
-        ArrayList<PreventDie> preventDies = new ArrayList<>();
+        ArrayList<Status> preventDies = new ArrayList<>();
         for (Status status : statuses) {
-            if (status instanceof PreventDie pd && pd.preventDieEffective()) {
-                preventDies.add(pd);
+            if (status.isPreventDie()) {
+                preventDies.add(status);
             }
         }
         preventDies.sort(PD_COMPARATOR);
-        for (PreventDie pd : preventDies) {
-            pd.preventDie(excessDamage);
-            interactiveInfo.getTraceableNumber().addTrace("(" + pd.getName() + "免死生效)");
+        for (Status status : preventDies) {
+            status.doPreventDie(excessDamage);
+            interactiveInfo.getTraceableNumber().addTrace("(" + status.name + "免死生效)");
             interactiveInfo.setCancel(true);
             return true;
         }

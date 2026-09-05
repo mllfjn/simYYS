@@ -7,14 +7,13 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
 import java.util.Optional;
 
 class Skill2 extends Skill {
     private static final String SkillName = "无垢莲华";
 
-    public Skill2(Character belongTo, int level) {
+    public Skill2(DiShiTian belongTo, int level) {
         super(belongTo, level, 2, 0, 2);
         belongTo.bp.addPriorityMove(belongTo,
                 () -> belongTo.addStatus(new StatusHuanJingListener(belongTo, level >= 3))
@@ -73,51 +72,57 @@ class Skill2 extends Skill {
         return Optional.of(target);
     }
 
-    static class StatusHuanJingListener extends Status implements StatusRunnable {
-        private final boolean isIncreaseLocation;
-
-        public StatusHuanJingListener(Character character, boolean isIncreaseLocation) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-            this.isIncreaseLocation = isIncreaseLocation;
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return (trigger == Trigger.BEFORE_ROUND && !belongTo.isUncontrollable())
-                    || (isIncreaseLocation && trigger == Trigger.AFTER_ROUND);
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            if (trigger == Trigger.BEFORE_ROUND) {
-                belongTo.addStatus(new StatusHuanJingContainer(((DiShiTian) belongTo)));
-                return true;
-            } else {
-                belongTo.doInteractive(interactive ->
-                        interactive.increaseLocation(belongTo, 50)
+    static class StatusHuanJingListener extends Status {
+        public StatusHuanJingListener(DiShiTian character, boolean isIncreaseLocation) {
+            super(SkillName + "开启幻境监听", character);
+            runOn(Trigger.BEFORE_ROUND, _ -> {
+                if (!belongTo.isUncontrollable()) {
+                    belongTo.addStatus(new StatusHuanJingContainer(character));
+                    delete();
+                }
+            });
+            if (isIncreaseLocation) {
+                runOn(Trigger.AFTER_ROUND, _ ->
+                        belongTo.doInteractive(interactive ->
+                                interactive.increaseLocation(belongTo, 50)
+                        )
                 );
             }
-            return false;
         }
 
         private static class StatusHuanJingContainer extends Status {
-            private final StatusAdder<?> adder;
-
             public StatusHuanJingContainer(DiShiTian belongTo) {
-                super(belongTo, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
+                super("王之盛宴", belongTo);
 
-                adder = belongTo.bp.addStatusAdder(c ->
+                // 帝释天队友降低速度
+                StatusAdder<?> adder = belongTo.bp.addStatusAdder(c ->
                         c.team == belongTo.team
-                                ? new DiShiTian.StatusReduceSpeed(belongTo, c)
+                                // 帝释天队友降低速度
+                                ? Status.of(SkillName + "减速", belongTo, c)
+                                .attribute(Attribute.SPEED, _ ->
+                                                            belongTo.enemyCount * belongTo.getInitSpeed() * -0.03
+                                )
                                 : c.isYYS() || c.isShiShen()
-                                ? new DiShiTian.StatusIncreaseLocation(belongTo, c)
-                                : null
+                                  ? new StatusIncreaseLocation(belongTo, c)
+                                  : null
                 );
+                beforeDelete(adder::deleteAndRemove);
             }
 
-            @Override
-            public void beforeDelete() {
-                adder.deleteAndRemove();
+            // 该状态在帝释天敌方身上,回合开始时拉帝释天这边的单位
+            static class StatusIncreaseLocation extends Status {
+
+                public StatusIncreaseLocation(DiShiTian from, Character belongTo) {
+                    super(SkillName + "回合结束监听", from, belongTo);
+                    from.enemyCount++;
+                    runOn(Trigger.BEFORE_ROUND, _ -> {
+                        Character target = new CharacterFinder(from)
+                                .filterTeammate()
+                                .get(Attribute.LOCATION, CharacterFinder.Criteria.MAX);
+                        from.doInteractive(interactive -> interactive.increaseLocation(target, 30));
+                    });
+                    runOn(Trigger.DIE, _ -> from.enemyCount--);
+                }
             }
         }
     }

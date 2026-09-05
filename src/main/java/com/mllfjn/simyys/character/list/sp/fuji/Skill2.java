@@ -9,7 +9,6 @@ import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.instance.StatusUnselectable;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.AttackType;
 
@@ -82,51 +81,36 @@ class Skill2 extends Skill {
         return Optional.of(target);
     }
 
-    static class StatusYuan extends Status implements Displayable, AttributeModifier, StatusRunnable {
+    static class StatusYuan extends Status {
         private static final String StatusName = "怨";
 
         private boolean isCounting = false;
 
         public StatusYuan(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.GENERAL, StatusForm.YIN_JI);
-        }
+            super(StatusName, from, belongTo);
+            type(StatusType.GENERAL, StatusForm.YIN_JI);
+            attribute(Attribute.ATTACK, _ -> {
+                if (isCounting) {
+                    return 0.0;
+                }
 
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return !isCounting && attribute == Attribute.ATTACK;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            double hpPercentCeil = Math.ceil(Attribute.HP_PERCENT.getGetter().apply(belongTo));
-            if (hpPercentCeil == 100) {
-                return 0;
-            }
-            isCounting = true;
-            double attack = belongTo.getAttack();
-            isCounting = false;
-
-            return -attack * (100 - hpPercentCeil) / 100;
-        }
-
-        @Override
-        public String getDisplayText() {
-            return StatusName;
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.BEING_ATTACKED;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            double hpPercentCeil = Math.ceil(Attribute.HP_PERCENT.getGetter().apply(belongTo));
-            if (hpPercentCeil <= 100) {
-                ((ParamAttackInfo) param).getAttackInfo().getTraceableNumber()
-                        .mul((1 + 0.01 * (100 - hpPercentCeil)), StatusName);
-            }
-            return false;
+                int hpPercent = ((int) ((double) Attribute.HP_PERCENT.getGetter().apply(belongTo)));
+                if (hpPercent == 100) {
+                    return 0.0;
+                }
+                isCounting = true;
+                double attack = belongTo.getAttack();
+                isCounting = false;
+                return -attack * (100 - hpPercent) / 100;
+            });
+            displayName();
+            runOn(Trigger.BEING_ATTACKED, triggerParam -> {
+                double hpPercentCeil = Math.ceil(Attribute.HP_PERCENT.getGetter().apply(belongTo));
+                if (hpPercentCeil <= 100) {
+                    ((ParamAttackInfo) triggerParam).getAttackInfo().getTraceableNumber()
+                            .mul((1 + 0.01 * (100 - hpPercentCeil)), StatusName);
+                }
+            });
         }
     }
 
@@ -138,7 +122,7 @@ class Skill2 extends Skill {
         private final Status StatusLv4ReduceDamage;
 
         public CharacterSheLing(Character owner, Character target, int level) {
-            super(owner.bp, "蛇灵", owner.team);
+            super(owner.bp, CharacterName, owner.team);
 
             // 移除我方召唤物位置上的召唤物
             Character summon = new CharacterFinder(owner)
@@ -181,14 +165,19 @@ class Skill2 extends Skill {
             };
 
             if (level >= 4) {
-                StatusLv4ReduceDamage = new StatusLv4ReduceDamage(this, owner);
-                owner.addStatus(StatusLv4ReduceDamage);
+                StatusLv4ReduceDamage = Status.of(CharacterName + "降低伤害", this, owner);
+                StatusLv4ReduceDamage.runOn(Trigger.BEING_ATTACKED, triggerParam ->
+                        ((ParamAttackInfo) triggerParam).getAttackInfo()
+                                .getTraceableNumber().mul(0.6, CharacterName)
+                ).addTo();
             } else {
                 StatusLv4ReduceDamage = null;
             }
 
             if (level >= 5) {
-                target.addStatus(new StatusLv5AfterRoundListener(this, target));
+                Status.of(CharacterName + "回合后攻击", this, target)
+                        .runOn(Trigger.AFTER_ROUND, _ -> attack())
+                        .addTo();
             }
         }
 
@@ -210,41 +199,6 @@ class Skill2 extends Skill {
         public void beforeDie(AttackInfo attackInfo, double excessDamage) {
             if (StatusLv4ReduceDamage != null) {
                 StatusLv4ReduceDamage.delete();
-            }
-        }
-
-        static class StatusLv4ReduceDamage extends Status implements StatusRunnable {
-            public StatusLv4ReduceDamage(Character from, Character belongTo) {
-                super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-            }
-
-            @Override
-            public boolean runnable(Trigger trigger) {
-                return trigger == Trigger.BEING_ATTACKED;
-            }
-
-            @Override
-            public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-                ((ParamAttackInfo) param).getAttackInfo().getTraceableNumber().mul(0.6, CharacterName);
-                return false;
-            }
-        }
-
-        class StatusLv5AfterRoundListener extends Status implements StatusRunnable {
-
-            public StatusLv5AfterRoundListener(Character from, Character belongTo) {
-                super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-            }
-
-            @Override
-            public boolean runnable(Trigger trigger) {
-                return trigger == Trigger.AFTER_ROUND;
-            }
-
-            @Override
-            public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-                CharacterSheLing.this.attack();
-                return false;
             }
         }
     }

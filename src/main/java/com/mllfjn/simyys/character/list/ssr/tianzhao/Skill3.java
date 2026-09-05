@@ -57,7 +57,7 @@ class Skill3 extends Skill {
 
         if (tianHuiTarget != null) {
             if (statusTianHui != null && tianHuiTarget == statusTianHui.belongTo) {
-                statusTianHui.setDuration(2);
+                statusTianHui.duration(2);
             } else {
                 if (statusTianHui != null) {
                     statusTianHui.delete();

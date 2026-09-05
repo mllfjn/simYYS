@@ -1,20 +1,19 @@
 package com.mllfjn.simyys.guihuo;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.Trigger;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
-public class MobGuiHuo extends Status implements StatusRunnable, Displayable {
+public class MobGuiHuo extends Status {
     private int max;
     private int now;
 
     public MobGuiHuo(Character belongTo, int initGuiHuo, int max) {
-        super(belongTo, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
+        super("鬼火", belongTo);
         this.now = initGuiHuo;
         this.max = max;
+
+        runOn(Trigger.BEFORE_ROUND, _ -> gainGuiHuo(1));
     }
 
     public static boolean mobCanUseGuiHuo(Character character, int num) {
@@ -38,25 +37,24 @@ public class MobGuiHuo extends Status implements StatusRunnable, Displayable {
     private boolean canUse(int num) {
         return now >= num;
     }
+
     private void useGuiHuo(int num) {
+        if (now == max) {
+            enableAction(Trigger.BEFORE_ROUND);
+        }
         now -= num;
+        changeDisplay();
     }
+
     private void gainGuiHuo(int num) {
         now = Math.min(now + num, max);
+        if (now == max) {
+            disableAction(Trigger.BEFORE_ROUND);
+        }
+        changeDisplay();
     }
 
-    @Override
-    public boolean runnable(Trigger trigger) {
-        return trigger == Trigger.BEFORE_ROUND && now < max;
-    }
-    @Override
-    public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-        now++;
-        return false;
-    }
-
-    @Override
-    public String getDisplayText() {
-        return "鬼火" + now;
+    private void changeDisplay() {
+        display(name + now);
     }
 }

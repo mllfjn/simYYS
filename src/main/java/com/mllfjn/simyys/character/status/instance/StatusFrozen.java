@@ -6,12 +6,13 @@ import com.mllfjn.simyys.interactive.StatusSupplier;
 
 import java.util.Optional;
 
-public class StatusFrozen extends Status implements CrowdControl, Displayable {
+public class StatusFrozen extends Status implements CrowdControl {
     public static final String StatusName = "冰冻";
 
     private StatusFrozen(Character from, Character belongTo, int duration) {
-        super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
-        setDurationType(StatusDurationType.CHI_XU, duration);
+        super(StatusName, from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
+        duration(StatusDurationType.CHI_XU, duration);
+        displayNameAndDuration();
     }
 
     public static void install(Character from, Character belongTo, int duration) {
@@ -31,10 +32,5 @@ public class StatusFrozen extends Status implements CrowdControl, Displayable {
         return new StatusSupplier(StatusName, StatusFrozen.class,
                 (from, to) -> install(from, to, duration)
         );
-    }
-
-    @Override
-    public String getDisplayText() {
-        return StatusName + getDuration();
     }
 }

@@ -5,12 +5,12 @@ import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.yuhun.YuHun;
+import com.mllfjn.simyys.character.yuhun.Equip;
 import com.mllfjn.simyys.character.yuhun.YuHunSealResponse;
 import com.mllfjn.simyys.battleevent.BattleActionListener;
 import com.mllfjn.simyys.battleevent.EventCharacterDie;
 
-public class ShangHunNiao extends YuHun implements YuHunSealResponse {
+public class ShangHunNiao extends Equip implements YuHunSealResponse {
     public static final String YuHunName = "伤魂鸟";
     private BattleActionListener listener;
 
@@ -51,11 +51,13 @@ public class ShangHunNiao extends YuHun implements YuHunSealResponse {
     }
 
 
-    static class StatusShangHunNiao extends Status implements AttributeModifier, Displayable {
+    static class StatusShangHunNiao extends Status {
         private int stack = 1;
 
         public StatusShangHunNiao(Character character) {
-            super(character, character, StatusType.BUFF, StatusForm.YIN_JI);
+            super(YuHunName, character, character, StatusType.BUFF, StatusForm.YIN_JI);
+            display(() -> YuHunName + stack);
+            attribute(Attribute.ZENG_SHANG, _ -> 20.0 * stack);
         }
 
         public static void addStack(Character character) {
@@ -68,21 +70,6 @@ public class ShangHunNiao extends YuHun implements YuHunSealResponse {
                             },
                             () -> character.addStatus(new StatusShangHunNiao(character))
                     );
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.ZENG_SHANG;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return 20 * stack;
-        }
-
-        @Override
-        public String getDisplayText() {
-            return "伤" + stack;
         }
     }
 }

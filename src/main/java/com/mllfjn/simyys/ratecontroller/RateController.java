@@ -3,7 +3,7 @@ package com.mllfjn.simyys.ratecontroller;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.list.ssr.shenwuyue.StatusMeiMengBiCheng;
 import com.mllfjn.simyys.character.skill.Skill;
-import com.mllfjn.simyys.character.yuhun.YuHun;
+import com.mllfjn.simyys.character.yuhun.Equip;
 import com.mllfjn.simyys.character.yuhun.YuHunUnfullMark;
 import com.mllfjn.simyys.interactive.EffectInfo;
 import com.mllfjn.simyys.interactive.InteractiveInfo;
@@ -204,14 +204,14 @@ public class RateController implements Serializable {
         return result.get();
     }
 
-    public static boolean yuHun(Character owner, YuHun yuHun, double rate) {
+    public static boolean yuHun(Character owner, Equip equip, double rate) {
         // 如果处于美梦必成状态下,携带者"初始""4件套"御魂效果概率提升至100%
-        if (yuHun.isInit() && !(yuHun instanceof YuHunUnfullMark) && owner.isHaveStatus(StatusMeiMengBiCheng.class)) {
+        if (equip.isInit() && !(equip instanceof YuHunUnfullMark) && owner.isHaveStatus(StatusMeiMengBiCheng.class)) {
             return true;
         }
 
         AtomicBoolean result = new AtomicBoolean();
-        whetherOrNot("御魂控制", "触发", List.of(yuHun.getName()), item -> item
+        whetherOrNot("御魂控制", "触发", List.of(equip.getName()), item -> item
                 , owner.bp.calc, owner.bp.calc::isControlYuHun, item -> rate, (i, b) -> result.set(b));
         return result.get();
     }

@@ -26,18 +26,9 @@ class Skill5 extends PassiveSkill {
             protected void dieHandle() {
                 partDie();
                 belongTo.skill6.summon();
-                belongTo.addStatus(
-                        new StatusModifyAttribute(belongTo, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL) {
-                            @Override
-                            public boolean isAffectAttribute(Attribute attribute) {
-                                return attribute == Attribute.SPEED;
-                            }
-
-                            @Override
-                            public double getInfluence(Attribute attribute, StatusModifyParam param) {
-                                return -50;
-                            }
-                        });
+                Status.of("土蜘蛛-腿减速", belongTo)
+                        .attribute(Attribute.SPEED, -50)
+                        .addTo();
             }
         };
         CharacterSummonBase characterBei = new CharacterSummonBase(belongTo.bp, "土蜘蛛-背", belongTo.team) {
@@ -51,18 +42,9 @@ class Skill5 extends PassiveSkill {
             protected void dieHandle() {
                 partDie();
                 belongTo.skill6.summon();
-                belongTo.addStatus(
-                        new StatusModifyAttribute(belongTo, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL) {
-                            @Override
-                            public boolean isAffectAttribute(Attribute attribute) {
-                                return attribute == Attribute.DEFENCE;
-                            }
-
-                            @Override
-                            public double getInfluence(Attribute attribute, StatusModifyParam param) {
-                                return belongTo.getInitDefense() * -0.3;
-                            }
-                        });
+                Status.of("土蜘蛛-背减防", belongTo)
+                        .attribute(Attribute.DEFENCE, -0.3 * belongTo.getInitDefense())
+                        .addTo();
             }
         };
         CharacterSummonBase characterQian = new CharacterSummonBase(belongTo.bp, "土蜘蛛-钳", belongTo.team) {
@@ -75,18 +57,9 @@ class Skill5 extends PassiveSkill {
             @Override
             protected void dieHandle() {
                 partDie();
-                belongTo.addStatus(
-                        new StatusModifyAttribute(belongTo, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL) {
-                            @Override
-                            public boolean isAffectAttribute(Attribute attribute) {
-                                return attribute == Attribute.ATTACK;
-                            }
-
-                            @Override
-                            public double getInfluence(Attribute attribute, StatusModifyParam param) {
-                                return belongTo.getInitAttack() * -0.3;
-                            }
-                        });
+                Status.of("土蜘蛛-钳减攻", belongTo)
+                        .attribute(Attribute.ATTACK, -0.3 * belongTo.getInitAttack())
+                        .addTo();
                 belongTo.skill6.clearSpider();
                 for (int i = 0; i < 3; i++) {
                     belongTo.bp.addCharacter(new CharacterSummonBase(belongTo.bp, "白茧", belongTo.team) {

@@ -3,6 +3,7 @@ module com.mllfjn.simyys {
     requires javafx.base;
     requires javafx.graphics;
     requires static org.jetbrains.annotations;
+    requires tools.jackson.databind;
 //    requires com.mllfjn.simyys; TODO 为什么会反复自动出现这句循环引用？
 
     opens com.mllfjn.simyys to javafx.fxml;
@@ -36,4 +37,7 @@ module com.mllfjn.simyys {
     opens com.mllfjn.simyys.character.yuhun.list.youchizi to javafx.fxml;
     exports com.mllfjn.simyys.starter.sceneeffect;
     exports com.mllfjn.simyys.character.list.ssr.sijinshen;
+    exports com.mllfjn.simyys.utils.serializable;
+    opens com.mllfjn.simyys.utils.serializable to javafx.fxml;
+    exports com.mllfjn.simyys.character.status.instance;
 }

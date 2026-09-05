@@ -1,12 +1,10 @@
 package com.mllfjn.simyys.character.list.ssr.datiangou;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.instance.StatusBiHu;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.ratecontroller.RateController;
 
 class Skill2 extends PassiveSkill {
@@ -19,11 +17,12 @@ class Skill2 extends PassiveSkill {
 
     public Skill2(Character belongTo, int level) {
         super(belongTo, level, 2);
+        belongTo.addStatus(new StatusGTZYBiHu(belongTo, level >= 5));
     }
 
     public StatusGTZYListener getStatus() {
         if (status == null) {
-            status = new StatusGTZYListener(getBelongTo(), maxStack[getLevel()], getLevel() >= 5);
+            status = new StatusGTZYListener(getBelongTo(), maxStack[getLevel()]);
         }
         return status;
     }
@@ -54,106 +53,72 @@ class Skill2 extends PassiveSkill {
         return SkillName;
     }
 
-    class StatusGTZYListener extends Status implements StatusRunnable {
+    class StatusGTZYListener extends Status {
         private final int maxStack;
         private final StatusXZYF statusXZYF;
-        private final StatusGTZYBiHu statusGTZYBiHu;
 
-        public StatusGTZYListener(Character character, int maxStack, boolean useSkill3AfterBiHuUsed) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
+        public StatusGTZYListener(Character character, int maxStack) {
+            super(SkillName + "监听", character);
             statusXZYF = new StatusXZYF(character);
             character.addStatus(statusXZYF);
 
-            statusGTZYBiHu = new StatusGTZYBiHu(character, useSkill3AfterBiHuUsed);
-            character.addStatus(statusGTZYBiHu);
-
             this.maxStack = maxStack;
-        }
+            beforeDelete(() -> Skill2.this.status = null);
 
-        @Override
-        public void beforeDelete() {
-            Skill2.this.status = null;
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return (trigger == Trigger.CAUSE_ATTACK && statusXZYF.stack < maxStack)
-                    || trigger == Trigger.AFTER_ROUND;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            if (trigger == Trigger.CAUSE_ATTACK) {
-                if (RateController.otherWhether(SkillName, "获得" + StatusXZYF.StatusName, bp.calc, 50)) {
+            runOn(Trigger.CAUSE_ATTACK, _ -> {
+                if (RateController.otherWhether(SkillName, "获得" + StatusXZYF.StatusName, belongTo().bp().calc, 50)) {
                     statusXZYF.stack++;
+                    if (statusXZYF.stack == maxStack) {
+                        removeAction(Trigger.CAUSE_ATTACK);
+                    }
                 }
-            } else {
-                statusGTZYBiHu.isActive = true;
-            }
-            return false;
+            });
         }
 
-        static class StatusXZYF extends Status implements Displayable, AttributeModifier {
+        static class StatusXZYF extends Status {
             private static final String StatusName = "雄姿英发";
 
             private int stack;
 
             public StatusXZYF(Character character) {
-                super(character, character, StatusType.GENERAL, StatusForm.YIN_JI);
-            }
-
-            @Override
-            public boolean isAffectAttribute(Attribute attribute) {
-                return attribute == Attribute.ZENG_SHANG;
-            }
-
-            @Override
-            public double getInfluence(Attribute attribute, StatusModifyParam param) {
-                return stack;
-            }
-
-            @Override
-            public String getDisplayText() {
-                if (stack == 0) {
-                    return null;
-                }
-                return StatusName + stack;
+                super(StatusName, character, character, StatusType.GENERAL, StatusForm.YIN_JI);
+                attribute(Attribute.ZENG_SHANG, _ -> (double) stack);
+                display(() -> {
+                    if (stack == 0) {
+                        return null;
+                    }
+                    return StatusName + stack;
+                });
             }
         }
+    }
 
-        class StatusGTZYBiHu extends StatusBiHu {
-            private boolean isActive;
-            private final boolean useSkill3AfterBiHuUsed;
+    class StatusGTZYBiHu extends StatusBiHu {
+        private boolean active;
+        private final boolean useSkill3AfterBiHuUsed;
 
-            public StatusGTZYBiHu(Character character, boolean useSkill3AfterBiHuUsed) {
-                super(character, character);
-                this.useSkill3AfterBiHuUsed = useSkill3AfterBiHuUsed;
-            }
-
-            @Override
-            public boolean runnable(Trigger trigger) {
-                if (!isActive) {
-                    return false;
-                } else {
-                    return super.runnable(trigger);
-                }
-            }
-
-            @Override
-            protected void used() {
-                isActive = false;
-                if (useSkill3AfterBiHuUsed) {
-                    belongTo.bp.addOutRoundSkill(skill3, () -> skill3.useWithoutCost());
-                }
-            }
-
-            @Override
-            public String getDisplayText() {
-                if (isActive) {
+        public StatusGTZYBiHu(Character character, boolean useSkill3AfterBiHuUsed) {
+            super(character, character);
+            this.useSkill3AfterBiHuUsed = useSkill3AfterBiHuUsed;
+            runOnAndDisable(Trigger.AFTER_ROUND, _ -> {
+                active = true;
+                disableAction(Trigger.AFTER_ROUND);
+            });
+            display(() -> {
+                if (active) {
                     return super.getDisplayText();
                 } else {
                     return null;
                 }
+            });
+        }
+
+        @Override
+        protected void used() {
+            active = false;
+            enableAction(Trigger.AFTER_ROUND);
+            if (useSkill3AfterBiHuUsed) {
+                belongTo.bp.addOutRoundSkill(skill3, () -> skill3.useWithoutCost());
             }
         }
     }

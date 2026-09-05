@@ -37,7 +37,7 @@ public class PropertyCheck extends PropertyRequire implements Serializable {
     public SimpleBooleanProperty getProperty() {
         if (property == null) {
             property = new SimpleBooleanProperty(value);
-            property.addListener((obs, old, val) -> value = val);
+            property.addListener((_, _, val) -> value = val);
         }
         return property;
     }
@@ -54,7 +54,7 @@ public class PropertyCheck extends PropertyRequire implements Serializable {
         if (value) {
             node.setSelected(true);
         }
-        node.selectedProperty().addListener((obs, old, val) -> {
+        node.selectedProperty().addListener((_, _, val) -> {
             value = val;
             if (property != null) {
                 property.set(val);

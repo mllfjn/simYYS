@@ -2,11 +2,11 @@ package com.mllfjn.simyys.character.yuhun.list;
 
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.StatusDurationType;
-import com.mllfjn.simyys.character.status.StatusShield;
-import com.mllfjn.simyys.character.yuhun.YuHun;
+import com.mllfjn.simyys.character.status.instance.StatusShield;
+import com.mllfjn.simyys.character.yuhun.Equip;
 import com.mllfjn.simyys.interactive.TraceableNumber;
 
-public class ZhenZhu extends YuHun {
+public class ZhenZhu extends Equip {
     public static final String YuHunName = "珍珠";
 
     @Override
@@ -23,7 +23,7 @@ public class ZhenZhu extends YuHun {
 
         public StatusZZShield(Character from, Character belongTo, double shield) {
             super(from, belongTo, shield);
-            setDurationType(StatusDurationType.CHI_XU, 2);
+            duration(StatusDurationType.CHI_XU, 2);
         }
     }
 }

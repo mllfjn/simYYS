@@ -1,10 +1,10 @@
 package com.mllfjn.simyys.character.yuhun.list;
 
-import com.mllfjn.simyys.character.yuhun.YuHun;
+import com.mllfjn.simyys.character.yuhun.Equip;
 import com.mllfjn.simyys.character.yuhun.YuHunAttack;
 import com.mllfjn.simyys.interactive.AttackInfo;
 
-public class PianYeZhiWei extends YuHun implements YuHunAttack {
+public class PianYeZhiWei extends Equip implements YuHunAttack {
     public static final String YuHunName = "片叶之苇";
 
     @Override

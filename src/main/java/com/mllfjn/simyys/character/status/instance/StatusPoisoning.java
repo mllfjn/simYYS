@@ -6,16 +6,25 @@ import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.StatusSupplier;
 
-public class StatusPoisoning extends Status implements Displayable, AttributeModifier {
+public class StatusPoisoning extends Status {
     private static final String StatusName = "中毒";
 
     private int stack;
 
     private StatusPoisoning(Character from, Character belongTo, int stack, int duration) {
-        super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
+        super(StatusName, from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
         this.stack = stack;
 
-        setDurationType(StatusDurationType.CHI_XU, duration);
+        duration(StatusDurationType.CHI_XU, duration);
+        attribute(Attribute.SPEED, _ -> -0.1 * belongTo.getInitSpeed());
+        attribute(Attribute.DEFENCE, param -> {
+            if (param == null || param.attackType() != AttackType.JIAN_JIE) {
+                return 0.0;
+            } else {
+                return -10.0 * stack;
+            }
+        });
+        display(() -> StatusName + stack + "-" + getDuration());
     }
 
     public static void add(Character from, Character belongTo, int stack, int duration) {
@@ -34,30 +43,5 @@ public class StatusPoisoning extends Status implements Displayable, AttributeMod
         return new StatusSupplier(StatusName, StatusPoisoning.class,
                 (from, to) -> add(from, to, stack, duration)
         );
-    }
-
-    @Override
-    public boolean isAffectAttribute(Attribute attribute) {
-        return attribute == Attribute.SPEED || attribute == Attribute.DEFENCE;
-    }
-
-    @Override
-    public double getInfluence(Attribute attribute, StatusModifyParam param) {
-        if (attribute == Attribute.SPEED) {
-            return -0.1 * belongTo.getInitSpeed();
-        } else {
-            if (param == null) {
-                return 0;
-            } else if (param.attackType() == AttackType.JIAN_JIE) {
-                return -10 * stack;
-            }
-        }
-
-        return 0;
-    }
-
-    @Override
-    public String getDisplayText() {
-        return StatusName + stack + "-" + getDuration();
     }
 }

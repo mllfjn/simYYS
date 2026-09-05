@@ -55,7 +55,7 @@ class Skill2 extends Skill {
                 .filterTeammate()
                 .getPriorAuto(Attribute.ATTACK, CharacterFinder.Criteria.MAX);
 
-        StatusShiZhiXi.enter(belongTo, target, getLevel());
+        StatusShiZhiXi.install(belongTo, target, getLevel());
 
         if (target == belongTo) {
             setCoolDown(1);

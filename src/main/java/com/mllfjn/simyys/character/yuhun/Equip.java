@@ -4,7 +4,7 @@ import com.mllfjn.simyys.character.Character;
 
 import java.io.Serializable;
 
-public abstract class YuHun implements Serializable {
+public abstract class Equip implements Serializable {
     protected Character character;
     private boolean isInit;
 

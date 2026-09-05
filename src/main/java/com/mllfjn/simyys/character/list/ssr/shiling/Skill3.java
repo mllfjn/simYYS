@@ -9,10 +9,8 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
 import com.mllfjn.simyys.character.status.instance.StatusBiHu;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
 
 import java.util.List;
@@ -69,8 +67,7 @@ class Skill3 extends Skill {
         return Optional.of(target);
     }
 
-    static class StatusYongCan extends Status implements Displayable, StatusRunnable
-            , InfluenceDamageWhenAttack {
+    static class StatusYongCan extends Status {
         private static final String StatusName = "用餐";
 
         private final int level;
@@ -79,14 +76,27 @@ class Skill3 extends Skill {
         private double xiangShiCount;
 
         public StatusYongCan(Character from, Character belongTo, int level, double xiangShiLimit) {
-            super(from, belongTo, StatusType.GENERAL, StatusForm.YIN_JI);
+            super(StatusName, from, belongTo, StatusType.GENERAL, StatusForm.YIN_JI);
             this.level = level;
             this.xiangShiLimit = xiangShiLimit;
-        }
-
-        @Override
-        public String getDisplayText() {
-            return StatusName;
+            displayName();
+            runOn(Trigger.BEING_ATTACKED, param ->
+                    ((ParamAttackInfo) param).getAttackInfo().getTraceableNumber().mul(0.6, StatusName)
+            );
+            runOn(Trigger.AFTER_ROUND, _ -> {
+                eat();
+                delete();
+            });
+            runOn(Trigger.CAUSE_ATTACK, param -> {
+                if (belongTo.isInRound()) {
+                    xiangShiCount += ((ParamAttackInfo) param).getAttackInfo().getTraceableNumber().getNumber();
+                }
+            });
+            runOn(Trigger.WHEN_ATTACK, param -> {
+                if (belongTo.isInRound()) {
+                    ((ParamAttackInfo) param).getAttackInfo().getTraceableNumber().mul(0.7, StatusName);
+                }
+            });
         }
 
         private void eat() {
@@ -109,33 +119,6 @@ class Skill3 extends Skill {
             }
         }
 
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return (belongTo.isInRound() && trigger == Trigger.CAUSE_ATTACK)
-                    || trigger == Trigger.AFTER_ROUND
-                    || trigger == Trigger.BEING_ATTACKED;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            if (trigger == Trigger.AFTER_ROUND) {
-                eat();
-                return true;
-            } else if (trigger == Trigger.CAUSE_ATTACK) {
-                xiangShiCount += ((ParamAttackInfo) param).getAttackInfo().getTraceableNumber().getNumber();
-            } else {
-                ((ParamAttackInfo) param).getAttackInfo().getTraceableNumber().mul(0.6, StatusName);
-            }
-            return false;
-        }
-
-        @Override
-        public void doInfluenceWhenAttack(AttackInfo attackInfo) {
-            if (belongTo.isInRound()) {
-                attackInfo.getTraceableNumber().mul(0.7, StatusName);
-            }
-        }
-
         static class StatusBaoShiBiHu extends StatusBiHu {
 
             private StatusBaoShiBiHu(Character from, Character belongTo) {
@@ -152,12 +135,12 @@ class Skill3 extends Skill {
             }
 
             public void refresh() {
-                setDurationType(StatusDurationType.CHI_XU, 2);
+                duration(StatusDurationType.CHI_XU, 2);
             }
         }
     }
 
-    static class StatusBaoShi extends Status implements Displayable {
+    static class StatusBaoShi extends Status {
         private static final String StatusName = "饱食";
 
         private final double num;
@@ -167,7 +150,7 @@ class Skill3 extends Skill {
         private int round = 4;
 
         public StatusBaoShi(Character from, Character belongTo, double num, int level, double limit) {
-            super(from, belongTo, StatusType.GENERAL, StatusForm.YIN_JI);
+            super(StatusName, from, belongTo, StatusType.GENERAL, StatusForm.YIN_JI);
             this.num = num;
             this.extraDamage = level >= 5;
             this.limit = limit;
@@ -191,6 +174,7 @@ class Skill3 extends Skill {
                     return false;
                 }
             });
+            display(() -> StatusName + round);
         }
 
         private void xiangShi() {
@@ -215,7 +199,7 @@ class Skill3 extends Skill {
                     attackInfo.setLimit(limit);
 
                     oStatus.ifPresent(status ->
-                            status.doInfluenceWhenAttack(attackInfo));
+                            status.run(Trigger.WHEN_ATTACK, new ParamAttackInfo(attackInfo)));
 
                     interactive.attack(attackInfo);
 
@@ -225,11 +209,6 @@ class Skill3 extends Skill {
                     }
                 }
             });
-        }
-
-        @Override
-        public String getDisplayText() {
-            return StatusName + round;
         }
     }
 }

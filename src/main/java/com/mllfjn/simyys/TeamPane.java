@@ -2,11 +2,9 @@ package com.mllfjn.simyys;
 
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.CharacterIcon;
-import com.mllfjn.simyys.character.list.sp.yinfan.StatusYuanLi;
 import com.mllfjn.simyys.character.propertygetter.FlagChangeInfo;
 import com.mllfjn.simyys.character.yuhun.list.HuoLing;
-import com.mllfjn.simyys.character.yuhun.YuHun;
-import com.mllfjn.simyys.character.yuhun.list.youchizi.StatusYCZ;
+import com.mllfjn.simyys.character.yuhun.Equip;
 import com.mllfjn.simyys.guihuo.GuiHuo;
 import javafx.geometry.Pos;
 import javafx.scene.layout.*;
@@ -170,8 +168,8 @@ public class TeamPane implements Serializable {
     public void calHuoLing() {
         if (!mobTeam) {
             for (Character character : characters) {
-                for (YuHun yuHun : character.getYuHunSet()) {
-                    if (yuHun instanceof HuoLing hl) {
+                for (Equip equip : character.getYuHunSet()) {
+                    if (equip instanceof HuoLing hl) {
                         hl.action(this);
                         return;
                     }

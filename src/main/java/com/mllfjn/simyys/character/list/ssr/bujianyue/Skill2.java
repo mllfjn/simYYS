@@ -1,12 +1,8 @@
 package com.mllfjn.simyys.character.list.ssr.bujianyue;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.determinant.RetainAfterChangeWave;
-import com.mllfjn.simyys.character.status.determinant.RetainAfterDie;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.ratecontroller.RateController;
 
 import java.util.List;
@@ -51,28 +47,21 @@ class Skill2 extends PassiveSkill {
         return SkillName;
     }
 
-    private class StatusBeforeRoundGet extends Status
-            implements StatusRunnable, RetainAfterDie, RetainAfterChangeWave {
+    private class StatusBeforeRoundGet extends Status {
         private static final List<String> choose = List.of(StatusYun.StatusName, StatusShan.StatusName);
 
         public StatusBeforeRoundGet(Character character) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.BEFORE_ROUND;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            String result = RateController.choose("不见岳-回合前随机获得", choose, s -> s, belongTo.bp.calc);
-            if (result.equals(choose.get(0))) {
-                StatusYun.addStack(belongTo, Skill2.this);
-            } else {
-                StatusShan.addStack(belongTo);
-            }
-            return false;
+            super(SkillName + "回合前监听", character);
+            retainAfterDie();
+            retainAfterChangeWave();
+            runOn(Trigger.BEFORE_ROUND, _ -> {
+                String result = RateController.choose("不见岳-回合前随机获得", choose, s -> s, belongTo.bp.calc);
+                if (result.equals(choose.getFirst())) {
+                    StatusYun.addStack(belongTo, Skill2.this);
+                } else {
+                    StatusShan.addStack(belongTo);
+                }
+            });
         }
     }
 }

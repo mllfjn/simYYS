@@ -1,15 +1,16 @@
 package com.mllfjn.simyys.character.list.sr.xiazhongshaonv;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.battleevent.StatusAdder;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.status.*;
+import com.mllfjn.simyys.character.status.instance.StatusShield;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.StatusSupplier;
 import com.mllfjn.simyys.ratecontroller.RateController;
+import com.mllfjn.simyys.utils.serializable.SerialConsumer;
 
 import java.util.List;
 
@@ -25,7 +26,17 @@ class Skill2 extends PassiveSkill {
         super(belongTo, 1, 2);
         this.awakening = awakening;
         if (awakening) {
-            belongTo.addStatus(new StatusAfterAttackListener(belongTo));
+            Status.of(SkillName + "受到攻击监听", belongTo)
+                    .runOn(Trigger.AFTER_ATTACK, param -> {
+                        Character attacker = ((ParamAttackInfo) param).getAttackInfo().getAttacker();
+                        RandomStatus choose = RateController.choose("匣中少女-溢彩:为攻击者附加减益", buffs,
+                                v -> v.attribute.getText(), belongTo.bp.calc
+                        );
+                        belongTo.doInteractive(interactive -> interactive.effect(Skill2.this, attacker,
+                                100, true,
+                                StatusRandomStatus.getSupplier(choose)
+                        ));
+                    }).addTo();
         }
     }
 
@@ -49,68 +60,51 @@ class Skill2 extends PassiveSkill {
         return SkillName;
     }
 
-    private class StatusAfterAttackListener extends Status implements StatusRunnable {
-        public StatusAfterAttackListener(Character character) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.AFTER_ATTACK;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            Character attacker = ((ParamAttackInfo) param).getAttackInfo().getAttacker();
-            RandomStatus choose = RateController.choose("匣中少女-溢彩:为攻击者附加减益", buffs,
-                    v -> v.attribute.getText(), belongTo.bp.calc
-            );
-            belongTo.doInteractive(interactive -> interactive.effect(Skill2.this, attacker,
-                    100, 0, true,
-                    StatusRandomStatus.getSupplier(choose)
-            ));
-            return false;
-        }
-    }
-
-    private class StatusXZBeforeRoundListener extends Status implements StatusRunnable {
+    private class StatusXZBeforeRoundListener extends Status {
 
         public StatusXZBeforeRoundListener(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.BEFORE_ROUND || Skill2.this.awakening && trigger == Trigger.OUT_ROUND_ACTION;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            belongTo.replaceStatus(new StatusXZShield(from, belongTo, belongTo.getMaxHp() * 0.08));
-            RandomStatus choose = RateController.choose("匣中少女-溢彩:获得BUFF", buffs,
-                    v -> v.attribute.getText(), belongTo.bp.calc
-            );
-            StatusRandomStatus.install(from, belongTo, StatusType.BUFF, choose, 2);
-            return false;
+            super(SkillName + "回合开始监听", from, belongTo);
+            SerialConsumer<TriggerParam> action = _ -> {
+                belongTo.replaceStatus(new StatusXZShield(from, belongTo, belongTo.getMaxHp() * 0.08));
+                RandomStatus choose = RateController.choose("匣中少女-溢彩:获得BUFF", buffs,
+                        v -> v.attribute.getText(), belongTo.bp.calc
+                );
+                StatusRandomStatus.install(from, belongTo, StatusType.BUFF, choose, 2);
+            };
+            runOn(Trigger.BEFORE_ROUND, action);
+            if (Skill2.this.awakening) {
+                runOn(Trigger.OUT_ROUND_ACTION, action);
+            }
         }
 
         private static class StatusXZShield extends StatusShield {
             public StatusXZShield(Character from, Character belongTo, double shield) {
                 super(from, belongTo, shield);
-                setDurationType(StatusDurationType.CHI_XU, 2);
+                duration(StatusDurationType.CHI_XU, 2);
             }
         }
     }
 
-    private static class StatusRandomStatus extends Status implements AttributeModifier {
+    private static class StatusRandomStatus extends Status {
         private final RandomStatus randomStatus;
 
         private StatusRandomStatus(Character from, Character belongTo, StatusType statusType,
                                    RandomStatus randomStatus, int duration
         ) {
-            super(from, belongTo, statusType, StatusForm.ZHUANG_TAI);
+            super(SkillName + "DEBUFF", from, belongTo, statusType, StatusForm.ZHUANG_TAI);
             this.randomStatus = randomStatus;
-            setDurationType(StatusDurationType.CHI_XU, duration);
+            duration(StatusDurationType.CHI_XU, duration);
+            attribute(randomStatus.attribute, _ -> {
+                double rtValue = switch (randomStatus) {
+                    case ATTACK -> belongTo.getInitAttack() * 0.1;
+                    case DEFENSE -> belongTo.getInitDefense() * 0.2;
+                    case CRIT_POWER, SPEED, EFFECT_RESIST_RATE -> 10;
+                };
+                if (statusType == StatusType.DEBUFF) {
+                    rtValue = -rtValue;
+                }
+                return rtValue;
+            });
         }
 
         static StatusSupplier getSupplier(RandomStatus randomStatus) {
@@ -127,30 +121,12 @@ class Skill2 extends PassiveSkill {
                         && srs.randomStatus == randomStatus
                         && status.statusType == statusType
                 ) {
-                    status.setDuration(duration);
+                    status.duration(duration);
                     return;
                 }
             }
             belongTo.addStatus(new StatusRandomStatus(from, belongTo, statusType, randomStatus, duration));
 
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == randomStatus.attribute;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            double rtValue = switch (randomStatus) {
-                case ATTACK -> belongTo.getInitAttack() * 0.1;
-                case DEFENSE -> belongTo.getInitDefense() * 0.2;
-                case CRIT_POWER, SPEED, EFFECT_RESIST_RATE -> 10;
-            };
-            if (statusType == StatusType.DEBUFF) {
-                rtValue = -rtValue;
-            }
-            return rtValue;
         }
     }
 
@@ -159,8 +135,8 @@ class Skill2 extends PassiveSkill {
         DEFENSE(Attribute.DEFENCE),
         CRIT_POWER(Attribute.CRIT_POWER),
         SPEED(Attribute.SPEED),
-        EFFECT_RESIST_RATE(Attribute.EFFECT_RESIST_RATE),
-        ;
+        EFFECT_RESIST_RATE(Attribute.EFFECT_RESIST_RATE);
+
         private final Attribute attribute;
 
         RandomStatus(Attribute attribute) {

@@ -4,10 +4,7 @@ import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.CharacterSummonBase;
 import com.mllfjn.simyys.character.skill.Skill1PuGongBase;
-import com.mllfjn.simyys.character.status.AttributeModifier;
 import com.mllfjn.simyys.character.status.Status;
-import com.mllfjn.simyys.character.status.StatusForm;
-import com.mllfjn.simyys.character.status.StatusType;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
 
@@ -17,7 +14,7 @@ class CharacterSheMo extends CharacterSummonBase {
     SkillDuYe skillDuYe;
 
     private CharacterSheMo(DaShe daShe, Character target) {
-        super(daShe.getBp(), "蛇魔", daShe.team);
+        super(daShe.bp(), "蛇魔", daShe.team);
         this.daShe = daShe;
 
         setInitBaseAttack(target.getInitBaseAttack() + daShe.getInitBaseAttack() * 0.2);
@@ -42,7 +39,7 @@ class CharacterSheMo extends CharacterSummonBase {
                 daShe.addStatus(new StatusIncreaseAttribute(daShe, daShe, skill2));
             }
         }
-        daShe.getBp().addCharacter(characterSheMo);
+        daShe.bp().addCharacter(characterSheMo);
     }
 
     @Override
@@ -88,35 +85,18 @@ class CharacterSheMo extends CharacterSummonBase {
         }
     }
 
-    private static class StatusIncreaseAttribute extends Status implements AttributeModifier {
-        private final Skill2 skill2;
+    private static class StatusIncreaseAttribute extends Status {
+        public StatusIncreaseAttribute(DaShe from, Character belongTo, Skill2 skill2) {
+            super("蛇魔属性提升", from, belongTo);
 
-        public StatusIncreaseAttribute(Character from, Character belongTo, Skill2 skill2) {
-            super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-            this.skill2 = skill2;
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.DEFENCE
-                    || (attribute == Attribute.EFFECT_RESIST_RATE && skill2.increaseEffectResist())
-                    || (attribute == Attribute.SPEED && skill2.increaseSpeed());
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            DaShe daShe = (DaShe) from;
-            if (attribute == Attribute.DEFENCE) {
-                return belongTo.getInitDefense() * 0.3 * daShe.getSheMoCount();
+            int sheMoCount = from.getSheMoCount();
+            attribute(Attribute.DEFENCE, _ -> belongTo.getInitDefense() * 0.3 * sheMoCount);
+            if (skill2.increaseEffectResist()) {
+                attribute(Attribute.EFFECT_RESIST_RATE, _ -> 20.0 * sheMoCount);
             }
-            if (attribute == Attribute.EFFECT_RESIST_RATE) {
-                return 20 * daShe.getSheMoCount();
+            if (skill2.increaseSpeed()) {
+                attribute(Attribute.SPEED, _ -> 10.0 * sheMoCount);
             }
-            if (attribute == Attribute.SPEED) {
-                return 10 * daShe.getSheMoCount();
-            }
-
-            return 0;
         }
     }
 }

@@ -74,34 +74,16 @@ class SpecialYaoQin extends YaoQin {
                     .filterTeammate()
                     .getAutoOrElseRandom();
 
-            target.addStatus(new StatusAttack(belongTo, target));
+            Status.of("妖琴攻击", belongTo, target)
+                    .type(StatusType.BUFF, StatusForm.ZHUANG_TAI)
+                    .duration(StatusDurationType.CHI_XU, 2)
+                    .attribute(Attribute.ATTACK, _ -> belongTo.getInitBaseAttack())
+                    .displayNameAndDuration()
+                    .addTo();
 
             belongTo.getInteractive().getNewRound(target);
 
             return Optional.of(target);
-        }
-
-        static class StatusAttack extends Status implements AttributeModifier, Displayable {
-
-            public StatusAttack(Character from, Character belongTo) {
-                super(from, belongTo, StatusType.BUFF, StatusForm.ZHUANG_TAI);
-                setDurationType(StatusDurationType.CHI_XU, 2);
-            }
-
-            @Override
-            public boolean isAffectAttribute(Attribute attribute) {
-                return attribute == Attribute.ATTACK;
-            }
-
-            @Override
-            public double getInfluence(Attribute attribute, StatusModifyParam param) {
-                return belongTo.getInitBaseAttack();
-            }
-
-            @Override
-            public String getDisplayText() {
-                return "妖琴攻击" + getDuration();
-            }
         }
     }
 

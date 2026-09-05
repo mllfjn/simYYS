@@ -11,16 +11,15 @@ import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.skill.Skill1PuGongBase;
 import com.mllfjn.simyys.character.skill.SkillAuto;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.determinant.IgnoreChangeMaxHp;
 import com.mllfjn.simyys.character.status.determinant.IgnoreDebuff;
 import com.mllfjn.simyys.character.status.determinant.RejectAllStatuses;
-import com.mllfjn.simyys.character.status.determinant.RetainAfterDie;
 import com.mllfjn.simyys.character.status.instance.StatusBind;
 import com.mllfjn.simyys.character.status.instance.StatusConfusion;
+import com.mllfjn.simyys.character.status.instance.StatusShield;
 import com.mllfjn.simyys.character.status.triggerParam.*;
-import com.mllfjn.simyys.character.yuhun.YuHun;
-import com.mllfjn.simyys.character.yuhun.YuHunFactory;
+import com.mllfjn.simyys.character.yuhun.Equip;
+import com.mllfjn.simyys.character.yuhun.EquipFactory;
 import com.mllfjn.simyys.character.yuhun.YuHunSealResponse;
 import com.mllfjn.simyys.character.list.yys.qiling.QiLingFactory;
 import com.mllfjn.simyys.interactive.*;
@@ -28,6 +27,7 @@ import com.mllfjn.simyys.guihuo.MobGuiHuo;
 import com.mllfjn.simyys.collections.SerializableObservableList;
 import com.mllfjn.simyys.ratecontroller.RateController;
 import javafx.collections.ObservableList;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 import java.util.*;
@@ -71,7 +71,7 @@ public abstract class Character implements Serializable {
     // 维持的状态
     private final List<Status> maintainedStatuses = new ArrayList<>();
     // 御魂列表
-    private final LinkedHashSet<YuHun> yuHunSet = new LinkedHashSet<>();
+    private final LinkedHashSet<Equip> equipSet = new LinkedHashSet<>();
     // 封印御魂次数
     private int sealYuHunCount = 0;
     // 头像
@@ -79,7 +79,7 @@ public abstract class Character implements Serializable {
 
     public transient BattlePane bp;
 
-    public BattlePane getBp() {
+    public BattlePane bp() {
         // 尽量用这个方法,TODO 改成根据bp序号从静态类中获取bp
         return bp;
     }
@@ -89,7 +89,7 @@ public abstract class Character implements Serializable {
         for (String key : PropertyKey.GENERAL_INPUT_KEYS) {
             map.put(key, new PropertyInput());
         }
-        ((PropertyInput) map.get(PropertyKey.GENERAL_WAVE_KEY)).setValue("1");
+        map.get(PropertyKey.GENERAL_WAVE_KEY).setValue("1");
 
         for (String key : PropertyKey.GENERAL_CHECK_KEYS) {
             map.put(key, new PropertyCheck());
@@ -100,7 +100,7 @@ public abstract class Character implements Serializable {
 
     public PropertiesMap getProperties() {
         PropertiesMap map = getDefaultProperties();
-        ((PropertyInput) map.get(PropertyKey.GENERAL_BASE_ATTACK_KEY)).setValue(getDefaultBaseAttack());
+        map.get(PropertyKey.GENERAL_BASE_ATTACK_KEY).setValue(getDefaultBaseAttack());
         return map;
     }
 
@@ -409,14 +409,9 @@ public abstract class Character implements Serializable {
         return location;
     }
 
-    public void setLocation(double newLocation, boolean isFromIncrease) {
-        if (newLocation != location) {
-            ParamLocationChange paramLocationChange = new ParamLocationChange(location, newLocation, isFromIncrease);
-            statusRun(Trigger.LOCATION_CHANGE, paramLocationChange);
-            if (!paramLocationChange.isCanceled()) {
-                this.location = paramLocationChange.newLocation;
-            }
-        }
+    public void setLocation(@NotNull ParamLocationChange paramLocationChange) {
+        this.location = paramLocationChange.newLocation;
+        statusRun(Trigger.LOCATION_CHANGED, paramLocationChange);
     }
 
     public void forceSetLocation(double newLocation) {
@@ -442,7 +437,7 @@ public abstract class Character implements Serializable {
 
         // 维持类状态过回合
         maintainedStatuses.removeIf(status -> {
-            status.setDuration(status.getDuration() - 1);
+            status.duration(status.getDuration() - 1);
             if (status.getDuration() == 0) {
                 status.delete();
                 return true;
@@ -539,17 +534,15 @@ public abstract class Character implements Serializable {
         statusRun(Trigger.AFTER_ROUND_FIRST, null);
         statusRun(Trigger.AFTER_ROUND, null);
 
-        // 持续类状态过回合
-        statuses.removeIf(status -> {
+        // 持续类状态过回合 TODO:和AfterRound合并
+        new ArrayList<>(statuses).forEach(status -> {
             if (status.getDurationType() == StatusDurationType.CHI_XU) {
                 if (status.getDuration() == 1) {
-                    status.beforeDelete();
-                    return true;
+                    status.delete();
                 } else {
-                    status.setDuration(status.getDuration() - 1);
+                    status.duration(status.getDuration() - 1);
                 }
             }
-            return false;
         });
         // 技能冷却
         skills.forEach(Skill::pastRound);
@@ -721,7 +714,6 @@ public abstract class Character implements Serializable {
 
     public void beHeal(HealInfo healInfo) {
         setHp(getHp() + healInfo.getTraceableNumber().getNumber());
-        statusRun(Trigger.AFTER_HEAL, new ParamHealInfo(healInfo));
     }
 
     /**
@@ -731,14 +723,17 @@ public abstract class Character implements Serializable {
         setHp(getHp() + num);
     }
 
-    public void dispelAllDebuff() {
-        getStatuses().removeIf(status -> {
-            if (status.statusType == StatusType.DEBUFF && status.statusForm == StatusForm.ZHUANG_TAI) {
-                status.beforeDelete();
-                return true;
+    public void deleteStatusIf(Predicate<Status> predicate) {
+        new ArrayList<>(getStatuses()).forEach(status -> {
+            if (predicate.test(status)) {
+                status.delete();
             }
-            return false;
         });
+    }
+
+    public void dispelAllDebuff() {
+        deleteStatusIf(status -> status.statusType == StatusType.DEBUFF
+                && status.statusForm == StatusForm.ZHUANG_TAI);
     }
 
     public void dispelDeBuff(int count) {
@@ -746,13 +741,13 @@ public abstract class Character implements Serializable {
         for (Status status : statuses) {
             if (status.statusType == StatusType.DEBUFF
                     && status.statusForm == StatusForm.ZHUANG_TAI
-                    && status instanceof Displayable) {
+            ) {
                 debuffs.add(status);
             }
         }
 
         List<Status> tobeDelete = RateController
-                .choose(name + "驱散减益状态", debuffs, Status::toString, bp.calc, count);
+                .choose(name + "驱散减益状态", debuffs, Status::getName, bp.calc, count);
 
         for (Status status : tobeDelete) {
             status.delete();
@@ -815,35 +810,12 @@ public abstract class Character implements Serializable {
         }
     }
 
-    public void removeStatusIf(Predicate<Status> filter) {
-        final Iterator<Status> iterator = getStatuses().iterator();
-        while (iterator.hasNext()) {
-            Status next = iterator.next();
-            if (filter.test(next)) {
-                next.beforeDelete();
-                iterator.remove();
-            }
-        }
-    }
-
     public void removeAllCrowControl() {
-        getStatuses().removeIf(status -> {
-            if (status instanceof CrowdControl) {
-                status.beforeDelete();
-                return true;
-            }
-            return false;
-        });
+        deleteStatusIf(status -> status instanceof CrowdControl);
     }
 
     public void removeAllDeBuff() {
-        getStatuses().removeIf(status -> {
-            if (status.statusType == StatusType.DEBUFF) {
-                status.beforeDelete();
-                return true;
-            }
-            return false;
-        });
+        deleteStatusIf(status -> status.statusType == StatusType.DEBUFF);
     }
 
     public CharacterIcon getCharacterIcon() {
@@ -878,7 +850,23 @@ public abstract class Character implements Serializable {
     }
 
     public <T extends Status> boolean addStatus(T newStatus) {
-        // 拒绝添加所有状态:堕落之剑和青女房
+        if (newStatus.statusType != StatusType.SPECIAL || newStatus.statusForm != StatusForm.SPECIAL) {
+            for (Status status : getStatuses()) {
+                // 拒绝添加所有状态:堕落之剑和青女房
+                if (status instanceof RejectAllStatuses) {
+                    return false;
+                }
+
+                // 无视debuff
+                if (
+                        newStatus.statusType == StatusType.DEBUFF
+                                && newStatus.statusForm == StatusForm.ZHUANG_TAI
+                                && status instanceof IgnoreDebuff id && id.ignoreDebuffEffective()
+                ) {
+                    return false;
+                }
+            }
+        }
         for (Status status : getStatuses()) {
             if (status instanceof RejectAllStatuses ||
                     (newStatus.statusType == StatusType.DEBUFF
@@ -929,12 +917,9 @@ public abstract class Character implements Serializable {
     }
 
     public <T extends Status> void removeStatus(Class<T> clazz) {
-        Iterator<Status> iterator = statuses.iterator();
-        while (iterator.hasNext()) {
-            Status next = iterator.next();
+        for (Status next : statuses) {
             if (clazz.isInstance(next)) {
-                next.beforeDelete();
-                iterator.remove();
+                next.delete();
                 return;
             }
         }
@@ -954,63 +939,63 @@ public abstract class Character implements Serializable {
         bp.doInteractive(this, action);
     }
 
-    public void addYuHun(YuHun yuHun) {
-        yuHunSet.add(yuHun);
-        if (yuHun instanceof YuHunSealResponse sr) {
+    public void addYuHun(Equip equip) {
+        equipSet.add(equip);
+        if (equip instanceof YuHunSealResponse sr) {
             sr.enable();
         }
     }
 
-    public void removeYuHun(YuHun yuHun) {
-        if (!yuHunSet.contains(yuHun)) {
+    public void removeYuHun(Equip equip) {
+        if (!equipSet.contains(equip)) {
             return;
         }
-        if (yuHun instanceof YuHunSealResponse sr) {
+        if (equip instanceof YuHunSealResponse sr) {
             sr.disable();
         }
-        yuHunSet.remove(yuHun);
+        equipSet.remove(equip);
     }
 
     public void addAllYuHun(String[] names) {
         for (String s : names) {
-            YuHunFactory.getYuHun(s, this, true).ifPresent(this::addYuHun);
+            EquipFactory.getEquip(s, this, true).ifPresent(this::addYuHun);
         }
     }
 
-    public void forEachYuHun(Consumer<YuHun> action) {
+    public void forEachYuHun(Consumer<Equip> action) {
         if (isYuHunSeal()) {
             return;
         }
-        yuHunSet.forEach(action);
+        equipSet.forEach(action);
     }
 
     public <T> Optional<T> getYuHun(Class<T> tClass) {
         if (isYuHunSeal()) {
             return Optional.empty();
         }
-        return yuHunSet.stream().filter(tClass::isInstance).map(tClass::cast).findFirst();
+        return equipSet.stream().filter(tClass::isInstance).map(tClass::cast).findFirst();
     }
 
     public boolean isYuHunSeal() {
         return sealYuHunCount > 0;
     }
 
-    public <T extends YuHun> YuHun removeYuHun(Class<T> tClass) {
-        Set<YuHun> yuHunSet = getYuHunSet();
-        for (YuHun yuHun : yuHunSet) {
-            if (tClass.isInstance(yuHun)) {
-                if (yuHun instanceof YuHunSealResponse sr) {
+    public <T extends Equip> Equip removeYuHun(Class<T> tClass) {
+        Set<Equip> equipSet = getYuHunSet();
+        for (Equip equip : equipSet) {
+            if (tClass.isInstance(equip)) {
+                if (equip instanceof YuHunSealResponse sr) {
                     sr.disable();
                 }
-                yuHunSet.remove(yuHun);
-                return yuHun;
+                equipSet.remove(equip);
+                return equip;
             }
         }
         return null;
     }
 
-    public LinkedHashSet<YuHun> getYuHunSet() {
-        return yuHunSet;
+    public LinkedHashSet<Equip> getYuHunSet() {
+        return equipSet;
     }
 
     public void sealYuHun() {
@@ -1041,14 +1026,7 @@ public abstract class Character implements Serializable {
         statusRun(Trigger.DIE, null);
         // 通过老头死亡时可以叠一层伤魂鸟判断，应该先触发死亡，再执行
         dieHandle();
-        Iterator<Status> iterator = statuses.iterator();
-        while (iterator.hasNext()) {
-            Status status = iterator.next();
-            if (!(status instanceof RetainAfterDie)) {
-                status.beforeDelete();
-                iterator.remove();
-            }
-        }
+        deleteStatusIf(status -> !status.isRetainAfterDie());
 
         if (sealPassiveSkillCount == 0) {
             for (Skill skill : skills) {
@@ -1094,12 +1072,11 @@ public abstract class Character implements Serializable {
     }
 
     public void statusRun(Trigger trigger, TriggerParam param) {
+        // TODO:加一个运行时可以改变遍历顺序
         List<Status> copy = new ArrayList<>(statuses);
         for (Status status : copy) {
-            if (status instanceof StatusRunnable r && r.runnable(trigger)) {
-                if (r.run(trigger, bp, param)) {
-                    status.delete();
-                }
+            if (status.runnable(trigger)) {
+                status.run(trigger, param);
             }
         }
     }

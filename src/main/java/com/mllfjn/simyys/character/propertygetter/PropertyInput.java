@@ -8,19 +8,41 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.stage.Window;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 public class PropertyInput extends PropertyRequire implements Serializable {
+    @Serial
+    private static final long serialVersionUID = -629409598346660239L;
+
     private String value = "";
     private transient SimpleStringProperty property;
-    public PropertyInput setValue(String value) {
-        this.value = value;
+
+    @Override
+    public PropertyRequire setValue(String value) {
+        if (property != null) {
+            property.setValue(value);
+        } else {
+            this.value = value;
+        }
         return this;
     }
+
+    @Override
+    public PropertyRequire setValue(double value) {
+        String s = String.valueOf(value);
+        if (property != null) {
+            property.setValue(s);
+        } else {
+            this.value = s;
+        }
+        return this;
+    }
+
     public SimpleStringProperty getProperty() {
         if (property == null) {
             property = new SimpleStringProperty(value);
-            property.addListener((obs, old, val) -> value = val);
+            property.addListener((_, _, val) -> value = val);
         }
         return property;
     }
@@ -44,13 +66,7 @@ public class PropertyInput extends PropertyRequire implements Serializable {
         Label label = new Label(desc);
 
         TextField tf = new TextField(value);
-        tf.textProperty().addListener((obs, old, val) -> {
-            if (property != null) {
-                property.set(val);
-            } else {
-                value = val;
-            }
-        });
+        tf.textProperty().bindBidirectional(getProperty());
 
         node.getChildren().addAll(label, tf);
         return node;

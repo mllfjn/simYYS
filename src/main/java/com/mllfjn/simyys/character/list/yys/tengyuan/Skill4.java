@@ -7,7 +7,6 @@ import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAddCrowdControl;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
 import java.util.List;
 import java.util.Optional;
@@ -60,51 +59,25 @@ class Skill4 extends Skill {
         return Optional.empty();
     }
 
-    static class StatusZouLv extends Status implements Displayable, StatusRunnable {
+    static class StatusZouLv extends Status {
         private static final String StatusName = "奏律状态";
 
         public StatusZouLv(Character character, int duration) {
-            super(character, character, StatusType.BUFF, StatusForm.YIN_JI);
-            setDurationType(StatusDurationType.WEI_CHI, duration);
-        }
-
-        @Override
-        public String getDisplayText() {
-            return StatusName + getDuration();
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.ADDING_CROWD_CONTROL;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            if (param instanceof ParamAddCrowdControl pac) {
-                pac.getEffectInfo().setCancel(true);
-            }
-            return false;
+            super(StatusName, character, character, StatusType.BUFF, StatusForm.YIN_JI);
+            duration(StatusDurationType.WEI_CHI, duration);
+            displayNameAndDuration();
+            runOn(Trigger.ADDING_CROWD_CONTROL, param ->
+                    ((ParamAddCrowdControl) param).getEffectInfo().setCancel(true)
+            );
         }
     }
 
-    static class StatusIncreaseAttack extends Status implements AttributeModifier {
-        private final double ratio;
-
+    static class StatusIncreaseAttack extends Status {
         public StatusIncreaseAttack(Character from, Character belongTo, int duration, double ratio) {
-            super(from, belongTo, StatusType.BUFF, StatusForm.ZHUANG_TAI);
-            this.ratio = ratio;
+            super(SkillName + "攻击", from, belongTo, StatusType.BUFF, StatusForm.ZHUANG_TAI);
 
-            setDurationType(StatusDurationType.WEI_CHI, duration);
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.ATTACK;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return belongTo.getInitBaseAttack() * ratio;
+            duration(StatusDurationType.WEI_CHI, duration);
+            attribute(Attribute.ATTACK, _ -> belongTo.getInitBaseAttack() * ratio);
         }
     }
 }

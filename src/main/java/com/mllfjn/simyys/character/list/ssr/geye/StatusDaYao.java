@@ -1,6 +1,5 @@
 package com.mllfjn.simyys.character.list.ssr.geye;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.battleevent.BattleActionListener;
 import com.mllfjn.simyys.battleevent.BattleEvent;
 import com.mllfjn.simyys.battleevent.EventActionDone;
@@ -8,33 +7,25 @@ import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.determinant.IgnoreDebuff;
-import com.mllfjn.simyys.character.status.determinant.PreventDie;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 
 import java.util.ArrayList;
 import java.util.List;
 
-class StatusDaYao extends Status implements Displayable, StatusRunnable, PreventDie, IgnoreDebuff, AttributeModifier {
+class StatusDaYao extends Status implements IgnoreDebuff {
     private static final String StatusName = "大妖姿态";
 
     private final double originalMaxHp;
     private final List<Character> huanHuaList = new ArrayList<>(3);
 
     private final boolean isIncreaseMaxHP;
-    private final boolean isIncreaseAttack;
-    private final boolean isIncreaseDefense;
-    private final boolean isIncreaseCritPower;
 
     // 受到致命伤害,在下一次行动结束时回到普通形态
     private boolean die = false;
 
     StatusDaYao(GeYe character, int initTeammateCount, int skillLevel) {
-        super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
+        super(StatusName, character);
 
         isIncreaseMaxHP = skillLevel >= 2;
-        isIncreaseAttack = skillLevel >= 3;
-        isIncreaseDefense = skillLevel >= 4;
-        isIncreaseCritPower = skillLevel >= 5;
 
         originalMaxHp = character.getMaxHp();
 
@@ -47,6 +38,49 @@ class StatusDaYao extends Status implements Displayable, StatusRunnable, Prevent
                 next.addStatus(new StatusHuanHua(belongTo, next));
             }
             changeDone();
+        }
+
+        beforeDelete(() -> {
+            belongTo.setMaxHp(originalMaxHp, true);
+            belongTo.removeSkill(4);
+            belongTo.addSkill(new Skill4(belongTo, ((GeYe) belongTo).skill3Level));
+            for (Character c : huanHuaList) {
+                c.removeStatus(StatusHuanHua.class);
+            }
+        });
+
+        display(() -> StatusName + getStack());
+
+        runOn(Trigger.OUT_ROUND_ACTION, Trigger.BEFORE_ROUND, _ ->
+                belongTo.bp.gainGuiHuo(belongTo, getStack())
+        );
+
+        preventDie(_ -> {
+            if (!die) {
+                belongTo.bp.addActionListener(new BattleActionListener(belongTo) {
+                    @Override
+                    public boolean onBattleAction(BattleEvent event) {
+                        if (event instanceof EventActionDone) {
+                            delete();
+                            return true;
+                        }
+                        return false;
+                    }
+                });
+                die = true;
+            }
+        });
+
+        if (skillLevel >= 3) {
+            attribute(Attribute.ATTACK, _ -> belongTo.getInitAttack() * getStack() * 0.2);
+        }
+
+        if (skillLevel >= 4) {
+            attribute(Attribute.DEFENCE, _ -> belongTo.getInitDefense() * getStack() * 0.2);
+        }
+
+        if (skillLevel >= 5) {
+            attribute(Attribute.CRIT_POWER, _ -> 20.0 * getStack());
         }
     }
 
@@ -88,71 +122,5 @@ class StatusDaYao extends Status implements Displayable, StatusRunnable, Prevent
     @Override
     public boolean ignoreDebuffEffective() {
         return belongTo.getHp() > (belongTo.getMaxHp() * 0.5);
-    }
-
-    @Override
-    public void beforeDelete() {
-        belongTo.setMaxHp(originalMaxHp, true);
-        belongTo.removeSkill(4);
-        belongTo.addSkill(new Skill4(belongTo, ((GeYe) belongTo).skill3Level));
-        for (Character character : huanHuaList) {
-            character.removeStatus(StatusHuanHua.class);
-        }
-    }
-
-    @Override
-    public String getDisplayText() {
-        return StatusName + getStack();
-    }
-
-    @Override
-    public boolean runnable(Trigger trigger) {
-        return trigger == Trigger.OUT_ROUND_ACTION || trigger == Trigger.BEFORE_ROUND;
-    }
-
-    @Override
-    public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-        belongTo.bp.gainGuiHuo(belongTo, getStack());
-        return false;
-    }
-
-    @Override
-    public void preventDie(double excessDamage) {
-        if (!die) {
-            belongTo.bp.addActionListener(new BattleActionListener(belongTo) {
-                @Override
-                public boolean onBattleAction(BattleEvent event) {
-                    if (event instanceof EventActionDone) {
-                        delete();
-                        return true;
-                    }
-                    return false;
-                }
-            });
-            die = true;
-        }
-    }
-
-    @Override
-    public String getName() {
-        return StatusName;
-    }
-
-    @Override
-    public boolean isAffectAttribute(Attribute attribute) {
-        return isIncreaseAttack && attribute == Attribute.ATTACK
-                || isIncreaseDefense && attribute == Attribute.DEFENCE
-                || isIncreaseCritPower && attribute == Attribute.CRIT_POWER;
-    }
-
-    @Override
-    public double getInfluence(Attribute attribute, StatusModifyParam param) {
-        if (attribute == Attribute.ATTACK) {
-            return belongTo.getInitAttack() * getStack() * 0.2;
-        } else if (attribute == Attribute.DEFENCE) {
-            return belongTo.getInitDefense() * getStack() * 0.2;
-        } else {
-            return 20 * getStack();
-        }
     }
 }

@@ -1,11 +1,9 @@
 package com.mllfjn.simyys.character.list.yys.boya;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.ParamUseSkill;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackType;
 import com.mllfjn.simyys.interactive.Interactive;
 
@@ -45,14 +43,14 @@ class Skill5 extends PassiveSkill implements YingFenShenCopy {
         use(skillUser, target, interactive, multiplier + extraMultiplier);
     }
 
-    class StatusZXJ extends Status implements StatusRunnable, Displayable {
+    class StatusZXJ extends Status {
 
         private final int multiplier;
 
         private int stack = 3;
 
         public StatusZXJ(Character character, int multiplier) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
+            super(SkillName, character);
             this.multiplier = multiplier;
 
             character.bp.addStatusAdder(c ->
@@ -60,6 +58,8 @@ class Skill5 extends PassiveSkill implements YingFenShenCopy {
                             ? new StatusZXJListener(character, c, this)
                             : null
             );
+            display(() -> SkillName + stack);
+            runOn(Trigger.AFTER_ROUND, _ -> stack = 3);
         }
 
         public void use(Character target) {
@@ -73,43 +73,18 @@ class Skill5 extends PassiveSkill implements YingFenShenCopy {
                 ((BoYa) belongTo).getYinFenShen().ifPresent(yfs -> yfs.usedSkill(Skill5.this, target));
             });
         }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.AFTER_ROUND;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            stack = 3;
-            return false;
-        }
-
-        @Override
-        public String getDisplayText() {
-            return SkillName + stack;
-        }
     }
 
-    static class StatusZXJListener extends Status implements StatusRunnable {
-        private final StatusZXJ status;
-
+    static class StatusZXJListener extends Status {
         public StatusZXJListener(Character from, Character belongTo, StatusZXJ status) {
-            super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-            this.status = status;
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.USED_PU_GONG && belongTo.isInRound();
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            if (param instanceof ParamUseSkill pus) {
-                status.use(pus.getTarget().orElseThrow());
-            }
-            return false;
+            super(SkillName + "普攻监听", from, belongTo);
+            runOn(Trigger.USED_PU_GONG, param -> {
+                if (belongTo.isInRound()) {
+                    if (param instanceof ParamUseSkill pus) {
+                        status.use(pus.getTarget().orElseThrow());
+                    }
+                }
+            });
         }
     }
 }

@@ -52,7 +52,7 @@ public class AXiuLuo extends CharacterShiShenBase {
     @Override
     protected void addOwnSkills() {
         Skill2 skill2 = new Skill2(this, skill2Level);
-        statusLiXing = skill2.getStatusLiXing();
+        statusLiXing = skill2.getStatusLiXing(this);
         addStatus(statusLiXing);
 
         addSkill(new Skill1(this, skill1Level));

@@ -1,10 +1,10 @@
 package com.mllfjn.simyys.character.yuhun.list.youchizi;
 
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.character.yuhun.YuHun;
+import com.mllfjn.simyys.character.yuhun.Equip;
 
 
-public class YouChiZi extends YuHun {
+public class YouChiZi extends Equip {
     public static final String YuHunName = "油赤子";
 
     @Override

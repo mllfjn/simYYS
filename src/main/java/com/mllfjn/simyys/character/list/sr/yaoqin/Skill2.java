@@ -12,14 +12,10 @@ import java.util.Optional;
 
 class Skill2 extends Skill {
     private static final String SkillName = "余音";
-    private static final int[] bonus = new int[]{0, 8, 11, 14, 17, 20};
-
-    private final int currentBonus;
-
+    private static final int[] BONUS = new int[]{0, 8, 11, 14, 17, 20};
 
     public Skill2(Character belongTo, int level) {
         super(belongTo, level, 2, 0, 2);
-        currentBonus = bonus[getLevel()];
     }
 
     @Override
@@ -51,28 +47,11 @@ class Skill2 extends Skill {
                 .getList();
 
         for (Character target : targets) {
-            target.addStatus(new StatusYuYin(getBelongTo(), target, currentBonus));
-        }
-    }
-
-    static class StatusYuYin extends Status implements AttributeModifier {
-        private final int num;
-
-        public StatusYuYin(Character from, Character belongTo, int num) {
-            super(from, belongTo, StatusType.BUFF, StatusForm.ZHUANG_TAI);
-            this.num = num;
-
-            setDurationType(StatusDurationType.CHI_XU, 1);
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.SPEED;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return num;
+            Status.of(SkillName, getBelongTo(), target)
+                    .type(StatusType.BUFF, StatusForm.ZHUANG_TAI)
+                    .duration(StatusDurationType.CHI_XU, 1)
+                    .attribute(Attribute.SPEED, BONUS[getLevel()])
+                    .addTo();
         }
     }
 }

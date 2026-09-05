@@ -1,22 +1,19 @@
 package com.mllfjn.simyys.character.list.sp.sphongye;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.battleevent.BattleActionListener;
 import com.mllfjn.simyys.battleevent.BattleEvent;
 import com.mllfjn.simyys.battleevent.EventActionDone;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.determinant.InfluenceDamageWhenAttack;
+import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.ParamLocationChange;
 import com.mllfjn.simyys.character.status.triggerParam.ParamStatus;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
-import com.mllfjn.simyys.interactive.AttackInfo;
 
 class Skill2 extends PassiveSkill {
     private static final String SkillName = "经霜";
 
-    private final StatusAttackListener statusAttackListener;
+    private final Status statusAttackListener;
     private final double damageIncreasement;
 
     private boolean canAddStackWhenTeammateBeingAttack = true;
@@ -24,7 +21,10 @@ class Skill2 extends PassiveSkill {
 
     public Skill2(Character belongTo, int level) {
         super(belongTo, level, 2);
-        statusAttackListener = new StatusAttackListener(belongTo);
+        statusAttackListener = Status.of(SkillName + "攻击监听", belongTo);
+        statusAttackListener.runOn(Trigger.CAUSE_ATTACK, param ->
+                StatusYeJin.addStack(belongTo, ((ParamAttackInfo) param).getAttackInfo().getTarget(), Skill2.this)
+        );
         damageIncreasement = level >= 2 ? 0.1 : 0.05;
 
         if (level >= 3) {
@@ -86,52 +86,27 @@ class Skill2 extends PassiveSkill {
         return SkillName;
     }
 
-    class StatusAttackListener extends Status implements InfluenceDamageWhenAttack {
-        public StatusAttackListener(Character character) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public void doInfluenceWhenAttack(AttackInfo attackInfo) {
-            StatusYeJin.addStack(belongTo, attackInfo.getTarget(), Skill2.this);
-        }
-    }
-
-    class StatusAddingDebuffListener extends Status implements StatusRunnable {
+    class StatusAddingDebuffListener extends Status {
         public StatusAddingDebuffListener(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return Skill2.this.canAddStackWhenTeammateBeingAttack() && trigger == Trigger.ADDING_DEBUFF;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            StatusYeJin.addStack(from, ((ParamStatus) param).getStatus().from, Skill2.this);
-            Skill2.this.addStackWhenTeammateBeingAttack();
-            return false;
+            super(SkillName + "减益状态监听", from, belongTo);
+            runOn(Trigger.ADDING_DEBUFF, param -> {
+                if (Skill2.this.canAddStackWhenTeammateBeingAttack()) {
+                    StatusYeJin.addStack(from, ((ParamStatus) param).getStatus().from, Skill2.this);
+                    Skill2.this.addStackWhenTeammateBeingAttack();
+                }
+            });
         }
     }
 
-    class StatusLocationChangeListener extends Status implements StatusRunnable {
+    class StatusLocationChangeListener extends Status {
         public StatusLocationChangeListener(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.LOCATION_CHANGE;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            ParamLocationChange plc = (ParamLocationChange) param;
-            if (plc.isFromIncrease && (plc.newLocation - plc.oldLocation) > 30) {
-                StatusYeJin.addStack(from, belongTo, Skill2.this);
-            }
-            return false;
+            super(SkillName + "拉条监听", from, belongTo);
+            runOn(Trigger.LOCATION_WILL_CHANGE, param -> {
+                ParamLocationChange plc = (ParamLocationChange) param;
+                if (plc.isFromIncrease && (plc.newLocation - plc.oldLocation) > 30) {
+                    StatusYeJin.addStack(from, belongTo, Skill2.this);
+                }
+            });
         }
     }
 }

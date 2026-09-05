@@ -3,7 +3,6 @@ package com.mllfjn.simyys.character.skill;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.TraversalOrderManager;
 import com.mllfjn.simyys.character.status.ConditionalReduceCost;
-import com.mllfjn.simyys.character.status.ForceChangeCost;
 import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.character.yuhun.list.HaiYueHuoYu;
 
@@ -23,9 +22,7 @@ public class SkillCostResult {
         int mustUse = skill.getCost();
         // 强制增加或减少消耗 比如猛火、SP千
         for (Status status : belongTo.getStatuses()) {
-            if (status instanceof ForceChangeCost rc) {
-                mustUse += rc.getChange();
-            }
+            mustUse += status.getForceChangeSkillCost();
         }
 
         // 可选额外消耗:海月火玉

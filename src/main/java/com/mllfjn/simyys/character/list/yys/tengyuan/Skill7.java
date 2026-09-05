@@ -1,12 +1,10 @@
 package com.mllfjn.simyys.character.list.yys.tengyuan;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.ratecontroller.RateController;
 
 import java.util.List;
@@ -40,7 +38,7 @@ class Skill7 extends PassiveSkill {
         Character belongTo = getBelongTo();
         final double increase = 5 * count;
         if (shuYin >= 3
-                || RateController.otherWhether(SkillName, "提升行动条效果作用于全体友方", belongTo.getBp().calc,
+                || RateController.otherWhether(SkillName, "提升行动条效果作用于全体友方", belongTo.bp().calc,
                 shuYin * 100.0 / 3)
         ) {
             List<Character> list = new CharacterFinder(belongTo)
@@ -68,20 +66,12 @@ class Skill7 extends PassiveSkill {
         return SkillName;
     }
 
-    static class StatusUseSkillListener extends Status implements StatusRunnable {
+    static class StatusUseSkillListener extends Status {
         public StatusUseSkillListener(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.WILL_USE_SKILL;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            from.doInteractive(interactive -> interactive.increaseLocation(from, 10));
-            return false;
+            super(SkillName + "使用技能监听", from, belongTo);
+            runOn(Trigger.WILL_USE_SKILL, _ ->
+                    from.doInteractive(interactive -> interactive.increaseLocation(from, 10))
+            );
         }
     }
 }

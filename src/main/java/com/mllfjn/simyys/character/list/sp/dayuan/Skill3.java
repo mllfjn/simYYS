@@ -87,11 +87,11 @@ class Skill3 extends Skill {
         // lv3-释放时额外为自身与目标施加庇护，维持1回合
         if (level >= 3) {
             StatusBiHu biHuDaYuan = new StatusBiHu(daYuan, daYuan);
-            biHuDaYuan.setDurationType(StatusDurationType.WEI_CHI, 1);
+            biHuDaYuan.duration(StatusDurationType.WEI_CHI, 1);
             daYuan.addStatus(biHuDaYuan);
             if (target != daYuan) {
                 StatusBiHu biHuTarget = new StatusBiHu(daYuan, target);
-                biHuTarget.setDurationType(StatusDurationType.WEI_CHI, 1);
+                biHuTarget.duration(StatusDurationType.WEI_CHI, 1);
                 target.addStatus(biHuTarget);
             }
         }
@@ -122,7 +122,7 @@ class Skill3 extends Skill {
             Character belongTo = getBelongTo();
             StatusDaYuanShield.install(belongTo, target
                     , RateController.baoJi(SkillName + "护盾", belongTo, belongTo.bp.calc
-                            , (c) -> belongTo.getCritRate(), List.of(target))[0]);
+                            , (_) -> belongTo.getCritRate(), List.of(target))[0]);
         }
         return interactive.healTypical(this, target, 8);
     }
@@ -139,7 +139,7 @@ class Skill3 extends Skill {
             if (!fullHealth.isEmpty()) {
                 Character belongTo = getBelongTo();
                 boolean[] results = RateController.baoJi(SkillName + "护盾", belongTo, belongTo.bp.calc
-                        , (c) -> belongTo.getCritRate(), fullHealth);
+                        , (_) -> belongTo.getCritRate(), fullHealth);
                 for (int i = 0; i < fullHealth.size(); i++) {
                     StatusDaYuanShield.install(belongTo, fullHealth.get(i), results[i]);
                 }
@@ -148,29 +148,27 @@ class Skill3 extends Skill {
         interactive.healTypical(this, targets, 8);
     }
 
-    static class StatusCritPower extends Status implements AttributeModifier {
+    static class StatusCritPower extends Status {
         // 防止from为大缘自身时递归计算
         private boolean counting;
 
         public StatusCritPower(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-            setDurationType(StatusDurationType.WEI_CHI, 1);
-        }
+            super("大缘爆伤", from, belongTo);
+            duration(StatusDurationType.WEI_CHI, 1);
+            attribute(Attribute.CRIT_POWER, _ -> {
+                if (from != belongTo) {
+                    return from.getCritPower() * 0.4;
+                }
 
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.CRIT_POWER && !counting;
-        }
+                if (counting) {
+                    return 0.0;
+                }
 
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            if (from != belongTo) {
-                return from.getCritPower() * 0.4;
-            }
-            counting = true;
-            double rt = from.getCritPower() * 0.4;
-            counting = false;
-            return Math.min(rt, 110);
+                counting = true;
+                double rt = from.getCritPower() * 0.4;
+                counting = false;
+                return Math.min(rt, 110);
+            });
         }
     }
 }

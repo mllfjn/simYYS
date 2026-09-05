@@ -1,16 +1,13 @@
 package com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.citiao;
 
-import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
+import com.mllfjn.simyys.character.skill.Skill1PuGongBase;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.character.status.StatusRunnable;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
-import com.mllfjn.simyys.character.status.triggerParam.TriggerParam;
 import com.mllfjn.simyys.interactive.AttackInfo;
-import com.mllfjn.simyys.interactive.InteractiveInfo;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,161 +16,99 @@ public class CiTiao1QiaoJin {
     public static final String CiTiaoName = "巧劲";
 
     public static void install(Character character) {
-        character.addStatus(new StatusQJListener(character));
+        character.bp().addStatusAdder(c -> c.team != character.team
+                ? new StatusQJSplash(character, c)
+                : null
+        );
 
         // 己方（指玩家）攻击力最高的单位普攻时，额外获得一次行动，回合结束后增加自身35%行动条
-        character.bp.addPriorityMove(character, () -> {
+        character.bp().addPriorityMove(character, () -> {
             Character maxAttack = new CharacterFinder(character)
                     .filterEnemy()
                     .get(Attribute.ATTACK, CharacterFinder.Criteria.MAX);
-            maxAttack.addStatus(new StatusQJUsePugGongListener(character, maxAttack));
+            Status statusQJMax = Status.of("巧劲-攻击最高", character, maxAttack);
+            statusQJMax.runOn(Trigger.USED_PU_GONG, _ -> {
+                        Optional<StatusQJNewRoundMark> optional
+                                = statusQJMax.belongTo.getStatus(StatusQJNewRoundMark.class);
+                        if (optional.isEmpty()) {
+                            statusQJMax.belongTo.addStatus(new StatusQJNewRoundMark(statusQJMax.from, statusQJMax.belongTo));
+                            statusQJMax.belongTo.doInteractive(interactive -> {
+                                interactive.getNewRound(statusQJMax.belongTo);
+                                interactive.increaseLocation(statusQJMax.belongTo, 35);
+                            });
+                        }
+                    })
+                    .addTo();
         });
     }
 
-    static class StatusQJUsePugGongListener extends Status implements StatusRunnable {
+    private static class StatusQJSplash extends Status {
+        private final Skill skill = Skill.getInstance(CiTiao1QiaoJin.CiTiaoName);
 
-        public StatusQJUsePugGongListener(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
+        public StatusQJSplash(Character from, Character belongTo) {
+            super("巧劲-伤害溅射", from, belongTo);
 
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.USED_PU_GONG;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            Optional<StatusQJNewRoundMark> optional = belongTo.getStatus(StatusQJNewRoundMark.class);
-            if (optional.isEmpty()) {
-                belongTo.addStatus(new StatusQJNewRoundMark(from, belongTo));
-                belongTo.doInteractive(interactive -> interactive.getNewRound(belongTo));
-            }
-            return false;
-        }
-    }
-
-    static class StatusQJNewRoundMark extends Status implements StatusRunnable {
-
-        public StatusQJNewRoundMark(Character from, Character belongTo) {
-            super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.AFTER_ROUND;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            belongTo.doInteractive(interactive -> interactive.increaseLocation(belongTo, 35));
-            return true;
-        }
-    }
-
-    // 巧劲要用状态类生效在BOSS身上，因为只有BOSS本体直接受到伤害才会触发这个效果，打在盾上不生效
-    static class StatusQJListener extends Status implements StatusRunnable {
-        private final Skill SKILL = Skill.getInstance(CiTiao1QiaoJin.CiTiaoName);
-
-        public StatusQJListener(Character character) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.AFTER_ATTACK;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            // 己方（指玩家，在这里是对面的人）普攻时，会造成40%溅射伤害
-            if (trigger == Trigger.AFTER_ATTACK) {
-                InteractiveInfo interactiveInfo = ((ParamAttackInfo) param).getAttackInfo();
-                Character attacker = interactiveInfo.getAttacker();
-                Skill skill = interactiveInfo.getSkill();
-                if (skill.getSkillID() == 1
-                        && attacker.team != belongTo.team
-                        && interactiveInfo.getTraceableNumber().getNumber() > 0) {
-                    double number = interactiveInfo.getTraceableNumber().getNumber();
+            // 普攻伤害溅射，默认关闭
+            runOnAndDisable(Trigger.CAUSE_ATTACK, param -> {
+                AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
+                if (attackInfo.getSkill() instanceof Skill1PuGongBase) {
+                    double number = attackInfo.getTraceableNumber().getNumber();
                     List<Character> targets = new CharacterFinder(belongTo)
-                            .filterTeammate()
-                            .filterSelf()
+                            .filterEnemy()
                             .getList();
-
-                    if (attacker.getStatus(StatusAddStackAfterRound.class).isEmpty()) {
-                        attacker.addStatus(new StatusAddStackAfterRound(attacker));
-                    }
-
-                    attacker.doInteractive(interactive -> {
+                    targets.remove(attackInfo.getTarget());
+                    belongTo.doInteractive(interactive -> {
                         for (Character target : targets) {
-                            interactive.attack(AttackInfo.createRealAttack(attacker
-                                    , SKILL, target, number * 0.4));
+                            interactive.attack(
+                                    AttackInfo.createRealAttack(belongTo, skill, target, number * 0.4)
+                            );
                         }
-                        SKILL.useDone();
                     });
+                    skill.useDone();
                 }
-            }
-            return false;
+            });
+
+            // 回合后添加巧劲减伤,默认关闭
+            runOnAndDisable(Trigger.AFTER_ROUND, _ -> {
+                StatusQJJianShang.addStack(from, belongTo);
+                disableAction(Trigger.CAUSE_ATTACK);
+                disableAction(Trigger.AFTER_ROUND);
+            });
+
+            // 开始普攻时监听伤害,激活回合后添加状态
+            runOn(Trigger.WILL_USE_PU_GONG, _ -> {
+                enableAction(Trigger.CAUSE_ATTACK);
+                enableAction(Trigger.AFTER_ROUND);
+            });
         }
     }
 
-    static class StatusQJJianShang extends Status implements Displayable, AttributeModifier {
-        private int stack = 0;
-
-        private StatusQJJianShang(Character character) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
-        }
-
-        public static void addStack(Character character) {
-            StatusQJJianShang status = character.getStatus(StatusQJJianShang.class)
-                    .orElseGet(() -> {
-                        StatusQJJianShang newStatus = new StatusQJJianShang(character);
-                        character.addStatus(newStatus);
-                        return newStatus;
-                    });
-
-            // 上限30层
-            if (status.stack < 30) {
-                status.stack++;
-            }
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.JIAN_SHANG;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            // 全队受到的伤害降低5%
-            return stack * 5;
-        }
-
-        @Override
-        public String getDisplayText() {
-            return CiTiao1QiaoJin.CiTiaoName + stack;
+    private static class StatusQJNewRoundMark extends Status {
+        public StatusQJNewRoundMark(Character from, Character belongTo) {
+            super("标记-巧劲不可连续触发", from, belongTo);
         }
     }
 
-    static class StatusAddStackAfterRound extends Status implements StatusRunnable {
+    static class StatusQJJianShang extends Status {
+        private int stack = 1;
 
-        public StatusAddStackAfterRound(Character character) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
+        private StatusQJJianShang(Character from, Character belongTo) {
+            super("巧劲-减伤", from, belongTo);
+            display(() -> CiTiao1QiaoJin.CiTiaoName + stack);
+            attribute(Attribute.JIAN_SHANG, _ -> 5.0 * stack);
         }
 
-        @Override
-        public boolean runnable(Trigger trigger) {
-            return trigger == Trigger.AFTER_ROUND;
-        }
-
-        @Override
-        public boolean run(Trigger trigger, BattlePane bp, TriggerParam param) {
-            List<Character> targets = new CharacterFinder(belongTo)
+        public static void addStack(Character from, Character target) {
+            List<Character> list = new CharacterFinder(target)
                     .filterTeammate()
                     .getList();
-            for (Character character : targets) {
-                StatusQJJianShang.addStack(character);
+            for (Character c : list) {
+                c.addStatusOrChange(
+                        StatusQJJianShang.class,
+                        status -> status.stack = Math.min(30, status.stack + 1),
+                        () -> new StatusQJJianShang(from, c)
+                );
             }
-            return true;
         }
     }
 }

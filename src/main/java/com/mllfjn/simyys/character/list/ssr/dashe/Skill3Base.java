@@ -27,7 +27,7 @@ public abstract class Skill3Base extends Skill {
         List<Character> choose = null;
         if (sheMoList != null && !sheMoList.isEmpty()) {
             choose = RateController.choose("蛇魔附加五感尽失", list, c -> c.name,
-                    belongTo.getBp().calc, sheMoList.size()
+                    belongTo.bp().calc, sheMoList.size()
             );
             for (Character character : choose) {
                 character.addStatus(new StatusWGJS(belongTo, character));

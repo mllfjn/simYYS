@@ -5,8 +5,6 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
 import com.mllfjn.simyys.character.CharacterShiShenBase;
 import com.mllfjn.simyys.character.status.Status;
-import com.mllfjn.simyys.character.status.StatusForm;
-import com.mllfjn.simyys.character.status.StatusType;
 import com.mllfjn.simyys.character.status.determinant.IgnoreDebuff;
 
 public class QianJi extends CharacterShiShenBase {
@@ -70,7 +68,7 @@ public class QianJi extends CharacterShiShenBase {
 
     static class StatusQianJiIgnoreDebuff extends Status implements IgnoreDebuff {
         public StatusQianJiIgnoreDebuff(Character character) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
+            super("免控", character);
         }
     }
 }

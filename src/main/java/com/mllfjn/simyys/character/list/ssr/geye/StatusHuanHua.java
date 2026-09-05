@@ -2,10 +2,7 @@ package com.mllfjn.simyys.character.list.ssr.geye;
 
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.character.status.AttributeModifier;
 import com.mllfjn.simyys.character.status.Status;
-import com.mllfjn.simyys.character.status.StatusForm;
-import com.mllfjn.simyys.character.status.StatusType;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.Color;
@@ -13,7 +10,7 @@ import javafx.scene.paint.Color;
 class StatusHuanHua extends Status {
 
     StatusHuanHua(Character from, Character belongTo) {
-        super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
+        super("幻化", from, belongTo);
         StatusHHSpeed.addStack(from);
 
         belongTo.bp.situation.canNotChangeLocation(belongTo);
@@ -37,31 +34,31 @@ class StatusHuanHua extends Status {
                 node.setEffect(glow);
             });
         });
-    }
 
-    @Override
-    public void beforeDelete() {
-        belongTo.bp.situation.canChangeLocation(belongTo);
-        belongTo.bp.situation.selectable(belongTo);
+        beforeDelete(() -> {
+            belongTo.bp.situation.canChangeLocation(belongTo);
+            belongTo.bp.situation.selectable(belongTo);
 
-        StatusHHSpeed.removeStack(from);
+            StatusHHSpeed.removeStack(from);
 
-        belongTo.doIfCharacterIconExist(characterIcon -> {
-            characterIcon.setVisualEffectTop(node -> node.setVisible(true));
-            characterIcon.setVisualEffectBottom(node -> node.setVisible(true));
+            belongTo.doIfCharacterIconExist(characterIcon -> {
+                characterIcon.setVisualEffectTop(node -> node.setVisible(true));
+                characterIcon.setVisualEffectBottom(node -> node.setVisible(true));
 
-            characterIcon.setVisualEffectCenter(node -> {
-                node.setEffect(null);
-                node.setOpacity(1);
+                characterIcon.setVisualEffectCenter(node -> {
+                    node.setEffect(null);
+                    node.setOpacity(1);
+                });
             });
         });
     }
 
-    static class StatusHHSpeed extends Status implements AttributeModifier {
+    static class StatusHHSpeed extends Status {
         private int stack = 1;
 
         private StatusHHSpeed(Character character) {
-            super(character, character, StatusType.SPECIAL, StatusForm.SPECIAL);
+            super("幻化速度", character);
+            attribute(Attribute.SPEED, _ -> belongTo.getInitSpeed() * 0.15 * stack);
         }
 
         static void addStack(Character character) {
@@ -75,16 +72,6 @@ class StatusHuanHua extends Status {
         static void removeStack(Character character) {
             character.getStatus(StatusHHSpeed.class)
                     .ifPresent(status -> status.stack--);
-        }
-
-        @Override
-        public boolean isAffectAttribute(Attribute attribute) {
-            return attribute == Attribute.SPEED;
-        }
-
-        @Override
-        public double getInfluence(Attribute attribute, StatusModifyParam param) {
-            return belongTo.getInitSpeed() * 0.15 * stack;
         }
     }
 }

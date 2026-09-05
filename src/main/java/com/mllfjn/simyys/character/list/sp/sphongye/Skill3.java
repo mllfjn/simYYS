@@ -9,8 +9,12 @@ import java.util.Optional;
 class Skill3 extends Skill {
     private static final String SkillName = "枫起之舞";
 
-    public Skill3(Character belongTo, int level) {
+    private final Skill2 skill2;
+
+    public Skill3(Character belongTo, int level, Skill2 skill2) {
         super(belongTo, level, 3, 0, 3);
+        this.skill2 = skill2;
+
         if (level >= 5) {
             belongTo.bp.addPriorityMove(belongTo, this::useWithoutCost);
         }
@@ -23,7 +27,7 @@ class Skill3 extends Skill {
 
     @Override
     public Optional<Character> usePrivate(BattlePane bp) {
-        StatusLinYin.install(((SPHongYe) getBelongTo()), getLevel());
+        StatusLinYin.install(((SPHongYe) getBelongTo()), getLevel(), skill2);
         return Optional.empty();
     }
 }

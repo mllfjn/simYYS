@@ -1,6 +1,7 @@
-package com.mllfjn.simyys.character.status;
+package com.mllfjn.simyys.character.status.instance;
 
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.interactive.InteractiveInfo;
 import com.mllfjn.simyys.interactive.TraceableNumber;
 
@@ -9,7 +10,12 @@ public class StatusShield extends Status {
     private double shield;
 
     public StatusShield(Character from, Character belongTo, double shield) {
-        super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
+        super(StatusName, from, belongTo);
+        this.shield = shield;
+    }
+
+    public StatusShield(String name, Character from, Character belongTo, double shield) {
+        super(name, from, belongTo);
         this.shield = shield;
     }
 
@@ -22,11 +28,11 @@ public class StatusShield extends Status {
         TraceableNumber traceableNumber = interactiveInfo.getTraceableNumber();
         double number = traceableNumber.getNumber();
         if (number > shield) {
-            traceableNumber.sub(shield, StatusName);
+            traceableNumber.sub(shield, getName());
             return true;
         } else {
             shield -= number;
-            traceableNumber.sub(number, StatusName);
+            traceableNumber.sub(number, getName());
             return false;
         }
     }

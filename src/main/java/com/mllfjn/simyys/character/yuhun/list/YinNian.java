@@ -2,14 +2,14 @@ package com.mllfjn.simyys.character.yuhun.list;
 
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.Skill;
-import com.mllfjn.simyys.character.yuhun.YuHun;
+import com.mllfjn.simyys.character.yuhun.Equip;
 import com.mllfjn.simyys.character.yuhun.YuHunAttack;
 import com.mllfjn.simyys.interactive.AttackInfo;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class YinNian extends YuHun implements YuHunAttack {
+public class YinNian extends Equip implements YuHunAttack {
     public static final String YuHunName = "隐念";
     private static final double[] multiplier = {1.2, 1.4, 1.6};
 

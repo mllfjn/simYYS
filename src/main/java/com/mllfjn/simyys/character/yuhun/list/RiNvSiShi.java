@@ -3,13 +3,13 @@ package com.mllfjn.simyys.character.yuhun.list;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.character.status.StatusType;
-import com.mllfjn.simyys.character.yuhun.YuHun;
+import com.mllfjn.simyys.character.yuhun.Equip;
 import com.mllfjn.simyys.character.yuhun.YuHunAfterCauseAttack;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.ratecontroller.RateController;
 
-public class RiNvSiShi extends YuHun implements YuHunAfterCauseAttack {
+public class RiNvSiShi extends Equip implements YuHunAfterCauseAttack {
     public static final String YuHunName = "日女巳时";
 
 

@@ -5,12 +5,13 @@ import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.interactive.StatusSupplier;
 
-public class StatusConfusion extends Status implements CrowdControl, Displayable {
+public class StatusConfusion extends Status implements CrowdControl {
     private static final String StatusName = "混乱";
 
     public StatusConfusion(Character from, Character belongTo, int duration) {
-        super(from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
-        setDurationType(StatusDurationType.CHI_XU, duration);
+        super(StatusName, from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
+        duration(StatusDurationType.CHI_XU, duration);
+        displayNameAndDuration();
     }
 
     public static StatusSupplier getSupplier(int duration) {
@@ -18,7 +19,7 @@ public class StatusConfusion extends Status implements CrowdControl, Displayable
                 to.getStatus(StatusConfusion.class).ifPresentOrElse(
                         status -> {
                             if (status.getDuration() < duration) {
-                                status.setDuration(duration);
+                                status.duration(duration);
                             }
                         },
                         () -> to.addStatus(new StatusConfusion(from, to, duration))
@@ -37,10 +38,5 @@ public class StatusConfusion extends Status implements CrowdControl, Displayable
                     skill1.usePrivate(belongTo.getInteractive(), target);
                     skill1.useOver(target);
                 });
-    }
-
-    @Override
-    public String getDisplayText() {
-        return StatusName + getDuration();
     }
 }

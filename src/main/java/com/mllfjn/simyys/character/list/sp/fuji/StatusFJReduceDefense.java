@@ -4,15 +4,15 @@ import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.status.*;
 
-class StatusFJReduceDefense extends Status implements AttributeModifier, Displayable {
+class StatusFJReduceDefense extends Status {
     private static final String StatusName = "缚姬减防";
 
-    private final int defensePerStack;
     private int stack = 1;
 
     private StatusFJReduceDefense(Character from, Character belongTo, int defensePerStack) {
-        super(from, belongTo, StatusType.SPECIAL, StatusForm.SPECIAL);
-        this.defensePerStack = defensePerStack;
+        super(StatusName, from, belongTo);
+        attribute(Attribute.DEFENCE, _ -> (double) (-defensePerStack * stack));
+        display(() -> StatusName + stack);
     }
 
     public static void addStack(Character from, Character belongTo, int defensePerStack) {
@@ -27,20 +27,5 @@ class StatusFJReduceDefense extends Status implements AttributeModifier, Display
         if (stack < 10) {
             stack++;
         }
-    }
-
-    @Override
-    public boolean isAffectAttribute(Attribute attribute) {
-        return attribute == Attribute.DEFENCE;
-    }
-
-    @Override
-    public double getInfluence(Attribute attribute, StatusModifyParam param) {
-        return -defensePerStack * stack;
-    }
-
-    @Override
-    public String getDisplayText() {
-        return StatusName + stack;
     }
 }
