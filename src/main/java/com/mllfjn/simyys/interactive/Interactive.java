@@ -250,10 +250,6 @@ public class Interactive {
 
         target.beHurt(attackInfo);
 
-        if (attackInfo.isCancel()) {
-            return;
-        }
-
         final double currentHp = target.getHp();
         final int currentCount = ++attackCountTotal;
         final int currentOwnerCount = attackCountMap.merge(owner, 1, (old, _) -> old + 1);
@@ -277,7 +273,7 @@ public class Interactive {
         addNumberRecord(target, customText);
 
         // 部分造成伤害后生效的御魂(日女歌姬等)
-        if (traceableNumber.getNumber() > 0) {
+        if (traceableNumber.getNumber() > 0 && !attackInfo.isCancel()) {
             // 触发攻击的目标身上的状态
             target.statusRun(Trigger.AFTER_ATTACK, paramAttackInfo);
 
