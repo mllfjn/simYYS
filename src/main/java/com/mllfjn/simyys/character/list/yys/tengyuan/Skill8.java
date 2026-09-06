@@ -53,7 +53,6 @@ class Skill8 extends PassiveSkill {
                 }
                 delete();
             });
-            displayName();
         }
 
         static class StatusDeadLine extends Status {

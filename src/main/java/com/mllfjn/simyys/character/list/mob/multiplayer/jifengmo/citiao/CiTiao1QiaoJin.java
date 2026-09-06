@@ -28,14 +28,16 @@ public class CiTiao1QiaoJin {
                     .get(Attribute.ATTACK, CharacterFinder.Criteria.MAX);
             Status statusQJMax = Status.of("巧劲-攻击最高", character, maxAttack);
             statusQJMax.runOn(Trigger.USED_PU_GONG, _ -> {
-                        Optional<StatusQJNewRoundMark> optional
-                                = statusQJMax.belongTo.getStatus(StatusQJNewRoundMark.class);
-                        if (optional.isEmpty()) {
-                            statusQJMax.belongTo.addStatus(new StatusQJNewRoundMark(statusQJMax.from, statusQJMax.belongTo));
-                            statusQJMax.belongTo.doInteractive(interactive -> {
-                                interactive.getNewRound(statusQJMax.belongTo);
-                                interactive.increaseLocation(statusQJMax.belongTo, 35);
-                            });
+                        if (maxAttack.isInRound()) {
+                            Optional<StatusQJNewRoundMark> optional
+                                    = statusQJMax.belongTo.getStatus(StatusQJNewRoundMark.class);
+                            if (optional.isEmpty()) {
+                                statusQJMax.belongTo.addStatus(new StatusQJNewRoundMark(statusQJMax.from, statusQJMax.belongTo));
+                                statusQJMax.belongTo.doInteractive(interactive -> {
+                                    interactive.getNewRound(statusQJMax.belongTo);
+                                    interactive.increaseLocation(statusQJMax.belongTo, 35);
+                                });
+                            }
                         }
                     })
                     .addTo();
@@ -60,7 +62,7 @@ public class CiTiao1QiaoJin {
                     belongTo.doInteractive(interactive -> {
                         for (Character target : targets) {
                             interactive.attack(
-                                    AttackInfo.createRealAttack(belongTo, skill, target, number * 0.4)
+                                    AttackInfo.createGuDingAttack(belongTo, skill, target, number * 0.4)
                             );
                         }
                     });
@@ -68,17 +70,17 @@ public class CiTiao1QiaoJin {
                 }
             });
 
-            // 回合后添加巧劲减伤,默认关闭
-            runOnAndDisable(Trigger.AFTER_ROUND, _ -> {
+            // 回合后（通过时之隙判断这里应该是行动后）添加巧劲减伤,默认关闭
+            runOnAndDisable(Trigger.AFTER_ACTION, _ -> {
                 StatusQJJianShang.addStack(from, belongTo);
                 disableAction(Trigger.CAUSE_ATTACK);
-                disableAction(Trigger.AFTER_ROUND);
+                disableAction(Trigger.AFTER_ACTION);
             });
 
             // 开始普攻时监听伤害,激活回合后添加状态
             runOn(Trigger.WILL_USE_PU_GONG, _ -> {
                 enableAction(Trigger.CAUSE_ATTACK);
-                enableAction(Trigger.AFTER_ROUND);
+                enableAction(Trigger.AFTER_ACTION);
             });
         }
     }
