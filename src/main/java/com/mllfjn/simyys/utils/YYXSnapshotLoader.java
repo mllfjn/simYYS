@@ -171,7 +171,7 @@ public class YYXSnapshotLoader {
         public String[] equips;
         public int hero_id;
         public String nick_name;
-        public Skill[] skills;
+        private Skill[] skills;
         public int level;
 
         private String equip;
@@ -200,6 +200,10 @@ public class YYXSnapshotLoader {
                 equip = stringJoiner.toString();
             }
             return equip;
+        }
+
+        public void setSkills(Skill[] skills) {
+            this.skills = skills;
         }
     }
 

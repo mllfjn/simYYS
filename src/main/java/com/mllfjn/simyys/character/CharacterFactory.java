@@ -11,6 +11,7 @@ import com.mllfjn.simyys.character.list.sp.laotou.LaoTou;
 import com.mllfjn.simyys.character.list.sp.luwan.LuWan;
 import com.mllfjn.simyys.character.list.sp.sphongye.SPHongYe;
 import com.mllfjn.simyys.character.list.sp.spjin.SpJin;
+import com.mllfjn.simyys.character.list.sp.spyue.SpYue;
 import com.mllfjn.simyys.character.list.sp.yinfan.YinFan;
 import com.mllfjn.simyys.character.list.sp.sphudie.SpHuDie;
 import com.mllfjn.simyys.character.list.sr.haifangzhu.HaiFangZhu;
@@ -65,8 +66,8 @@ public class CharacterFactory {
     public static final Map<String, CharacterMeta> nameMap = new HashMap<>();
 
     private static final Map<String, Image> iconMap = new HashMap<>();
-    public static final List<Class<? extends Character>> FIRE_CHARACTER =
-            List.of(FuJi.class, SPHongYe.class, ShiLing.class, SiJinShen.class, QingJi.class);
+    private static final Set<Class<? extends Character>> FIRE_CHARACTER =
+            Set.of(FuJi.class, SPHongYe.class, ShiLing.class, SiJinShen.class, QingJi.class);
 
     static {
         List<CharacterMeta> yysMap = new ArrayList<>();
@@ -89,6 +90,7 @@ public class CharacterFactory {
         putCharacterMeta(spMap, 355, LuWan.CharacterName, LuWan.class);
         putCharacterMeta(spMap, 388, SPHongYe.CharacterName, SPHongYe.class);
         putCharacterMeta(spMap, 594, SpHuDie.CharacterName, SpHuDie.class);
+        putCharacterMeta(spMap, 586, SpYue.CharacterName, SpYue.class);
 
         List<CharacterMeta> ssrMap = new ArrayList<>();
         characterMapList.put("SSR", ssrMap);
@@ -143,6 +145,10 @@ public class CharacterFactory {
         list.add(characterMeta);
         idMap.put(id, characterMeta);
         nameMap.put(name, characterMeta);
+    }
+
+    public static boolean isFireCharacter(Character character) {
+        return FIRE_CHARACTER.contains(character.getClass());
     }
 
     public static Character getCharacter(String name) {
