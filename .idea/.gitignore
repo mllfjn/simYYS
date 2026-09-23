@@ -4,3 +4,8 @@
 /AndroidProjectSystem.xml
 /migrations.xml
 /runConfigurations.xml
+/deploymentTargetSelector.xml
+/deviceManager.xml
+/kotlinc.xml
+/artifacts/shared.xml
+/artifacts/shared_jvm.xml
