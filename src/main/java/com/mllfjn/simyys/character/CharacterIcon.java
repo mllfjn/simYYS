@@ -22,12 +22,12 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.util.Callback;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Optional;
 
@@ -104,7 +104,8 @@ public class CharacterIcon implements Serializable {
     // 技能选择栏
     private transient ComboBox<Skill> skillBox;
     // 状态显示
-    private final MemoryLabel[] memoryLabels;
+    private final AttributeMemory[] attributeMemories;
+    private final ArrayList<String> attributeShowList = new ArrayList<>();
     // 红绿标的那个标
     private transient HBox autoTo;
     // 左键点击时的红绿标菜单
@@ -123,13 +124,11 @@ public class CharacterIcon implements Serializable {
         this.character = character;
 
         Attribute[] attributes = Attribute.values();
-        memoryLabels = new MemoryLabel[attributes.length];
+        attributeMemories = new AttributeMemory[attributes.length];
         for (int i = 0; i < attributes.length; i++) {
-            MemoryLabel memoryLabel = new MemoryLabel(character, attributes[i]);
-            memoryLabels[i] = memoryLabel;
+            AttributeMemory memoryLabel = new AttributeMemory(character, attributes[i]);
+            attributeMemories[i] = memoryLabel;
         }
-        memoryLabels[Attribute.SPEED.ordinal()].displaying = true;
-        memoryLabels[Attribute.LOCATION.ordinal()].displaying = true;
     }
 
     public void reset() {
@@ -230,9 +229,18 @@ public class CharacterIcon implements Serializable {
 
         bottom = new VBox(skillBox);
         bottom.setMaxWidth(MAX_WIDTH);
-        Menu menuSetAttributeVisible = new Menu("显示属性");
-        for (MemoryLabel memoryLabel : memoryLabels) {
-            memoryLabel.reset(menuSetAttributeVisible);
+        Menu menuAlwaysShow = new Menu("总是显示属性");
+        for (AttributeMemory attributeMemory : attributeMemories) {
+            CheckMenuItem item = new CheckMenuItem(attributeMemory.attribute.getText());
+            item.selectedProperty().addListener((_, _, val) -> {
+                        attributeMemory.setAlwaysShow(val);
+                        if (val) {
+                            attributeMemory.refresh(attributeShowList);
+                        }
+                        showAttributes();
+                    }
+            );
+            menuAlwaysShow.getItems().add(item);
         }
 
         Menu menuSetAttribute = new Menu("设置属性");
@@ -271,7 +279,7 @@ public class CharacterIcon implements Serializable {
                 })
         );
 
-        ContextMenu menu = new ContextMenu(menuSetAttributeVisible, menuSetAttribute);
+        ContextMenu menu = new ContextMenu(menuAlwaysShow, menuSetAttribute);
         bottom.setOnContextMenuRequested(event ->
                 menu.show(bottom, event.getScreenX(), event.getScreenY())
         );
@@ -383,8 +391,19 @@ public class CharacterIcon implements Serializable {
     }
 
     private void refreshProperties() {
-        for (MemoryLabel memoryLabel : memoryLabels) {
-            memoryLabel.refresh();
+        attributeShowList.clear();
+        for (AttributeMemory attributeMemory : attributeMemories) {
+            attributeMemory.refresh(attributeShowList);
+        }
+        showAttributes();
+    }
+
+    private void showAttributes() {
+        bottom.getChildren().clear();
+        if (!attributeShowList.isEmpty()) {
+            for (String s : attributeShowList) {
+                bottom.getChildren().add(new Text(s));
+            }
         }
     }
 
@@ -470,125 +489,4 @@ public class CharacterIcon implements Serializable {
         return yuHunIcon[index];
     }
 
-    class MemoryLabel implements Serializable {
-        private final Character character;
-        private final Attribute attribute;
-
-        private double num;
-        private boolean displaying = false;
-        private boolean showingChanged = false;
-
-        private transient Label label;
-        private transient CheckMenuItem item;
-
-        private MemoryLabel(Character character, Attribute attribute) {
-            this.attribute = attribute;
-            this.character = character;
-
-            num = attribute.getGetter().apply(character);
-        }
-
-        public void reset(Menu menu) {
-            item = new CheckMenuItem(attribute.getText());
-            if (displaying) {
-                item.setSelected(true);
-            }
-            item.selectedProperty().addListener((_, _, val) -> {
-                if (val) {
-                    start();
-                    setLabelText();
-                } else {
-                    stop();
-                }
-            });
-            menu.getItems().add(item);
-            if (displaying) {
-                createLabel(false);
-                setLabelText();
-            }
-        }
-
-        public void refresh() {
-            double newNumber = attribute.getGetter().apply(character);
-            if (newNumber != num) {
-                if (!displaying) {
-                    item.setSelected(true);
-//                    start();
-                }
-                setLabelText(newNumber);
-                num = newNumber;
-                setChanged(true);
-            } else if (showingChanged) {
-                setChanged(false);
-            }
-        }
-
-        private void start() {
-            displaying = true;
-            if (label == null) {
-                createLabel(true);
-            } else {
-                character.getCharacterIcon().bottom.getChildren().add(getIndex(), label);
-            }
-        }
-
-        private void stop() {
-            displaying = false;
-            character.getCharacterIcon().bottom.getChildren().remove(label);
-        }
-
-        private void createLabel(boolean shouldOrder) {
-            label = new Label();
-            label.setFont(Font.font(10));
-
-            if (!shouldOrder) {
-                character.getCharacterIcon().bottom.getChildren().add(label);
-            } else {
-                character.getCharacterIcon().bottom.getChildren().add(getIndex(), label);
-            }
-        }
-
-        private int getIndex() {
-            int ordinal = attribute.ordinal();
-            int count = 0;
-            for (int i = 0; i < ordinal; i++) {
-                if (CharacterIcon.this.memoryLabels[i].displaying) {
-                    count++;
-                }
-            }
-            return count;
-        }
-
-        private void setLabelText() {
-            label.setText(attribute.getText() + ":" + DecimalFormatUtil.df_0_2.format(num));
-        }
-
-        private void setLabelText(double newNumber) {
-            // 生命:1234(+234)
-
-            StringBuilder sb = new StringBuilder();
-            sb.append(attribute.getText()).append(":").append(DecimalFormatUtil.df_0_2.format(newNumber));
-            sb.append("(");
-            double difference = newNumber - num;
-            if (difference > 0) {
-                sb.append("+");
-            }
-            sb.append(DecimalFormatUtil.df_0_2.format(difference)).append(")");
-            label.setText(sb.toString());
-        }
-
-        private void setChanged(boolean changed) {
-            if (changed) {
-                if (!showingChanged) {
-                    showingChanged = true;
-                    // 如果变更就换成红色
-                    label.setStyle("-fx-text-fill: red");
-                }
-            } else {
-                label.setStyle("-fx-text-fill: black");
-                setLabelText();
-                showingChanged = false;
-            }
-        }
-    }
 }
