@@ -15,7 +15,7 @@ class SpecialHaiFangZhu extends HaiFangZhu {
         this.setInitDefense(352);
         this.forceSetMaxHp(64720, true);
         this.setInitBaseAttack(3483);
-        this.setInitSpeed(100);
+        this.setInitSpeed(110);
         this.setInitCritPower(150);
 
         skill1Level = 5;
