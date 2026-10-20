@@ -29,7 +29,7 @@ class Skill2 extends Skill {
                 .getPriorAuto(Attribute.ATTACK, CharacterFinder.Criteria.MAX);
 
         new StatusChaNa(getBelongTo(), target,
-                level >= 4 ? 2 : level == 3 ? 1.5 : 1,
+                level >= 4 ? 0.02 : level == 3 ? 0.015 : 0.01,
                 level >= 5
         );
 
