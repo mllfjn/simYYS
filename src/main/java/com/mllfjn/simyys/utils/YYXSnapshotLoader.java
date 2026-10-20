@@ -223,7 +223,7 @@ public class YYXSnapshotLoader {
         public double value;
     }
 
-    public static class Skill {
+    public static final class Skill {
         public int level;
     }
 
