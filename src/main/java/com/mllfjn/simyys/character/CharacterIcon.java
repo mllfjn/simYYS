@@ -87,7 +87,7 @@ public class CharacterIcon implements Serializable {
     private transient VBox top;
     // 中间区域，包括生命护盾头像技能
     private transient VBox center;
-    // 头像以下，显示当前属性
+    // 头像以下，显示技能和当前属性
     private transient VBox bottom;
 
     // 视觉效果
@@ -104,6 +104,7 @@ public class CharacterIcon implements Serializable {
     // 技能选择栏
     private transient ComboBox<Skill> skillBox;
     // 状态显示
+    private transient VBox attributes;
     private final AttributeMemory[] attributeMemories;
     private final ArrayList<String> attributeShowList = new ArrayList<>();
     // 红绿标的那个标
@@ -227,7 +228,8 @@ public class CharacterIcon implements Serializable {
         skillBox.setCellFactory(skillCellFactory);
         skillBox.setMaxWidth(MAX_WIDTH);
 
-        bottom = new VBox(skillBox);
+        attributes = new VBox();
+        bottom = new VBox(skillBox, attributes);
         bottom.setMaxWidth(MAX_WIDTH);
         Menu menuAlwaysShow = new Menu("总是显示属性");
         for (AttributeMemory attributeMemory : attributeMemories) {
@@ -399,10 +401,10 @@ public class CharacterIcon implements Serializable {
     }
 
     private void showAttributes() {
-        bottom.getChildren().clear();
+        attributes.getChildren().clear();
         if (!attributeShowList.isEmpty()) {
             for (String s : attributeShowList) {
-                bottom.getChildren().add(new Text(s));
+                attributes.getChildren().add(new Text(s));
             }
         }
     }
