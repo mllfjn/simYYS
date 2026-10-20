@@ -62,6 +62,13 @@ public abstract class Character implements Serializable {
     // 被封印被动的次数
     private int sealPassiveSkillCount = 0;
 
+    // 咲耶-刹那，仅可普攻
+    private Status chaNa;
+
+    public void chaNa(Status chaNa) {
+        this.chaNa = chaNa;
+    }
+
     private final SerializableObservableList<Skill> skills = new SerializableObservableList<>();
     protected Map<Integer, Integer> lockSkillMap;
     protected Map<Integer, FlagChangeInfo> flagChangeMap;
@@ -495,7 +502,16 @@ public abstract class Character implements Serializable {
             return;
         }
 
+        // 处于其他控制状态跳过回合
         if (isUnderCrowdControl()) {
+            return;
+        }
+
+        // 咲耶-刹那仅普攻回合
+        if (chaNa != null) {
+            usePuGong();
+            chaNa.delete();
+            chaNa = null;
             return;
         }
 
