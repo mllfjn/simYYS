@@ -19,7 +19,7 @@ public class XiaoYe extends CharacterShiShenBase {
 
     @Override
     protected boolean canAwakening() {
-        return false;
+        return true;
     }
 
     @Override

@@ -9,7 +9,12 @@ class StatusYiSui extends Status {
     private StatusYiSui(XiaoYe from, Character belongTo, int duration) {
         super("易碎", from, belongTo, StatusType.DEBUFF, StatusForm.YIN_JI);
         attribute(Attribute.DEFENCE, -300);
-        if (!belongTo.isMob()) {
+
+        if (belongTo.isMob()) {
+            if (from.awakening) {
+                attribute(Attribute.DEFENCE, -400);
+            }
+        } else {
             runOn(Trigger.AFTER_ATTACK, param -> {
                 double damage = ((ParamAttackInfo) param).getAttackInfo().getTraceableNumber().getNumber();
                 if (damage > (from.getInitAttack() * 3)) {
@@ -17,11 +22,14 @@ class StatusYiSui extends Status {
                 }
             });
         }
+
         if (duration > 0) {
             duration(StatusDurationType.CHI_XU, duration);
         }
+
         from.statusYiSui = this;
         beforeDelete(() -> from.statusYiSui = null);
+
         addTo();
     }
 
