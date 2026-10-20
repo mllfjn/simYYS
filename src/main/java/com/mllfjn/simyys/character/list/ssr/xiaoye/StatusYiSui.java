@@ -8,14 +8,16 @@ import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 class StatusYiSui extends Status {
     private StatusYiSui(XiaoYe from, Character belongTo, int duration) {
         super("易碎", from, belongTo, StatusType.DEBUFF, StatusForm.YIN_JI);
-        attribute(Attribute.DEFENCE, -300);
         if (!belongTo.isMob()) {
+            attribute(Attribute.DEFENCE, -300);
             runOn(Trigger.AFTER_ATTACK, param -> {
                 double damage = ((ParamAttackInfo) param).getAttackInfo().getTraceableNumber().getNumber();
                 if (damage > (from.getInitAttack() * 3)) {
                     delete();
                 }
             });
+        } else if (from.awakening) {
+            attribute(Attribute.DEFENCE, -400);
         }
         if (duration > 0) {
             duration(StatusDurationType.CHI_XU, duration);
