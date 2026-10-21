@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
@@ -19,6 +20,7 @@ import com.mllfjn.simyys.character.list.yys.CharacterYYSBase;
 import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
 import com.mllfjn.simyys.character.propertygetter.PropertiesMap;
 import com.mllfjn.simyys.character.propertygetter.PropertyMultiInput;
+import com.mllfjn.simyys.character.yuhun.EquipFactory;
 import com.mllfjn.simyys.starter.Initializer;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelFormat;
@@ -176,7 +178,10 @@ public class QRCodeLoader {
         public Object field1;
         public Object field2;
         public Object field3;
-        public List<List<Integer>> equips; // 御魂 [0]为四件套,[1]为二件套,注意[1]中可能会出现四件套,在此应当忽略
+
+        @JsonDeserialize(using = EquipsDeserializer.class)
+        public String equips; // 御魂
+
         public AttributeLimit attributeLimit;
         public Object field6; // 二四六主属性,无用
 
@@ -184,7 +189,47 @@ public class QRCodeLoader {
         }
 
         public void get(PropertiesMap map) {
-            StringJoiner stringJoiner = new StringJoiner(",");
+            // TODO
+        }
+    }
+
+    public static class EquipsDeserializer extends JsonDeserializer<Object> {
+
+        @Override
+        public Object deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JacksonException {
+            if (p.currentToken() == JsonToken.VALUE_NUMBER_INT) {
+                // 直接为0,代表没有御魂
+                p.nextToken();
+                return null;
+            } else {
+                // [0]为四件套,[1]为二件套,注意[1]中可能会出现四件套,在此应当忽略
+
+                StringJoiner sj = new StringJoiner(",");
+                if (p.nextToken() != JsonToken.VALUE_NUMBER_INT) {
+                    // 四件套存在
+                    addEquip(sj, p.readValueAs(int[].class), 4);
+                }
+
+                if (p.nextToken() != JsonToken.VALUE_NUMBER_INT) {
+                    // 二件套存在
+                    addEquip(sj, p.readValueAs(int[].class), 2);
+                }
+
+                if (sj.length() > 0) {
+                    return sj.toString();
+                } else {
+                    return null;
+                }
+            }
+        }
+
+        private void addEquip(StringJoiner sj, int[] ids, int setCount) {
+            for (int id : ids) {
+                EquipFactory.EquipMeta equipMeta = EquipFactory.ID_MAP.get(300000 + id);
+                if (equipMeta != null && equipMeta.setCount() == setCount) {
+                    sj.add(equipMeta.name());
+                }
+            }
         }
     }
 
