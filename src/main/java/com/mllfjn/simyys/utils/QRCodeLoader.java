@@ -69,15 +69,14 @@ public class QRCodeLoader {
                     byte[] decompressedBytes = new byte[4096];
                     int length = inflater.inflate(decompressedBytes);
 
-                    /*StringBuilder builder = new StringBuilder();
+                    StringBuilder builder = new StringBuilder();
                     for (int i = 0; i < length; i++) {
                         builder.append(String.format("%02x", decompressedBytes[i]));
                     }
-                    System.out.println(builder);*/
+                    System.out.println("QRCodeLoader:\n" + builder);
 
                     ObjectMapper mapper = new ObjectMapper(new MessagePackFactory());
                     Data data = mapper.readValue(decompressedBytes, Data.class);
-//                    System.out.println(data);
 
                     for (CharacterData characterData : data.characterData) {
                         CharacterFactory.CharacterMeta meta = CharacterFactory.idMap.get(characterData.hero_id);
@@ -229,7 +228,7 @@ public class QRCodeLoader {
                     addEquip(sj, p.readValueAs(int[].class), 2);
                 }
 
-                // 这里测试时发现有可能出现[2]，不知道作用
+                // 这里测试时发现有可能出现[2]
                 do {
                     p.nextToken();
                 } while (p.currentToken() != JsonToken.END_ARRAY);
@@ -256,7 +255,7 @@ public class QRCodeLoader {
     public static class AttributesLimit {
         AttributeLimit[] limits;
 
-        public Object field8 = null;
+        public Object field8 = null; // 该字段未读,跳过了
 
         public AttributesLimit(AttributeLimit[] limits) {
             this.limits = limits;
@@ -271,7 +270,7 @@ public class QRCodeLoader {
                 if (loadAttribute == LoadAttribute.ATTACK) {
                     value -= (float) map.get(PropertyKey.GENERAL_BASE_ATTACK_KEY).getDouble();
                 }
-                loadAttribute.setter.apply(map);
+                loadAttribute.setter.apply(map).setValue(value);
             }
 
         }
@@ -289,6 +288,12 @@ public class QRCodeLoader {
                     limits[i] = new AttributeLimit(value[0], value[1]);
                 }
             }
+
+            // 跳过field8
+            do {
+                p.nextToken();
+            } while (p.currentToken() != JsonToken.END_ARRAY);
+
             return new AttributesLimit(limits);
         }
     }
@@ -303,10 +308,15 @@ public class QRCodeLoader {
         }
 
         public float get(float defaultMin, float defaultMax, Random random) {
-            float useMin = (min == -1) ? defaultMin : min;
-            float useMax = (max == -1) ? defaultMax : max;
-
-            return random.nextFloat(useMin, useMax);
+            if (min != -1) {
+                if (min == max) {
+                    return min;
+                } else {
+                    return random.nextFloat(min, max);
+                }
+            } else {
+                return random.nextFloat(defaultMin, defaultMax);
+            }
         }
     }
 
@@ -323,7 +333,7 @@ public class QRCodeLoader {
         ;
         public final float min;
         public final float max;
-        public final Function<PropertiesMap, ?> setter;
+        public final Function<PropertiesMap, PropertyRequire> setter;
         LoadAttribute(float min, float max, Function<PropertiesMap, PropertyRequire> setter) {
             this.min = min;
             this.max = max;
