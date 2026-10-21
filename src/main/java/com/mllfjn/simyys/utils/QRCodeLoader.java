@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -20,6 +19,7 @@ import com.mllfjn.simyys.character.list.yys.CharacterYYSBase;
 import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
 import com.mllfjn.simyys.character.propertygetter.PropertiesMap;
 import com.mllfjn.simyys.character.propertygetter.PropertyMultiInput;
+import com.mllfjn.simyys.character.propertygetter.PropertyRequire;
 import com.mllfjn.simyys.character.yuhun.EquipFactory;
 import com.mllfjn.simyys.starter.Initializer;
 import javafx.scene.image.Image;
@@ -27,15 +27,14 @@ import javafx.scene.image.PixelFormat;
 import javafx.scene.image.PixelReader;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
-import org.msgpack.jackson.dataformat.JsonArrayFormat;
 import org.msgpack.jackson.dataformat.MessagePackFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Base64;
-import java.util.List;
+import java.util.Random;
 import java.util.StringJoiner;
+import java.util.function.Function;
 import java.util.zip.Inflater;
 
 public class QRCodeLoader {
@@ -70,11 +69,11 @@ public class QRCodeLoader {
                     byte[] decompressedBytes = new byte[4096];
                     int length = inflater.inflate(decompressedBytes);
 
-                    /*StringBuilder builder = new StringBuilder();
+                    StringBuilder builder = new StringBuilder();
                     for (int i = 0; i < length; i++) {
                         builder.append(String.format("%02x", decompressedBytes[i]));
                     }
-                    System.out.println(builder);*/
+                    System.out.println(builder);
 
                     ObjectMapper mapper = new ObjectMapper(new MessagePackFactory());
                     Data data = mapper.readValue(decompressedBytes, Data.class);
@@ -182,14 +181,15 @@ public class QRCodeLoader {
         @JsonDeserialize(using = EquipsDeserializer.class)
         public String equips; // 御魂
 
-        public AttributeLimit attributeLimit;
+        public AttributesLimit attributesLimit;
         public Object field6; // 二四六主属性,无用
 
         public Field5() {
         }
 
         public void get(PropertiesMap map) {
-            // TODO
+            map.get(PropertyKey.YU_HUN_KEY).setValue(equips);
+            attributesLimit.get(map);
         }
     }
 
@@ -199,21 +199,25 @@ public class QRCodeLoader {
         public Object deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JacksonException {
             if (p.currentToken() == JsonToken.VALUE_NUMBER_INT) {
                 // 直接为0,代表没有御魂
-                p.nextToken();
                 return null;
             } else {
                 // [0]为四件套,[1]为二件套,注意[1]中可能会出现四件套,在此应当忽略
 
                 StringJoiner sj = new StringJoiner(",");
-                if (p.nextToken() != JsonToken.VALUE_NUMBER_INT) {
+                if (p.nextToken() == JsonToken.START_ARRAY) {
                     // 四件套存在
                     addEquip(sj, p.readValueAs(int[].class), 4);
                 }
 
-                if (p.nextToken() != JsonToken.VALUE_NUMBER_INT) {
+                if (p.nextToken() == JsonToken.START_ARRAY) {
                     // 二件套存在
                     addEquip(sj, p.readValueAs(int[].class), 2);
                 }
+
+                // 这里测试时发现有可能出现[2]，不知道作用
+                do {
+                    p.nextToken();
+                } while (p.currentToken() != JsonToken.END_ARRAY);
 
                 if (sj.length() > 0) {
                     return sj.toString();
@@ -233,19 +237,73 @@ public class QRCodeLoader {
         }
     }
 
-    @JsonFormat(shape = JsonFormat.Shape.ARRAY)
-    public static class AttributeLimit {
-        public Object attack;
-        public Object crit_rate;
-        public Object crit_power;
-        public Object speed;
-        public Object defense;
-        public Object hp;
-        public Object effect_hit_rate;
-        public Object effect_resist_rate;
-        public Object field8;
+    @JsonDeserialize(using = ASLDeserializer.class)
+    public static class AttributesLimit {
+        AttributeLimit[] limits;
 
-        public AttributeLimit() {
+        public Object field8 = null;
+
+        public AttributesLimit(AttributeLimit[] limits) {
+            this.limits = limits;
+        }
+
+        public void get(PropertiesMap map) {
+            Random random = new Random();
+            for (LoadAttribute loadAttribute : LoadAttribute.values()) {
+                if (loadAttribute == LoadAttribute.ATTACK) {
+                } else {
+
+                }
+            }
+        }
+    }
+
+    public static class ASLDeserializer extends JsonDeserializer<Object> {
+        @Override
+        public Object deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JacksonException {
+            AttributeLimit[] limits = new AttributeLimit[LoadAttribute.values().length];
+            for (int i = 0; i < limits.length; i++) {
+                if (p.nextToken() == JsonToken.VALUE_NUMBER_INT) {
+                    limits[i] = new AttributeLimit(-1, -1);
+                } else {
+                    float[] value = p.readValueAs(float[].class);
+                    limits[i] = new AttributeLimit(value[0], value[1]);
+                }
+            }
+            return new AttributesLimit(limits);
+        }
+    }
+
+    public static class AttributeLimit {
+        private final float min;
+        private final float max;
+
+        public AttributeLimit(float min, float max) {
+            this.min = min;
+            this.max = max;
+        }
+
+        public float get(float defaultMin, float defaultMax, Random random) {
+            float useMin = (min == -1) ? defaultMin : min;
+            float useMax = (max == -1) ? defaultMax : max;
+
+            return random.nextFloat(useMin, useMax);
+        }
+    }
+
+    private enum LoadAttribute {
+        // 顺序不可改变!
+        EFFECT_RESIST_RATE(0, 300, pm -> pm.get(PropertyKey.GENERAL_EFFECT_RESIST_RATE_KEY)),
+        CRIT_RATE(10, 220, pm -> pm.get(PropertyKey.GENERAL_CRIT_RATE_KEY)),
+        ATTACK(2000, 20000, pm -> pm.get(PropertyKey.GENERAL_YU_HUN_ATTACK_KEY)),
+        EFFECT_HIT_RATE(0, 300, pm -> pm.get(PropertyKey.GENERAL_EFFECT_HIT_RATE_KEY)),
+        HP(10000, 100000, pm -> pm.get(PropertyKey.GENERAL_HP_KEY)),
+        CRIT_POWER(150, 420, pm -> pm.get(PropertyKey.GENERAL_CRIT_POWER_KEY)),
+        SPEED(100, 300, pm -> pm.get(PropertyKey.GENERAL_SPEED_KEY)),
+        DEFENCE(100, 1200, pm -> pm.get(PropertyKey.GENERAL_DEFENSE_KEY)),
+        ;
+
+        LoadAttribute(float min, float max, Function<PropertiesMap, PropertyRequire> setter) {
         }
     }
 
