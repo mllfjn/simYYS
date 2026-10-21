@@ -5,16 +5,20 @@ import com.mllfjn.simyys.character.PropertyKey;
 import com.mllfjn.simyys.character.propertygetter.PropertiesMap;
 import com.mllfjn.simyys.character.propertygetter.PropertyRequire;
 import com.mllfjn.simyys.character.status.*;
-import com.mllfjn.simyys.collections.StringGroup;
+
+import java.util.List;
+import java.util.Map;
 
 public class QiLingFactory {
-    public static final StringGroup[] QI_LING = new StringGroup[]{new StringGroup("契灵",
-            QiLingHuoLing.QiLingName,
-            QiLingZhenMuShou.QiLingName,
-            QiLingTiHun.QiLingName,
-            QiLingYueMoTu.QiLingName,
-            QiLingZhenNv.QiLingName
-    )};
+
+    public static void addOptions(Map<String, Map<String, List<String>>> map) {
+        map.put(PropertyKey.QI_LING_KEY, Map.of("契灵", List.of(QiLingHuoLing.QiLingName,
+                QiLingZhenMuShou.QiLingName,
+                QiLingTiHun.QiLingName,
+                QiLingYueMoTu.QiLingName,
+                QiLingZhenNv.QiLingName))
+        );
+    }
 
     public static void addQiLing(PropertiesMap map, Character character) {
         PropertyRequire propertyRequire = map.get(PropertyKey.QI_LING_KEY);

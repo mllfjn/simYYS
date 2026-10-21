@@ -1,6 +1,5 @@
 package com.mllfjn.simyys.character.propertygetter;
 
-import com.mllfjn.simyys.collections.StringGroup;
 import com.mllfjn.simyys.starter.Initializer;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.Insets;
@@ -18,20 +17,20 @@ import javafx.stage.Window;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.StringJoiner;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class PropertySelectMulti  extends PropertyRequire implements Serializable {
+public class PropertySelectMulti extends PropertySelect implements Serializable {
     @Serial
     private static final long serialVersionUID = -9067275274183631003L;
     private static final String SPLIT_CHAR = ",";
 
-    private String value;
-    private final StringGroup[] options;
-
     private transient SimpleStringProperty property;
 
-    public PropertySelectMulti(StringGroup[] options) {
-        this.options = options;
+    public PropertySelectMulti(String optionKey) {
+        super(optionKey);
     }
 
     @Override
@@ -57,11 +56,6 @@ public class PropertySelectMulti  extends PropertyRequire implements Serializabl
     }
 
     @Override
-    public String getString() {
-        return value;
-    }
-
-    @Override
     public PropertyRequire setValue(String s) {
         if (property == null) {
             value = s;
@@ -77,17 +71,6 @@ public class PropertySelectMulti  extends PropertyRequire implements Serializabl
             property.addListener((_, _, val) -> value = val);
         }
         return property;
-    }
-
-    private boolean contains(String newValue) {
-        for (StringGroup option : options) {
-            for (String s : option.values()) {
-                if (newValue.equals(s)) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     @Override
@@ -115,33 +98,39 @@ public class PropertySelectMulti  extends PropertyRequire implements Serializabl
             currentValues = List.of(value.split(SPLIT_CHAR));
         }
 
-        CheckBox[][] cbs = new CheckBox[options.length][];
-        for (int i = 0; i < options.length; i++) {
-            String[] values = options[i].values();
-            cbs[i] = new CheckBox[values.length];
+        Set<Map.Entry<String, List<String>>> entries = getOptions().entrySet();
+        CheckBox[][] cbs = new CheckBox[entries.size()][];
+        AtomicInteger i = new AtomicInteger(0);
+        for (Map.Entry<String, List<String>> entry : entries) {
+            List<String> values = entry.getValue();
+            cbs[i.get()] = new CheckBox[values.size()];
             TilePane tp = new TilePane();
-            for (int j = 0; j < values.length; j++) {
-                CheckBox cb = new CheckBox(values[j]);
-                cb.setPrefWidth(75);
-                cbs[i][j] = cb;
 
-                if (currentValues != null && currentValues.contains(values[j])) {
+            for (int j = 0; j < values.size(); j++) {
+                CheckBox cb = new CheckBox(values.get(j));
+                cb.setPrefWidth(75);
+                cbs[i.get()][j] = cb;
+
+                if (currentValues != null && currentValues.contains(values.get(j))) {
                     cb.setSelected(true);
                 }
 
                 tp.getChildren().add(cb);
             }
-            gp.add(new Label(options[i].label()), 0, i);
-            gp.add(tp, 1, i);
+
+            gp.add(new Label(entry.getKey()), 0, i.get());
+            gp.add(tp, 1, i.get());
+
+            i.getAndIncrement();
         }
 
         Button confirmBtn = new Button("确定");
         confirmBtn.setOnAction(_ -> {
             StringJoiner sj = new StringJoiner(SPLIT_CHAR);
-            for (int i = 0; i < cbs.length; i++) {
-                for (int j = 0; j < cbs[i].length; j++) {
-                    if (cbs[i][j].isSelected()) {
-                        sj.add(options[i].values()[j]);
+            for (CheckBox[] cb : cbs) {
+                for (CheckBox checkBox : cb) {
+                    if (checkBox.isSelected()) {
+                        sj.add(checkBox.getText());
                     }
                 }
             }
@@ -150,7 +139,7 @@ public class PropertySelectMulti  extends PropertyRequire implements Serializabl
             stage.close();
         });
 
-        gp.add(confirmBtn, 1, options.length);
+        gp.add(confirmBtn, 1, entries.size());
         gp.setPadding(new Insets(20));
         gp.setVgap(20);
 

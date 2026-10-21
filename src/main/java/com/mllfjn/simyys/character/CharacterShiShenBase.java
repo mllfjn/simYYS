@@ -2,7 +2,6 @@ package com.mllfjn.simyys.character;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.propertygetter.*;
-import com.mllfjn.simyys.collections.StringGroup;
 
 public abstract class CharacterShiShenBase extends Character {
     public int skill1Level = 1;
@@ -13,7 +12,7 @@ public abstract class CharacterShiShenBase extends Character {
     public PropertiesMap getProperties() {
         PropertiesMap map = super.getProperties();
 
-        map.put(PropertyKey.YU_HUN_KEY, new PropertySelectMulti(StringGroup.YU_HUN));
+        map.put(PropertyKey.YU_HUN_KEY, new PropertySelectMulti(PropertyKey.YU_HUN_KEY));
         map.put(PropertyKey.SKILL_KEY, new PropertyInput().setValue(getDefaultSkillLevel()));
 
         if (canAwakening()) {

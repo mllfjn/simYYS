@@ -2,7 +2,6 @@ package com.mllfjn.simyys.character.list.yys;
 
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.PropertyKey;
-import com.mllfjn.simyys.character.list.yys.qiling.QiLingFactory;
 import com.mllfjn.simyys.character.propertygetter.*;
 
 import static com.mllfjn.simyys.character.PropertyKey.YYSSkillDesc;
@@ -23,7 +22,7 @@ public abstract class CharacterYYSBase extends Character {
         map.get(PropertyKey.GENERAL_EFFECT_HIT_RATE_KEY).setValue("0");
         map.get(PropertyKey.GENERAL_EFFECT_RESIST_RATE_KEY).setValue("0");
 
-        map.put(PropertyKey.QI_LING_KEY, new PropertySelectSingle(QiLingFactory.QI_LING));
+        map.put(PropertyKey.QI_LING_KEY, new PropertySelectSingle(PropertyKey.QI_LING_KEY));
 
         ((PropertyCheck) map.get(PropertyKey.GENERAL_YYS_KEY)).setValue(true);
 

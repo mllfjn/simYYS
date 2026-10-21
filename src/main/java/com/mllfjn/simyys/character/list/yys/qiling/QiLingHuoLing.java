@@ -9,7 +9,7 @@ import com.mllfjn.simyys.interactive.Interactive;
 
 import java.util.List;
 
-public class QiLingHuoLing {
+class QiLingHuoLing {
     static final String QiLingName = "火灵";
     private static final Skill SKILL = Skill.getInstance("火灵之力");
 
