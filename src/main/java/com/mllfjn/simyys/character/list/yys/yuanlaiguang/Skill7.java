@@ -12,13 +12,13 @@ import com.mllfjn.simyys.interactive.AttackType;
 import java.util.List;
 import java.util.Optional;
 
-class Skill7Passive extends PassiveSkill {
+class Skill7 extends PassiveSkill {
     static final String SkillName = "剑之垒";
 
     private int count;
     private BattleActionListener listener;
 
-    public Skill7Passive(Character belongTo, int level, int shuYin) {
+    public Skill7(Character belongTo, int level, int shuYin) {
         super(belongTo, level, 7);
 
         Status.of(SkillName + "回合开始前刷新", belongTo)
@@ -63,7 +63,7 @@ class Skill7Passive extends PassiveSkill {
                                 .filterEnemy()
                                 .getList();
                         belongTo.doInteractive(interactive ->
-                                interactive.attackTypical(Skill7Passive.this, targets, mul, AttackType.QUN_TI));
+                                interactive.attackTypical(Skill7.this, targets, mul, AttackType.QUN_TI));
                         listener = null;
                         belongTo.bp.log.addSkill(sb.toString());
                         return true;
@@ -78,7 +78,7 @@ class Skill7Passive extends PassiveSkill {
                 public boolean onBattleAction(BattleEvent event) {
                     if (event instanceof EventActionDone) {
                         belongTo.doInteractive(interactive ->
-                                interactive.attackTypical(Skill7Passive.this, target, mul, AttackType.DAN_TI));
+                                interactive.attackTypical(Skill7.this, target, mul, AttackType.DAN_TI));
                         listener = null;
                         belongTo.bp.log.addSkill(sb.toString());
                         return true;
