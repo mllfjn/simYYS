@@ -5,7 +5,6 @@ import com.mllfjn.simyys.character.PropertyKey;
 import com.mllfjn.simyys.character.list.yys.CharacterYYSBase;
 import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
 import com.mllfjn.simyys.character.propertygetter.PropertiesMap;
-import com.mllfjn.simyys.character.propertygetter.PropertyInput;
 import com.mllfjn.simyys.character.propertygetter.PropertyMultiInput;
 import com.mllfjn.simyys.character.skill.Skill;
 
@@ -13,18 +12,6 @@ import java.util.Optional;
 
 public class BoYa extends CharacterYYSBase {
     public static final String CharacterName = "源博雅";
-    private static final String[] SkillNames = new String[]{
-            Skill1.SkillName, Skill2.SkillName, Skill3.SkillName,
-            Skill4.SkillName, Skill5.SkillName, Skill6.SkillName,
-            Skill7.SkillName, Skill8.SkillName};
-    private static final String[] DefaultSkillLevels = new String[]{
-            "5", "0", "5",
-            "5", "5", "5",
-            "5", "1"};
-    private static final String[] DefaultShuYin = new String[]{
-            "0", "0", "3",
-            "0", "0", "0",
-            "0", "0"};
 
     private Skill4.YinFenShen yinFenShen;
     private Skill8 skill8;
@@ -58,11 +45,23 @@ public class BoYa extends CharacterYYSBase {
         PropertiesMap map = super.getProperties();
 
         // 博雅初始暴击20
-        ((PropertyInput) map.get(PropertyKey.GENERAL_CRIT_RATE_KEY)).setValue("20");
-
-        PropertyKey.addYYSSkill(map, SkillNames, DefaultSkillLevels, DefaultShuYin);
-
+        map.get(PropertyKey.GENERAL_CRIT_RATE_KEY).setValue("20");
+        
         return map;
+    }
+
+    @Override
+    protected YYSSkill[] getSkill() {
+        return new YYSSkill[]{
+                new YYSSkill(Skill1.SkillName, 5, 0),
+                new YYSSkill(Skill2.SkillName, 0, 0),
+                new YYSSkill(Skill3.SkillName, 5, 3),
+                new YYSSkill(Skill4.SkillName, 5, 0),
+                new YYSSkill(Skill5.SkillName, 5, 0),
+                new YYSSkill(Skill6.SkillName, 5, 0),
+                new YYSSkill(Skill7.SkillName, 5, 0),
+                new YYSSkill(Skill8.SkillName, 1, 0)
+        };
     }
 
     @Override

@@ -5,24 +5,33 @@ import com.mllfjn.simyys.character.PropertyKey;
 import com.mllfjn.simyys.character.list.yys.qiling.QiLingFactory;
 import com.mllfjn.simyys.character.propertygetter.*;
 
+import static com.mllfjn.simyys.character.PropertyKey.YYSSkillDesc;
+
 public abstract class CharacterYYSBase extends Character {
     @Override
     public PropertiesMap getProperties() {
         PropertiesMap map = super.getProperties();
 
-        ((PropertyInput) map.get(PropertyKey.GENERAL_SPEED_KEY)).setValue("128");
-        ((PropertyInput) map.get(PropertyKey.GENERAL_YU_HUN_ATTACK_KEY)).setValue("3126");
-        ((PropertyInput) map.get(PropertyKey.GENERAL_HP_KEY)).setValue("27140");
-        ((PropertyInput) map.get(PropertyKey.GENERAL_DEFENSE_KEY)).setValue("1051");
-        ((PropertyInput) map.get(PropertyKey.GENERAL_CRIT_RATE_KEY)).setValue("0");
-        ((PropertyInput) map.get(PropertyKey.GENERAL_CRIT_POWER_KEY)).setValue("150");
-        ((PropertyInput) map.get(PropertyKey.GENERAL_EFFECT_HIT_RATE_KEY)).setValue("0");
-        ((PropertyInput) map.get(PropertyKey.GENERAL_EFFECT_RESIST_RATE_KEY)).setValue("0");
+        map.get(PropertyKey.GENERAL_SPEED_KEY).setValue("128");
+        map.get(PropertyKey.GENERAL_YU_HUN_ATTACK_KEY).setValue("3126");
+        map.get(PropertyKey.GENERAL_HP_KEY).setValue("27140");
+        map.get(PropertyKey.GENERAL_DEFENSE_KEY).setValue("1051");
+        map.get(PropertyKey.GENERAL_CRIT_RATE_KEY).setValue("0");
+        map.get(PropertyKey.GENERAL_CRIT_POWER_KEY).setValue("150");
+        map.get(PropertyKey.GENERAL_EFFECT_HIT_RATE_KEY).setValue("0");
+        map.get(PropertyKey.GENERAL_EFFECT_RESIST_RATE_KEY).setValue("0");
 
         map.put(PropertyKey.QI_LING_KEY, new PropertySelectSingle(QiLingFactory.QI_LING));
 
         ((PropertyCheck) map.get(PropertyKey.GENERAL_YYS_KEY)).setValue(true);
 
+        YYSSkill[] skills = getSkill();
+        for (YYSSkill skill : skills) {
+            map.put(skill.name, new PropertyMultiInput(YYSSkillDesc)
+                    .setValue(0, String.valueOf(skill.defaultLevel))
+                    .setValue(1, String.valueOf(skill.defaultShuYin))
+            );
+        }
         return map;
     }
 
@@ -32,7 +41,9 @@ public abstract class CharacterYYSBase extends Character {
     }
 
     @Override
-    protected void addOwnSkills() {
+    protected void addOwnSkills() {}
 
-    }
+    protected abstract YYSSkill[] getSkill();
+
+    public record YYSSkill(String name, int defaultLevel, int defaultShuYin) {}
 }

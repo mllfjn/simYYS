@@ -50,7 +50,7 @@ class Skill5 extends Skill {
 
         // 与鬼胄相关的内容
         getBelongTo().getSkill(6).ifPresent(skill -> {
-            Skill6Passive skill6 = ((Skill6Passive) skill);
+            Skill6 skill6 = ((Skill6) skill);
             // lv3, lv5-释放后鬼兵部伤害吸收系数提升
             if (level >= 3) {
                 skill6.addAbsorb(level >= 5 ? 0.2 : 0.1);

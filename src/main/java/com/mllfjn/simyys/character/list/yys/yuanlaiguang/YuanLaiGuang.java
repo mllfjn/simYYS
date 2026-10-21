@@ -1,39 +1,38 @@
 package com.mllfjn.simyys.character.list.yys.yuanlaiguang;
 
 import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.PropertyKey;
-import com.mllfjn.simyys.character.list.yys.qiling.QiLingFactory;
+import com.mllfjn.simyys.character.list.yys.CharacterYYSBase;
 import com.mllfjn.simyys.character.propertygetter.*;
 
-public class YuanLaiGuang extends Character {
+public class YuanLaiGuang extends CharacterYYSBase {
     public static final String CharacterName = "源赖光";
-
-    private static final String[] SkillNames = new String[]{
-            Skill1.SkillName, Skill4.SkillName, Skill5.SkillName, Skill6Passive.SkillName, Skill7Passive.SkillName};
-    private static final String[] DefaultSkillLevels = new String[]{"5", "5", "5", "1", "5"};
-    private static final String[] DefaultShuYin = new String[]{"0", "0", "3", "0", "0"};
 
     @Override
     public PropertiesMap getProperties() {
         PropertiesMap map = super.getProperties();
 
-        ((PropertyInput) map.get(PropertyKey.GENERAL_SPEED_KEY)).setValue("142");
-        ((PropertyInput) map.get(PropertyKey.GENERAL_YU_HUN_ATTACK_KEY)).setValue("5568");
-        ((PropertyInput) map.get(PropertyKey.GENERAL_HP_KEY)).setValue("20826");
-        ((PropertyInput) map.get(PropertyKey.GENERAL_DEFENSE_KEY)).setValue("806");
-        ((PropertyInput) map.get(PropertyKey.GENERAL_CRIT_RATE_KEY)).setValue("20");
-        ((PropertyInput) map.get(PropertyKey.GENERAL_CRIT_POWER_KEY)).setValue("150");
-        ((PropertyInput) map.get(PropertyKey.GENERAL_EFFECT_HIT_RATE_KEY)).setValue("0");
-        ((PropertyInput) map.get(PropertyKey.GENERAL_EFFECT_RESIST_RATE_KEY)).setValue("0");
-
-        map.put(PropertyKey.QI_LING_KEY, new PropertySelectSingle(QiLingFactory.QI_LING));
-
-        ((PropertyCheck) map.get(PropertyKey.GENERAL_YYS_KEY)).setValue(true);
-
-        PropertyKey.addYYSSkill(map, SkillNames, DefaultSkillLevels, DefaultShuYin);
+        map.get(PropertyKey.GENERAL_SPEED_KEY).setValue("142");
+        map.get(PropertyKey.GENERAL_YU_HUN_ATTACK_KEY).setValue("5568");
+        map.get(PropertyKey.GENERAL_HP_KEY).setValue("20826");
+        map.get(PropertyKey.GENERAL_DEFENSE_KEY).setValue("806");
+        map.get(PropertyKey.GENERAL_CRIT_RATE_KEY).setValue("20");
 
         return map;
+    }
+
+    @Override
+    protected YYSSkill[] getSkill() {
+        return new YYSSkill[]{
+                new YYSSkill(Skill1.SkillName, 5, 0),
+                null,
+                null,
+                new YYSSkill(Skill4.SkillName, 5, 0),
+                new YYSSkill(Skill5.SkillName, 5, 3),
+                new YYSSkill(Skill6.SkillName, 1, 0),
+                new YYSSkill(Skill7.SkillName, 5, 0),
+                null,
+        };
     }
 
     @Override
@@ -55,23 +54,14 @@ public class YuanLaiGuang extends Character {
             addSkill(new Skill5(this, skillLevels[0], skillLevels[1]));
         }
 
-        skillLevels = ((PropertyMultiInput) map.get(Skill6Passive.SkillName)).getValuesInt();
+        skillLevels = ((PropertyMultiInput) map.get(Skill6.SkillName)).getValuesInt();
         if (skillLevels[0] > 0) {
-            addSkill(new Skill6Passive(this, skillLevels[1]));
+            addSkill(new Skill6(this, skillLevels[1]));
         }
 
-        skillLevels = ((PropertyMultiInput) map.get(Skill7Passive.SkillName)).getValuesInt();
+        skillLevels = ((PropertyMultiInput) map.get(Skill7.SkillName)).getValuesInt();
         if (skillLevels[0] > 0) {
-            addSkill(new Skill7Passive(this, skillLevels[0], skillLevels[1]));
+            addSkill(new Skill7(this, skillLevels[0], skillLevels[1]));
         }
-    }
-
-    @Override
-    protected String getDefaultBaseAttack() {
-        return "3256";
-    }
-
-    @Override
-    protected void addOwnSkills() {
     }
 }

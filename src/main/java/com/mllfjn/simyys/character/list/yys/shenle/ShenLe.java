@@ -1,7 +1,6 @@
 package com.mllfjn.simyys.character.list.yys.shenle;
 
 import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.character.PropertyKey;
 import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
 import com.mllfjn.simyys.character.propertygetter.PropertiesMap;
 import com.mllfjn.simyys.character.list.yys.CharacterYYSBase;
@@ -9,17 +8,19 @@ import com.mllfjn.simyys.character.propertygetter.PropertyMultiInput;
 
 public class ShenLe extends CharacterYYSBase {
     public static final String CharacterName = "神乐";
-    private static final String[] SkillNames = new String[]{Skill1.SkillName, Skill3.SkillName};
-    private static final String[] DefaultSkillLevels = new String[]{"5", "5"};
-    private static final String[] DefaultShuYin = new String[]{"0", "3"};
 
     @Override
-    public PropertiesMap getProperties() {
-        PropertiesMap map = super.getProperties();
-
-        PropertyKey.addYYSSkill(map, SkillNames, DefaultSkillLevels, DefaultShuYin);
-
-        return map;
+    protected YYSSkill[] getSkill() {
+        return new YYSSkill[]{
+                new YYSSkill(Skill1.SkillName, 5, 0),
+                null,
+                new YYSSkill(Skill3.SkillName, 5, 3),
+                null,
+                null,
+                null,
+                null,
+                null,
+        };
     }
 
     @Override
