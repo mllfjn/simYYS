@@ -69,11 +69,11 @@ public class QRCodeLoader {
                     byte[] decompressedBytes = new byte[4096];
                     int length = inflater.inflate(decompressedBytes);
 
-                    StringBuilder builder = new StringBuilder();
+                    /*StringBuilder builder = new StringBuilder();
                     for (int i = 0; i < length; i++) {
                         builder.append(String.format("%02x", decompressedBytes[i]));
                     }
-                    System.out.println(builder);
+                    System.out.println(builder);*/
 
                     ObjectMapper mapper = new ObjectMapper(new MessagePackFactory());
                     Data data = mapper.readValue(decompressedBytes, Data.class);
@@ -260,7 +260,7 @@ public class QRCodeLoader {
 
     public static class ASLDeserializer extends JsonDeserializer<Object> {
         @Override
-        public Object deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JacksonException {
+        public Object deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
             AttributeLimit[] limits = new AttributeLimit[LoadAttribute.values().length];
             for (int i = 0; i < limits.length; i++) {
                 if (p.nextToken() == JsonToken.VALUE_NUMBER_INT) {
@@ -332,7 +332,7 @@ public class QRCodeLoader {
     public static class CDDeserializer extends JsonDeserializer<CharacterData[]> {
 
         @Override
-        public CharacterData[] deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JacksonException {
+        public CharacterData[] deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
             JsonNode treeNode = p.getCodec().readTree(p);
             CharacterData[] result = new CharacterData[treeNode.size()];
 
