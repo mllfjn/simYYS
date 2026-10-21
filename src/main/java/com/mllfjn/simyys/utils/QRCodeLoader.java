@@ -3,7 +3,14 @@ package com.mllfjn.simyys.utils;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JacksonException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.TreeNode;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.zxing.*;
 import com.google.zxing.common.HybridBinarizer;
 import javafx.scene.image.Image;
@@ -11,9 +18,11 @@ import javafx.scene.image.PixelFormat;
 import javafx.scene.image.PixelReader;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
+import org.msgpack.jackson.dataformat.JsonArrayFormat;
 import org.msgpack.jackson.dataformat.MessagePackFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Base64;
 import java.util.zip.Inflater;
 
@@ -69,43 +78,56 @@ public class QRCodeLoader {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Data {
         @JsonProperty("2")
-        @JsonFormat(shape = JsonFormat.Shape.ARRAY)
-        public HeroData[] heroData;
+        @JsonDeserialize(using = CDDeserializer.class)
+        public CharacterData[] characterData;
 
         public Data() {}
     }
 
-    public static class HeroData {
+    public abstract static class CharacterData {
         public int hero_id;
         public int star; // 星级
         public int level; // 等级
         public boolean awake; // 觉醒
-        public Object[] skills; // 技能,阴阳师为二维数组,式神一维
 
-        @JsonFormat(shape = JsonFormat.Shape.ARRAY)
+        public CharacterData() {}
+    }
+
+    @JsonFormat(shape = JsonFormat.Shape.ARRAY)
+    public static class YYSData extends CharacterData{
+        public int[][] skills; // 技能
+        public QiLingData qiLingData;
+        public int lockSkill; // 锁定技能,妖术为11
+
+        public YYSData() {}
+    }
+
+    @JsonFormat(shape = JsonFormat.Shape.ARRAY)
+    public static class HeroData extends CharacterData {
+        public int[] skills; // 技能
         public Field5 field5;
-
         public Object field6;
         public Object field7;
-        public Object lockSkill; // 锁定技能,妖术为11
+        public int lockSkill; // 锁定技能,妖术为11
         public Object field9;
 
         public HeroData() {}
     }
 
+    @JsonFormat(shape = JsonFormat.Shape.ARRAY)
     public static class Field5 {
         public Object field0;
         public Object field1;
         public Object field2;
         public Object field3;
         public Object[] equips; // 御魂 [0]为四件套,[1]为二件套
-
-        @JsonFormat(shape = JsonFormat.Shape.ARRAY)
         public AttributeLimit attributeLimit;
-
         public Object field6; // 二四六主属性,此处无用
+
+        public Field5() {}
     }
 
+    @JsonFormat(shape = JsonFormat.Shape.ARRAY)
     public static class AttributeLimit {
         public Object attack;
         public Object crit_rate;
@@ -116,5 +138,34 @@ public class QRCodeLoader {
         public Object effect_hit_rate;
         public Object effect_resist_rate;
         public Object field8;
+
+        public AttributeLimit() {}
+    }
+
+    @JsonFormat(shape = JsonFormat.Shape.ARRAY)
+    public static class QiLingData {
+        public int id; // 猜测为契灵id
+        public int star; // 星级,无用
+        public int level; // 等级,无用
+        public int filed3;
+        public int[] shuYin; // 术印
+
+        public QiLingData() {}
+    }
+
+    public static class CDDeserializer extends JsonDeserializer<CharacterData[]> {
+
+        @Override
+        public CharacterData[] deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JacksonException {
+            JsonNode treeNode = p.getCodec().readTree(p);
+            CharacterData[] result = new CharacterData[treeNode.size()];
+
+            for (int i = 0; i < treeNode.size(); i++) {
+                JsonNode node = treeNode.get(i);
+                Class<? extends CharacterData> targetType = (i == 0) ? YYSData.class : HeroData.class;
+                result[i] = ctxt.readTreeAsValue(node, targetType);
+            }
+            return result;
+        }
     }
 }
