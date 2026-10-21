@@ -22,7 +22,7 @@ public class YuanLaiGuang extends CharacterYYSBase {
     }
 
     @Override
-    protected YYSSkill[] getSkill() {
+    protected YYSSkill[] getYYSSkills() {
         return new YYSSkill[]{
                 new YYSSkill(Skill1.SkillName, 5, 0),
                 null,

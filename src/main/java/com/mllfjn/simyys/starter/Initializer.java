@@ -149,14 +149,7 @@ public class Initializer extends Application {
             for (CharacterFactory.CharacterMeta value : CharacterFactory.characterMapList.get(label)) {
                 Button btn = new Button(value.name());
                 btn.setPrefWidth(100);
-                btn.setOnAction(_ -> {
-                    PropertiesHolder propertiesHolder = new PropertiesHolder(value.name(),
-                            CharacterFactory.getProperties(value.name()),
-                            new LinkedHashMap<>(), new LinkedHashMap<>()
-                    );
-                    propertiesHolder.show(stageSelect.getScene());
-                    items.add(propertiesHolder);
-                });
+                btn.setOnAction(_ -> addCharacter(value.name()).show(stageSelect.getScene()));
                 tp.getChildren().add(btn);
             }
             gp.add(new Label(label), 0, i);
@@ -169,6 +162,15 @@ public class Initializer extends Application {
         stageSelect.initModality(Modality.WINDOW_MODAL);
         Initializer.installScale(stageSelect, gp, 500, 500);
         stageSelect.showAndWait();
+    }
+
+    private PropertiesHolder addCharacter(String name) {
+        PropertiesHolder propertiesHolder = new PropertiesHolder(name,
+                CharacterFactory.getProperties(name),
+                new LinkedHashMap<>(), new LinkedHashMap<>()
+        );
+        items.add(propertiesHolder);
+        return propertiesHolder;
     }
 
     private void getController(Stage stage, Scene scene, Pane stageRoot, BorderPane borderPane) {
@@ -219,9 +221,7 @@ public class Initializer extends Application {
                 loadDataButton.setTooltip(new Tooltip(result));
             }
         });
-        loadQRCode.setOnAction(_ -> {
-            QRCodeLoader.loadQRCode(stage);
-        });
+        loadQRCode.setOnAction(_ -> QRCodeLoader.loadQRCode(stage, this));
 
         controlPane.getChildren().addAll(saveButton, loadButton, loadDataButton, loadQRCode, startButton);
 

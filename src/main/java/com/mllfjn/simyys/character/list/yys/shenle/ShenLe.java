@@ -10,7 +10,7 @@ public class ShenLe extends CharacterYYSBase {
     public static final String CharacterName = "神乐";
 
     @Override
-    protected YYSSkill[] getSkill() {
+    protected YYSSkill[] getYYSSkills() {
         return new YYSSkill[]{
                 new YYSSkill(Skill1.SkillName, 5, 0),
                 null,

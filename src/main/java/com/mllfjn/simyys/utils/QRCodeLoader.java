@@ -13,6 +13,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.zxing.*;
 import com.google.zxing.common.HybridBinarizer;
+import com.mllfjn.simyys.character.CharacterFactory;
+import com.mllfjn.simyys.character.PropertyKey;
+import com.mllfjn.simyys.character.list.yys.CharacterYYSBase;
+import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
+import com.mllfjn.simyys.character.propertygetter.PropertiesMap;
+import com.mllfjn.simyys.character.propertygetter.PropertyMultiInput;
+import com.mllfjn.simyys.starter.Initializer;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelFormat;
 import javafx.scene.image.PixelReader;
@@ -23,12 +30,15 @@ import org.msgpack.jackson.dataformat.MessagePackFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
+import java.util.StringJoiner;
 import java.util.zip.Inflater;
 
 public class QRCodeLoader {
 
-    public static void loadQRCode(Window ownerWindow) {
+    public static void loadQRCode(Window ownerWindow, Initializer initializer) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("qrCode",
                 "*.jpg", "*.png")
@@ -81,7 +91,8 @@ public class QRCodeLoader {
         @JsonDeserialize(using = CDDeserializer.class)
         public CharacterData[] characterData;
 
-        public Data() {}
+        public Data() {
+        }
     }
 
     public abstract static class CharacterData {
@@ -90,16 +101,47 @@ public class QRCodeLoader {
         public int level; // 等级
         public boolean awake; // 觉醒
 
-        public CharacterData() {}
+        public CharacterData() {
+        }
+
+        public abstract void get(PropertiesHolder ph);
     }
 
     @JsonFormat(shape = JsonFormat.Shape.ARRAY)
-    public static class YYSData extends CharacterData{
+    public static class YYSData extends CharacterData {
         public int[][] skills; // 技能
         public QiLingData qiLingData;
         public int lockSkill; // 锁定技能,妖术为11
 
-        public YYSData() {}
+        public YYSData() {
+        }
+
+        @Override
+        public void get(PropertiesHolder ph) {
+            if (lockSkill > 0 && lockSkill != 11) {
+                ph.lockSkillMap.put(0, lockSkill);
+            }
+
+            PropertiesMap map = ph.propertiesMap;
+
+            CharacterYYSBase.YYSSkill[] yysSkills = ((CharacterYYSBase) CharacterFactory.getCharacter(ph.name)).yysSkills;
+            for (int i = 0; i < yysSkills.length; i++) {
+                changeSkill(yysSkills[i], i, map);
+            }
+        }
+
+        private void changeSkill(CharacterYYSBase.YYSSkill yysSkill, int index, PropertiesMap map) {
+            for (int[] skill : skills) {
+                int skillID = skill[0];
+                if (skillID == index) {
+                    int skillLevel = skill[1];
+                    ((PropertyMultiInput) map.get(yysSkill.name()))
+                            .setValue(0, String.valueOf(skillLevel))
+                            .setValue(1, String.valueOf(qiLingData.getShuYin(skillID)));
+                    break;
+                }
+            }
+        }
     }
 
     @JsonFormat(shape = JsonFormat.Shape.ARRAY)
@@ -111,7 +153,21 @@ public class QRCodeLoader {
         public int lockSkill; // 锁定技能,妖术为11
         public Object field9;
 
-        public HeroData() {}
+        public HeroData() {
+        }
+
+        @Override
+        public void get(PropertiesHolder ph) {
+            if (lockSkill > 0 && lockSkill != 11) {
+                ph.lockSkillMap.put(0, lockSkill);
+            }
+
+            ph.propertiesMap.get(PropertyKey.SKILL_KEY).setValue(
+                    skills[0] * 100
+                            + skills[1] * 10
+                            + skills[2]
+            );
+        }
     }
 
     @JsonFormat(shape = JsonFormat.Shape.ARRAY)
@@ -120,11 +176,16 @@ public class QRCodeLoader {
         public Object field1;
         public Object field2;
         public Object field3;
-        public Object[] equips; // 御魂 [0]为四件套,[1]为二件套
+        public List<List<Integer>> equips; // 御魂 [0]为四件套,[1]为二件套,注意[1]中可能会出现四件套,在此应当忽略
         public AttributeLimit attributeLimit;
-        public Object field6; // 二四六主属性,此处无用
+        public Object field6; // 二四六主属性,无用
 
-        public Field5() {}
+        public Field5() {
+        }
+
+        public void get(PropertiesMap map) {
+            StringJoiner stringJoiner = new StringJoiner(",");
+        }
     }
 
     @JsonFormat(shape = JsonFormat.Shape.ARRAY)
@@ -139,7 +200,8 @@ public class QRCodeLoader {
         public Object effect_resist_rate;
         public Object field8;
 
-        public AttributeLimit() {}
+        public AttributeLimit() {
+        }
     }
 
     @JsonFormat(shape = JsonFormat.Shape.ARRAY)
@@ -150,7 +212,18 @@ public class QRCodeLoader {
         public int filed3;
         public int[] shuYin; // 术印
 
-        public QiLingData() {}
+        public QiLingData() {
+        }
+
+        public int getShuYin(int skillID) {
+            int count = 0;
+            for (int i : shuYin) {
+                if (i == skillID) {
+                    count++;
+                }
+            }
+            return count;
+        }
     }
 
     public static class CDDeserializer extends JsonDeserializer<CharacterData[]> {
