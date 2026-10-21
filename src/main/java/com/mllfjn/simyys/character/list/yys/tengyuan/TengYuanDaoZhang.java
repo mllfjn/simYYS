@@ -1,26 +1,12 @@
 package com.mllfjn.simyys.character.list.yys.tengyuan;
 
 import com.mllfjn.simyys.BattlePane;
-import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.PropertyKey;
-import com.mllfjn.simyys.character.list.yys.qiling.QiLingFactory;
+import com.mllfjn.simyys.character.list.yys.CharacterYYSBase;
 import com.mllfjn.simyys.character.propertygetter.*;
 
-public class TengYuanDaoZhang extends Character {
+public class TengYuanDaoZhang extends CharacterYYSBase {
     public static final String CharacterName = "藤原道长";
-
-    private static final String[] SkillNames = new String[]{
-            Skill1.SkillName, Skill2.SkillName, Skill3.SkillName,
-            Skill4.SkillName, Skill5.SkillName, Skill6.SkillName,
-            Skill7.SkillName, Skill8.SkillName};
-    private static final String[] DefaultSkillLevels = new String[]{
-            "5", "0", "0",
-            "5", "5", "5",
-            "1", "6"};
-    private static final String[] DefaultShuYin = new String[]{
-            "0", "0", "0",
-            "0", "0", "0",
-            "0", "0"};
 
     private final StatusLvYin statusLvYin;
 
@@ -38,22 +24,23 @@ public class TengYuanDaoZhang extends Character {
     @Override
     public PropertiesMap getProperties() {
         PropertiesMap map = super.getProperties();
-
-        ((PropertyInput) map.get(PropertyKey.GENERAL_SPEED_KEY)).setValue("142");
-        ((PropertyInput) map.get(PropertyKey.GENERAL_YU_HUN_ATTACK_KEY)).setValue("3126");
-        ((PropertyInput) map.get(PropertyKey.GENERAL_HP_KEY)).setValue("27140");
-        ((PropertyInput) map.get(PropertyKey.GENERAL_DEFENSE_KEY)).setValue("806");
-        ((PropertyInput) map.get(PropertyKey.GENERAL_CRIT_RATE_KEY)).setValue("0");
-        ((PropertyInput) map.get(PropertyKey.GENERAL_CRIT_POWER_KEY)).setValue("150");
-        ((PropertyInput) map.get(PropertyKey.GENERAL_EFFECT_HIT_RATE_KEY)).setValue("0");
-        ((PropertyInput) map.get(PropertyKey.GENERAL_EFFECT_RESIST_RATE_KEY)).setValue("0");
-
-        map.put(PropertyKey.QI_LING_KEY, new PropertySelectSingle(QiLingFactory.QI_LING));
-
-        ((PropertyCheck) map.get(PropertyKey.GENERAL_YYS_KEY)).setValue(true);
-
-        PropertyKey.addYYSSkill(map, SkillNames, DefaultSkillLevels, DefaultShuYin);
+        map.get(PropertyKey.GENERAL_SPEED_KEY).setValue("142");
+        map.get(PropertyKey.GENERAL_DEFENSE_KEY).setValue("806");
         return map;
+    }
+
+    @Override
+    protected YYSSkill[] getSkill() {
+        return new YYSSkill[]{
+                new YYSSkill(Skill1.SkillName, 5, 0),
+                new YYSSkill(Skill2.SkillName, 0, 0),
+                new YYSSkill(Skill3.SkillName, 0, 0),
+                new YYSSkill(Skill4.SkillName, 5, 3),
+                new YYSSkill(Skill5.SkillName, 5, 3),
+                new YYSSkill(Skill6.SkillName, 5, 0),
+                new YYSSkill(Skill7.SkillName, 1, 0),
+                new YYSSkill(Skill8.SkillName, 6, 0)
+        };
     }
 
     @Override
@@ -126,15 +113,5 @@ public class TengYuanDaoZhang extends Character {
         } else {
             super.round();
         }
-    }
-
-    @Override
-    protected String getDefaultBaseAttack() {
-        return "3256";
-    }
-
-    @Override
-    protected void addOwnSkills() {
-
     }
 }

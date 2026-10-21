@@ -1,7 +1,5 @@
 package com.mllfjn.simyys.character;
 
-import com.mllfjn.simyys.character.propertygetter.*;
-
 public class PropertyKey {
     public static final String GENERAL_SPEED_KEY = "速度";
     public static final String GENERAL_BASE_ATTACK_KEY = "基础攻击";
@@ -44,14 +42,5 @@ public class PropertyKey {
     public static final String JUE_XING_KEY = "是否觉醒";
     public static final String QI_LING_KEY = "契灵";
 
-    private static final String[] YYSSkillDesc = new String[]{"技能等级", "契灵术印等级"};
-
-    public static void addYYSSkill(PropertiesMap map
-            , String[] names, String[] defaultLevels, String[] defaultShuYin) {
-        for (int i = 0; i < names.length; i++) {
-            map.put(names[i], new PropertyMultiInput(YYSSkillDesc)
-                    .setValue(0, defaultLevels[i])
-                    .setValue(1, defaultShuYin[i]));
-        }
-    }
+    public static final String[] YYSSkillDesc = new String[]{"技能等级", "契灵术印等级"};
 }

@@ -8,13 +8,13 @@ import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.InteractiveInfo;
 
-class Skill6Passive extends PassiveSkill {
+class Skill6 extends PassiveSkill {
     static final String SkillName = "鬼胄";
 
     private final StatusShieldGZ status;
     private StatusGZFS statusGZFS;
 
-    public Skill6Passive(Character belongTo, int shuYin) {
+    public Skill6(Character belongTo, int shuYin) {
         super(belongTo, 0, 6);
         status = new StatusShieldGZ(belongTo, shuYin);
         belongTo.addStatus(status);
@@ -55,7 +55,7 @@ class Skill6Passive extends PassiveSkill {
                     belongTo.getSkill(7).ifPresent(skill -> {
                         AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
                         if (attackInfo.getTraceableNumber().getNumber() == 0) {
-                            ((Skill7Passive) skill).piZhan(attackInfo.getAttacker());
+                            ((Skill7) skill).piZhan(attackInfo.getAttacker());
                         }
                     })
             );
@@ -79,7 +79,7 @@ class Skill6Passive extends PassiveSkill {
 
                 double realUsed = Math.min(number, maxUse);
 
-                interactiveInfo.getTraceableNumber().sub(realUsed, Skill6Passive.SkillName);
+                interactiveInfo.getTraceableNumber().sub(realUsed, Skill6.SkillName);
                 maxShield -= realUsed;
             }
             return false;

@@ -2,7 +2,6 @@ package com.mllfjn.simyys.character.list.yys.qingming;
 
 import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.character.PropertyKey;
 import com.mllfjn.simyys.character.list.yys.CharacterYYSBase;
 import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
 import com.mllfjn.simyys.character.propertygetter.PropertiesMap;
@@ -15,17 +14,19 @@ import java.util.Optional;
 
 public class QingMing extends CharacterYYSBase {
     public static final String CharacterName = "晴明";
-    private static final String[] SkillNames = new String[]{Skill1.SkillName, Skill5.SkillName, Skill8.SkillName};
-    private static final String[] DefaultSkillLevels = new String[]{"5", "5", "5"};
-    private static final String[] DefaultShuYin = new String[]{"0", "3", "3"};
 
     @Override
-    public PropertiesMap getProperties() {
-        PropertiesMap map = super.getProperties();
-
-        PropertyKey.addYYSSkill(map, SkillNames, DefaultSkillLevels, DefaultShuYin);
-
-        return map;
+    protected YYSSkill[] getSkill() {
+        return new YYSSkill[]{
+                new YYSSkill(Skill1.SkillName, 5, 0),
+                null,
+                null,
+                null,
+                new YYSSkill(Skill5.SkillName, 5, 3),
+                null,
+                null,
+                new YYSSkill(Skill8.SkillName, 1, 3)
+        };
     }
 
     @Override
