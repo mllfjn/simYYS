@@ -16,6 +16,7 @@ import com.google.zxing.common.HybridBinarizer;
 import com.mllfjn.simyys.character.CharacterFactory;
 import com.mllfjn.simyys.character.PropertyKey;
 import com.mllfjn.simyys.character.list.yys.CharacterYYSBase;
+import com.mllfjn.simyys.character.list.yys.qiling.QiLingFactory;
 import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
 import com.mllfjn.simyys.character.propertygetter.PropertiesMap;
 import com.mllfjn.simyys.character.propertygetter.PropertyMultiInput;
@@ -69,11 +70,11 @@ public class QRCodeLoader {
                     byte[] decompressedBytes = new byte[4096];
                     int length = inflater.inflate(decompressedBytes);
 
-                    StringBuilder builder = new StringBuilder();
+                    /*StringBuilder builder = new StringBuilder();
                     for (int i = 0; i < length; i++) {
                         builder.append(String.format("%02x", decompressedBytes[i]));
                     }
-                    System.out.println("QRCodeLoader:\n" + builder);
+                    System.out.println("QRCodeLoader:\n" + builder);*/
 
                     ObjectMapper mapper = new ObjectMapper(new MessagePackFactory());
                     Data data = mapper.readValue(decompressedBytes, Data.class);
@@ -132,6 +133,11 @@ public class QRCodeLoader {
 
             PropertiesMap map = ph.propertiesMap;
 
+            QiLingFactory.QiLingMeta meta = QiLingFactory.ID_MAP.get(qiLingData.id);
+            if (meta != null) {
+                map.get(PropertyKey.QI_LING_KEY).setValue(meta.name());
+            }
+
             CharacterYYSBase.YYSSkill[] yysSkills = ((CharacterYYSBase) CharacterFactory.getCharacter(ph.name)).yysSkills;
             for (int i = 0; i < yysSkills.length; i++) {
                 changeSkill(yysSkills[i], i, map);
@@ -143,13 +149,13 @@ public class QRCodeLoader {
                 return;
             }
 
-            int targetLevel = 0;
+            int targetLevel = index == 0 ? 5 : 0; // 普攻等级没写在这里
             int targetShuYin = 0;
             for (int[] skill : skills) {
                 int skillID = skill[0];
-                if (skillID == index) {
+                if (skillID == (index + 1)) {
                     targetLevel = skill[1];
-                    targetShuYin = qiLingData.getShuYin(index);
+                    targetShuYin = qiLingData.getShuYin(skillID);
                     break;
                 }
             }

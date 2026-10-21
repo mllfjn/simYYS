@@ -44,6 +44,14 @@ public class PropertySelectSingle extends PropertySelect implements Serializable
     }
 
     @Override
+    public PropertyRequire setValue(String value) {
+        if (contains(value)) {
+            this.value = value;
+        }
+        return this;
+    }
+
+    @Override
     public Node getNode(String desc, Window owner) {
         return getSelectWindow(desc, owner);
     }
