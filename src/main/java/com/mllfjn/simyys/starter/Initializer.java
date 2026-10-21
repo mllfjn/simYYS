@@ -4,6 +4,7 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.collections.SerializableObservableList;
 import com.mllfjn.simyys.customnode.NodeWithController;
 import com.mllfjn.simyys.starter.sceneeffect.SceneEffect;
+import com.mllfjn.simyys.utils.QRCodeLoader;
 import com.mllfjn.simyys.utils.Utils;
 import com.mllfjn.simyys.character.CharacterFactory;
 import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
@@ -178,12 +179,14 @@ public class Initializer extends Application {
         Button saveButton = new Button("保存队伍预设");
         Button loadButton = new Button("读取队伍预设");
         Button loadDataButton = new Button("读取式神数据");
+        Button loadQRCode = new Button("读取阵容码");
         Button startButton = new Button("开始");
 
         int width = 100;
         saveButton.setPrefWidth(width);
         loadButton.setPrefWidth(width);
         loadDataButton.setPrefWidth(width);
+        loadQRCode.setPrefWidth(width);
         startButton.setPrefWidth(width);
 
         saveButton.setOnAction(_ -> saveDate(stage));
@@ -216,8 +219,11 @@ public class Initializer extends Application {
                 loadDataButton.setTooltip(new Tooltip(result));
             }
         });
+        loadQRCode.setOnAction(_ -> {
+            QRCodeLoader.loadQRCode(stage);
+        });
 
-        controlPane.getChildren().addAll(saveButton, loadButton, loadDataButton, startButton);
+        controlPane.getChildren().addAll(saveButton, loadButton, loadDataButton, loadQRCode, startButton);
 
         borderPane.setTop(controlPane);
     }

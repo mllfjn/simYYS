@@ -74,7 +74,7 @@ public class CharacterFactory {
         List<CharacterMeta> yysMap = new ArrayList<>();
         characterMapList.put("阴阳师", yysMap);
         int index = 1;
-        putCharacterMeta(yysMap, index++, QingMing.CharacterName, QingMing.class);
+        putCharacterMeta(yysMap, 10, QingMing.CharacterName, QingMing.class);
         putCharacterMeta(yysMap, index++, ShenLe.CharacterName, ShenLe.class);
         putCharacterMeta(yysMap, index++, BoYa.CharacterName, BoYa.class);
         putCharacterMeta(yysMap, index++, YuanLaiGuang.CharacterName, YuanLaiGuang.class);
