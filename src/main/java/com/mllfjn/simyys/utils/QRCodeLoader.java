@@ -77,7 +77,15 @@ public class QRCodeLoader {
 
                     ObjectMapper mapper = new ObjectMapper(new MessagePackFactory());
                     Data data = mapper.readValue(decompressedBytes, Data.class);
-                    System.out.println(data);
+//                    System.out.println(data);
+
+                    for (CharacterData characterData : data.characterData) {
+                        CharacterFactory.CharacterMeta meta = CharacterFactory.idMap.get(characterData.hero_id);
+                        if (meta != null) {
+                            PropertiesHolder ph = initializer.addCharacter(meta.name());
+                            characterData.get(ph);
+                        }
+                    }
                 }
 
             } catch (Exception e) {
@@ -132,16 +140,23 @@ public class QRCodeLoader {
         }
 
         private void changeSkill(CharacterYYSBase.YYSSkill yysSkill, int index, PropertiesMap map) {
+            if (yysSkill == null) {
+                return;
+            }
+
+            int targetLevel = 0;
+            int targetShuYin = 0;
             for (int[] skill : skills) {
                 int skillID = skill[0];
                 if (skillID == index) {
-                    int skillLevel = skill[1];
-                    ((PropertyMultiInput) map.get(yysSkill.name()))
-                            .setValue(0, String.valueOf(skillLevel))
-                            .setValue(1, String.valueOf(qiLingData.getShuYin(skillID)));
+                    targetLevel = skill[1];
+                    targetShuYin = qiLingData.getShuYin(index);
                     break;
                 }
             }
+            ((PropertyMultiInput) map.get(yysSkill.name()))
+                    .setValue(0, String.valueOf(targetLevel))
+                    .setValue(1, String.valueOf(targetShuYin));
         }
     }
 
@@ -149,7 +164,7 @@ public class QRCodeLoader {
     public static class HeroData extends CharacterData {
         public int[] skills; // 技能
         public Field5 field5;
-        public Object field6;
+        public int noCalculating; // 不配置御魂开关,为1时应当清除御魂
         public Object field7;
         public int lockSkill; // 锁定技能,妖术为11
         public Object field9;
@@ -164,10 +179,10 @@ public class QRCodeLoader {
             }
 
             ph.propertiesMap.get(PropertyKey.SKILL_KEY).setValue(
-                    skills[0] * 100
-                            + skills[1] * 10
-                            + skills[2]
+                    skills[0] * 100 + skills[1] * 10 + skills[2]
             );
+
+            field5.get(ph.propertiesMap);
         }
     }
 
@@ -249,12 +264,16 @@ public class QRCodeLoader {
 
         public void get(PropertiesMap map) {
             Random random = new Random();
-            for (LoadAttribute loadAttribute : LoadAttribute.values()) {
+            LoadAttribute[] loadAttributes = LoadAttribute.values();
+            for (int i = 0; i < limits.length; i++) {
+                LoadAttribute loadAttribute = loadAttributes[i];
+                float value = limits[i].get(loadAttribute.min, loadAttribute.max, random);
                 if (loadAttribute == LoadAttribute.ATTACK) {
-                } else {
-
+                    value -= (float) map.get(PropertyKey.GENERAL_BASE_ATTACK_KEY).getDouble();
                 }
+                loadAttribute.setter.apply(map);
             }
+
         }
     }
 
@@ -302,8 +321,13 @@ public class QRCodeLoader {
         SPEED(100, 300, pm -> pm.get(PropertyKey.GENERAL_SPEED_KEY)),
         DEFENCE(100, 1200, pm -> pm.get(PropertyKey.GENERAL_DEFENSE_KEY)),
         ;
-
+        public final float min;
+        public final float max;
+        public final Function<PropertiesMap, ?> setter;
         LoadAttribute(float min, float max, Function<PropertiesMap, PropertyRequire> setter) {
+            this.min = min;
+            this.max = max;
+            this.setter = setter;
         }
     }
 

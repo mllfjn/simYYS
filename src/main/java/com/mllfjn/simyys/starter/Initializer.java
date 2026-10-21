@@ -164,7 +164,7 @@ public class Initializer extends Application {
         stageSelect.showAndWait();
     }
 
-    private PropertiesHolder addCharacter(String name) {
+    public PropertiesHolder addCharacter(String name) {
         PropertiesHolder propertiesHolder = new PropertiesHolder(name,
                 CharacterFactory.getProperties(name),
                 new LinkedHashMap<>(), new LinkedHashMap<>()
