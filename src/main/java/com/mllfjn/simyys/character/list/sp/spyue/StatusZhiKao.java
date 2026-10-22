@@ -14,28 +14,24 @@ import com.mllfjn.simyys.interactive.AttackInfo;
 import com.mllfjn.simyys.interactive.AttackType;
 
 class StatusZhiKao extends Status {
-    private int stack;
-
     private final BattleActionListener listener;
     private boolean added;
 
     public StatusZhiKao(Character from, Character belongTo, Skill2 skill2, int initStack) {
         super("炙烤", from, belongTo, StatusType.GENERAL, StatusForm.YIN_JI);
-        stack = initStack;
+        enableStack(5);
+        setStack(initStack);
         listener = new BattleActionListener(from) {
             @Override
             public boolean onBattleAction(BattleEvent event) {
                 if (event instanceof EventActionDone) {
-                    stack--;
+                    reduceStack();
                     if (from.team != belongTo.team) {
                         from.doInteractive(interactive -> {
                             AttackInfo attackInfo = new AttackInfo(from, skill2, belongTo, AttackType.DAN_TI, from.getDefence());
                             attackInfo.setMultiplier(300);
                             interactive.attack(attackInfo);
                         });
-                    }
-                    if (stack == 0) {
-                        delete();
                     }
                     return true;
                 }
@@ -57,10 +53,18 @@ class StatusZhiKao extends Status {
 
     }
 
+    @Override
+    public void reduceStack() {
+        super.reduceStack();
+        if (stack == 0) {
+            delete();
+        }
+    }
+
     public static void addStack(Character from, Character belongTo, Skill2 skill2, int stack) {
         belongTo.addStatusOrChange(
                 StatusZhiKao.class,
-                statusZhiKao -> statusZhiKao.stack = Math.min(5, statusZhiKao.stack + stack),
+                status -> status.addStack(stack),
                 () -> new StatusZhiKao(from, belongTo, skill2, stack)
         );
     }

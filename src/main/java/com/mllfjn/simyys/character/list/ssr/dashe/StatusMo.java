@@ -9,14 +9,16 @@ import com.mllfjn.simyys.interactive.AttackInfo;
 class StatusMo extends Status {
     private static final String StatusName = "魔";
 
-    private int stack = 1;
-
-    StatusMo(Character from, Character belongTo) {
+    StatusMo(DaShe from, Character belongTo) {
         super(StatusName, from, belongTo, StatusType.GENERAL, StatusForm.YIN_JI);
-        display(() -> StatusName + stack);
+        enableStack(3);
+        setStack(1);
+        displayNameAndStack();
     }
 
-    void addStack(Skill2 skill2) {
+    @Override
+    public void addStack() {
+        Skill2 skill2 = ((DaShe) from).skill2;
         if (stack == 2) {
             from.doInteractive(interactive -> {
                 AttackInfo attackInfo = AttackInfo.createJianJieAttack(from, skill2, belongTo, from.getAttack());

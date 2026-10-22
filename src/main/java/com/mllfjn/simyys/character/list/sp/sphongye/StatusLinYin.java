@@ -19,12 +19,12 @@ class StatusLinYin extends Status {
     private final double beingJianJieAttack;
     private final double beingNormalAttack;
 
-    private int stack = 2;
-
     private StatusLinYin(SPHongYe character, int level, Skill2 skill2) {
         super(StatusName, character);
         type(StatusType.BUFF, StatusForm.YIN_JI);
-        display(() -> StatusName + stack);
+        enableStack(2);
+        setStack(2);
+        displayNameAndStack();
 
         if (level >= 2) {
             attribute(Attribute.IGNORE_DEFENCE, 200.0);
@@ -61,18 +61,18 @@ class StatusLinYin extends Status {
         });
     }
 
-    void reduceStack() {
-        if (stack == 1) {
+    @Override
+    public void reduceStack() {
+        super.reduceStack();
+        if (getStack() == 0) {
             delete();
-        } else {
-            stack--;
         }
     }
 
     static void install(SPHongYe character, int level, Skill2 skill2) {
         character.getStatus(StatusLinYin.class)
                 .ifPresentOrElse(
-                        status -> status.stack = 2,
+                        status -> status.setStack(2),
                         () -> character.addStatus(new StatusLinYin(character, level, skill2))
                 );
     }

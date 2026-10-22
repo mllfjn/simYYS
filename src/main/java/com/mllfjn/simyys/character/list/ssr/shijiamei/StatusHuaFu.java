@@ -10,12 +10,11 @@ import java.util.Optional;
 class StatusHuaFu extends Status {
     private static final String StatusName = "花祓";
 
-    private int stack;
-
     private StatusHuaFu(Character character, int stack) {
         super(StatusName, character, character, StatusType.GENERAL, StatusForm.YIN_JI);
-        this.stack = stack;
-        display(() -> StatusName + stack);
+        enableStack(5);
+        setStack(stack);
+        displayNameAndStack();
     }
 
     static void addStack(Character character, int stack) {
@@ -39,11 +38,5 @@ class StatusHuaFu extends Status {
             return true;
         }
         return false;
-    }
-
-    private void addStack(int addStack) {
-        if (stack < 5) {
-            stack = Math.min(stack + addStack, 5);
-        }
     }
 }

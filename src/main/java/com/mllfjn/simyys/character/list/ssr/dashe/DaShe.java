@@ -13,11 +13,11 @@ public class DaShe extends CharacterShiShenBase {
 
     private List<CharacterSheMo> sheMoList;
 
-    private Skill2 skill2;
+    Skill2 skill2;
     private Skill3 skill3;
 
     void addMo(Character target) {
-        target.addStatusOrChange(StatusMo.class, statusMo -> statusMo.addStack(skill2),
+        target.addStatusOrChange(StatusMo.class, StatusMo::addStack,
                 () -> new StatusMo(this, target)
         );
     }

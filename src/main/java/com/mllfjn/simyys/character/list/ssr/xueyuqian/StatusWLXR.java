@@ -8,11 +8,11 @@ import com.mllfjn.simyys.character.status.StatusType;
 class StatusWLXR extends Status {
     private static final String StatusName = "巫灵雪刃";
 
-    private int stack;
-
     public StatusWLXR(Character character) {
         super(StatusName, character, character, StatusType.GENERAL, StatusForm.YIN_JI);
+        enableStack(3);
         display(() -> {
+            int stack = getStack();
             if (stack > 0) {
                 return StatusName + stack;
             } else {
@@ -20,18 +20,13 @@ class StatusWLXR extends Status {
             }
         });
         retainAfterDie();
-        retainAfterChangeWave(() -> stack = 0);
-    }
-
-    void addStack() {
-        if (stack < 3) {
-            stack++;
-        }
+        retainAfterChangeWave(() -> setStack(0));
     }
 
     boolean evolve() {
+        int stack = getStack();
         if (stack >= 2) {
-            stack -= 2;
+            setStack(stack - 2);
             return true;
         } else {
             return false;

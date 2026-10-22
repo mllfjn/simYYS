@@ -32,11 +32,10 @@ public class HuoZhiChe extends Equip implements YuHunSealResponse {
     }
 
     static class StatusAfterRound extends Status {
-        private int stack;
-
         public StatusAfterRound(Character character) {
             super(YuHunName, character);
             display(() -> {
+                int stack = getStack();
                 if (stack == 0) {
                     return null;
                 }
@@ -44,10 +43,10 @@ public class HuoZhiChe extends Equip implements YuHunSealResponse {
             });
             runOn(Trigger.AFTER_ROUND, _ -> {
                 // 携带者回合结束时,获得1层墓火
-                stack++;
+                addStack();
                 // 累计4层时清空层数并获得1个回合,且该回合鬼火消耗减少1点
-                if (stack == 4) {
-                    stack = 0;
+                if (getStack() == 4) {
+                    setStack(0);
                     belongTo.getInteractive().getNewRound(belongTo);
                     Status.of(YuHunName + "鬼火消耗减少", belongTo)
                             .duration(StatusDurationType.CHI_XU, 1)

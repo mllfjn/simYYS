@@ -10,13 +10,12 @@ import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 class StatusHZBH extends Status {
     private static final String StatusName = "狐族庇护";
 
-    private int stack;
-
     private boolean continueEffective;
 
     private StatusHZBH(Character from, Character belongTo, int stack) {
         super(StatusName, from, belongTo, StatusType.BUFF, StatusForm.YIN_JI);
-        this.stack = stack;
+        enableStack(3);
+        setStack(stack);
 
         duration(StatusDurationType.CHI_XU, 1);
         display(() -> StatusName + stack);
@@ -32,18 +31,14 @@ class StatusHZBH extends Status {
             pac.getEffectInfo().setCancel(true);
             setContinueEffective(pac.getEffectInfo().getSkill());
         });
+
+        addTo();
     }
 
     static void addStack(Character from, Character belongTo, int stack, boolean isIncreaseSpeed) {
         belongTo.getStatus(StatusHZBH.class).ifPresentOrElse(
-                status -> {
-                    status.stack += stack;
-                    if (status.stack > 3) {
-                        status.stack = 3;
-                    }
-                    status.duration(1);
-                },
-                () -> belongTo.addStatus(new StatusHZBH(from, belongTo, stack))
+                status -> status.addStack(stack),
+                () -> new StatusHZBH(from, belongTo, stack)
         );
 
         // 二-lv3加速效果
@@ -52,30 +47,39 @@ class StatusHZBH extends Status {
         }
     }
 
+    @Override
+    public void addStack(int amount) {
+        super.addStack(amount);
+        duration(1);
+    }
+
     private void setContinueEffective(Skill skill) {
         if (!continueEffective) {
             continueEffective = true;
             skill.addSkillEndListener(() -> {
-                if (stack > 1) {
-                    stack--;
-                } else {
-                    delete();
-                }
+                reduceStack();
                 continueEffective = false;
             });
+        }
+    }
+
+    @Override
+    public void reduceStack() {
+        super.reduceStack();
+        if (stack == 0) {
+            delete();
         }
     }
 
     static class StatusHZBHSpeed extends Status {
         private static final String StatusName = "加速";
 
-        private int stack = 1;
-
         private StatusHZBHSpeed(Character character, int duration) {
             super(StatusHZBH.StatusName + StatusName, character, character, StatusType.BUFF, StatusForm.ZHUANG_TAI);
             duration(StatusDurationType.CHI_XU, duration);
-            display(() -> StatusName + stack);
-            attribute(Attribute.SPEED, _ -> 75.0 * stack);
+            enableStackAndAddStack(3);
+            displayNameAndStack();
+            attribute(Attribute.SPEED, _ -> 75.0 * getStack());
         }
 
         static void addStack(Character character) {
@@ -84,7 +88,7 @@ class StatusHZBH extends Status {
             int stackNow = 0;
             for (Status status : character.getStatuses()) {
                 if (status instanceof StatusHZBHSpeed s) {
-                    stackNow += s.stack;
+                    stackNow += s.getStack();
                     if (stackNow == 3) {
                         return;
                     }
@@ -95,7 +99,7 @@ class StatusHZBH extends Status {
             }
 
             if (statusHZBHSpeed != null) {
-                statusHZBHSpeed.stack++;
+                statusHZBHSpeed.addStack();
             } else {
                 character.addStatus(new StatusHZBHSpeed(character, shouldDuration));
             }

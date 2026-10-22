@@ -205,6 +205,10 @@ public class Status implements Serializable {
         return this;
     }
 
+    public final void displayNameAndStack() {
+        displayTextSupplier = () -> name + getStack();
+    }
+
     public boolean isDisplayText() {
         return displayText != null || displayTextSupplier != null;
     }
@@ -249,25 +253,42 @@ public class Status implements Serializable {
     }
 
     // =========================叠层====================================
-    private int maxStack;
-    private int stack;
+    protected int maxStack;
+    protected int stack;
 
     public final Status enableStack(int maxStack) {
         this.maxStack = maxStack;
         return this;
     }
 
-    public final void addStack() {
+    public final void enableStackAndAddStack(int maxStack) {
+        enableStack(maxStack);
+        addStack();
+    }
+
+    public void addStack() {
         if (stack < maxStack) {
             stack++;
         }
     }
 
-    public final void addStack(int amount) {
+    public void addStack(int amount) {
         stack = Math.min(stack + amount, maxStack);
     }
 
-    public int getStack() {
+    public void reduceStack() {
+        if (stack > 0) {
+            stack--;
+        } else {
+            throw new IllegalStateException(this.getClass().getSimpleName() + name + "的层数已经是0");
+        }
+    }
+
+    public final void setStack(int stack) {
+        this.stack = stack;
+    }
+
+    public final int getStack() {
         return stack;
     }
 

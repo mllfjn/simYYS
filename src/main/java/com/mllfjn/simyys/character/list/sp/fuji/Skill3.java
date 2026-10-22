@@ -57,13 +57,12 @@ class Skill3 extends Skill {
     static class StatusTongGu extends Status {
         private static final String StatusName = "瞳蛊";
 
-        private int stack = 1;
-
         private StatusTongGu(Character from, Character belongTo, boolean prohibitIncrease) {
             super(StatusName, from, belongTo);
             type(StatusType.DEBUFF, StatusForm.YIN_JI);
-            display(() -> StatusName + stack);
+            displayNameAndStack();
             duration(StatusDurationType.WEI_CHI, 1);
+            enableStackAndAddStack(3);
             if (prohibitIncrease) {
                 runOn(Trigger.LOCATION_WILL_CHANGE, triggerParam -> {
                     ParamLocationChange plc = (ParamLocationChange) triggerParam;
@@ -80,12 +79,6 @@ class Skill3 extends Skill {
                             StatusTongGu::addStack,
                             () -> belongTo.addStatus(new StatusTongGu(from, belongTo, prohibitIncrease))
                     );
-        }
-
-        void addStack() {
-            if (stack < 3) {
-                stack++;
-            }
         }
     }
 }

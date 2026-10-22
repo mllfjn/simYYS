@@ -92,11 +92,10 @@ public class CiTiao1QiaoJin {
     }
 
     static class StatusQJJianShang extends Status {
-        private int stack = 1;
-
         private StatusQJJianShang(Character from, Character belongTo) {
             super("巧劲-减伤", from, belongTo);
             display(() -> CiTiao1QiaoJin.CiTiaoName + stack);
+            enableStackAndAddStack(30);
             attribute(Attribute.JIAN_SHANG, _ -> 5.0 * stack);
         }
 
@@ -107,7 +106,7 @@ public class CiTiao1QiaoJin {
             for (Character c : list) {
                 c.addStatusOrChange(
                         StatusQJJianShang.class,
-                        status -> status.stack = Math.min(30, status.stack + 1),
+                        Status::addStack,
                         () -> new StatusQJJianShang(from, c)
                 );
             }

@@ -77,57 +77,39 @@ class Skill6 extends PassiveSkill {
     }
 
     static class StatusSpeed extends Status {
-        private final int maxStack;
-
-        private int stack;
-
         public StatusSpeed(Character character, int speedPerStack, int maxStack) {
             super(SkillName + "速度", character, character, StatusType.BUFF, StatusForm.ZHUANG_TAI);
-            this.maxStack = maxStack;
+            enableStack(maxStack);
             attribute(Attribute.SPEED, _ -> (double) (speedPerStack * stack));
+            addTo();
         }
 
         public static void addStack(Character character, int speedPerStack, int maxStack, int stack) {
             character.getStatus(StatusSpeed.class)
-                    .orElseGet(() -> {
-                        StatusSpeed status = new StatusSpeed(character, speedPerStack, maxStack);
-                        character.addStatus(status);
-                        return status;
-                    }).addStack(stack);
-        }
-
-        private void addStack(int addStack) {
-            stack = Math.min(stack + addStack, maxStack);
+                    .orElseGet(() -> new StatusSpeed(character, speedPerStack, maxStack))
+                    .addStack(stack);
         }
     }
 
     static class StatusZhuLvForTeammates extends Status {
-        private final int maxStack;
-        private int stack;
-
         public StatusZhuLvForTeammates(Character character, int critPowerPerStack, int effectResistPerStack,
-                                       int maxStack) {
+                                       int maxStack
+        ) {
             super(SkillName, character, character, StatusType.BUFF, StatusForm.ZHUANG_TAI);
-            this.maxStack = maxStack;
+            enableStack(maxStack);
             attribute(Attribute.CRIT_POWER, _ -> (double) (critPowerPerStack * stack));
             if (effectResistPerStack > 0) {
                 attribute(Attribute.EFFECT_RESIST_RATE, _ -> (double) (effectResistPerStack * stack));
             }
+            addTo();
         }
 
         public static void addStack(Character character, int critPowerPerStack, int effectResistPerStack,
                                     int maxStack, int stack) {
             character.getStatus(StatusZhuLvForTeammates.class)
-                    .orElseGet(() -> {
-                        StatusZhuLvForTeammates status = new StatusZhuLvForTeammates(character,
-                                critPowerPerStack, effectResistPerStack, maxStack);
-                        character.addStatus(status);
-                        return status;
-                    }).addStack(stack);
-        }
-
-        private void addStack(int addStack) {
-            stack = Math.min(stack + addStack, maxStack);
+                    .orElseGet(() ->
+                            new StatusZhuLvForTeammates(character, critPowerPerStack, effectResistPerStack, maxStack))
+                    .addStack(stack);
         }
     }
 }

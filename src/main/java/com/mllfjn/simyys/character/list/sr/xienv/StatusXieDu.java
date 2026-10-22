@@ -22,7 +22,6 @@ class StatusXieDu extends Status {
     private final int multiplier;
     private final Skill2 skill2;
 
-    private int stack = 1;
     private double receivedDamage = 0;
 
     public StatusXieDu(Character from, Character belongTo, int multiplier,
@@ -30,9 +29,10 @@ class StatusXieDu extends Status {
         super(StatusName, from, belongTo, StatusType.DEBUFF, StatusForm.YIN_JI);
         this.multiplier = multiplier;
         this.skill2 = skill2;
-        display(() -> StatusName + stack);
+        enableStackAndAddStack(5);
+        displayNameAndStack();
         setColor(Color.PURPLE);
-        attribute(Attribute.DEFENCE, _ -> -80.0 * stack);
+        attribute(Attribute.DEFENCE, _ -> -80.0 * getStack());
         if (setOffAfterRound) {
             runOn(Trigger.AFTER_ROUND_FIRST, _ -> setOff());
         }
@@ -70,10 +70,6 @@ class StatusXieDu extends Status {
                 });
             }
         }
-    }
-
-    public int getStack() {
-        return stack;
     }
 
     private void jianShe() {

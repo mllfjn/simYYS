@@ -8,13 +8,12 @@ import com.mllfjn.simyys.character.status.*;
 class Skill2 extends PassiveSkill {
     private static final String SkillName = "激怒";
 
-    private int stack;
-
     public Skill2(Character belongTo) {
         super(belongTo, -1, 2);
-        Status.of(SkillName, belongTo)
-                .attribute(Attribute.ATTACK, _ -> stack * 0.08 * belongTo.getInitAttack())
-                .runOn(Trigger.AFTER_ROUND, _ -> stack++)
+        Status status = Status.of(SkillName, belongTo);
+        status.enableStack(Integer.MAX_VALUE)
+                .attribute(Attribute.ATTACK, _ -> status.getStack() * 0.08 * belongTo.getInitAttack())
+                .runOn(Trigger.AFTER_ROUND, _ -> status.addStack())
                 .addTo();
     }
 

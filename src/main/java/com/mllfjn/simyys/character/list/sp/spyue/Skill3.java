@@ -46,20 +46,21 @@ class Skill3 extends Skill {
     }
 
     private class StatusRongXin extends Status {
-        private int stack;
         private final Skill3Special skill3Special;
 
         private StatusRongXin(Character character, Skill2 skill2) {
             super("熔芯", character);
             skill3Special = new Skill3Special(character, skill2);
             type(StatusType.GENERAL, StatusForm.YIN_JI);
-            display(() -> getName() + stack);
+            enableStack(8);
+            displayNameAndStack();
             retainAfterDie();
-            retainAfterChangeWave(() -> stack = 0);
+            retainAfterChangeWave(() -> setStack(0));
         }
 
-        void addStack(int addStack) {
-            this.stack += addStack;
+        @Override
+        public void addStack(int amount) {
+            super.addStack(amount);
             Character character = new CharacterFinder(belongTo)
                     .filterTeammate()
                     .get(Attribute.HP_PERCENT, CharacterFinder.Criteria.MIN);
@@ -69,6 +70,18 @@ class Skill3 extends Skill {
                 skill3Special.usePrivate(belongTo.bp());
             }
         }
+
+        /*void addStack(int addStack) {
+            this.stack += addStack;
+            Character character = new CharacterFinder(belongTo)
+                    .filterTeammate()
+                    .get(Attribute.HP_PERCENT, CharacterFinder.Criteria.MIN);
+            Skill3.this.heal(List.of(character), 200);
+            if (stack == 8) {
+                stack = 0;
+                skill3Special.usePrivate(belongTo.bp());
+            }
+        }*/
     }
 
     private void heal(List<Character> targets, int multiplier) {

@@ -52,22 +52,18 @@ public class ShangHunNiao extends Equip implements YuHunSealResponse {
 
 
     static class StatusShangHunNiao extends Status {
-        private int stack = 1;
 
         public StatusShangHunNiao(Character character) {
             super(YuHunName, character, character, StatusType.BUFF, StatusForm.YIN_JI);
-            display(() -> YuHunName + stack);
-            attribute(Attribute.ZENG_SHANG, _ -> 20.0 * stack);
+            enableStackAndAddStack(6);
+            displayNameAndStack();
+            attribute(Attribute.ZENG_SHANG, _ -> 20.0 * getStack());
         }
 
         public static void addStack(Character character) {
             character.getStatus(StatusShangHunNiao.class)
                     .ifPresentOrElse(
-                            status -> {
-                                if (status.stack < 6) {
-                                    status.stack++;
-                                }
-                            },
+                            Status::addStack,
                             () -> character.addStatus(new StatusShangHunNiao(character))
                     );
         }

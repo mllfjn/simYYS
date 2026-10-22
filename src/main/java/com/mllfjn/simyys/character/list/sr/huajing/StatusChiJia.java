@@ -8,11 +8,11 @@ import com.mllfjn.simyys.interactive.AttackInfo;
 import java.util.List;
 
 class StatusChiJia extends Status {
-    private int stack = 3;
-
     public StatusChiJia(HuaJing from, Character belongTo, Skill2 skill2) {
         super(Skill2.SkillName, from, belongTo);
-        display(() -> Skill2.SkillName + stack);
+        enableStack(3);
+        setStack(3);
+        displayNameAndStack();
         beforeDelete(() -> from.statusChiJia = null);
         runOn(Trigger.AFTER_ACTION, _ -> {
             List<Character> list = new CharacterFinder(belongTo)
@@ -34,14 +34,20 @@ class StatusChiJia extends Status {
                     character.unsealPassiveSkill();
                 }
             });
-            stack--;
+            reduceStack();
             skill2.useDone();
-            if (stack == 1) {
-                delete();
-            }
+
         });
         runOn(Trigger.AFTER_ROUND, _ ->
                 from.doInteractive(interactive -> interactive.increaseLocation(belongTo, 20))
         );
+    }
+
+    @Override
+    public void reduceStack() {
+        super.reduceStack();
+        if (stack == 0) {
+            delete();
+        }
     }
 }

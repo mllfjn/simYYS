@@ -54,24 +54,23 @@ class StatusHuanHua extends Status {
     }
 
     static class StatusHHSpeed extends Status {
-        private int stack = 1;
 
         private StatusHHSpeed(Character character) {
             super("幻化速度", character);
-            attribute(Attribute.SPEED, _ -> belongTo.getInitSpeed() * 0.15 * stack);
+            enableStackAndAddStack(3);
+            attribute(Attribute.SPEED, _ -> belongTo.getInitSpeed() * 0.15 * getStack());
         }
 
         static void addStack(Character character) {
             character.getStatus(StatusHHSpeed.class)
                     .ifPresentOrElse(
-                            status -> status.stack++,
+                            Status::addStack,
                             () -> character.addStatus(new StatusHHSpeed(character))
                     );
         }
 
         static void removeStack(Character character) {
-            character.getStatus(StatusHHSpeed.class)
-                    .ifPresent(status -> status.stack--);
+            character.getStatus(StatusHHSpeed.class).ifPresent(Status::reduceStack);
         }
     }
 }
