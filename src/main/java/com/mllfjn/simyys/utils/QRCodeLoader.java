@@ -65,11 +65,11 @@ public class QRCodeLoader {
                     byte[] decompressedBytes = new byte[4096];
                     int length = inflater.inflate(decompressedBytes);
 
-                    /*StringBuilder builder = new StringBuilder();
+                    StringBuilder builder = new StringBuilder();
                     for (int i = 0; i < length; i++) {
                         builder.append(String.format("%02x", decompressedBytes[i]));
                     }
-                    System.out.println("QRCodeLoader:\n" + builder);*/
+                    System.out.println("QRCodeLoader:\n" + builder);
 
                     ObjectMapper mapper = new ObjectMapper(new MessagePackFactory());
                     Data data = mapper.readValue(decompressedBytes, Data.class);
@@ -129,9 +129,11 @@ public class QRCodeLoader {
 
             PropertiesMap map = ph.propertiesMap;
 
-            QiLingFactory.QiLingMeta meta = QiLingFactory.ID_MAP.get(qiLingData.id);
-            if (meta != null) {
-                map.get(PropertyKey.QI_LING_KEY).setValue(meta.name());
+            if (qiLingData != null) {
+                QiLingFactory.QiLingMeta meta = QiLingFactory.ID_MAP.get(qiLingData.id);
+                if (meta != null) {
+                    map.get(PropertyKey.QI_LING_KEY).setValue(meta.name());
+                }
             }
 
             CharacterYYSBase.YYSSkill[] yysSkills = ((CharacterYYSBase) CharacterFactory.getCharacter(ph.name)).yysSkills;
