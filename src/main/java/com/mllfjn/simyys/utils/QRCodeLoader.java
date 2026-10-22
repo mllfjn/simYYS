@@ -15,6 +15,10 @@ import com.google.zxing.*;
 import com.google.zxing.common.HybridBinarizer;
 import com.mllfjn.simyys.character.CharacterFactory;
 import com.mllfjn.simyys.character.PropertyKey;
+import com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.dizhennian.DiZhenNian;
+import com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.huangkulou.HuangKuLou;
+import com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.shenqilou.ShenQiLou;
+import com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.tuzhizhu.TuZhiZhu;
 import com.mllfjn.simyys.character.list.yys.CharacterYYSBase;
 import com.mllfjn.simyys.character.list.yys.qiling.QiLingFactory;
 import com.mllfjn.simyys.character.propertygetter.*;
@@ -34,6 +38,13 @@ import java.util.function.Function;
 import java.util.zip.Inflater;
 
 public class QRCodeLoader {
+
+    private static final Map<Integer, String> TYPE_MAP = Map.of(
+            10020219, ShenQiLou.CharacterName,
+            10020221, TuZhiZhu.CharacterName,
+            10020223, HuangKuLou.CharacterName,
+            10020225, DiZhenNian.CharacterName
+    );
 
     public static void loadQRCode(Window ownerWindow, Initializer initializer) {
         FileChooser fileChooser = new FileChooser();
@@ -65,11 +76,11 @@ public class QRCodeLoader {
                     byte[] decompressedBytes = new byte[4096];
                     int length = inflater.inflate(decompressedBytes);
 
-                    StringBuilder builder = new StringBuilder();
+                    /*StringBuilder builder = new StringBuilder();
                     for (int i = 0; i < length; i++) {
                         builder.append(String.format("%02x", decompressedBytes[i]));
                     }
-                    System.out.println("QRCodeLoader:\n" + builder);
+                    System.out.println("QRCodeLoader:\n" + builder);*/
 
                     ObjectMapper mapper = new ObjectMapper(new MessagePackFactory());
                     Data data = mapper.readValue(decompressedBytes, Data.class);
@@ -80,6 +91,13 @@ public class QRCodeLoader {
                         if (meta != null) {
                             PropertiesHolder ph = initializer.addCharacter(meta.name());
                             characterData.get(ph, maxAttributeMap);
+                        }
+                    }
+
+                    if (data.type != 0) {
+                        CharacterFactory.CharacterMeta meta = CharacterFactory.nameMap.get(TYPE_MAP.get(data.type));
+                        if (meta != null) {
+                            initializer.addCharacter(meta.name());
                         }
                     }
                 }
@@ -95,6 +113,9 @@ public class QRCodeLoader {
         @JsonProperty("2")
         @JsonDeserialize(using = CDDeserializer.class)
         public CharacterData[] characterData;
+
+        @JsonProperty("6")
+        public int type; // 阵容适用的副本
 
         public Data() {
         }
