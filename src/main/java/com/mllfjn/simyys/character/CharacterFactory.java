@@ -73,12 +73,11 @@ public class CharacterFactory {
     static {
         List<CharacterMeta> yysMap = new ArrayList<>();
         characterMapList.put("阴阳师", yysMap);
-        int index = 1;
         putCharacterMeta(yysMap, 10, QingMing.CharacterName, QingMing.class);
-        putCharacterMeta(yysMap, index++, ShenLe.CharacterName, ShenLe.class);
-        putCharacterMeta(yysMap, index++, BoYa.CharacterName, BoYa.class);
-        putCharacterMeta(yysMap, index++, YuanLaiGuang.CharacterName, YuanLaiGuang.class);
-        putCharacterMeta(yysMap, index++, TengYuanDaoZhang.CharacterName, TengYuanDaoZhang.class);
+        putCharacterMeta(yysMap, 11, ShenLe.CharacterName, ShenLe.class);
+        putCharacterMeta(yysMap, 13, BoYa.CharacterName, BoYa.class);
+        putCharacterMeta(yysMap, 15, YuanLaiGuang.CharacterName, YuanLaiGuang.class);
+        putCharacterMeta(yysMap, 16, TengYuanDaoZhang.CharacterName, TengYuanDaoZhang.class);
 
         List<CharacterMeta> spMap = new ArrayList<>();
         characterMapList.put("SP", spMap);
@@ -134,7 +133,7 @@ public class CharacterFactory {
 
         List<CharacterMeta> mobMap = new ArrayList<>();
         characterMapList.put("怪物", mobMap);
-        index = 50;
+        int index = 50;
         putCharacterMeta(mobMap, index++, ShenQiLou.CharacterName, ShenQiLou.class);
         putCharacterMeta(mobMap, index++, TuZhiZhu.CharacterName, TuZhiZhu.class);
         putCharacterMeta(mobMap, index++, HuangKuLou.CharacterName, HuangKuLou.class);

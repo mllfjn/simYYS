@@ -17,10 +17,7 @@ import com.mllfjn.simyys.character.CharacterFactory;
 import com.mllfjn.simyys.character.PropertyKey;
 import com.mllfjn.simyys.character.list.yys.CharacterYYSBase;
 import com.mllfjn.simyys.character.list.yys.qiling.QiLingFactory;
-import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
-import com.mllfjn.simyys.character.propertygetter.PropertiesMap;
-import com.mllfjn.simyys.character.propertygetter.PropertyMultiInput;
-import com.mllfjn.simyys.character.propertygetter.PropertyRequire;
+import com.mllfjn.simyys.character.propertygetter.*;
 import com.mllfjn.simyys.character.yuhun.EquipFactory;
 import com.mllfjn.simyys.starter.Initializer;
 import javafx.scene.image.Image;
@@ -32,9 +29,7 @@ import org.msgpack.jackson.dataformat.MessagePackFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Base64;
-import java.util.Random;
-import java.util.StringJoiner;
+import java.util.*;
 import java.util.function.Function;
 import java.util.zip.Inflater;
 
@@ -79,11 +74,12 @@ public class QRCodeLoader {
                     ObjectMapper mapper = new ObjectMapper(new MessagePackFactory());
                     Data data = mapper.readValue(decompressedBytes, Data.class);
 
+                    Map<LoadAttribute, Float> maxAttributeMap = new EnumMap<>(LoadAttribute.class);
                     for (CharacterData characterData : data.characterData) {
                         CharacterFactory.CharacterMeta meta = CharacterFactory.idMap.get(characterData.hero_id);
                         if (meta != null) {
                             PropertiesHolder ph = initializer.addCharacter(meta.name());
-                            characterData.get(ph);
+                            characterData.get(ph, maxAttributeMap);
                         }
                     }
                 }
@@ -113,7 +109,7 @@ public class QRCodeLoader {
         public CharacterData() {
         }
 
-        public abstract void get(PropertiesHolder ph);
+        public abstract void get(PropertiesHolder ph, Map<LoadAttribute, Float> maxAttributeMap);
     }
 
     @JsonFormat(shape = JsonFormat.Shape.ARRAY)
@@ -126,7 +122,7 @@ public class QRCodeLoader {
         }
 
         @Override
-        public void get(PropertiesHolder ph) {
+        public void get(PropertiesHolder ph, Map<LoadAttribute, Float> maxAttributeMap) {
             if (lockSkill > 0 && lockSkill != 11) {
                 ph.lockSkillMap.put(0, lockSkill);
             }
@@ -170,7 +166,7 @@ public class QRCodeLoader {
         public int[] skills; // 技能
         public Field5 field5;
         public int noCalculating; // 不配置御魂开关,为1时应当清除御魂
-        public Object field7;
+        public int[] maxAttribute; // 最高属性
         public int lockSkill; // 锁定技能,妖术为11
         public Object field9;
 
@@ -178,7 +174,7 @@ public class QRCodeLoader {
         }
 
         @Override
-        public void get(PropertiesHolder ph) {
+        public void get(PropertiesHolder ph, Map<LoadAttribute, Float> maxAttributeMap) {
             if (lockSkill > 0 && lockSkill != 11) {
                 ph.lockSkillMap.put(0, lockSkill);
             }
@@ -187,7 +183,16 @@ public class QRCodeLoader {
                     skills[0] * 100 + skills[1] * 10 + skills[2]
             );
 
-            field5.get(ph.propertiesMap);
+            field5.get(ph.propertiesMap, maxAttributeMap);
+
+            if (maxAttribute != null) {
+                for (int i : maxAttribute) {
+                    LoadAttribute loadAttribute = LoadAttribute.values()[i];
+                    maxAttributeMap.put(
+                            loadAttribute, ((PropertyInput) loadAttribute.setter.apply(ph.propertiesMap)).getFloat()
+                    );
+                }
+            }
         }
     }
 
@@ -207,7 +212,7 @@ public class QRCodeLoader {
         public Field5() {
         }
 
-        public void get(PropertiesMap map) {
+        public void get(PropertiesMap map, Map<LoadAttribute, Float> maxAttributeMap) {
             map.get(PropertyKey.YU_HUN_KEY).setValue(equips);
             attributesLimit.get(map);
         }
@@ -326,7 +331,7 @@ public class QRCodeLoader {
         }
     }
 
-    private enum LoadAttribute {
+    public enum LoadAttribute {
         // 顺序不可改变!
         EFFECT_RESIST_RATE(0, 300, pm -> pm.get(PropertyKey.GENERAL_EFFECT_RESIST_RATE_KEY)),
         CRIT_RATE(10, 220, pm -> pm.get(PropertyKey.GENERAL_CRIT_RATE_KEY)),
