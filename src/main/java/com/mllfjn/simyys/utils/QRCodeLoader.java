@@ -153,7 +153,9 @@ public class QRCodeLoader {
                 int skillID = skill[0];
                 if (skillID == (index + 1)) {
                     targetLevel = skill[1];
-                    targetShuYin = qiLingData.getShuYin(skillID);
+                    if (qiLingData != null) {
+                        targetShuYin = qiLingData.getShuYin(skillID);
+                    }
                     break;
                 }
             }
