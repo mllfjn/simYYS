@@ -248,6 +248,29 @@ public class Status implements Serializable {
         return this;
     }
 
+    // =========================叠层====================================
+    private int maxStack;
+    private int stack;
+
+    public final Status enableStack(int maxStack) {
+        this.maxStack = maxStack;
+        return this;
+    }
+
+    public final void addStack() {
+        if (stack < maxStack) {
+            stack++;
+        }
+    }
+
+    public final void addStack(int amount) {
+        stack = Math.min(stack + amount, maxStack);
+    }
+
+    public int getStack() {
+        return stack;
+    }
+
     // ========================改变鬼火消耗===============================
     private int forceChangeSkillCost;
 
