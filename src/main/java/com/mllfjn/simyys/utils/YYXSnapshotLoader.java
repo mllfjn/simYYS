@@ -1,15 +1,15 @@
 package com.mllfjn.simyys.utils;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.mllfjn.simyys.character.yuhun.EquipFactory;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
 import org.jetbrains.annotations.Nullable;
-import tools.jackson.core.JsonParser;
-import tools.jackson.core.JsonToken;
-import tools.jackson.databind.ObjectMapper;
-import tools.jackson.databind.json.JsonMapper;
 
 import java.io.File;
 import java.io.IOException;
@@ -113,7 +113,7 @@ public class YYXSnapshotLoader {
 
     private static void navigateToProperty(JsonParser parser, String propertyName) throws IOException {
         while (true) {
-            String name = parser.nextName();
+            String name = parser.nextFieldName();
             if (name == null) {
                 throw new IOException("未找到property:" + propertyName);
             }
@@ -171,7 +171,7 @@ public class YYXSnapshotLoader {
         public String[] equips;
         public int hero_id;
         public String nick_name;
-        private Skill[] skills;
+        private int[] skills;
         public int level;
 
         private String equip;
@@ -190,7 +190,7 @@ public class YYXSnapshotLoader {
         }
 
         public String getSkillLevel() {
-            return String.valueOf(100 * skills[0].level + 10 * skills[1].level + skills[2].level);
+            return String.valueOf(100 * skills[0] + 10 * skills[1] + skills[2]);
         }
 
         public String getEquip() {
@@ -202,7 +202,7 @@ public class YYXSnapshotLoader {
             return equip;
         }
 
-        public void setSkills(Skill[] skills) {
+        public void setSkills(int[] skills) {
             this.skills = skills;
         }
     }

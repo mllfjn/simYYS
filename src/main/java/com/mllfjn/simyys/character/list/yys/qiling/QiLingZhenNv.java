@@ -11,7 +11,7 @@ import com.mllfjn.simyys.interactive.AttackInfo;
 import java.io.Serializable;
 import java.util.List;
 
-public class QiLingZhenNv implements Serializable {
+class QiLingZhenNv implements Serializable {
     static final String QiLingName = "针女";
     private final Skill skill = Skill.getInstance("针女");
 

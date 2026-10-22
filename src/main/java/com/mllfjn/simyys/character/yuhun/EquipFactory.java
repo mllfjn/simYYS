@@ -1,6 +1,7 @@
 package com.mllfjn.simyys.character.yuhun;
 
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.PropertyKey;
 import com.mllfjn.simyys.character.yuhun.list.*;
 import com.mllfjn.simyys.character.yuhun.list.youchizi.YouChiZi;
 import com.mllfjn.simyys.utils.PicUtil;
@@ -18,9 +19,12 @@ public class EquipFactory {
     public static final Map<Integer, EquipMeta> ID_MAP = new HashMap<>();
     private static final Map<String, EquipMeta> NAME_MAP = new HashMap<>();
 
+    private static final Map<String, List<String>> SELECT_MAP = new LinkedHashMap<>();
+
     static {
         for (EquipType value : EquipType.values()) {
             EQUIP_LIST_MAP.put(value, new ArrayList<>());
+            SELECT_MAP.put(value.desc, new ArrayList<>());
         }
         putEquipMeta(300048, KuangGu.YuHunName, KuangGu.class, EquipType.ATTACK);
         putEquipMeta(300022, XinYan.YuHunName, XinYan.class, EquipType.ATTACK);
@@ -66,6 +70,10 @@ public class EquipFactory {
         putEquipMetaSingle(300091, YeHuangHun.YuHunName, YeHuangHun.class);
     }
 
+    public static void addOptions(Map<String, Map<String, List<String>>> map) {
+        map.put(PropertyKey.YU_HUN_KEY, SELECT_MAP);
+    }
+
     private static void putEquipMeta(int id, String name, Class<? extends Equip> clazz, EquipType equipType) {
         EquipMeta equipMeta = new EquipMeta(id, name, clazz, equipType, 4);
         putEquipMeta(id, name, equipType, equipMeta);
@@ -80,6 +88,8 @@ public class EquipFactory {
         EQUIP_LIST_MAP.get(equipType).add(equipMeta);
         NAME_MAP.put(name, equipMeta);
         ID_MAP.put(id, equipMeta);
+
+        SELECT_MAP.get(equipType.desc).add(name);
     }
 
     public static Image getImage(String name) {
@@ -113,13 +123,19 @@ public class EquipFactory {
     }
 
     public enum EquipType {
-        ATTACK,
-        CRIT_RATE,
-        CRIT_POWER,
-        DEFENSE,
-        HP,
-        EFFECT_HIT,
-        EFFECT_RESIST,
-        SINGLE
+        ATTACK("攻击"),
+        CRIT_RATE("暴击"),
+        CRIT_POWER("爆伤"),
+        DEFENSE("防御"),
+        HP("生命"),
+        EFFECT_HIT("命中"),
+        EFFECT_RESIST("抵抗"),
+        SINGLE("首领"),
+        ;
+        public final String desc;
+
+        EquipType(String desc) {
+            this.desc = desc;
+        }
     }
 }

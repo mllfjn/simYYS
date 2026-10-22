@@ -30,7 +30,7 @@ public class TengYuanDaoZhang extends CharacterYYSBase {
     }
 
     @Override
-    protected YYSSkill[] getSkill() {
+    protected YYSSkill[] getYYSSkills() {
         return new YYSSkill[]{
                 new YYSSkill(Skill1.SkillName, 5, 0),
                 new YYSSkill(Skill2.SkillName, 0, 0),

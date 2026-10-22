@@ -81,4 +81,8 @@ public class PropertyInput extends PropertyRequire implements Serializable {
     public int getInt() {
         return Utils.parseIntOrDefault(value, 0);
     }
+
+    public float getFloat() {
+        return Float.parseFloat(value);
+    }
 }

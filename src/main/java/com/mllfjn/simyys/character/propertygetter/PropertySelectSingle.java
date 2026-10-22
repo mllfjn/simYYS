@@ -1,11 +1,9 @@
 package com.mllfjn.simyys.character.propertygetter;
 
-import com.mllfjn.simyys.collections.StringGroup;
 import com.mllfjn.simyys.starter.Initializer;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -16,28 +14,17 @@ import javafx.stage.Window;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class PropertySelectSingle  extends PropertyRequire implements Serializable {
+public class PropertySelectSingle extends PropertySelect implements Serializable {
     @Serial
     private static final long serialVersionUID = 3858806336321004506L;
 
-    private String value;
-    private final StringGroup[] options;
-
-    public PropertySelectSingle(StringGroup[] options) {
-        this.options = options;
-    }
-
-    @Override
-    public String getString() {
-        return value;
-    }
-
-    public void setValue(int i) {
-        if (options.length == 1) {
-            value = options[0].values()[i];
-        }
-
+    public PropertySelectSingle(String optionKey) {
+        super(optionKey);
     }
 
     @Override
@@ -47,36 +34,26 @@ public class PropertySelectSingle  extends PropertyRequire implements Serializab
             if (newValue == null) {
                 return true;
             }
-            for (StringGroup group : options) {
-                for (String s : group.values()) {
-                    if (newValue.equals(s)) {
-                        this.value = newValue;
-                        return true;
-                    }
-                }
+
+            if (contains(newValue)) {
+                this.value = newValue;
+                return true;
             }
         }
         return false;
     }
 
     @Override
-    public Node getNode(String desc, Window owner) {
-        if (options.length == 1 && options[0].values().length <= 5) {
-            return getSimpleComboBox(desc);
+    public PropertyRequire setValue(String value) {
+        if (contains(value)) {
+            this.value = value;
         }
-        return getSelectWindow(desc, owner);
+        return this;
     }
 
-    private Node getSimpleComboBox(String desc) {
-        ComboBox<String> comboBox = new ComboBox<>();
-        comboBox.getItems().addAll(options[0].values());
-        comboBox.getSelectionModel().selectedItemProperty().addListener((obs, old, val) -> value = val);
-        if (value != null && !value.isEmpty()) {
-            comboBox.getSelectionModel().select(value);
-        }
-        HBox node = new HBox(new Label(desc), comboBox);
-        node.setSpacing(10);
-        return node;
+    @Override
+    public Node getNode(String desc, Window owner) {
+        return getSelectWindow(desc, owner);
     }
 
     private Node getSelectWindow(String desc, Window owner) {
@@ -86,17 +63,19 @@ public class PropertySelectSingle  extends PropertyRequire implements Serializab
         Label valueLbl = new Label(value);
 
         Button confirmBtn = new Button("点击选择");
-        confirmBtn.setOnAction(e -> {
+        confirmBtn.setOnAction(_ -> {
             Stage stage = new Stage();
             GridPane gp = new GridPane();
             gp.setVgap(20);
             gp.setHgap(20);
             gp.setPadding(new Insets(20));
-            for (int i = 0; i < options.length; i++) {
+            Set<Map.Entry<String, List<String>>> optionEntries = getOptions().entrySet();
+            AtomicInteger i = new AtomicInteger();
+            optionEntries.forEach(entry -> {
                 TilePane tp = new TilePane();
-                for (String s : options[i].values()) {
+                for (String s : entry.getValue()) {
                     Button button = new Button(s);
-                    button.setOnAction(event -> {
+                    button.setOnAction(_ -> {
                         value = s;
                         valueLbl.setText(s);
                         stage.close();
@@ -104,9 +83,13 @@ public class PropertySelectSingle  extends PropertyRequire implements Serializab
                     tp.getChildren().add(button);
                 }
 
-                gp.add(new Label(options[i].label()), 0, i);
-                gp.add(tp, 1, i);
-            }
+                Label label = new Label(entry.getKey());
+                // 小了契灵会变成"..."???
+                label.setPrefWidth(70);
+                gp.add(label, 0, i.get());
+                gp.add(tp, 1, i.get());
+                i.getAndIncrement();
+            });
             Initializer.installScale(stage, gp, 300, 500);
             stage.initOwner(owner);
             stage.initModality(Modality.WINDOW_MODAL);

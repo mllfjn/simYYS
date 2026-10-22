@@ -4,6 +4,7 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.collections.SerializableObservableList;
 import com.mllfjn.simyys.customnode.NodeWithController;
 import com.mllfjn.simyys.starter.sceneeffect.SceneEffect;
+import com.mllfjn.simyys.utils.QRCodeLoader;
 import com.mllfjn.simyys.utils.Utils;
 import com.mllfjn.simyys.character.CharacterFactory;
 import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
@@ -148,14 +149,7 @@ public class Initializer extends Application {
             for (CharacterFactory.CharacterMeta value : CharacterFactory.characterMapList.get(label)) {
                 Button btn = new Button(value.name());
                 btn.setPrefWidth(100);
-                btn.setOnAction(_ -> {
-                    PropertiesHolder propertiesHolder = new PropertiesHolder(value.name(),
-                            CharacterFactory.getProperties(value.name()),
-                            new LinkedHashMap<>(), new LinkedHashMap<>()
-                    );
-                    propertiesHolder.show(stageSelect.getScene());
-                    items.add(propertiesHolder);
-                });
+                btn.setOnAction(_ -> addCharacter(value.name()).show(stageSelect.getScene()));
                 tp.getChildren().add(btn);
             }
             gp.add(new Label(label), 0, i);
@@ -170,6 +164,15 @@ public class Initializer extends Application {
         stageSelect.showAndWait();
     }
 
+    public PropertiesHolder addCharacter(String name) {
+        PropertiesHolder propertiesHolder = new PropertiesHolder(name,
+                CharacterFactory.getProperties(name),
+                new LinkedHashMap<>(), new LinkedHashMap<>()
+        );
+        items.add(propertiesHolder);
+        return propertiesHolder;
+    }
+
     private void getController(Stage stage, Scene scene, Pane stageRoot, BorderPane borderPane) {
         HBox controlPane = new HBox(50);
         controlPane.setPadding(new Insets(20, 0, 20, 0));
@@ -178,12 +181,14 @@ public class Initializer extends Application {
         Button saveButton = new Button("保存队伍预设");
         Button loadButton = new Button("读取队伍预设");
         Button loadDataButton = new Button("读取式神数据");
+        Button loadQRCode = new Button("读取阵容码");
         Button startButton = new Button("开始");
 
         int width = 100;
         saveButton.setPrefWidth(width);
         loadButton.setPrefWidth(width);
         loadDataButton.setPrefWidth(width);
+        loadQRCode.setPrefWidth(width);
         startButton.setPrefWidth(width);
 
         saveButton.setOnAction(_ -> saveDate(stage));
@@ -216,8 +221,9 @@ public class Initializer extends Application {
                 loadDataButton.setTooltip(new Tooltip(result));
             }
         });
+        loadQRCode.setOnAction(_ -> QRCodeLoader.loadQRCode(stage, this));
 
-        controlPane.getChildren().addAll(saveButton, loadButton, loadDataButton, startButton);
+        controlPane.getChildren().addAll(saveButton, loadButton, loadDataButton, loadQRCode, startButton);
 
         borderPane.setTop(controlPane);
     }

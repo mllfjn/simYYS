@@ -1,5 +1,13 @@
 package com.mllfjn.simyys.character;
 
+import com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.citiao.CiTiaoManager;
+import com.mllfjn.simyys.character.list.yys.qiling.QiLingFactory;
+import com.mllfjn.simyys.character.yuhun.EquipFactory;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class PropertyKey {
     public static final String GENERAL_SPEED_KEY = "速度";
     public static final String GENERAL_BASE_ATTACK_KEY = "基础攻击";
@@ -43,4 +51,12 @@ public class PropertyKey {
     public static final String QI_LING_KEY = "契灵";
 
     public static final String[] YYSSkillDesc = new String[]{"技能等级", "契灵术印等级"};
+
+    public static final Map<String, Map<String, List<String>>> SELECT_OPTIONS = new HashMap<>();
+
+    static {
+        CiTiaoManager.addOptions(SELECT_OPTIONS);
+        QiLingFactory.addOptions(SELECT_OPTIONS);
+        EquipFactory.addOptions(SELECT_OPTIONS);
+    }
 }

@@ -4,6 +4,7 @@ plugins {
 //    id("org.javamodularity.moduleplugin") version "1.8.15"
     id("org.openjfx.javafxplugin") version "0.1.0"
     id("org.beryx.jlink") version "3.2.1"
+    id("org.gradlex.extra-java-module-info") version "1.14.2"
 }
 
 group = "com.mllfjn"
@@ -41,8 +42,14 @@ dependencies {
 
     compileOnly("org.jetbrains:annotations:26.0.2")
 
-    // Source: https://mvnrepository.com/artifact/tools.jackson.core/jackson-databind
-    implementation("tools.jackson.core:jackson-databind:3.2.2")
+    // Source: https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.22.3")
+
+    // Source: https://mvnrepository.com/artifact/com.google.zxing/core
+    implementation("com.google.zxing:core:3.5.4")
+
+    // Source: https://mvnrepository.com/artifact/org.msgpack/jackson-dataformat-msgpack
+    implementation("org.msgpack:jackson-dataformat-msgpack:0.9.12")
 }
 
 tasks.withType<Test> {
@@ -55,4 +62,10 @@ jlink {
     launcher {
         name = "simYYS"
     }
+}
+
+extraJavaModuleInfo {
+    // 为自动模块指定一个稳定的名称，或者自动生成 module-info
+    automaticModule("org.msgpack:jackson-dataformat-msgpack", "org.msgpack.jackson")
+    deriveAutomaticModuleNamesFromFileNames.set(true)
 }

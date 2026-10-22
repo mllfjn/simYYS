@@ -2,12 +2,13 @@ package com.mllfjn.simyys.character.list.yys;
 
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.PropertyKey;
-import com.mllfjn.simyys.character.list.yys.qiling.QiLingFactory;
 import com.mllfjn.simyys.character.propertygetter.*;
 
 import static com.mllfjn.simyys.character.PropertyKey.YYSSkillDesc;
 
 public abstract class CharacterYYSBase extends Character {
+    public YYSSkill[] yysSkills = getYYSSkills();
+
     @Override
     public PropertiesMap getProperties() {
         PropertiesMap map = super.getProperties();
@@ -21,16 +22,17 @@ public abstract class CharacterYYSBase extends Character {
         map.get(PropertyKey.GENERAL_EFFECT_HIT_RATE_KEY).setValue("0");
         map.get(PropertyKey.GENERAL_EFFECT_RESIST_RATE_KEY).setValue("0");
 
-        map.put(PropertyKey.QI_LING_KEY, new PropertySelectSingle(QiLingFactory.QI_LING));
+        map.put(PropertyKey.QI_LING_KEY, new PropertySelectSingle(PropertyKey.QI_LING_KEY));
 
         ((PropertyCheck) map.get(PropertyKey.GENERAL_YYS_KEY)).setValue(true);
 
-        YYSSkill[] skills = getSkill();
-        for (YYSSkill skill : skills) {
-            map.put(skill.name, new PropertyMultiInput(YYSSkillDesc)
-                    .setValue(0, String.valueOf(skill.defaultLevel))
-                    .setValue(1, String.valueOf(skill.defaultShuYin))
-            );
+        for (YYSSkill skill : yysSkills) {
+            if (skill != null) {
+                map.put(skill.name, new PropertyMultiInput(YYSSkillDesc)
+                        .setValue(0, String.valueOf(skill.defaultLevel))
+                        .setValue(1, String.valueOf(skill.defaultShuYin))
+                );
+            }
         }
         return map;
     }
@@ -43,7 +45,7 @@ public abstract class CharacterYYSBase extends Character {
     @Override
     protected void addOwnSkills() {}
 
-    protected abstract YYSSkill[] getSkill();
+    protected abstract YYSSkill[] getYYSSkills();
 
     public record YYSSkill(String name, int defaultLevel, int defaultShuYin) {}
 }
