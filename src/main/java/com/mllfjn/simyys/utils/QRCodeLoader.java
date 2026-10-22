@@ -146,7 +146,7 @@ public class QRCodeLoader {
         @Override
         public void get(PropertiesHolder ph, Map<LoadAttribute, Float> maxAttributeMap) {
             if (lockSkill > 0 && lockSkill != 11) {
-                ph.lockSkillMap.put(0, lockSkill);
+                ph.lockSkillMap.put(1, lockSkill);
             }
 
             PropertiesMap map = ph.propertiesMap;
@@ -202,7 +202,7 @@ public class QRCodeLoader {
         @Override
         public void get(PropertiesHolder ph, Map<LoadAttribute, Float> maxAttributeMap) {
             if (lockSkill > 0 && lockSkill != 11) {
-                ph.lockSkillMap.put(0, lockSkill);
+                ph.lockSkillMap.put(1, lockSkill);
             }
 
             ph.propertiesMap.get(PropertyKey.SKILL_KEY).setValue(
