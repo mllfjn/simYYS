@@ -39,12 +39,14 @@ public class TeamPane implements Serializable {
                 center.add(top, index, 0);
                 center.add(characterIcon.getCenter(), index, 1);
                 center.add(characterIcon.getBottom(), index, 2);
+            }
 
-                if (character == autos[0]) {
-                    characterIcon.setIsAuto(FlagChangeInfo.FlagType.GREEN, true);
-                } else if (character == autos[1]) {
-                    characterIcon.setIsAuto(FlagChangeInfo.FlagType.RED, true);
-                }
+            if (autos[0] != null) {
+                autos[0].getCharacterIcon().setIsAuto(FlagChangeInfo.FlagType.GREEN, true);
+            }
+
+            if (autos[1] != null) {
+                autos[1].getCharacterIcon().setIsAuto(FlagChangeInfo.FlagType.RED, true);
             }
 
             root = new BorderPane();
