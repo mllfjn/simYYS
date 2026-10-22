@@ -76,6 +76,7 @@ public class CharacterFactory {
         putCharacterMeta(yysMap, 10, QingMing.CharacterName, QingMing.class);
         putCharacterMeta(yysMap, 11, ShenLe.CharacterName, ShenLe.class);
         putCharacterMeta(yysMap, 13, BoYa.CharacterName, BoYa.class);
+
         putCharacterMeta(yysMap, 15, YuanLaiGuang.CharacterName, YuanLaiGuang.class);
         putCharacterMeta(yysMap, 16, TengYuanDaoZhang.CharacterName, TengYuanDaoZhang.class);
 

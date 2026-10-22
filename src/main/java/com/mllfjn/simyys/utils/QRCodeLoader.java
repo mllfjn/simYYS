@@ -76,7 +76,8 @@ public class QRCodeLoader {
                     byte[] decompressedBytes = new byte[4096];
                     int length = inflater.inflate(decompressedBytes);
 
-                    /*StringBuilder builder = new StringBuilder();
+                    /*// 测试用
+                    StringBuilder builder = new StringBuilder();
                     for (int i = 0; i < length; i++) {
                         builder.append(String.format("%02x", decompressedBytes[i]));
                     }
@@ -239,7 +240,7 @@ public class QRCodeLoader {
 
         public void get(PropertiesMap map, Map<LoadAttribute, Float> maxAttributeMap) {
             map.get(PropertyKey.YU_HUN_KEY).setValue(equips);
-            attributesLimit.get(map);
+            attributesLimit.get(map, maxAttributeMap);
         }
     }
 
@@ -297,12 +298,21 @@ public class QRCodeLoader {
             this.limits = limits;
         }
 
-        public void get(PropertiesMap map) {
+        public void get(PropertiesMap map, Map<LoadAttribute, Float> maxAttributeMap) {
             Random random = new Random();
             LoadAttribute[] loadAttributes = LoadAttribute.values();
             for (int i = 0; i < limits.length; i++) {
                 LoadAttribute loadAttribute = loadAttributes[i];
-                float value = limits[i].get(loadAttribute.min, loadAttribute.max, random);
+
+                float max = loadAttribute.max;
+                // 最高属性
+                Float maxAttribute = maxAttributeMap.get(loadAttribute);
+                if (maxAttribute != null) {
+                    max = maxAttribute;
+                }
+
+                float value = limits[i].get(loadAttribute.min, max, random);
+
                 if (loadAttribute == LoadAttribute.ATTACK) {
                     value -= (float) map.get(PropertyKey.GENERAL_BASE_ATTACK_KEY).getDouble();
                 }
@@ -379,10 +389,11 @@ public class QRCodeLoader {
 
     @JsonFormat(shape = JsonFormat.Shape.ARRAY)
     public static class QiLingData {
-        public int id; // 猜测为契灵id
+        public int id; // 契灵id
         public int star; // 星级,无用
         public int level; // 等级,无用
-        public int filed3;
+        public int relevantYYS; // 对应阴阳师,有用但是为什么这里阴阳师和英杰中间没空一个,考虑到基本不装备不对应的契灵,没必要检测
+        // 晴明1,神乐2,博雅4,藤原6
         public int[] shuYin; // 术印
 
         public QiLingData() {
