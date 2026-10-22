@@ -15,11 +15,9 @@ public class CustomInputMenuItem {
         Text text = new Text(desc);
         TextField textField = new TextField();
         Button button = new Button("确定");
-        button.setOnAction(event -> {
-            double number = Utils.parseDoubleOrDefault(textField.getText(), -1);
-            if (number > 0) {
-                consumer.accept(number);
-            }
+        button.setOnAction(_ -> {
+            double number = Utils.parseDoubleOrDefault(textField.getText(), 0);
+            consumer.accept(number);
         });
         HBox hBox = new HBox(text, textField, button);
         return new CustomMenuItem(hBox);
