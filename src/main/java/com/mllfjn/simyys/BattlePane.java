@@ -546,7 +546,10 @@ public class BattlePane {
         for (int i = 0; i < characters.size(); i++) {
             speeds[i] = characters.get(i).getSpeed();
             double ttaNext = Character.getTTA(atStart ? 100 : 100 - characters.get(i).getLocationWhenGettingOrder(), speeds[i]);
-            if (ttaNext < ttaMin) {
+            if (
+                    ttaNext < ttaMin ||
+                    (ttaNext == 0 && speeds[i] > speeds[indexMin]) // 同在底端优先速度高
+            ) {
                 ttaMin = ttaNext;
                 indexMin = i;
             }
