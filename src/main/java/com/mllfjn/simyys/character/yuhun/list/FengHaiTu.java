@@ -60,7 +60,10 @@ public class FengHaiTu extends Equip implements YuHunSealResponse {
         public StatusHaiTuShouHu(Character from, Character belongTo) {
             super(StatusName, from, belongTo);
             duration(StatusDurationType.CHI_XU, 1);
-            beforeDelete(() -> belongTo.lostHP(record));
+            beforeDelete(() -> {
+                beforeDelete(null);
+                belongTo.lostHP(record);
+            });
             display(() -> StatusName + ((int) record));
         }
 

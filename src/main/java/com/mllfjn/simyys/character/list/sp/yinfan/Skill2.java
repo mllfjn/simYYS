@@ -61,7 +61,7 @@ class Skill2 extends Skill {
             StatusAdder<?> adder = belongTo.bp.addStatusAdder(c ->
                     c.team == character.team && c != character && !c.isYYS()
                             ? Status.of(SkillName + "释放技能监听", character, c)
-                            .runOn(Trigger.WILL_USE_SKILL, _ -> StatusYuanYou.install(from, belongTo))
+                            .runOn(Trigger.WILL_USE_SKILL, _ -> StatusYuanYou.install(character, c))
                             : null
             );
             beforeDelete(adder::deleteAndRemove);

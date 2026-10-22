@@ -4,6 +4,8 @@ import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.PropertyKey;
 import com.mllfjn.simyys.character.propertygetter.*;
 
+import java.io.Serializable;
+
 import static com.mllfjn.simyys.character.PropertyKey.YYSSkillDesc;
 
 public abstract class CharacterYYSBase extends Character {
@@ -47,5 +49,5 @@ public abstract class CharacterYYSBase extends Character {
 
     protected abstract YYSSkill[] getYYSSkills();
 
-    public record YYSSkill(String name, int defaultLevel, int defaultShuYin) {}
+    public record YYSSkill(String name, int defaultLevel, int defaultShuYin) implements Serializable {}
 }
