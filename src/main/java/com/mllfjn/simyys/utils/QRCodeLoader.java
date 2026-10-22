@@ -206,7 +206,7 @@ public class QRCodeLoader {
             }
 
             ph.propertiesMap.get(PropertyKey.SKILL_KEY).setValue(
-                    skills[0] * 100 + skills[1] * 10 + skills[2]
+                    String.valueOf(skills[0] * 100 + skills[1] * 10 + skills[2])
             );
 
             field5.get(ph.propertiesMap, maxAttributeMap);
