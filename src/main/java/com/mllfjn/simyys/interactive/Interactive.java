@@ -469,6 +469,7 @@ public class Interactive {
         target.statusRun(Trigger.LOCATION_WILL_CHANGE, param);
         if (param.isCanceled()) {
             increaseLog.add(target.name + "免疫行动条击退");
+            return;
         }
 
         StringBuilder sb = new StringBuilder();

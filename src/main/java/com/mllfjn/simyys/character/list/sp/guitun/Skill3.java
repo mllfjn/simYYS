@@ -65,7 +65,7 @@ class Skill3 extends Skill {
             Skill1Special skill1Special = new Skill1Special(character, skill1.getLevel());
             character.addSkill(skill1Special, true);
 
-            duration(StatusDurationType.WEI_CHI, 2);
+            duration(StatusDurationType.CHI_XU, 2);
             displayNameAndDuration();
             addTo();
 
