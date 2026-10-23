@@ -16,6 +16,7 @@ public abstract class Skill implements Serializable {
     private final Character belongTo;
     private final int level;
     private final int skillID;
+    private final String name;
     // 技能本身的消耗
     private int cost;
     // 技能冷却时间
@@ -29,20 +30,29 @@ public abstract class Skill implements Serializable {
     // 当技能结束时，遍历通知
     private List<SkillEndListener> skillEndListeners;
 
+    // 不记得为什么不直接把name作为成员了
     public Skill(Character belongTo, int level, int cost, int coolDown, int skillID) {
         this.belongTo = belongTo;
         this.level = level;
         this.cost = cost;
         this.coolDown = coolDown;
         this.skillID = skillID;
+
+        this.name = getName();
+    }
+
+    public Skill(Character belongTo, int level, String name, int cost, int coolDown, int skillID) {
+        this.belongTo = belongTo;
+        this.level = level;
+        this.cost = cost;
+        this.coolDown = coolDown;
+        this.skillID = skillID;
+
+        this.name = name;
     }
 
     public static Skill getInstance(String name) {
-        return new Skill(null, 0, 0, 0, 0) {
-            @Override
-            public String getName() {
-                return name;
-            }
+        return new Skill(null, 0, name, 0, 0, 0) {
 
             @Override
             public Optional<Character> usePrivate(BattlePane bp) {
@@ -55,7 +65,9 @@ public abstract class Skill implements Serializable {
         costResult = null;
     }
 
-    public abstract String getName();
+    public String getName() {
+        return name;
+    }
 
     public boolean tryUse(BattlePane bp) {
         if (canUse(bp)) {

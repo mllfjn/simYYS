@@ -7,6 +7,7 @@ import com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.tuzhizhu.TuZhiZ
 import com.mllfjn.simyys.character.list.r.chounv.ChouNv;
 import com.mllfjn.simyys.character.list.r.shouwu.ShouWu;
 import com.mllfjn.simyys.character.list.sp.fuji.FuJi;
+import com.mllfjn.simyys.character.list.sp.guitun.GuiTun;
 import com.mllfjn.simyys.character.list.sp.laotou.LaoTou;
 import com.mllfjn.simyys.character.list.sp.luwan.LuWan;
 import com.mllfjn.simyys.character.list.sp.sphongye.SPHongYe;
@@ -92,6 +93,7 @@ public class CharacterFactory {
         putCharacterMeta(spMap, 388, SPHongYe.CharacterName, SPHongYe.class);
         putCharacterMeta(spMap, 594, SpHuDie.CharacterName, SpHuDie.class);
         putCharacterMeta(spMap, 586, SpYue.CharacterName, SpYue.class);
+        putCharacterMeta(spMap, 341, GuiTun.CharacterName, GuiTun.class);
 
         List<CharacterMeta> ssrMap = new ArrayList<>();
         characterMapList.put("SSR", ssrMap);
