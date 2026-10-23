@@ -214,11 +214,6 @@ public class Interactive {
             });
         }
 
-        // 护盾
-        if (!attackInfo.isCanThroughShield()) {
-            target.checkShield(attackInfo);
-        }
-
         if (traceableNumber.getNumber() > 0) {
             if (attackInfo.isCanInfluenceAttack()) {
                 // 攻击者身上状态类影响
@@ -231,6 +226,11 @@ public class Interactive {
                     return;
                 }
             }
+        }
+
+        // 护盾
+        if (!attackInfo.isCanThroughShield()) {
+            target.checkShield(attackInfo);
         }
 
         // 部分造成伤害时生效的御魂(破势狂骨等)
@@ -422,13 +422,14 @@ public class Interactive {
 
     private void effectBase(EffectInfo effectInfo, Character target, StatusSupplier statusSupplier) {
         if (effectInfo.isHit()) {
+            ParamAddCrowdControl paramAddCrowdControl = new ParamAddCrowdControl(effectInfo);
             if (statusSupplier.isCrowdControl()) {
-                target.statusRun(Trigger.ADDING_CROWD_CONTROL, new ParamAddCrowdControl(effectInfo));
+                target.statusRun(Trigger.ADDING_CROWD_CONTROL, paramAddCrowdControl);
             }
             if (!effectInfo.isCancel()) {
                 statusSupplier.supply(owner, target);
                 if (statusSupplier.isCrowdControl()) {
-                    owner.statusRun(Trigger.MAKING_CROWD_CONTROL, new ParamAddCrowdControl(effectInfo));
+                    owner.statusRun(Trigger.MAKING_CROWD_CONTROL, paramAddCrowdControl);
                 }
             }
         }

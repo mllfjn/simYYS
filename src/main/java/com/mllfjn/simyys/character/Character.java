@@ -242,6 +242,10 @@ public abstract class Character implements Serializable {
         return TraversalOrderManager.getProbabilityAtLeastOne(Attribute.XIE_ZHAN, getStatuses());
     }
 
+    public int getLostHpPercentage() {
+        return (int) ((getMaxHp() - getHp()) / getMaxHp() * 100);
+    }
+
 
     public boolean isMob() {
         return isMob;
@@ -721,7 +725,7 @@ public abstract class Character implements Serializable {
      * 失去:区别于受到伤害,失去生命不会暴击,无法被护盾吸收,不触发受到伤害相关效果
      */
     public void lostHP(double num) {
-        // 如果后来给失去生命默认解除睡眠状态,修改神蛇的堕化
+        // 如果后来给失去生命默认解除睡眠状态,修改神蛇的堕化和鬼王姿态
         setHp(getHp() - num);
         if (hp <= 0) {
             die();

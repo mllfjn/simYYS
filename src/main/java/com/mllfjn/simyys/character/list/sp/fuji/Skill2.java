@@ -94,21 +94,22 @@ class Skill2 extends Skill {
                     return 0.0;
                 }
 
-                int hpPercent = ((int) ((double) Attribute.HP_PERCENT.getGetter().apply(belongTo)));
-                if (hpPercent == 100) {
+                int lostHpPercentage = belongTo.getLostHpPercentage();
+                if (lostHpPercentage == 0) {
                     return 0.0;
                 }
+
                 isCounting = true;
                 double attack = belongTo.getAttack();
                 isCounting = false;
-                return -attack * (100 - hpPercent) / 100;
+                return - attack * lostHpPercentage / 100;
             });
             displayName();
             runOn(Trigger.BEING_ATTACKED, triggerParam -> {
-                double hpPercentCeil = Math.ceil(Attribute.HP_PERCENT.getGetter().apply(belongTo));
-                if (hpPercentCeil <= 100) {
+                int lostHpPercentage = belongTo.getLostHpPercentage();
+                if (lostHpPercentage > 0) {
                     ((ParamAttackInfo) triggerParam).getAttackInfo().getTraceableNumber()
-                            .mul((1 + 0.01 * (100 - hpPercentCeil)), StatusName);
+                            .mul(1 + 0.01 * lostHpPercentage, StatusName);
                 }
             });
         }
