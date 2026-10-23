@@ -522,14 +522,36 @@ public class BattlePane {
     }
 
     private void getNextActor() {
-        // 如果有时之隙新回合,先时之隙,否则看一般获得新回合,最后跑条
-        Character characterActing = situation.sZXNewRoundCharacter().orElseGet(() -> {
-            Character newRoundCharacter = situation.newRoundCharacter().orElseGet(() -> getNextOrder(false));
-            // 这部分不在时之隙新回合生效
-            newRoundCharacter.forceSetLocation(0);
-            newRoundCharacter.checkWhetherRunBeforeRound();
-            return newRoundCharacter;
-        });
+        Character characterActing = null;
+        boolean fromSZX = false;
+
+        // 如果有时之隙新回合,先时之隙
+        Optional<Character> oSZXCharacter = situation.sZXNewRoundCharacter();
+        if (oSZXCharacter.isPresent()) {
+            fromSZX = true;
+            characterActing = oSZXCharacter.get();
+        }
+
+        // 否则看一般获得新回合
+        if (characterActing == null) {
+            Optional<Character> oNewRoundCharacter = situation.newRoundCharacter();
+            if (oNewRoundCharacter.isPresent()) {
+                characterActing = oNewRoundCharacter.get();
+            }
+        }
+
+        // 最后跑条
+        if (characterActing == null) {
+            characterActing = getNextOrder(false);
+        }
+
+        onTrigger(new EventActionStart());
+
+        if (!fromSZX) {
+            characterActing.forceSetLocation(0);
+            characterActing.checkWhetherRunBeforeRound();
+        }
+
         situation.characterActing = characterActing;
         characterActing.timesToAct++;
         characterActing.refreshSkills();
