@@ -6,12 +6,12 @@ import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.interactive.AttackInfo;
 
 class StatusTiJia extends Status {
-    private int stack = 3;
-
     public StatusTiJia(HuaJing from, Character belongTo, Skill3 skill3) {
         super(Skill3.SkillName, from, belongTo);
         beforeDelete(() -> from.statusTiJia = null);
-        display(() -> Skill3.SkillName + stack);
+        enableStack(3);
+        setStack(3);
+        displayNameAndStack();
         runOn(Trigger.BEFORE_ROUND, _ -> {
             from.doInteractive(interactive ->
                     interactive.healTypical(skill3, belongTo, skill3.getMultiplier()))
@@ -22,11 +22,7 @@ class StatusTiJia extends Status {
             AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
             if (attackInfo.isCrit()) {
                 attackInfo.getTraceableNumber().mul(0.5, Skill3.SkillName);
-                if (stack == 1) {
-                    delete();
-                } else {
-                    stack--;
-                }
+                reduceStack();
             }
         });
         runOn(Trigger.AFTER_ROUND, _ -> {
@@ -34,5 +30,13 @@ class StatusTiJia extends Status {
                 from.doInteractive(interactive -> interactive.increaseLocation(belongTo, 20));
             }
         });
+    }
+
+    @Override
+    public void reduceStack() {
+        super.reduceStack();
+        if (stack == 0) {
+            delete();
+        }
     }
 }

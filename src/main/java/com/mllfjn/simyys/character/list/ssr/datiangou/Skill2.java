@@ -28,10 +28,7 @@ class Skill2 extends PassiveSkill {
     }
 
     void addStack(int addStack) {
-        StatusGTZYListener s = getStatus();
-        if (s.statusXZYF.stack < s.maxStack) {
-            s.statusXZYF.stack = Math.min(s.statusXZYF.stack + addStack, s.maxStack);
-        }
+        getStatus().addStack(addStack);
     }
 
     void setSkill3(Skill3 skill3) {
@@ -54,7 +51,6 @@ class Skill2 extends PassiveSkill {
     }
 
     class StatusGTZYListener extends Status {
-        private final int maxStack;
         private final StatusXZYF statusXZYF;
 
         public StatusGTZYListener(Character character, int maxStack) {
@@ -62,13 +58,13 @@ class Skill2 extends PassiveSkill {
             statusXZYF = new StatusXZYF(character);
             character.addStatus(statusXZYF);
 
-            this.maxStack = maxStack;
+            enableStack(maxStack);
             beforeDelete(() -> Skill2.this.status = null);
 
             runOn(Trigger.CAUSE_ATTACK, _ -> {
                 if (RateController.otherWhether(SkillName, "获得" + StatusXZYF.StatusName, belongTo().bp().calc, 50)) {
-                    statusXZYF.stack++;
-                    if (statusXZYF.stack == maxStack) {
+                    statusXZYF.addStack();
+                    if (statusXZYF.getStack() == maxStack) {
                         removeAction(Trigger.CAUSE_ATTACK);
                     }
                 }
@@ -78,12 +74,11 @@ class Skill2 extends PassiveSkill {
         static class StatusXZYF extends Status {
             private static final String StatusName = "雄姿英发";
 
-            private int stack;
-
             public StatusXZYF(Character character) {
                 super(StatusName, character, character, StatusType.GENERAL, StatusForm.YIN_JI);
-                attribute(Attribute.ZENG_SHANG, _ -> (double) stack);
+                attribute(Attribute.ZENG_SHANG, _ -> (double) getStack());
                 display(() -> {
+                    int stack = getStack();
                     if (stack == 0) {
                         return null;
                     }

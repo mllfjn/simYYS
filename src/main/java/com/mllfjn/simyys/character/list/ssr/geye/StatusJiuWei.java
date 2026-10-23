@@ -9,23 +9,19 @@ import java.util.Optional;
 
 class StatusJiuWei extends Status {
     private static final String StatusName = "九尾";
-    private int stack = 1;
 
     private StatusJiuWei(Character character) {
         super(StatusName, character, character, StatusType.GENERAL, StatusForm.YIN_JI);
-        display(() -> StatusName + stack);
-    }
-
-    int getStack() {
-        return stack;
+        enableStackAndAddStack(3);
+        displayNameAndStack();
     }
 
     static boolean addStack(Character character) {
         Optional<StatusJiuWei> oStatus = character.getStatus(StatusJiuWei.class);
         if (oStatus.isPresent()) {
             StatusJiuWei status = oStatus.get();
-            status.stack++;
-            return status.stack == 3;
+            status.addStack();
+            return status.getStack() == 3;
         } else {
             character.addStatus(new StatusJiuWei(character));
             return false;

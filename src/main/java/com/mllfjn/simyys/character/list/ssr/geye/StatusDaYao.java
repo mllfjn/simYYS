@@ -49,10 +49,10 @@ class StatusDaYao extends Status implements IgnoreDebuff {
             }
         });
 
-        display(() -> StatusName + getStack());
+        display(() -> StatusName + getSize());
 
         runOn(Trigger.OUT_ROUND_ACTION, Trigger.BEFORE_ROUND, _ ->
-                belongTo.bp.gainGuiHuo(belongTo, getStack())
+                belongTo.bp.gainGuiHuo(belongTo, getSize())
         );
 
         preventDie(_ -> {
@@ -72,15 +72,15 @@ class StatusDaYao extends Status implements IgnoreDebuff {
         });
 
         if (skillLevel >= 3) {
-            attribute(Attribute.ATTACK, _ -> belongTo.getInitAttack() * getStack() * 0.2);
+            attribute(Attribute.ATTACK, _ -> belongTo.getInitAttack() * getSize() * 0.2);
         }
 
         if (skillLevel >= 4) {
-            attribute(Attribute.DEFENCE, _ -> belongTo.getInitDefense() * getStack() * 0.2);
+            attribute(Attribute.DEFENCE, _ -> belongTo.getInitDefense() * getSize() * 0.2);
         }
 
         if (skillLevel >= 5) {
-            attribute(Attribute.CRIT_POWER, _ -> 20.0 * getStack());
+            attribute(Attribute.CRIT_POWER, _ -> 20.0 * getSize());
         }
     }
 
@@ -109,13 +109,13 @@ class StatusDaYao extends Status implements IgnoreDebuff {
 
             double baseMaxHp = belongTo.getInitAttack() * 2.25;
             if (isIncreaseMaxHP) {
-                baseMaxHp += originalMaxHp * 0.2 * getStack();
+                baseMaxHp += originalMaxHp * 0.2 * getSize();
             }
             belongTo.setMaxHp(baseMaxHp, true);
         }
     }
 
-    int getStack() {
+    int getSize() {
         return huanHuaList.size();
     }
 

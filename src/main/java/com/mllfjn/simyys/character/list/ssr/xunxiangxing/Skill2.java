@@ -54,12 +54,12 @@ class Skill2 extends Skill {
 
         private final Skill2 skill2;
 
-        private int stack;
-
         public StatusXinXiang(Character character, Skill2 skill2) {
             super(StatusName, character, character, StatusType.BUFF, StatusForm.YIN_JI);
             this.skill2 = skill2;
+            enableStack(5);
             display(() -> {
+                int stack = getStack();
                 if (stack == 0) {
                     return null;
                 }
@@ -75,7 +75,8 @@ class Skill2 extends Skill {
                     );
         }
 
-        void addStack() {
+        @Override
+        public void addStack() {
             if (stack == 4) {
                 List<Character> list = new CharacterFinder(belongTo)
                         .filterEnemy()

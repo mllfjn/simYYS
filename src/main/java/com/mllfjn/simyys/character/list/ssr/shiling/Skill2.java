@@ -75,23 +75,18 @@ class Skill2 extends PassiveSkill {
     }
 
     static class StatusBaoShiAttack extends Status {
-        private int stack = 0;
 
         private StatusBaoShiAttack(Character character) {
             super("饱食加攻击", character);
-            attribute(Attribute.ATTACK, _ -> 0.3 * stack * belongTo.getInitBaseAttack());
+            enableStack(5);
+            attribute(Attribute.ATTACK, _ -> 0.3 * getStack() * belongTo.getInitBaseAttack());
+            addTo();
         }
 
         public static void addStack(Character character) {
             character.getStatus(StatusBaoShiAttack.class)
                     .orElseGet(() -> new StatusBaoShiAttack(character))
                     .addStack();
-        }
-
-        private void addStack() {
-            if (stack < 5) {
-                stack++;
-            }
         }
     }
 

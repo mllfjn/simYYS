@@ -39,12 +39,12 @@ class StatusFuHunXiang extends Status {
     static void addStack(Character from, Character belongTo) {
         belongTo.getStatus(StatusFuHunXiang.class)
                 .ifPresentOrElse(
-                        StatusFuHunXiang::addStack,
+                        StatusFuHunXiang::_addStack,
                         () -> belongTo.addStatus(new StatusFuHunXiang(from, belongTo))
                 );
     }
 
-    private void addStack() {
+    private void _addStack() {
         if (defenseStack < 5) {
             defenseStack++;
         }

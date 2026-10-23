@@ -26,21 +26,16 @@ class Skill2 extends PassiveSkill {
     }
 
     static class StatusQingJiReduceDefense extends Status {
-        private int stack = 1;
-
         private StatusQingJiReduceDefense(Character from, Character belongTo) {
             super(SkillName + "减防", from, belongTo, StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
-            attribute(Attribute.DEFENCE, _ -> -20.0 * stack);
+            enableStackAndAddStack(15);
+            attribute(Attribute.DEFENCE, _ -> - 20.0 * getStack());
         }
 
         static void addStack(Character from, Character belongTo) {
             belongTo.getStatus(StatusQingJiReduceDefense.class)
                     .ifPresentOrElse(
-                            status -> {
-                                if (status.stack < 15) {
-                                    status.stack++;
-                                }
-                            },
+                            Status::addStack,
                             () -> belongTo.addStatus(new StatusQingJiReduceDefense(from, belongTo))
                     );
         }

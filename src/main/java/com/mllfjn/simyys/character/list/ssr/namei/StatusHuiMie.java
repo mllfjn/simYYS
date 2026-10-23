@@ -8,8 +8,6 @@ import javafx.scene.paint.Color;
 
 public class StatusHuiMie extends Status {
     private static final String text = "毁灭";
-    // 毁灭等级
-    private int stack = 1;
     // 免死是否可以触发
     private boolean canTrigger = true;
     // 剩余可以触发免死的次数
@@ -18,6 +16,7 @@ public class StatusHuiMie extends Status {
     public StatusHuiMie(NaMei from, Character belongTo, int level, boolean awakening) {
         super(text, from, belongTo);
         type(StatusType.BUFF, StatusForm.YIN_JI);
+        enableStackAndAddStack(6);
 
         // 我方场上至多存在1个此效果
         from.getStatus(StatusNaMeiFlag.class).ifPresent(status -> status.statusHuiMie.delete());
@@ -25,7 +24,7 @@ public class StatusHuiMie extends Status {
         display(() -> {
             StringBuilder sb = new StringBuilder();
             // 毁灭6
-            sb.append(text).append(stack);
+            sb.append(text).append(getStack());
             // 免死生效
             if (isPreventDie()) {
                 sb.append(Status.DELIMITER).append("金盾");
@@ -35,24 +34,22 @@ public class StatusHuiMie extends Status {
         });
         setColor(Color.ORANGE);
         runOn(Trigger.BEFORE_ROUND, _ -> {
-            if (stack < 6) {
-                stack++;
-            }
+            addStack();
 
             if (!canTrigger && times > 0) {
                 canTrigger = true;
             }
 
-            if (stack == 6 && times == 0) {
+            if (getStack() == 6 && times == 0) {
                 removeAction(Trigger.BEFORE_ROUND);
             }
         });
         // 降低防御(stack - 1) * 100，这里算的是+防御，所以负的
-        attribute(Attribute.DEFENCE, _ -> 100.0 * (1 - stack));
+        attribute(Attribute.DEFENCE, _ -> 100.0 * (1 - getStack()));
         // 造成伤害时无视100点防御
         attribute(Attribute.IGNORE_DEFENCE, _ -> {
             // lv4-友方每因毁灭降低100点防御,额外无视40点防御,至多额外无视200点防御
-            return 100.0 + (level >= 4 ? (stack - 1) * 40 : 0);
+            return 100.0 + (level >= 4 ? (getStack() - 1) * 40 : 0);
         });
         // 那美攻击时无视护甲的状态
         StatusNaMeiFlag naMeiFlag = new StatusNaMeiFlag(from, this, awakening);

@@ -49,10 +49,6 @@ class StatusLiXing extends Status {
         stack -= useStack;
     }
 
-    int getStack() {
-        return stack;
-    }
-
     private void refuel() {
         if (stack < 9) {
             stack = 9;

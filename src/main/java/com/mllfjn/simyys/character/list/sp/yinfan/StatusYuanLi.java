@@ -11,26 +11,24 @@ public class StatusYuanLi extends Status {
     private final int skill2Level;
     private final int skill3Level;
 
-    private int stack;
-
     public StatusYuanLi(Character character, int skill2Level, int skill3Level) {
         super(StatusName, character);
         type(StatusType.GENERAL, StatusForm.YIN_JI);
         beforeDelete(() -> belongTo.bp.getGuiHuoInstance(belongTo.team).setYuanLi(null));
-        display(() -> StatusName + stack);
+        enableStack(8);
+        displayNameAndStack();
         this.skill2Level = skill2Level;
         this.skill3Level = skill3Level;
         character.bp.getGuiHuoInstance(character.team).setYuanLi(this);
+        addTo();
     }
 
-    public static void addYuanLi(Character character, int num, int skill2Level, int skill3Level) {
-        StatusYuanLi status = character.getStatus(StatusYuanLi.class).orElseGet(() -> {
-            StatusYuanLi newStatus = new StatusYuanLi(character, skill2Level, skill3Level);
-            character.addStatus(newStatus);
-            return newStatus;
-        });
+    public static void addYuanLi(Character character, int amount, int skill2Level, int skill3Level) {
+        StatusYuanLi status = character.getStatus(StatusYuanLi.class).orElseGet(
+                () -> new StatusYuanLi(character, skill2Level, skill3Level)
+        );
 
-        status.stack = Math.min(8, status.stack + num);
+        status.addStack(amount);
     }
 
     public int getGuiHuo(int num, boolean isFromYuHun) {
@@ -63,22 +61,19 @@ public class StatusYuanLi extends Status {
     }
 
     static class StatusYuanLiCritPower extends Status {
-        private int stack = 0;
-
         public StatusYuanLiCritPower(Character character) {
             super("因幡自身加爆伤", character);
             type(StatusType.BUFF, StatusForm.YIN_JI);
+            enableStack(24);
             attribute(Attribute.CRIT_POWER, _ -> 5.0 * stack);
+            addTo();
         }
 
         public static void addStack(Character character, int num) {
-            StatusYuanLiCritPower status = character.getStatus(StatusYuanLiCritPower.class).orElseGet(() -> {
-                StatusYuanLiCritPower newStatus = new StatusYuanLiCritPower(character);
-                character.addStatus(newStatus);
-                return newStatus;
-            });
+            StatusYuanLiCritPower status = character.getStatus(StatusYuanLiCritPower.class).
+                    orElseGet(() -> new StatusYuanLiCritPower(character));
 
-            status.stack = Math.min(24, status.stack + num);
+            status.addStack(num);
         }
     }
 

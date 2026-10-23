@@ -36,14 +36,12 @@ public class YiNianHuo extends Equip implements YuHunSealResponse {
     static class StatusNianHuo extends Status implements ConditionalReduceCost {
         public static final String StatusName = "念火";
 
-        private int stack;
-
         public StatusNianHuo(Character character) {
             super(StatusName, character, character, StatusType.BUFF, StatusForm.YIN_JI);
-            runOn(Trigger.BEFORE_ROUND, _ -> {
-                stack++;
-                stackChange();
-            });
+            enableStack(3);
+            displayNameAndStack();
+            runOn(Trigger.BEFORE_ROUND, _ -> addStack());
+            attribute(Attribute.EFFECT_RESIST_RATE, _ -> 15.0 * stack);
         }
 
         @Override
@@ -54,20 +52,13 @@ public class YiNianHuo extends Equip implements YuHunSealResponse {
         @Override
         public void enable(int usedCount) {
             stack -= usedCount;
+            enableAction(Trigger.BEFORE_ROUND);
         }
 
-        private void stackChange() {
-            if (stack != 0) {
-                display(StatusName + stack);
-                attribute(Attribute.EFFECT_RESIST_RATE, 15 * stack);
-            } else {
-                stopDisplay();
-                attribute(Attribute.EFFECT_RESIST_RATE, 0);
-            }
-
-            if (stack < 3) {
-                enableAction(Trigger.BEFORE_ROUND);
-            } else {
+        @Override
+        public void addStack() {
+            super.addStack();
+            if (stack == maxStack) {
                 disableAction(Trigger.BEFORE_ROUND);
             }
         }

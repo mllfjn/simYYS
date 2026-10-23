@@ -11,11 +11,10 @@ import com.mllfjn.simyys.interactive.AttackType;
 class StatusPiCaoRouHou extends Status {
     private static final String StatusName = "皮糙肉厚";
 
-    private int stack = 10;
-
     public StatusPiCaoRouHou(Character character, double breakDamage) {
         super(StatusName, character);
-        display(() -> StatusName + stack);
+        enableStack(10);
+        displayNameAndStack();
         beforeDelete(() -> {
             for (Character c : belongTo.bp.situation.characters) {
                 c.removeStatus(StatusPiCaoRouHouReduceDamage.class);
@@ -33,10 +32,7 @@ class StatusPiCaoRouHou extends Status {
             if (attackInfo.getAttackType() == AttackType.DAN_TI) {
                 double number = attackInfo.getTraceableNumber().getNumber();
                 if (number > breakDamage) {
-                    stack--;
-                    if (stack == 0) {
-                        delete();
-                    }
+                    reduceStack();
                 }
             }
         });
@@ -46,6 +42,14 @@ class StatusPiCaoRouHou extends Status {
                 target.addStatus(new StatusPiCaoRouHouReduceDamage(character, target));
             }
         });
+    }
+
+    @Override
+    public void reduceStack() {
+        super.reduceStack();
+        if (stack == 0) {
+            delete();
+        }
     }
 
     static class StatusPiCaoRouHouReduceDamage extends Status {

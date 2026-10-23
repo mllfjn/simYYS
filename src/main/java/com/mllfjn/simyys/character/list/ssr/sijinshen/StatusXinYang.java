@@ -8,14 +8,13 @@ import com.mllfjn.simyys.character.status.instance.StatusShield;
 import java.util.List;
 
 class StatusXinYang extends Status {
-    private int stack;
-
     private final boolean getNewRoundWhenXinYangRemoved;
 
     StatusXinYang(SiJinShen character, boolean getNewRoundWhenXinYangRemoved) {
         super("信仰", character, character, StatusType.BUFF, StatusForm.YIN_JI);
         this.getNewRoundWhenXinYangRemoved = getNewRoundWhenXinYangRemoved;
         beforeDelete(() -> character.statusXinYang = null);
+        enableStack(12);
         display(() -> {
             if (stack != 0) {
                 return getName() + stack;
@@ -25,8 +24,10 @@ class StatusXinYang extends Status {
         });
     }
 
-    void addStack() {
-        if (stack == 11) {
+    @Override
+    public void addStack() {
+        super.addStack();
+        if (stack == 12) {
             stack = 0;
             List<Character> list = new CharacterFinder(belongTo)
                     .filterTeammate()

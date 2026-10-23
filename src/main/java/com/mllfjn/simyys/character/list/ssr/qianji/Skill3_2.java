@@ -49,23 +49,17 @@ class Skill3_2 extends Skill {
 
 class StatusBeiGe extends Status {
     private static final String StatusName = "悲歌";
-    private int stack;
 
     public StatusBeiGe(Character character) {
         super(StatusName, character);
         // 千姬回合开始时获得1层悲歌(没写,但是上限应该是5层)
+        enableStack(5);
+        displayNameAndStack();
         runOn(Trigger.BEFORE_ROUND, _ -> {
-            stack++;
-
-            if (stack == 1) {
-                display(() -> StatusName + stack);
-            } else if (stack == 5) {
+            addStack();
+            if (getStack() == 5) {
                 removeAction(Trigger.BEFORE_ROUND);
             }
         });
-    }
-
-    public int getStack() {
-        return stack;
     }
 }

@@ -13,21 +13,14 @@ import java.util.List;
 class StatusShan extends Status {
     static final String StatusName = "峦纹·山";
 
-    private int stack = 1;
-
     private StatusShan(Character character) {
         super(StatusName, character, character, StatusType.GENERAL, StatusForm.YIN_JI);
-        display(() -> StatusName + stack);
+        enableStackAndAddStack(5);
+        displayNameAndStack();
     }
 
     static void addStack(Character character) {
         character.addStatusOrChange(StatusShan.class, StatusShan::addStack, () -> new StatusShan(character));
-    }
-
-    void addStack() {
-        if (stack < 5) {
-            stack++;
-        }
     }
 
     void consumeStack(Skill1 skill, Interactive interactive) {
@@ -40,7 +33,7 @@ class StatusShan extends Status {
         double initDefense = belongTo.getInitDefense();
         interactive.heal(skill, list, c -> {
             HealInfo healInfo = HealInfo.createHeal(belongTo, skill, c, initDefense);
-            healInfo.setMultiplier(stack * 100);
+            healInfo.setMultiplier(getStack() * 100);
             return healInfo;
         });
     }
@@ -61,7 +54,7 @@ class StatusShan extends Status {
             }
         }
 
-        int canDispel = stack;
+        int canDispel = getStack();
         if (!crowedControls.isEmpty()) {
             List<Status> choose = RateController.choose(StatusName + "驱散-优先控制效果", crowedControls,
                     Status::toString, belongTo.bp.calc, canDispel

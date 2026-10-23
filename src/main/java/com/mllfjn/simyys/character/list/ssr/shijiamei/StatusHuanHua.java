@@ -8,12 +8,11 @@ import com.mllfjn.simyys.character.status.StatusType;
 class StatusHuanHua extends Status {
     private static final String StatusName = "幻花";
 
-    private int stack;
-
     private StatusHuanHua(Character character, int stack) {
         super(StatusName, character, character, StatusType.GENERAL, StatusForm.YIN_JI);
-        this.stack = stack;
-        display(() -> StatusName + stack);
+        enableStack(5);
+        setStack(stack);
+        displayNameAndStack();
     }
 
     static void addStack(Character character, int stack) {
@@ -24,9 +23,10 @@ class StatusHuanHua extends Status {
                 );
     }
 
-    private void addStack(int addStack) {
+    @Override
+    public void addStack(int amount) {
         if (stack < 5) {
-            stack = Math.min(stack + addStack, 5);
+            stack = Math.min(stack + amount, 5);
             if (stack == 5) {
                 ((ShiJiaMei) belongTo).unlockDuanZui();
             }

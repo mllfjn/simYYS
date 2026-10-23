@@ -205,6 +205,10 @@ public class Status implements Serializable {
         return this;
     }
 
+    public final void displayNameAndStack() {
+        displayTextSupplier = () -> name + getStack();
+    }
+
     public boolean isDisplayText() {
         return displayText != null || displayTextSupplier != null;
     }
@@ -246,6 +250,46 @@ public class Status implements Serializable {
             colorR = null;
         }
         return this;
+    }
+
+    // =========================叠层====================================
+    protected int maxStack;
+    protected int stack;
+
+    public final Status enableStack(int maxStack) {
+        this.maxStack = maxStack;
+        return this;
+    }
+
+    public final void enableStackAndAddStack(int maxStack) {
+        enableStack(maxStack);
+        addStack();
+    }
+
+    public void addStack() {
+        if (stack < maxStack) {
+            stack++;
+        }
+    }
+
+    public void addStack(int amount) {
+        stack = Math.min(stack + amount, maxStack);
+    }
+
+    public void reduceStack() {
+        if (stack > 0) {
+            stack--;
+        } else {
+            throw new IllegalStateException(this.getClass().getSimpleName() + name + "的层数已经是0");
+        }
+    }
+
+    public final void setStack(int stack) {
+        this.stack = stack;
+    }
+
+    public final int getStack() {
+        return stack;
     }
 
     // ========================改变鬼火消耗===============================
