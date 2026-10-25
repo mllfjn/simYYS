@@ -899,8 +899,9 @@ public abstract class Character implements Serializable {
         }
 
         statuses.add(newStatus);
-        if (newStatus.statusType == StatusType.DEBUFF) {
-            statusRun(Trigger.ADDING_DEBUFF, new ParamStatus(newStatus));
+
+        if (newStatus.statusType == StatusType.DEBUFF || newStatus.statusType == StatusType.BUFF) {
+            statusRun(Trigger.ADDED_STATUS, new ParamStatus(newStatus));
         }
 
         return true;

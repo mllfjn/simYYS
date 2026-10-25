@@ -89,10 +89,13 @@ class Skill2 extends PassiveSkill {
     class StatusAddingDebuffListener extends Status {
         public StatusAddingDebuffListener(Character from, Character belongTo) {
             super(SkillName + "减益状态监听", from, belongTo);
-            runOn(Trigger.ADDING_DEBUFF, param -> {
-                if (Skill2.this.canAddStackWhenTeammateBeingAttack()) {
-                    StatusYeJin.addStack(from, ((ParamStatus) param).getStatus().from, Skill2.this);
-                    Skill2.this.addStackWhenTeammateBeingAttack();
+            runOn(Trigger.ADDED_STATUS, param -> {
+                Status status = ((ParamStatus) param).getStatus();
+                if (status.statusType == StatusType.DEBUFF) {
+                    if (Skill2.this.canAddStackWhenTeammateBeingAttack()) {
+                        StatusYeJin.addStack(from, status.from, Skill2.this);
+                        Skill2.this.addStackWhenTeammateBeingAttack();
+                    }
                 }
             });
         }

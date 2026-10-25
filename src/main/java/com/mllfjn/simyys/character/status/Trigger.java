@@ -11,7 +11,7 @@ public enum Trigger {
     AFTER_ATTACK, // 遭到攻击 (有伤害) 其实这两分的不是很开 以后再改
     MAKING_CROWD_CONTROL, // 要对其他角色造成控制时
     ADDING_CROWD_CONTROL, // 要被控制时
-    ADDING_DEBUFF, // 被添加DEBUFF时
+    ADDED_STATUS, // 被添加状态
     WHEN_ATTACK, // 造成伤害时
     CAUSE_ATTACK, // 造成伤害后
     WILL_USE_SKILL, // 将要使用技能
