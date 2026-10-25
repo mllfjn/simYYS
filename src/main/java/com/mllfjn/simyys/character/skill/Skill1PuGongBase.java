@@ -19,6 +19,11 @@ public abstract class Skill1PuGongBase extends Skill {
 
     private final List<Skill1PuGongBase> xieZhanSkills = new ArrayList<>();
 
+    public Skill1PuGongBase(Character belongTo, int level, String name) {
+        super(belongTo, level, name, 0, 0, 1);
+    }
+
+    @Deprecated
     public Skill1PuGongBase(Character belongTo, int level) {
         super(belongTo, level, 0, 0, 1);
     }

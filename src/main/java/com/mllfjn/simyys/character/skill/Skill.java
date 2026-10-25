@@ -30,17 +30,6 @@ public abstract class Skill implements Serializable {
     // 当技能结束时，遍历通知
     private List<SkillEndListener> skillEndListeners;
 
-    // 不记得为什么不直接把name作为成员了
-    public Skill(Character belongTo, int level, int cost, int coolDown, int skillID) {
-        this.belongTo = belongTo;
-        this.level = level;
-        this.cost = cost;
-        this.coolDown = coolDown;
-        this.skillID = skillID;
-
-        this.name = getName();
-    }
-
     public Skill(Character belongTo, int level, String name, int cost, int coolDown, int skillID) {
         this.belongTo = belongTo;
         this.level = level;
@@ -49,6 +38,18 @@ public abstract class Skill implements Serializable {
         this.skillID = skillID;
 
         this.name = name;
+    }
+
+    // 不记得为什么不直接把name作为成员了
+    @Deprecated
+    public Skill(Character belongTo, int level, int cost, int coolDown, int skillID) {
+        this.belongTo = belongTo;
+        this.level = level;
+        this.cost = cost;
+        this.coolDown = coolDown;
+        this.skillID = skillID;
+
+        this.name = getName();
     }
 
     public static Skill getInstance(String name) {
