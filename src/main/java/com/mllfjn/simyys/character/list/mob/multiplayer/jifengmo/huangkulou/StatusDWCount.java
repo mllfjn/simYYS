@@ -40,6 +40,7 @@ class StatusDWCount extends Status {
                                             .createRealAttack(belongTo, skill2, c, count * 3000)
                             );
                         });
+                        skill2.useDone();
                         setOff = false;
                     }
                 }
