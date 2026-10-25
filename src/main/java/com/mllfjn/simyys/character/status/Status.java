@@ -209,6 +209,16 @@ public class Status implements Serializable {
         displayTextSupplier = () -> name + getStack();
     }
 
+    public final void displayNameAndNonZeroStack() {
+        displayTextSupplier = () -> {
+            if (stack == 0) {
+                return null;
+            } else {
+                return name + stack;
+            }
+        };
+    }
+
     public boolean isDisplayText() {
         return displayText != null || displayTextSupplier != null;
     }
