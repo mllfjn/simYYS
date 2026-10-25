@@ -25,26 +25,27 @@ public class WuDaoQu extends Equip implements YuHunAttack {
 
     @Override
     public void effectInfo(AttackInfo attackInfo) {
-        if (statusRecord.increase > 1) {
-            attackInfo.getTraceableNumber().mul(statusRecord.increase, EQUIP_NAME);
+        if (statusRecord.getStack() > 0) {
+            attackInfo.getTraceableNumber().mul(1 + 0.15 * statusRecord.getStack(), EQUIP_NAME);
             yuHunEffect();
         }
     }
 
     private static class StatusRecord extends Status {
-        private double increase = 1;
 
         protected StatusRecord(Character character) {
             super("无刀取计数器", character);
+            enableStack(3);
+            displayNameAndNonZeroStack();
             runOn(Trigger.AFTER_ROUND, _ -> {
-                increase += 0.15;
-                if (increase == 1.45) {
+                stack++;
+                if (stack == 3) {
                     disableAction(Trigger.AFTER_ROUND);
                 }
             });
             retainAfterDie();
             retainAfterChangeWave(() -> {
-                increase = 1;
+                stack = 0;
                 enableAction(Trigger.AFTER_ROUND);
             });
             addTo();
