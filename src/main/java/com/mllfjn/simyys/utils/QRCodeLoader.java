@@ -197,7 +197,7 @@ public class QRCodeLoader {
     public static class HeroData extends CharacterData {
         public int[] skills; // 技能
         public Field5 field5;
-        public int noCalculating; // 不配置御魂开关,为1时应当清除御魂
+        public Integer noCalculating; // 不配置御魂开关,为1时应当清除御魂
         public int[] maxAttribute; // 最高属性
         public int lockSkill; // 锁定技能,妖术为11
         public Object field9;
@@ -341,10 +341,11 @@ public class QRCodeLoader {
                 }
             }
 
-            // 跳过field8
-            do {
-                p.nextToken();
-            } while (p.currentToken() != JsonToken.END_ARRAY);
+            // 跳过field8:可能是0代表空,也可能是数组
+            if (p.nextToken() == JsonToken.START_ARRAY) {
+                p.skipChildren();
+            }
+            p.nextToken();
 
             return new AttributesLimit(limits);
         }
