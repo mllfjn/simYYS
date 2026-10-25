@@ -43,4 +43,6 @@ module com.mllfjn.simyys {
     exports com.mllfjn.simyys.utils.serializable;
     opens com.mllfjn.simyys.utils.serializable to javafx.fxml;
     exports com.mllfjn.simyys.character.status.instance;
+    exports com.mllfjn.simyys.utils.qrcodeloader;
+    opens com.mllfjn.simyys.utils.qrcodeloader to javafx.fxml;
 }

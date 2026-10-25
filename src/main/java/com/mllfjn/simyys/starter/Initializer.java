@@ -4,7 +4,7 @@ import com.mllfjn.simyys.BattlePane;
 import com.mllfjn.simyys.collections.SerializableObservableList;
 import com.mllfjn.simyys.customnode.NodeWithController;
 import com.mllfjn.simyys.starter.sceneeffect.SceneEffect;
-import com.mllfjn.simyys.utils.QRCodeLoader;
+import com.mllfjn.simyys.utils.qrcodeloader.QRCodeLoader;
 import com.mllfjn.simyys.utils.Utils;
 import com.mllfjn.simyys.character.CharacterFactory;
 import com.mllfjn.simyys.character.propertygetter.PropertiesHolder;
