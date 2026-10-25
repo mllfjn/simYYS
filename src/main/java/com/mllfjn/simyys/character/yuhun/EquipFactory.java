@@ -61,6 +61,8 @@ public class EquipFactory {
         putEquipMeta(300080, GongQian.YuHunName, GongQian.class, EquipType.EFFECT_RESIST);
         putEquipMeta(300090, DiaoPingHuo.YuHunName, DiaoPingHuo.class, EquipType.EFFECT_RESIST);
 
+        putEquipMeta(300092, WuDaoQu.EQUIP_NAME, WuDaoQu.class, EquipType.CRIT_POWER);
+
         putEquipMetaSingle(300077, GuiLingGeJi.YuHunName, GuiLingGeJi.class);
         putEquipMetaSingle(300054, ShenQiLou.YuHunName, ShenQiLou.class);
         putEquipMetaSingle(300053, DiZhenNian.YuHunName, DiZhenNian.class);
