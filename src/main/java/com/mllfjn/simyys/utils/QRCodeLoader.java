@@ -63,7 +63,11 @@ public class QRCodeLoader {
             BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
 
             try {
-                Result result = new MultiFormatReader().decode(bitmap);
+                Map<DecodeHintType, Object> hints = new EnumMap<>(DecodeHintType.class);
+                hints.put(DecodeHintType.TRY_HARDER, Boolean.TRUE);
+                hints.put(DecodeHintType.POSSIBLE_FORMATS, EnumSet.of(BarcodeFormat.QR_CODE));
+
+                Result result = new MultiFormatReader().decode(bitmap, hints);
                 // 二维码内容,形如: #TA#eJxlj89rE0EUx2f2V7f
                 String qrContent = result.getText();
                 // 去除不知道是什么的开头
@@ -76,12 +80,12 @@ public class QRCodeLoader {
                     byte[] decompressedBytes = new byte[4096];
                     int length = inflater.inflate(decompressedBytes);
 
-                    /*// 测试用
+                    // 测试用
                     StringBuilder builder = new StringBuilder();
                     for (int i = 0; i < length; i++) {
                         builder.append(String.format("%02x", decompressedBytes[i]));
                     }
-                    System.out.println("QRCodeLoader:\n" + builder);*/
+                    System.out.println("QRCodeLoader:\n" + builder);
 
                     ObjectMapper mapper = new ObjectMapper(new MessagePackFactory());
                     Data data = mapper.readValue(decompressedBytes, Data.class);
@@ -103,6 +107,8 @@ public class QRCodeLoader {
                     }
                 }
 
+            } catch (NotFoundException e) {
+                Utils.error("未识别到二维码");
             } catch (Exception e) {
                 Utils.throwException("读取阵容码时出错", e);
             }
