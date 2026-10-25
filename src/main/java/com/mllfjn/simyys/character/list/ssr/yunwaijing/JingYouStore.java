@@ -48,8 +48,8 @@ class JingYouStore implements Serializable {
             // 友方最多2个
             if (deque.size() == MAX_CAPACITY) {
                 deque.pollFirst().delete();
-                deque.addLast(new StatusJingYou(owner, target));
             }
+            deque.addLast(new StatusJingYou(owner, target));
         }
 
         if (!added) {
@@ -79,6 +79,13 @@ class JingYouStore implements Serializable {
                 statusJingYou.onDispel();
             }
         }
+    }
+
+    void removeAll() {
+        self = null;
+        deque.clear();
+        owner.bp().removeActionListener(listener);
+        added = false;
     }
 
     private class StatusJingYou extends Status {

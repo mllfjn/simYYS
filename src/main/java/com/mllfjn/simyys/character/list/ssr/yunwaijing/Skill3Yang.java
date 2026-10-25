@@ -23,8 +23,6 @@ class Skill3Yang extends Skill {
         this.increase = level >= 4 ? 20 : 10;
 
         jingYouStore = new JingYouStore(belongTo, this);
-
-        // TODO:镜佑移除
     }
 
     @Override
@@ -50,5 +48,13 @@ class Skill3Yang extends Skill {
         }
 
         return Optional.of(target);
+    }
+
+    void changeToYang() {
+        jingYouStore.addJingYou(getBelongTo());
+    }
+
+    void changeToYin() {
+        jingYouStore.removeAll();
     }
 }

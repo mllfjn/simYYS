@@ -21,6 +21,11 @@ public class YunWaiJing extends CharacterShiShenBase {
     private Skill3Yang skill3Yang;
 
     @Override
+    protected boolean useSkillAuto() {
+        return tryUseSkill(3);
+    }
+
+    @Override
     protected String getDefaultSkillLevel() {
         return "555";
     }
@@ -68,6 +73,8 @@ public class YunWaiJing extends CharacterShiShenBase {
                 removeSkill(skill1Yang);
                 removeSkill(skill2Yang);
                 removeSkill(skill3Yang);
+
+                skill3Yang.changeToYin();
             }
 
             // 添加阴状态技能
@@ -99,6 +106,8 @@ public class YunWaiJing extends CharacterShiShenBase {
             addSkill(skill1Yang, true);
             addSkill(skill2Yang, true);
             addSkill(skill3Yang, true);
+
+            skill3Yang.changeToYang();
         }
     }
 

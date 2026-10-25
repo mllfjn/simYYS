@@ -637,9 +637,9 @@ public abstract class Character implements Serializable {
 
     public void addSkill(Skill skill, boolean needOrder) {
         if (needOrder) {
-            int i = 0;
+            int i = 0, id;
             Iterator<Skill> iterator = skills.iterator();
-            while (iterator.hasNext() && iterator.next().getSkillID() < skill.getSkillID()) {
+            while (iterator.hasNext() && (id = iterator.next().getSkillID()) >= 0 && id < skill.getSkillID()) {
                 i++;
             }
             skills.add(i, skill);
