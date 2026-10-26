@@ -31,6 +31,7 @@ public class EquipFactory {
         putEquipMeta(300012, LunRuDao.YuHunName, LunRuDao.class, EquipType.ATTACK);
         putEquipMeta(300004, FuYi.YuHunName, FuYi.class, EquipType.ATTACK);
         putEquipMeta(300086, YinNian.YuHunName, YinNian.class, EquipType.ATTACK);
+        putEquipMeta(300074, BingZhuBu.EQUIP_NAME, BingZhuBu.class, EquipType.ATTACK);
 
         putEquipMeta(300075, QingNvFang.YuHunName, QingNvFang.class, EquipType.CRIT_RATE);
         putEquipMeta(300036, ZhenNv.YuHunName, ZhenNv.class, EquipType.CRIT_RATE);
