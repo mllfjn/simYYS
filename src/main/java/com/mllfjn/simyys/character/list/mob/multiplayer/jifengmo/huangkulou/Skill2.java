@@ -75,9 +75,9 @@ class Skill2 extends Skill {
             duration(StatusDurationType.CHI_XU, 3);
             displayNameAndDuration();
             runOn(Trigger.BEFORE_ROUND, _ ->
-                    from.doInteractive(skill, interactive -> {
-                        interactive.attackTypical(belongTo, 33, AttackType.DAN_TI);
-                    })
+                    from.doInteractive(skill, interactive ->
+                            interactive.attackTypical(belongTo, 33, AttackType.DAN_TI)
+                    )
             );
         }
 

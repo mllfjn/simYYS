@@ -35,7 +35,7 @@ class Skill2 extends PassiveSkill {
         if (isActive() && !copyList.isEmpty()) {
             TianZhao tianZhao = (TianZhao) getBelongTo();
             if (!tianZhao.isUncontrollable()) {
-                tianZhao.bp.addOutRoundSkill(this, () -> {
+                tianZhao.bp.addOutRoundSkill(() -> {
                     tianZhao.setCopyTarget(copyTarget);
                     double coefficient = Coefficients[getLevel()];
                     tianZhao.doInteractive(this, interactive ->

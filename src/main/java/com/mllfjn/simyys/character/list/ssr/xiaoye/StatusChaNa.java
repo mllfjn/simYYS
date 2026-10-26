@@ -1,7 +1,6 @@
 package com.mllfjn.simyys.character.list.ssr.xiaoye;
 
 import com.mllfjn.simyys.character.Character;
-import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.skill.Skill1PuGongBase;
 import com.mllfjn.simyys.character.status.Status;
 import com.mllfjn.simyys.character.status.Trigger;
@@ -27,7 +26,7 @@ public class StatusChaNa extends Status {
                 ParamUseSkill pus = (ParamUseSkill) param;
                 Skill1PuGongBase s1pg = (Skill1PuGongBase) pus.getSkill();
                 Character target = pus.getTarget().orElseThrow();
-                belongTo.bp().addOutRoundSkill(s1pg, () -> {
+                belongTo.bp().addOutRoundSkill(() -> {
                     belongTo.doInteractive(s1pg, i1 ->
                             s1pg.usePrivate(i1, target)
                     );

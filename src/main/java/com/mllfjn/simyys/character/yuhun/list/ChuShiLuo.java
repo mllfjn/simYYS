@@ -7,7 +7,6 @@ import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.yuhun.Equip;
 import com.mllfjn.simyys.character.yuhun.YuHunAfterBeingAttack;
 import com.mllfjn.simyys.interactive.AttackInfo;
-import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.interactive.TraceableNumber;
 
 public class ChuShiLuo extends Equip implements YuHunAfterBeingAttack {
@@ -29,7 +28,6 @@ public class ChuShiLuo extends Equip implements YuHunAfterBeingAttack {
     public void action(AttackInfo attackInfo) {
         getBelongTo().doInteractive(skill, interactive ->
                 interactive.recovery(character, attackInfo.getTraceableNumber().getNumber() * 0.1));
-        ;
     }
 
     private static class StatusChuShiLuo extends Status {

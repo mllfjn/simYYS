@@ -9,7 +9,6 @@ import com.mllfjn.simyys.character.yuhun.Equip;
 import com.mllfjn.simyys.character.yuhun.YuHunAfterCauseAttack;
 import com.mllfjn.simyys.character.yuhun.YuHunHitFeedBack;
 import com.mllfjn.simyys.interactive.AttackInfo;
-import com.mllfjn.simyys.interactive.Interactive;
 
 public class XueYouHun extends Equip implements YuHunAfterCauseAttack, YuHunHitFeedBack {
     public static final String YuHunName = "雪幽魂";

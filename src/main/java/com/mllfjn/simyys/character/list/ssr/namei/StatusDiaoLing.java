@@ -18,11 +18,11 @@ public class StatusDiaoLing extends Status {
         attribute(Attribute.DEFENCE, -100.0);
         Skill skill = Skill.getInstance(StatusName);
         // 回合结束时受到施加者攻击120%间接伤害
-        runOn(Trigger.AFTER_ROUND_FIRST, _ -> {
-            from.doInteractive(skill, interactive ->
-                            interactive.attackTypical(belongTo, 120, AttackType.JIAN_JIE)
-            );
-        });
+        runOn(Trigger.AFTER_ROUND_FIRST, _ ->
+                from.doInteractive(skill, interactive ->
+                        interactive.attackTypical(belongTo, 120, AttackType.JIAN_JIE)
+                )
+        );
     }
 
     public static StatusSupplier getSupplier(int duration) {

@@ -12,11 +12,11 @@ class StatusTiJia extends Status {
         enableStack(3);
         setStack(3);
         displayNameAndStack();
-        runOn(Trigger.BEFORE_ROUND, _ -> {
-            from.doInteractive(skill3, interactive ->
-                    interactive.healTypical(belongTo, skill3.getMultiplier())
-            );
-        });
+        runOn(Trigger.BEFORE_ROUND, _ ->
+                from.doInteractive(skill3, interactive ->
+                        interactive.healTypical(belongTo, skill3.getMultiplier())
+                )
+        );
         runOn(Trigger.BEFORE_ATTACK, param -> {
             AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
             if (attackInfo.isCrit()) {

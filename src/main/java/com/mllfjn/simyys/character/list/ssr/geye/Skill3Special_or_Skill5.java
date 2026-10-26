@@ -90,7 +90,7 @@ class Skill3Special_or_Skill5 extends Skill {
         VBox vBox = new VBox();
         Button button = new Button("确定");
         button.setPrefWidth(100);
-        button.setOnAction(event -> stage.close());
+        button.setOnAction(_ -> stage.close());
         vBox.setAlignment(Pos.CENTER);
         vBox.getChildren().addAll(hBox, new Text("至多选择" + maxTarget + "名式神"), button);
         vBox.setSpacing(10);

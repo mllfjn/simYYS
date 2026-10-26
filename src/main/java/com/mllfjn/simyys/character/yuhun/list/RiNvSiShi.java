@@ -7,7 +7,6 @@ import com.mllfjn.simyys.character.status.StatusType;
 import com.mllfjn.simyys.character.yuhun.Equip;
 import com.mllfjn.simyys.character.yuhun.YuHunAfterCauseAttack;
 import com.mllfjn.simyys.interactive.AttackInfo;
-import com.mllfjn.simyys.interactive.Interactive;
 import com.mllfjn.simyys.ratecontroller.RateController;
 
 public class RiNvSiShi extends Equip implements YuHunAfterCauseAttack {

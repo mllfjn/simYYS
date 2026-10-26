@@ -697,8 +697,7 @@ public class BattlePane {
         return situation.teamPane[1 - character.team].isMobTeam();
     }
 
-    public void addOutRoundSkill(Skill skill, Runnable runnable) {
-        // TODO skill.done要统一调用
+    public void addOutRoundSkill(Runnable runnable) {
         outRoundSkillList.add(runnable);
     }
 

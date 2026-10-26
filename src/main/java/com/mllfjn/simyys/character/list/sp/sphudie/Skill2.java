@@ -28,7 +28,7 @@ class Skill2 extends Skill {
                         damage += number;
                         // TODO 这里有一个初始生命的概念,以后加上
                         if (damage >= (belongTo.getMaxHp() * 0.2)) {
-                            belongTo.bp.addOutRoundSkill(this, () -> {
+                            belongTo.bp.addOutRoundSkill(() -> {
                                 huDieSkill2Use();
                                 damage = 0;
                                 status.enableAction(Trigger.AFTER_ATTACK);
