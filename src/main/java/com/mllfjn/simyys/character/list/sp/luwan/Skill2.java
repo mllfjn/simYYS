@@ -79,8 +79,8 @@ class Skill2 extends Skill {
                         return true;
                     } else if (listenerType && event instanceof EventCharacterDie) {
                         if (level >= 3) {
-                            belongTo.doInteractive(interactive ->
-                                    interactive.recovery(Skill2.this, belongTo, belongTo.getMaxHp() * 0.3)
+                            belongTo.doInteractive(Skill2.this, interactive ->
+                                    interactive.recovery(belongTo, belongTo.getMaxHp() * 0.3)
                             );
                         }
                         check();
@@ -156,8 +156,8 @@ class Skill2 extends Skill {
             displayName();
             runOn(Trigger.CAUSE_ATTACK, triggerParam -> {
                 double number = ((ParamAttackInfo) triggerParam).getAttackInfo().getTraceableNumber().getNumber();
-                belongTo.doInteractive(interactive ->
-                        interactive.recovery(Skill2.this, belongTo, number * 0.12)
+                belongTo.doInteractive(Skill2.this, interactive ->
+                        interactive.recovery(belongTo, number * 0.12)
                 );
             });
             runOn(Trigger.BEING_ATTACKED, triggerParam ->

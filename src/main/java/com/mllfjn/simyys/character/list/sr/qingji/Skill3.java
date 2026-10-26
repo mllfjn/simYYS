@@ -31,7 +31,7 @@ class Skill3 extends Skill {
     @Override
     public Optional<Character> usePrivate(BattlePane bp) {
         Character belongTo = getBelongTo();
-        Interactive interactive = belongTo.getInteractive();
+        Interactive interactive = belongTo.getInteractive(this);
         int multi = multiplier[getLevel()];
 
         List<Character> list = new CharacterFinder(belongTo)
@@ -39,8 +39,8 @@ class Skill3 extends Skill {
                 .getList();
 
         for (int i = 0; i < 3; i++) {
-            interactive.attackTypical(this, list, multi, AttackType.QUN_TI);
-            EffectInfo[] effectInfos = interactive.effect(this, list, 100, true,
+            interactive.attackTypical(list, multi, AttackType.QUN_TI);
+            EffectInfo[] effectInfos = interactive.effect(list, 100, true,
                     StatusPoisoning.getSupplier(3, 5)
             );
             for (EffectInfo effectInfo : effectInfos) {

@@ -38,12 +38,11 @@ class QiLingZhenNv implements Serializable {
                 AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
                 if (count == 5) {
                     count = 0;
-                    from.doInteractive(interactive -> {
-                        interactive.attack(AttackInfo.createRealAttack(from, QiLingZhenNv.this.skill,
-                                attackInfo.getTarget(), Math.min(from.getAttack() * 0.5, from.getInitAttack())
-                        ));
-                        skill.useDone();
-                    });
+                    from.doInteractive(QiLingZhenNv.this.skill, interactive ->
+                            interactive.attack(AttackInfo.createRealAttack(from, QiLingZhenNv.this.skill,
+                                    attackInfo.getTarget(), Math.min(from.getAttack() * 0.5, from.getInitAttack())
+                            ))
+                    );
                     QiLingFactory.yuHunEffect(from, QiLingName);
                 } else {
                     if (attackInfo.isCrit()) {
@@ -63,13 +62,13 @@ class QiLingZhenNv implements Serializable {
                 AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
                 if (attackInfo.getSkill() != QiLingZhenNv.this.skill) {
                     disableAction(Trigger.CAUSE_ATTACK);
-                    belongTo.bp().addOutRoundSkill(QiLingZhenNv.this.skill, () -> {
+                    belongTo.bp().addOutRoundSkill(() -> {
                         List<Character> list = new CharacterFinder(belongTo)
                                 .filterEnemy()
                                 .getList();
-                        belongTo.doInteractive(interactive -> {
+                        belongTo.doInteractive(QiLingZhenNv.this.skill, interactive -> {
                             for (int i = 0; i < 3; i++) {
-                                interactive.attack(QiLingZhenNv.this.skill, list, c ->
+                                interactive.attack(list, c ->
                                         AttackInfo.createRealAttack(belongTo, QiLingZhenNv.this.skill, c,
                                                 belongTo.getAttack() * 2
                                         )

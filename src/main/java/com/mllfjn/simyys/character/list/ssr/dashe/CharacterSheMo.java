@@ -50,7 +50,7 @@ class CharacterSheMo extends CharacterSummonBase {
     @Override
     public void afterRound() {
         super.afterRound();
-        daShe.doInteractive(interactive -> interactive.increaseLocation(daShe, 10));
+        daShe.doInteractive(skillDuYe, interactive -> interactive.increaseLocation(daShe, 10));
     }
 
     @Override
@@ -75,7 +75,7 @@ class CharacterSheMo extends CharacterSummonBase {
         }
 
         void attack(Interactive interactive, Character target) {
-            interactive.attackTypical(this, target, 100, AttackType.DAN_TI);
+            interactive.attackTypical(target, 100, AttackType.DAN_TI);
             daShe.addMo(target);
         }
 

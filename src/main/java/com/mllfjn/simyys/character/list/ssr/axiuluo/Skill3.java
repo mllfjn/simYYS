@@ -27,7 +27,7 @@ class Skill3 extends Skill {
     @Override
     public Optional<Character> usePrivate(BattlePane bp) {
         AXiuLuo belongTo = (AXiuLuo) getBelongTo();
-        Interactive interactive = belongTo.getInteractive();
+        Interactive interactive = belongTo.getInteractive(this);
 
         Character target = new CharacterFinder(belongTo)
                 .filterEnemy()
@@ -38,14 +38,14 @@ class Skill3 extends Skill {
                 .getList();
 
         belongTo.statusLiXing.consume(list.size());
-        interactive.attackTypical(this, list, multiplier[getLevel()], AttackType.QUN_TI);
+        interactive.attackTypical(list, multiplier[getLevel()], AttackType.QUN_TI);
 
         Character currentTarget = target;
         int pursuitMultiplier = getLevel() >= 4 ? 63 : 54;
         while (belongTo.statusLiXing.getStack() > 0) {
             if (currentTarget.alive) {
                 belongTo.statusLiXing.consume(1);
-                interactive.attackTypical(this, currentTarget, pursuitMultiplier, AttackType.DAN_TI);
+                interactive.attackTypical(currentTarget, pursuitMultiplier, AttackType.DAN_TI);
             } else if (getLevel() >= 5) {
                 // lv5切换目标
                 currentTarget = new CharacterFinder(belongTo)

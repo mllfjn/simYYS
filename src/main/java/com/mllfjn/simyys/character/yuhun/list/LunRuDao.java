@@ -1,6 +1,7 @@
 package com.mllfjn.simyys.character.yuhun.list;
 
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.yuhun.Equip;
 import com.mllfjn.simyys.character.yuhun.YuHunSealResponse;
@@ -8,6 +9,8 @@ import com.mllfjn.simyys.ratecontroller.RateController;
 
 public class LunRuDao extends Equip implements YuHunSealResponse {
     public static final String YuHunName = "轮入道";
+    private static final Skill SKILL = Skill.getInstance(YuHunName);
+
     private static final int RATE = 20;
 
     private StatusLRD status;
@@ -41,7 +44,7 @@ public class LunRuDao extends Equip implements YuHunSealResponse {
             runOn(Trigger.AFTER_ROUND, _ -> {
                 if (canTrigger) {
                     if (RateController.yuHun(belongTo, LunRuDao.this, RATE)) {
-                        belongTo.doInteractive(interactive -> interactive.getNewRound(belongTo));
+                        belongTo.doInteractive(SKILL, interactive -> interactive.getNewRound(belongTo));
                         LunRuDao.this.yuHunEffect();
                         canTrigger = false;
                     }

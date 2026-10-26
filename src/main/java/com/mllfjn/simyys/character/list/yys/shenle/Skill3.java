@@ -56,7 +56,7 @@ class Skill3 extends Skill {
 
         if (mobBattle) {
             // 与怪物战斗时,使目标获得1个回合
-            belongTo.getInteractive().getNewRound(target);
+            belongTo.getInteractive(this).getNewRound(target);
         } else {
             // 与阴阳师战斗时,交换神乐与目标的行动条位置
             double targetLocation = target.getLocation();

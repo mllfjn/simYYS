@@ -22,7 +22,7 @@ class Skill1 extends Skill1PuGongBase implements YingFenShenCopy {
     }
 
     private void use(Character skillUser, Character target, int multiplier, Interactive interactive, boolean doLog) {
-        interactive.attackTypical(this, target, multiplier, AttackType.DAN_TI);
+        interactive.attackTypical(target, multiplier, AttackType.DAN_TI);
         if (doLog) {
             log(skillUser, target);
         }

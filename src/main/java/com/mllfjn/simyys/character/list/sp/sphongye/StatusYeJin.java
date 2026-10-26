@@ -20,11 +20,10 @@ class StatusYeJin extends Status {
         displayNameAndStack();
         // 回合前受到伤害
         runOn(Trigger.BEFORE_ROUND, _ ->
-                from.doInteractive(interactive -> {
+                from.doInteractive(skill2, interactive -> {
                     AttackInfo attackInfo = AttackInfo.createJianJieAttack(from, skill2, belongTo, from.getAttack());
                     attackInfo.setMultiplier(10);
                     interactive.attack(attackInfo);
-                    skill2.useDone();
                 })
         );
         // 提升受到的间接伤害

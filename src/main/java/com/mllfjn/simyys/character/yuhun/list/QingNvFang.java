@@ -56,10 +56,8 @@ public class QingNvFang extends Equip {
             attribute(Attribute.DEFENCE, _ -> belongTo.getInitDefense());
             // 若冰封结束时仍存活,则再次恢复100%生命
             runOn(Trigger.BEFORE_ROUND, _ -> {
-                belongTo.doInteractive(
-                        interactive -> interactive.recovery(Skill.getInstance(QingNvFang.YuHunName),
-                                belongTo, belongTo.getMaxHp()
-                        )
+                belongTo.doInteractive(Skill.getInstance(QingNvFang.YuHunName), interactive ->
+                        interactive.recovery(belongTo, belongTo.getMaxHp())
                 );
                 delete();
             });

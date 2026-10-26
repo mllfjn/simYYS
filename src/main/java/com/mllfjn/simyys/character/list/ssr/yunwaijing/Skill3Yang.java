@@ -42,7 +42,7 @@ class Skill3Yang extends Skill {
                 .filterTeammate()
                 .getList();
 
-        Interactive interactive = getBelongTo().getInteractive();
+        Interactive interactive = getBelongTo().getInteractive(this);
         for (Character character : teammate) {
             interactive.increaseLocation(character, 20);
         }

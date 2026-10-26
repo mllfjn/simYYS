@@ -25,7 +25,7 @@ class Skill2 extends Skill {
     @Override
     public Optional<Character> usePrivate(BattlePane bp) {
         ShenQiLou shenQiLou = ((ShenQiLou) getBelongTo());
-        Interactive interactive = shenQiLou.getInteractive();
+        Interactive interactive = shenQiLou.getInteractive(this);
         // 对群体目标造成当前生命40%的伤害,没测试,猜测是真伤
         // 降低敌方群体15%暴击率
         List<Character> target = new CharacterFinder(shenQiLou)

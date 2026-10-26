@@ -31,7 +31,7 @@ class StatusShan extends Status {
         dispel(list);
 
         double initDefense = belongTo.getInitDefense();
-        interactive.heal(skill, list, c -> {
+        interactive.heal(list, c -> {
             HealInfo healInfo = HealInfo.createHeal(belongTo, skill, c, initDefense);
             healInfo.setMultiplier(getStack() * 100);
             return healInfo;

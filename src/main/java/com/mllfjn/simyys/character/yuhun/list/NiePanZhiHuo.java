@@ -18,10 +18,9 @@ public class NiePanZhiHuo extends Equip implements YuHunSealResponse {
         status = Status.of(YuHunName, character);
         status.runOn(Trigger.AFTER_ACTION, _ -> {
             if (character.getHpPercent() < 0.3) {
-                character.doInteractive(interactive -> {
-                    interactive.healTypical(skill, character, 15);
+                character.doInteractive(skill, interactive -> {
+                    interactive.healTypical(character, 15);
                     yuHunEffect();
-                    skill.useDone();
                 });
             }
         });

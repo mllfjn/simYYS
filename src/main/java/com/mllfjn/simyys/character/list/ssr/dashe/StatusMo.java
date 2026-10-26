@@ -20,14 +20,14 @@ class StatusMo extends Status {
     public void addStack() {
         Skill2 skill2 = ((DaShe) from).skill2;
         if (stack == 2) {
-            from.doInteractive(interactive -> {
+            from.doInteractive(skill2, interactive -> {
                 AttackInfo attackInfo = AttackInfo.createJianJieAttack(from, skill2, belongTo, from.getAttack());
                 attackInfo.setMultiplier(211);
                 interactive.attack(attackInfo);
                 double recovery = attackInfo.getTraceableNumber().getNumber();
-                interactive.recovery(skill2, from, recovery);
+                interactive.recovery(from, recovery);
                 ((DaShe) from).getMinHpSheMo().ifPresent(sheMo ->
-                        interactive.recovery(skill2, sheMo, recovery)
+                        interactive.recovery(sheMo, recovery)
                 );
             });
             delete();

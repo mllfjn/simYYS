@@ -41,10 +41,10 @@ class Skill4Special extends Skill {
     @Override
     public Optional<Character> usePrivate(BattlePane bp) {
         Character belongTo = getBelongTo();
-        Interactive interactive = belongTo.getInteractive();
+        Interactive interactive = belongTo.getInteractive(this);
 
         // 恢复生命
-        interactive.recovery(this, belongTo, belongTo.getInitAttack());
+        interactive.recovery(belongTo, belongTo.getInitAttack());
 
         // 攻击3次
         List<Character> list = new CharacterFinder(belongTo)
@@ -59,14 +59,14 @@ class Skill4Special extends Skill {
         }
 
         for (int i = 0; i < 2; i++) {
-            interactive.attackTypical(this, list, multiplier, AttackType.QUN_TI);
+            interactive.attackTypical(list, multiplier, AttackType.QUN_TI);
         }
 
         // 第三次
         double thirdMultiplier = multiplier
                 * coefficient[belongTo.getStatus(StatusDaYao.class).orElseThrow().getStack()];
 
-        interactive.attackTypical(this, list, thirdMultiplier, AttackType.QUN_TI);
+        interactive.attackTypical(list, thirdMultiplier, AttackType.QUN_TI);
 
         return Optional.empty();
     }

@@ -108,8 +108,8 @@ class HaiYuanBeiJi extends CharacterSummonBase {
                 AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
                 double number = attackInfo.getTraceableNumber().getNumber();
                 if (number > 0) {
-                    from.doInteractive(interactive ->
-                            interactive.recovery(skill, belongTo, number * 0.3));
+                    from.doInteractive(skill, interactive ->
+                            interactive.recovery(belongTo, number * 0.3));
                 }
             });
         }

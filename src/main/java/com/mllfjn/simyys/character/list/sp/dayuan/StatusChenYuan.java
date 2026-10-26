@@ -6,6 +6,7 @@ import com.mllfjn.simyys.battleevent.EventActionDone;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
+import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.Trigger;
 
@@ -14,7 +15,7 @@ import java.util.List;
 class StatusChi extends Status {
     static final String StatusName = "尘缘·赤";
 
-    public StatusChi(DaYuan from, Character belongTo, int level) {
+    public StatusChi(DaYuan from, Character belongTo, int level, Skill skill) {
         super(StatusName, from, belongTo);
         type(StatusType.BUFF, StatusForm.YIN_JI);
         duration(StatusDurationType.CHI_XU, 1);
@@ -23,7 +24,7 @@ class StatusChi extends Status {
             // 无法连续触发此效果
             if (!belongTo.isHaveStatus(StatusChiNewRound.class)) {
                 // 回合结束后立即获得1个回合,且新回合释放妖术技能消耗的鬼火减少2点(已包含在StatusChiNewRound中)
-                belongTo.doInteractive(interactive -> interactive.getNewRound(belongTo));
+                belongTo.doInteractive(skill, interactive -> interactive.getNewRound(belongTo));
                 belongTo.bp.addActionListener(new BattleActionListener(belongTo) {
                     @Override
                     public boolean onBattleAction(BattleEvent event) {

@@ -12,6 +12,8 @@ import java.util.List;
 public class StatusDaDun extends StatusSleep {
     private static final String StatusName = "打盹";
 
+    private final Skill skill = Skill.getInstance(StatusName);
+
     public StatusDaDun(Character laoTou, boolean levelGZ4) {
         super(laoTou, laoTou);
         // lv4-打盹额外获得1点鬼火
@@ -22,13 +24,13 @@ public class StatusDaDun extends StatusSleep {
         displayName();
         runOn(Trigger.AFTER_ATTACK, _ -> {
             // 沉睡维持期间被移除时，恢复全体非召唤物友方目标生命上限14%的生命
-            belongTo.doInteractive(interactive -> {
+            belongTo.doInteractive(skill, interactive -> {
                 List<Character> teammate = new CharacterFinder(belongTo)
                         .filterTeammate()
                         .filterSummon(false)
                         .getList();
                 for (Character character : teammate) {
-                    interactive.recovery(Skill.getInstance(StatusName), character, belongTo.getMaxHp() * 0.14);
+                    interactive.recovery(character, belongTo.getMaxHp() * 0.14);
                 }
             });
         });

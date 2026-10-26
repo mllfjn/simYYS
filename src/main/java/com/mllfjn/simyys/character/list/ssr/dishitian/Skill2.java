@@ -16,7 +16,7 @@ class Skill2 extends Skill {
     public Skill2(DiShiTian belongTo, int level) {
         super(belongTo, level, 2, 0, 2);
         belongTo.bp.addPriorityMove(belongTo,
-                () -> belongTo.addStatus(new StatusHuanJingListener(belongTo, level >= 3))
+                () -> belongTo.addStatus(new StatusHuanJingListener(belongTo, level >= 3, this))
         );
     }
 
@@ -73,17 +73,17 @@ class Skill2 extends Skill {
     }
 
     static class StatusHuanJingListener extends Status {
-        public StatusHuanJingListener(DiShiTian character, boolean isIncreaseLocation) {
+        public StatusHuanJingListener(DiShiTian character, boolean isIncreaseLocation, Skill skill) {
             super(SkillName + "开启幻境监听", character);
             runOn(Trigger.BEFORE_ROUND, _ -> {
                 if (!belongTo.isUncontrollable()) {
-                    belongTo.addStatus(new StatusHuanJingContainer(character));
+                    belongTo.addStatus(new StatusHuanJingContainer(character, skill));
                     delete();
                 }
             });
             if (isIncreaseLocation) {
                 runOn(Trigger.AFTER_ROUND, _ ->
-                        belongTo.doInteractive(interactive ->
+                        belongTo.doInteractive(skill, interactive ->
                                 interactive.increaseLocation(belongTo, 50)
                         )
                 );
@@ -91,7 +91,7 @@ class Skill2 extends Skill {
         }
 
         private static class StatusHuanJingContainer extends Status {
-            public StatusHuanJingContainer(DiShiTian belongTo) {
+            public StatusHuanJingContainer(DiShiTian belongTo, Skill skill) {
                 super("王之盛宴", belongTo);
 
                 // 帝释天队友降低速度
@@ -103,7 +103,7 @@ class Skill2 extends Skill {
                                                             belongTo.enemyCount * belongTo.getInitSpeed() * -0.03
                                 )
                                 : c.isYYS() || c.isShiShen()
-                                  ? new StatusIncreaseLocation(belongTo, c)
+                                  ? new StatusIncreaseLocation(belongTo, c, skill)
                                   : null
                 );
                 beforeDelete(adder::deleteAndRemove);
@@ -112,14 +112,14 @@ class Skill2 extends Skill {
             // 该状态在帝释天敌方身上,回合开始时拉帝释天这边的单位
             static class StatusIncreaseLocation extends Status {
 
-                public StatusIncreaseLocation(DiShiTian from, Character belongTo) {
+                public StatusIncreaseLocation(DiShiTian from, Character belongTo, Skill skill) {
                     super(SkillName + "回合结束监听", from, belongTo);
                     from.enemyCount++;
                     runOn(Trigger.BEFORE_ROUND, _ -> {
                         Character target = new CharacterFinder(from)
                                 .filterTeammate()
                                 .get(Attribute.LOCATION, CharacterFinder.Criteria.MAX);
-                        from.doInteractive(interactive -> interactive.increaseLocation(target, 30));
+                        from.doInteractive(skill, interactive -> interactive.increaseLocation(target, 30));
                     });
                     runOn(Trigger.DIE, _ -> from.enemyCount--);
                 }

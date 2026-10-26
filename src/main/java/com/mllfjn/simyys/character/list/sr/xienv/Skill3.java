@@ -45,7 +45,7 @@ class Skill3 extends Skill {
     @Override
     public Optional<Character> usePrivate(BattlePane bp) {
         XieNv belongTo = ((XieNv) getBelongTo());
-        Interactive interactive = belongTo.getInteractive();
+        Interactive interactive = belongTo.getInteractive(this);
         int level = getLevel();
 
         Character target = new CharacterFinder(belongTo)
@@ -54,7 +54,7 @@ class Skill3 extends Skill {
 
         StatusXieDu xieDu = belongTo.getXieDu();
 
-        interactive.attackTypical(this, target, 50, AttackType.DAN_TI);
+        interactive.attackTypical(target, 50, AttackType.DAN_TI);
 
         // 如果没有人携带蝎毒,则给target上蝎毒
         if (xieDu == null) {

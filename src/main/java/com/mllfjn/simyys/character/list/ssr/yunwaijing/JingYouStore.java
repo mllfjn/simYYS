@@ -111,9 +111,9 @@ class JingYouStore implements Serializable {
         private void onDispel() {
             if (dispel) {
                 belongTo.dispelDeBuff(skill.dispelCount);
-                from.doInteractive(interactive -> {
+                from.doInteractive(skill, interactive -> {
                     interactive.increaseLocation(belongTo, skill.increase);
-                    interactive.recovery(skill, belongTo, from.getDefence() * skill.recovery);
+                    interactive.recovery(belongTo, from.getDefence() * skill.recovery);
                 });
 
                 dispel = false;

@@ -52,7 +52,7 @@ class Skill3 extends Skill {
     @Override
     public Optional<Character> usePrivate(BattlePane bp) {
         Character belongTo = getBelongTo();
-        Interactive interactive = belongTo.getInteractive();
+        Interactive interactive = belongTo.getInteractive(this);
 
         // 优先打红标,如果红标不存在,则优先打草人,无草人则打生命最高的单位
         // 这个逻辑似乎只有须佐有,就不写通用逻辑了
@@ -90,7 +90,7 @@ class Skill3 extends Skill {
                 .addTo();
 
         for (int i = 0; i < 6; i++) {
-            interactive.attackTypical(this, target, multiplier, AttackType.DAN_TI);
+            interactive.attackTypical(target, multiplier, AttackType.DAN_TI);
         }
 
         belongTo.removeStatus(status);

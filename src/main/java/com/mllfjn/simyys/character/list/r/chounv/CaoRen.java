@@ -30,10 +30,8 @@ public class CaoRen extends CharacterSummonBase {
         status.duration(StatusDurationType.CHI_XU, 3)
                 .runOn(Trigger.AFTER_ATTACK, triggerParam -> {
                     double number = ((ParamAttackInfo) triggerParam).getAttackInfo().getTraceableNumber().getNumber();
-                    chouNv.doInteractive(interactive -> {
-                        interactive.attack(AttackInfo.createChuanDaoAttack(chouNv, skill, bind, number));
-                        skill.useDone();
-                    });
+                    chouNv.doInteractive(skill, interactive ->
+                            interactive.attack(AttackInfo.createChuanDaoAttack(chouNv, skill, bind, number)));
                 })
                 .display(() -> "剩余回合" + status.getDuration())
                 .beforeDelete(this::die)

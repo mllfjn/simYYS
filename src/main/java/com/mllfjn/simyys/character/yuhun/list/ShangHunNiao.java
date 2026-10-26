@@ -23,8 +23,8 @@ public class ShangHunNiao extends Equip implements YuHunSealResponse {
             public boolean onBattleAction(BattleEvent event) {
                 if (event instanceof EventCharacterDie ed && !ed.getCharacter().isMob()) {
                     Character belongTo = getBelongTo();
-                    belongTo.doInteractive(
-                            interactive -> interactive.healTypical(Skill.getInstance(YuHunName), belongTo, 20));
+                    belongTo.doInteractive(Skill.getInstance(YuHunName), interactive ->
+                            interactive.healTypical(belongTo, 20));
                     // 并提升20%伤害
                     StatusShangHunNiao.addStack(belongTo);
 

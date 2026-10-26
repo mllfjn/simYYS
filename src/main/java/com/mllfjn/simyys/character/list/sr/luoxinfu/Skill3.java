@@ -33,14 +33,14 @@ class Skill3 extends Skill {
     @Override
     public Optional<Character> usePrivate(BattlePane bp) {
         Character belongTo = getBelongTo();
-        Interactive interactive = belongTo.getInteractive();
+        Interactive interactive = belongTo.getInteractive(this);
         boolean level5 = getLevel() >= 5;
 
         List<Character> list = new CharacterFinder(belongTo)
                 .filterEnemy()
                 .getList();
 
-        interactive.attackTypical(this, list, multiplier[getLevel()], AttackType.QUN_TI);
+        interactive.attackTypical(list, multiplier[getLevel()], AttackType.QUN_TI);
 
         double belongToSpeed = belongTo.getSpeed();
         for (Character character : list) {
@@ -51,7 +51,7 @@ class Skill3 extends Skill {
                 baseRate += (int) ((belongToSpeed - speed) / 3);
             }
             EffectInfo effectInfo = interactive
-                    .effect(this, character, baseRate, true, StatusStun.getSupplier(1));
+                    .effect(character, baseRate, true, StatusStun.getSupplier(1));
             if (!effectInfo.isHit() && level5) {
                 if (!character.isHaveStatus(StatusSXDY.class)) {
                     character.addStatus(new StatusSXDY(belongTo, character));
@@ -67,7 +67,7 @@ class Skill3 extends Skill {
             type(StatusType.DEBUFF, StatusForm.ZHUANG_TAI);
             duration(StatusDurationType.CHI_XU, 1);
             displayName();
-            beforeDelete(() -> from.doInteractive(interactive -> {
+            beforeDelete(() -> from.doInteractive(Skill3.this, interactive -> {
                 AttackInfo attackInfo = AttackInfo
                         .createJianJieAttack(from, Skill3.this, belongTo, from.getAttack());
                 double fromSpeed = from.getSpeed();
@@ -79,7 +79,6 @@ class Skill3 extends Skill {
                 }
                 attackInfo.setMultiplier(baseMultiplier);
                 interactive.attack(attackInfo);
-                Skill3.this.useDone();
             }));
         }
     }

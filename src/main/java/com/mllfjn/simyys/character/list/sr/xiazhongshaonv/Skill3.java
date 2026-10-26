@@ -50,8 +50,8 @@ class Skill3 extends Skill {
             beforeDelete(() -> {
                 double needRecovery = recordHp - belongTo.getHp();
                 if (needRecovery > 0) {
-                    from.doInteractive(interactive ->
-                            interactive.recovery(Skill3.this, belongTo, needRecovery)
+                    from.doInteractive(Skill3.this, interactive ->
+                            interactive.recovery(belongTo, needRecovery)
                     );
                 }
             });

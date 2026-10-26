@@ -27,15 +27,15 @@ class Skill3Yin extends Skill {
     @Override
     public Optional<Character> usePrivate(BattlePane bp) {
         Character belongTo = getBelongTo();
-        Interactive interactive = belongTo.getInteractive();
+        Interactive interactive = belongTo.getInteractive(this);
         int level = getLevel();
 
         List<Character> enemy = new CharacterFinder(belongTo)
                 .filterEnemy()
                 .getList();
 
-        interactive.attackTypical(this, enemy, MULTIPLIER[level], AttackType.QUN_TI);
-        interactive.effect(this, enemy, 100, true, StatusJingNu.getSupplier());
+        interactive.attackTypical(enemy, MULTIPLIER[level], AttackType.QUN_TI);
+        interactive.effect(enemy, 100, true, StatusJingNu.getSupplier());
 
         Character target = new CharacterFinder(belongTo)
                 .filterEnemy()
@@ -46,7 +46,7 @@ class Skill3Yin extends Skill {
             heiLian += belongTo.getLostHpPercentage() / 30;
         }
         for (int i = 0; i < heiLian; i++) {
-            interactive.attackTypical(this, target, MULTIPLIER[level], AttackType.DAN_TI);
+            interactive.attackTypical(target, MULTIPLIER[level], AttackType.DAN_TI);
         }
 
         return Optional.of(target);

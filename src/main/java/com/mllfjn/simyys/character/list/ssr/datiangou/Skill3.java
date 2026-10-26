@@ -29,7 +29,7 @@ class Skill3 extends Skill {
     @Override
     public Optional<Character> usePrivate(BattlePane bp) {
         Character belongTo = getBelongTo();
-        Interactive interactive = belongTo.getInteractive();
+        Interactive interactive = belongTo.getInteractive(this);
 
         List<Character> list = new CharacterFinder(belongTo)
                 .filterEnemy()
@@ -38,7 +38,7 @@ class Skill3 extends Skill {
         skill2.addStack(list.size());
 
         for (int i = 0; i < 4; i++) {
-            interactive.attackTypical(this, list, multiplier[getLevel()], AttackType.QUN_TI);
+            interactive.attackTypical(list, multiplier[getLevel()], AttackType.QUN_TI);
         }
         return Optional.empty();
     }

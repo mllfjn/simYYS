@@ -24,12 +24,12 @@ class Skill3Special extends Skill {
 
     @Override
     public Optional<Character> usePrivate(BattlePane bp) {
-        Interactive interactive = getBelongTo().getInteractive();
+        Interactive interactive = getBelongTo().getInteractive(this);
         // 对全体敌方造成攻击313%伤害
         List<Character> targets = new CharacterFinder(getBelongTo())
                 .filterEnemy()
                 .getList();
-        interactive.attackTypical(this, targets, 313, AttackType.QUN_TI);
+        interactive.attackTypical(targets, 313, AttackType.QUN_TI);
         // 之后追击4次,每次对随机敌方目标造成攻击128%伤害
         for (int i = 0; i < 4; i++) {
             Character target = new CharacterFinder(getBelongTo())
@@ -38,7 +38,7 @@ class Skill3Special extends Skill {
             if (target == null) {
                 break;
             }
-            interactive.attackTypical(this, target, 128, AttackType.DAN_TI);
+            interactive.attackTypical(target, 128, AttackType.DAN_TI);
         }
         return Optional.empty();
     }

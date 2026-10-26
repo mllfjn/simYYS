@@ -45,7 +45,7 @@ class Skill3 extends Skill {
                         .filterSelf()
                         .get(Attribute.ATTACK, CharacterFinder.Criteria.MAX));
 
-        Interactive interactive = daYuan.getInteractive();
+        Interactive interactive = daYuan.getInteractive(this);
 
         // 获得1层神力
         StatusShenLi.addStack(daYuan, 1);
@@ -78,7 +78,7 @@ class Skill3 extends Skill {
             }
         }
         if (chi) {
-            target.addStatus(new StatusChi(daYuan, target, level));
+            target.addStatus(new StatusChi(daYuan, target, level, this));
         }
         if (qing) {
             target.addStatus(new StatusQing(daYuan, target, level));
@@ -124,7 +124,7 @@ class Skill3 extends Skill {
                     , RateController.baoJi(SkillName + "护盾", belongTo, belongTo.bp.calc
                             , (_) -> belongTo.getCritRate(), List.of(target))[0]);
         }
-        return interactive.healTypical(this, target, 8);
+        return interactive.healTypical(target, 8);
     }
 
     private void heal(Interactive interactive, List<Character> targets) {
@@ -145,7 +145,7 @@ class Skill3 extends Skill {
                 }
             }
         }
-        interactive.healTypical(this, targets, 8);
+        interactive.healTypical(targets, 8);
     }
 
     static class StatusCritPower extends Status {

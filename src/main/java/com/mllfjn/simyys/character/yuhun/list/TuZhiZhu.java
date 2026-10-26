@@ -82,7 +82,7 @@ public class TuZhiZhu extends Equip implements YuHunUnfullMark {
                     if (record == null) {
                         break;
                     }
-                    record.from.doInteractive(interactive ->
+                    record.from.doInteractive(skill, interactive ->
                             interactive.attack(AttackInfo.createJianJieAttack(record.from, skill, belongTo, record.num))
                     );
                 }

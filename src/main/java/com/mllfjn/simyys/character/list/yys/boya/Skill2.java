@@ -44,7 +44,7 @@ class Skill2 extends Skill implements YingFenShenCopy {
                 .filterEnemy()
                 .getAutoOrElseRandom();
 
-        use(boYa, target, boYa.getInteractive(), realMultiplier, false);
+        use(boYa, target, boYa.getInteractive(this), realMultiplier, false);
         boYa.getYinFenShen().ifPresent(yfs -> yfs.usedSkill(this, target));
 
         return Optional.of(target);
@@ -53,7 +53,7 @@ class Skill2 extends Skill implements YingFenShenCopy {
     private void use(Character skillUser, Character target, Interactive interactive, int multiplier, boolean doLog) {
 
         if (extraTarget == 0) {
-            interactive.attackTypical(this, target, realMultiplier, AttackType.DAN_TI);
+            interactive.attackTypical(target, realMultiplier, AttackType.DAN_TI);
         } else {
             List<Character> candidate = new CharacterFinder(skillUser)
                     .filterEnemy()
@@ -70,13 +70,13 @@ class Skill2 extends Skill implements YingFenShenCopy {
                     extraTarget = RateController
                             .choose(SkillName + "的额外目标", candidate, Character::getName, skillUser.bp.calc);
                 } else {
-                    extraTarget = candidate.get(0);
+                    extraTarget = candidate.getFirst();
                 }
                 candidate.remove(extraTarget);
                 targets.add(extraTarget);
             }
 
-            interactive.attackTypical(this, targets, multiplier, AttackType.DAN_TI);
+            interactive.attackTypical(targets, multiplier, AttackType.DAN_TI);
 
             if (doLog) {
                 log(skillUser, target);

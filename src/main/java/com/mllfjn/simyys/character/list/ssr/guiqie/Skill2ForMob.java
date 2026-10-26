@@ -21,7 +21,7 @@ class Skill2ForMob extends PassiveSkill {
     void attacked(Interactive interactive, Character target) {
         if (isActive()) {
             if (target.getHp() < (target.getMaxHp() * 0.85)) {
-                interactive.attackTypical(this, target, 125, AttackType.DAN_TI);
+                interactive.attackTypical(target, 125, AttackType.DAN_TI);
                 Character belongTo = getBelongTo();
                 StatusEffectResist.install(belongTo);
                 if (target.getHp() < (target.getMaxHp() * 0.65)) {
@@ -31,7 +31,7 @@ class Skill2ForMob extends PassiveSkill {
                     for (Character character : list) {
                         character.sealPassiveSkill();
                     }
-                    interactive.attack(this, list, c -> {
+                    interactive.attack(list, c -> {
                         AttackInfo attackInfo = AttackInfo
                                 .createTypicalAttack(belongTo, this, c, 125, AttackType.QUN_TI);
                         attackInfo.setCanThroughShield(true);
@@ -42,7 +42,6 @@ class Skill2ForMob extends PassiveSkill {
                         character.unsealPassiveSkill();
                     }
                 }
-                this.useDone();
             }
         }
     }

@@ -24,12 +24,12 @@ class Skill2Special extends Skill {
     @Override
     public Optional<Character> usePrivate(BattlePane bp) {
         Character belongTo = getBelongTo();
-        Interactive interactive = belongTo.getInteractive();
+        Interactive interactive = belongTo.getInteractive(this);
         for (int i = 0; i < 5; i++) {
             Character target = new CharacterFinder(belongTo)
                     .filterEnemy()
                     .getRandom();
-            interactive.attackTypical(this, target, 240, AttackType.DAN_TI);
+            interactive.attackTypical(target, 240, AttackType.DAN_TI);
         }
         return Optional.empty();
     }

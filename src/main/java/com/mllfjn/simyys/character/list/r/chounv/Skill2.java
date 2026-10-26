@@ -29,8 +29,8 @@ class Skill2 extends PassiveSkill {
             Character target = new CharacterFinder(belongTo)
                     .filterEnemy()
                     .get(Attribute.HP_PERCENT, CharacterFinder.Criteria.MAX);
-            belongTo.doInteractive(interactive ->
-                    interactive.effect(Skill2.this, target, rate, true, StatusZhouHuo.getSupplier(yiShang)));
+            belongTo.doInteractive(Skill2.this, interactive ->
+                    interactive.effect(target, rate, true, StatusZhouHuo.getSupplier(yiShang)));
 
         }).addTo();
     }

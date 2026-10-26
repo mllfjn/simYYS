@@ -36,7 +36,7 @@ public abstract class Skill1PuGongBase extends Skill {
 
     public void usePrivate(Interactive interactive, Character target) {
         // 造成攻击（系数）伤害
-        interactive.attackTypical(this, target, multiplierGeneral[getLevel()], AttackType.DAN_TI);
+        interactive.attackTypical(target, multiplierGeneral[getLevel()], AttackType.DAN_TI);
     }
 
     public boolean canXieZhan(Skill skill) {
@@ -57,9 +57,8 @@ public abstract class Skill1PuGongBase extends Skill {
             s1.xieZhanSkills.add(this);
         }
 
-        getBelongTo().doInteractive(interactive -> usePrivate(interactive, target));
+        getBelongTo().doInteractive(this, interactive -> usePrivate(interactive, target));
         log(target);
-        useDone();
     }
 
     @Override
@@ -74,7 +73,7 @@ public abstract class Skill1PuGongBase extends Skill {
 
         belongTo.statusRun(Trigger.WILL_USE_PU_GONG, new ParamUseSkill(this, target, 0));
 
-        usePrivate(belongTo.getInteractive(), target);
+        usePrivate(belongTo.getInteractive(this), target);
 
         useOver(target);
     }

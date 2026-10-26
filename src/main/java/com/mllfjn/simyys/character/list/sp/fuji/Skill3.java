@@ -41,13 +41,13 @@ class Skill3 extends Skill {
     @Override
     public Optional<Character> usePrivate(BattlePane bp) {
         FuJi belongTo = (FuJi) getBelongTo();
-        Interactive interactive = belongTo.getInteractive();
+        Interactive interactive = belongTo.getInteractive(this);
         Character target = new CharacterFinder(belongTo)
                 .filterEnemy()
                 .getPriorAuto(Attribute.ATTACK, CharacterFinder.Criteria.MAX);
 
         for (int i = 0; i < 3; i++) {
-            interactive.attackTypical(this, target, multiplier[getLevel()], AttackType.DAN_TI);
+            interactive.attackTypical(target, multiplier[getLevel()], AttackType.DAN_TI);
             belongTo.attack(target);
             StatusTongGu.addStack(belongTo, target, getLevel() >= 3);
         }

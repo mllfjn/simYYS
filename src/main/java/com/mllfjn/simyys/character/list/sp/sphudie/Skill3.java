@@ -33,7 +33,7 @@ class Skill3 extends Skill {
     @Override
     public Optional<Character> usePrivate(BattlePane bp) {
         Character belongTo = getBelongTo();
-        Interactive interactive = belongTo.getInteractive();
+        Interactive interactive = belongTo.getInteractive(this);
         final int level = getLevel();
 
         List<Character> list = new CharacterFinder(belongTo)
@@ -44,7 +44,7 @@ class Skill3 extends Skill {
                 .filterTeammate()
                 .getPriorAuto(Attribute.INIT_ATTACK, CharacterFinder.Criteria.MAX);
 
-        HealInfo[] healInfos = interactive.heal(this, list, c -> {
+        HealInfo[] healInfos = interactive.heal(list, c -> {
             HealInfo healInfo = new HealInfo(belongTo, this, c, belongTo.getMaxHp());
             if (c == target) {
                 healInfo.setMultiplier(level >= 2 ? 30 : 20);

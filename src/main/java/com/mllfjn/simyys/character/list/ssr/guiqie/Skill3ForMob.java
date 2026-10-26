@@ -28,13 +28,13 @@ class Skill3ForMob extends Skill {
 
     @Override
     public Optional<Character> usePrivate(BattlePane bp) {
-        Interactive interactive = getBelongTo().getInteractive();
+        Interactive interactive = getBelongTo().getInteractive(this);
         Character target = new CharacterFinder(getBelongTo())
                 .filterEnemy()
                 .getPriorAuto(Attribute.HP_PERCENT, CharacterFinder.Criteria.MIN);
 
         for (int i = 0; i < 3; i++) {
-            interactive.attackTypical(this, target, multiplier[getLevel()], AttackType.DAN_TI);
+            interactive.attackTypical(target, multiplier[getLevel()], AttackType.DAN_TI);
         }
 
         skill2.attacked(interactive, target);

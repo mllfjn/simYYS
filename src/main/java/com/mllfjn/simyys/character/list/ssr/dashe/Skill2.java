@@ -61,7 +61,7 @@ class Skill2 extends Skill {
         target.addStatus(new StatusBJZL(getBelongTo(), target));
 
         if (getLevel() >= 5) {
-            getBelongTo().getInteractive().getNewRound(target);
+            getBelongTo().getInteractive(this).getNewRound(target);
         }
 
         return Optional.of(target);

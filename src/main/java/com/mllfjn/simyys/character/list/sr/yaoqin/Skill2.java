@@ -36,7 +36,7 @@ class Skill2 extends Skill {
                 .filterTeammate()
                 .getAutoOrElseRandom();
 
-        getBelongTo().getInteractive().getNewRound(target);
+        getBelongTo().getInteractive(this).getNewRound(target);
 
         return target;
     }

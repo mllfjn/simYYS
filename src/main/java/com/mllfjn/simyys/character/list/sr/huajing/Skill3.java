@@ -43,7 +43,7 @@ class Skill3 extends Skill {
         List<Character> list = new CharacterFinder(belongTo)
                 .filterTeammate()
                 .getList();
-        belongTo.getInteractive().healTypical(this, list, multiplier[getLevel()]);
+        belongTo.getInteractive(this).healTypical(list, multiplier[getLevel()]);
 
         return Optional.of(target);
     }

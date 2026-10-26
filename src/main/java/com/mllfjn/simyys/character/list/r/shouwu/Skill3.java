@@ -36,7 +36,7 @@ class Skill3 extends Skill {
         status.attribute(Attribute.IGNORE_DEFENCE, _ -> target.getDefence() * 0.4);
 //        new StatusTemporarilyIgnoreDefense(belongTo, target);
         belongTo.addStatus(status);
-        belongTo.getInteractive().attackTypical(this, target, multiplier[getLevel()], AttackType.DAN_TI);
+        belongTo.getInteractive(this).attackTypical(target, multiplier[getLevel()], AttackType.DAN_TI);
         belongTo.removeStatus(status);
 
         skill2.madeAttack(target);

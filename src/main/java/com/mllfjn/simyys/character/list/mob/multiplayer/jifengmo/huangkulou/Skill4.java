@@ -27,14 +27,14 @@ class Skill4 extends Skill {
     @Override
     public Optional<Character> usePrivate(BattlePane bp) {
         Character belongTo = getBelongTo();
-        Interactive interactive = belongTo.getInteractive();
+        Interactive interactive = belongTo.getInteractive(this);
         List<Character> targets = new CharacterFinder(belongTo)
                 .filterEnemy()
                 .getList();
         // 对全体玩家造成1段伤害
-        interactive.attackTypical(this, targets, 150, AttackType.QUN_TI);
+        interactive.attackTypical(targets, 150, AttackType.QUN_TI);
         // 并附带20%的概率眩晕玩家
-        interactive.effect(this, targets, 20, true, StatusStun.getSupplier(1));
+        interactive.effect(targets, 20, true, StatusStun.getSupplier(1));
         // 当场上有部下时,邀战所有部下
         List<Character> bx = new CharacterFinder(belongTo)
                 .filterTeammate()

@@ -7,11 +7,12 @@ import com.mllfjn.simyys.character.status.Trigger;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.character.status.triggerParam.ParamUseSkill;
 import com.mllfjn.simyys.interactive.AttackInfo;
+import com.mllfjn.simyys.interactive.Interactive;
 
 public class StatusChaNa extends Status {
-    StatusChaNa(Character from, Character belongTo, double increasePerPoint, boolean extraPuGong) {
+    StatusChaNa(Character from, Character belongTo, Interactive interactive, double increasePerPoint, boolean extraPuGong) {
         super("刹那", from, belongTo);
-        from.getInteractive().getNewRound(belongTo);
+        interactive.getNewRound(belongTo);
         belongTo.chaNa(this);
         runOn(Trigger.WHEN_ATTACK, param -> {
             AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
@@ -23,13 +24,13 @@ public class StatusChaNa extends Status {
         if (extraPuGong) {
             runOn(Trigger.USED_PU_GONG, param -> {
                 ParamUseSkill pus = (ParamUseSkill) param;
-                Skill1PuGongBase skill = (Skill1PuGongBase) pus.getSkill();
+                Skill1PuGongBase s1pg = (Skill1PuGongBase) pus.getSkill();
                 Character target = pus.getTarget().orElseThrow();
-                belongTo.bp().addOutRoundSkill(skill, () -> {
-                    belongTo.doInteractive(interactive ->
-                            skill.usePrivate(interactive, target)
+                belongTo.bp().addOutRoundSkill(() -> {
+                    belongTo.doInteractive(s1pg, i1 ->
+                            s1pg.usePrivate(i1, target)
                     );
-                    skill.useOver(target);
+                    s1pg.useOver(target);
                 });
             });
         }

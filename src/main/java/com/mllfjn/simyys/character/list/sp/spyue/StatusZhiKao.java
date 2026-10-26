@@ -27,7 +27,7 @@ class StatusZhiKao extends Status {
                 if (event instanceof EventActionDone) {
                     reduceStack();
                     if (from.team != belongTo.team) {
-                        from.doInteractive(interactive -> {
+                        from.doInteractive(skill2, interactive -> {
                             AttackInfo attackInfo = new AttackInfo(from, skill2, belongTo, AttackType.DAN_TI, from.getDefence());
                             attackInfo.setMultiplier(300);
                             interactive.attack(attackInfo);

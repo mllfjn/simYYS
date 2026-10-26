@@ -70,24 +70,12 @@ class Skill3 extends Skill {
                 skill3Special.usePrivate(belongTo.bp());
             }
         }
-
-        /*void addStack(int addStack) {
-            this.stack += addStack;
-            Character character = new CharacterFinder(belongTo)
-                    .filterTeammate()
-                    .get(Attribute.HP_PERCENT, CharacterFinder.Criteria.MIN);
-            Skill3.this.heal(List.of(character), 200);
-            if (stack == 8) {
-                stack = 0;
-                skill3Special.usePrivate(belongTo.bp());
-            }
-        }*/
     }
 
     private void heal(List<Character> targets, int multiplier) {
         double defense = getBelongTo().getInitDefense();
-        getBelongTo().doInteractive(interactive ->
-                interactive.heal(this, targets, c -> {
+        getBelongTo().doInteractive(this, interactive ->
+                interactive.heal(targets, c -> {
                     HealInfo healInfo = new HealInfo(getBelongTo(), this, c, defense);
                     healInfo.setMultiplier(multiplier);
                     return healInfo;

@@ -48,7 +48,7 @@ class Skill3 extends Skill {
     public Optional<Character> usePrivate(BattlePane bp) {
         int level = getLevel();
         TengYuanDaoZhang belongTo = (TengYuanDaoZhang) getBelongTo();
-        Interactive interactive = belongTo.getInteractive();
+        Interactive interactive = belongTo.getInteractive(this);
 
         Character target = new CharacterFinder(belongTo)
                 .filterEnemy()

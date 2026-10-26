@@ -44,7 +44,7 @@ class Skill3 extends Skill {
         List<Character> list = new CharacterFinder(belongTo)
                 .filterTeammate()
                 .getList();
-        Interactive interactive = belongTo.getInteractive();
+        Interactive interactive = belongTo.getInteractive(this);
         double increase = level >= 5 ? 20 : level >= 3 ? 15 : 10;
         for (Character character : list) {
             interactive.increaseLocation(character, increase);

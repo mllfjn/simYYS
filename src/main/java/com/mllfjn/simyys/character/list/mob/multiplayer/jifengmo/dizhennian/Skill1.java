@@ -28,7 +28,7 @@ class Skill1 extends Skill {
                 .filterEnemy()
                 .getList();
 
-        belongTo.getInteractive().attackTypical(this, targets, 100, AttackType.QUN_TI);
+        belongTo.getInteractive(this).attackTypical(targets, 100, AttackType.QUN_TI);
         return Optional.empty();
     }
 }

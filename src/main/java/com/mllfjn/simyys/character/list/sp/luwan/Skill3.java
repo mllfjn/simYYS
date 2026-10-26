@@ -44,13 +44,13 @@ class Skill3 extends Skill {
         List<Character> list = new CharacterFinder(getBelongTo())
                 .filterEnemy()
                 .getList();
-        Interactive interactive = getBelongTo().getInteractive();
+        Interactive interactive = getBelongTo().getInteractive(this);
         if (getLevel() >= 5) {
             for (Character enemy : list) {
                 enemy.dispelBuff(1);
             }
         }
-        interactive.attackTypical(this, list, multiplier[getLevel()], AttackType.QUN_TI);
+        interactive.attackTypical(list, multiplier[getLevel()], AttackType.QUN_TI);
 
         getBelongTo().removeStatus(StatusLuZe.class);
 

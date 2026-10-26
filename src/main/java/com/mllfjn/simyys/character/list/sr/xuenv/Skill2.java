@@ -67,8 +67,8 @@ class Skill2 extends PassiveSkill {
             @Override
             public boolean handle(InteractiveInfo interactiveInfo) {
                 if (reduceSpeed) {
-                    from.doInteractive(interactive ->
-                            interactive.effect(Skill2.this, interactiveInfo.getAttacker(),
+                    from.doInteractive(Skill2.this, interactive ->
+                            interactive.effect(interactiveInfo.getAttacker(),
                                     reduceSpeedRate, true, StatusReduceSpeed.getSupplier()
                             )
                     );

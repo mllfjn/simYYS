@@ -84,7 +84,7 @@ class Skill3 extends Skill {
         statusDaYao.changeDone();
 
         // 获得新回合
-        belongTo.getInteractive().getNewRound(belongTo);
+        belongTo.getInteractive(this).getNewRound(belongTo);
         // 刚用过不能再次用,考虑到变身会清除所有印记,应该不用考虑时之晖
         belongTo.addStatus(new StatusUsedSkill3Mark(belongTo));
 

@@ -42,16 +42,15 @@ class SkillWuJianShaLu extends Skill {
             Character target = new CharacterFinder(belongTo)
                     .filterSelf()
                     .getRandom();
-            belongTo.doInteractive(interactive -> {
-                interactive.attackTypical(this, target, 263, AttackType.DAN_TI);
+            belongTo.doInteractive(this, interactive -> {
+                interactive.attackTypical(target, 263, AttackType.DAN_TI);
                 List<Character> list = new CharacterFinder(belongTo)
                         .filterSelf()
                         .filter(c -> c != target)
                         .getList();
-                interactive.attackTypical(this, list, 113, AttackType.QUN_TI);
+                interactive.attackTypical(list, 113, AttackType.QUN_TI);
             });
             log(target);
-            useDone();
         } else {
             backToNormal();
         }

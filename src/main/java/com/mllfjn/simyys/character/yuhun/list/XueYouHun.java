@@ -9,7 +9,6 @@ import com.mllfjn.simyys.character.yuhun.Equip;
 import com.mllfjn.simyys.character.yuhun.YuHunAfterCauseAttack;
 import com.mllfjn.simyys.character.yuhun.YuHunHitFeedBack;
 import com.mllfjn.simyys.interactive.AttackInfo;
-import com.mllfjn.simyys.interactive.Interactive;
 
 public class XueYouHun extends Equip implements YuHunAfterCauseAttack, YuHunHitFeedBack {
     public static final String YuHunName = "雪幽魂";
@@ -21,10 +20,12 @@ public class XueYouHun extends Equip implements YuHunAfterCauseAttack, YuHunHitF
     }
 
     @Override
-    public void action(AttackInfo attackInfo, Interactive interactive) {
+    public void action(AttackInfo attackInfo) {
         Character target = attackInfo.getTarget();
-        interactive.effect(skill, target, isHaveReduceSpeed(target) ? 30 : 15, true,
-                StatusFrozen.getSupplier(1)
+        character.doInteractive(skill, interactive ->
+                interactive.effect(target, isHaveReduceSpeed(target) ? 30 : 15,
+                        true, StatusFrozen.getSupplier(1)
+                )
         );
     }
 

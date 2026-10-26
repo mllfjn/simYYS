@@ -14,12 +14,11 @@ class StatusYuanHuo extends Status {
         type(StatusType.DEBUFF, StatusForm.YIN_JI);
         duration(StatusDurationType.CHI_XU, 1);
         runOn(Trigger.BEFORE_ROUND, _ ->
-                from.doInteractive(interactive -> {
+                from.doInteractive(SKILL, interactive -> {
                     AttackInfo attackInfo = AttackInfo
                             .createJianJieAttack(from, SKILL, belongTo, from.getAttack());
                     attackInfo.setMultiplier(99);
                     interactive.attack(attackInfo);
-                    SKILL.useDone();
                 })
         );
     }

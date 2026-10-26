@@ -23,6 +23,6 @@ class Skill1 extends Skill1PuGongBase {
 
     @Override
     public void usePrivate(Interactive interactive, Character target) {
-        getBelongTo().getInteractive().attackTypical(this, target, multiplier, AttackType.DAN_TI);
+        getBelongTo().getInteractive(this).attackTypical(target, multiplier, AttackType.DAN_TI);
     }
 }

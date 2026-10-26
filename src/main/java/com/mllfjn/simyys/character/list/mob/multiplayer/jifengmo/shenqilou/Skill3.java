@@ -24,10 +24,10 @@ class Skill3 extends Skill {
     @Override
     public Optional<Character> usePrivate(BattlePane bp) {
         // 进行四连击,对群体目标造成100%的伤害。
-        Interactive interactive = getBelongTo().getInteractive();
+        Interactive interactive = getBelongTo().getInteractive(this);
         for (int i = 0; i < 4; i++) {
-            interactive.attackTypical(this
-                    , new CharacterFinder(getBelongTo()).filterEnemy().getList()
+            interactive.attackTypical(
+                    new CharacterFinder(getBelongTo()).filterEnemy().getList()
                     , 100, AttackType.QUN_TI);
         }
         return Optional.empty();

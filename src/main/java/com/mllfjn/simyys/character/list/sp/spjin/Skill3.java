@@ -49,7 +49,7 @@ class Skill3 extends Skill {
     @Override
     public Optional<Character> usePrivate(BattlePane bp) {
         Character belongTo = getBelongTo();
-        Interactive interactive = belongTo.getInteractive();
+        Interactive interactive = belongTo.getInteractive(this);
         Character target = new CharacterFinder(belongTo)
                 .filterEnemy()
                 .getPriorAuto(Attribute.HP, CharacterFinder.Criteria.MAX);
@@ -57,7 +57,7 @@ class Skill3 extends Skill {
         int currentMultiplier = multiplier;
         boolean increasing = isIncreasing(target);
         for (int i = 0; i < 6; i++) {
-            interactive.attackTypical(this, target, currentMultiplier, AttackType.DAN_TI);
+            interactive.attackTypical(target, currentMultiplier, AttackType.DAN_TI);
             if (increasing) {
                 currentMultiplier += 23;
             }

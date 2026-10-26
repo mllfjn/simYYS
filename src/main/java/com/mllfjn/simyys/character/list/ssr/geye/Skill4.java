@@ -34,7 +34,7 @@ class Skill4 extends Skill {
         List<Character> list = new CharacterFinder(belongTo)
                 .filterEnemy().getList();
 
-        belongTo.getInteractive().attackTypical(this, list, multiplier[getLevel()], AttackType.QUN_TI);
+        belongTo.getInteractive(this).attackTypical(list, multiplier[getLevel()], AttackType.QUN_TI);
         return Optional.empty();
     }
 }

@@ -16,8 +16,10 @@ public class CiTiao1QiaoJin {
     public static final String CiTiaoName = "巧劲";
 
     public static void install(Character character) {
+        Skill skill = Skill.getInstance(CiTiao1QiaoJin.CiTiaoName);
+
         character.bp().addStatusAdder(c -> c.team != character.team
-                ? new StatusQJSplash(character, c)
+                ? new StatusQJSplash(character, c, skill)
                 : null
         );
 
@@ -33,7 +35,7 @@ public class CiTiao1QiaoJin {
                                     = statusQJMax.belongTo.getStatus(StatusQJNewRoundMark.class);
                             if (optional.isEmpty()) {
                                 statusQJMax.belongTo.addStatus(new StatusQJNewRoundMark(statusQJMax.from, statusQJMax.belongTo));
-                                statusQJMax.belongTo.doInteractive(interactive -> {
+                                statusQJMax.belongTo.doInteractive(skill, interactive -> {
                                     interactive.getNewRound(statusQJMax.belongTo);
                                     interactive.increaseLocation(statusQJMax.belongTo, 35);
                                 });
@@ -45,9 +47,7 @@ public class CiTiao1QiaoJin {
     }
 
     private static class StatusQJSplash extends Status {
-        private final Skill skill = Skill.getInstance(CiTiao1QiaoJin.CiTiaoName);
-
-        public StatusQJSplash(Character from, Character belongTo) {
+        public StatusQJSplash(Character from, Character belongTo, Skill skill) {
             super("巧劲-伤害溅射", from, belongTo);
 
             // 普攻伤害溅射，默认关闭
@@ -59,14 +59,13 @@ public class CiTiao1QiaoJin {
                             .filterEnemy()
                             .getList();
                     targets.remove(attackInfo.getTarget());
-                    belongTo.doInteractive(interactive -> {
+                    belongTo.doInteractive(skill, interactive -> {
                         for (Character target : targets) {
                             interactive.attack(
                                     AttackInfo.createGuDingAttack(belongTo, skill, target, number * 0.4)
                             );
                         }
                     });
-                    skill.useDone();
                 }
             });
 

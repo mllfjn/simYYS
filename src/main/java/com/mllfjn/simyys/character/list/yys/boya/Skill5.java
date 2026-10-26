@@ -33,7 +33,7 @@ class Skill5 extends PassiveSkill implements YingFenShenCopy {
 
     private void use(Character skillUser, Character target, Interactive interactive, int multiplier) {
         for (int i = 0; i < 3; i++) {
-            interactive.attackTypical(Skill5.this, target, multiplier + i * 25, AttackType.DAN_TI);
+            interactive.attackTypical(target, multiplier + i * 25, AttackType.DAN_TI);
         }
         Skill5.this.log(skillUser, target);
     }
@@ -67,7 +67,7 @@ class Skill5 extends PassiveSkill implements YingFenShenCopy {
                 return;
             }
             stack--;
-            belongTo.doInteractive(interactive -> {
+            belongTo.doInteractive(Skill5.this, interactive -> {
                 Skill5.this.use(belongTo, target, interactive, multiplier);
                 interactive.increaseLocation(belongTo, 10);
                 ((BoYa) belongTo).getYinFenShen().ifPresent(yfs -> yfs.usedSkill(Skill5.this, target));

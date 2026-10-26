@@ -52,8 +52,8 @@ public class DiaoPingHuo extends Equip implements YuHunSealResponse {
                         .get(Attribute.HP_PERCENT, CharacterFinder.Criteria.MIN);
                 HealInfo healInfo = HealInfo.createHeal(belongTo, skill, target, belongTo.getDefence());
                 healInfo.setMultiplier(700);
-                belongTo.doInteractive(interactive -> interactive.heal(skill, List.of(target)
-                        , _ -> healInfo));
+                belongTo.doInteractive(skill, interactive ->
+                        interactive.heal(List.of(target), _ -> healInfo));
             });
         }
     }

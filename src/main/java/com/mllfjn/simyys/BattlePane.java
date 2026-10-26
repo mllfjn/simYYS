@@ -603,13 +603,13 @@ public class BattlePane {
         return situation.characterActing;
     }
 
-    public Interactive getInteractive(Character character) {
-        interactive.setOwner(character);
+    public Interactive getInteractive(Character character, Skill skill) {
+        interactive.setOwner(character, skill);
         return interactive;
     }
 
-    public void doInteractive(Character character, Consumer<Interactive> action) {
-        interactive.doInterActive(character, action);
+    public void doInteractive(Character character, Skill skill, Consumer<Interactive> action) {
+        interactive.doInterActive(character, skill, action);
     }
 
     public boolean canSummon(int team) {
@@ -697,8 +697,7 @@ public class BattlePane {
         return situation.teamPane[1 - character.team].isMobTeam();
     }
 
-    public void addOutRoundSkill(Skill skill, Runnable runnable) {
-        // TODO skill.done要统一调用
+    public void addOutRoundSkill(Runnable runnable) {
         outRoundSkillList.add(runnable);
     }
 

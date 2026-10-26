@@ -22,7 +22,7 @@ class Skill1 extends Skill1PuGongBase {
 
     @Override
     public void usePrivate(Interactive interactive, Character target) {
-        interactive.attackTypical(this, target
+        interactive.attackTypical(target
                 , multiplierGeneral[getLevel()] + shuYin * 20, AttackType.DAN_TI);
     }
 

@@ -47,7 +47,7 @@ class Skill3 extends Skill {
     @Override
     public Optional<Character> usePrivate(BattlePane bp) {
         ShiJiaMei belongTo = (ShiJiaMei) getBelongTo();
-        Interactive interactive = belongTo.getInteractive();
+        Interactive interactive = belongTo.getInteractive(this);
         int level = getLevel();
 
         // 友方目标
@@ -68,7 +68,7 @@ class Skill3 extends Skill {
         for (int i = 0; i < 3; i++) {
             Character next = priorityQueueRecovery.poll();
             if (next != null) {
-                interactive.recovery(this, next, recovery);
+                interactive.recovery(next, recovery);
             } else {
                 break;
             }
@@ -89,7 +89,7 @@ class Skill3 extends Skill {
                     .filterEnemy()
                     .getPriorAuto(Attribute.HP, CharacterFinder.Criteria.MIN);
             int targetMultiplier = getMultiplier(target);
-            interactive.attackTypical(this, target, targetMultiplier, AttackType.DAN_TI);
+            interactive.attackTypical(target, targetMultiplier, AttackType.DAN_TI);
 
             // 逻辑有点乱,目的是为了减少调用getMultiplier方法
             PriorityQueue<Character> priorityQueueAttack = new CharacterFinder(belongTo)
@@ -99,17 +99,17 @@ class Skill3 extends Skill {
             // != null代表了还有目标需要攻击
             if (first != null) {
                 int firstMultiplier = first == target ? targetMultiplier : getMultiplier(first);
-                interactive.attackTypical(this, first, firstMultiplier, AttackType.DAN_TI);
+                interactive.attackTypical(first, firstMultiplier, AttackType.DAN_TI);
 
                 Character second = priorityQueueAttack.poll();
                 // second == null 代表了只剩一个目标了,如果它还活着再攻击一次
                 if (second == null) {
                     if (first.alive) {
-                        interactive.attackTypical(this, first, firstMultiplier, AttackType.DAN_TI);
+                        interactive.attackTypical(first, firstMultiplier, AttackType.DAN_TI);
                     }
                 } else {
                     int secondMultiplier = second == target ? targetMultiplier : getMultiplier(second);
-                    interactive.attackTypical(this, second, secondMultiplier, AttackType.DAN_TI);
+                    interactive.attackTypical(second, secondMultiplier, AttackType.DAN_TI);
                 }
             }
         }

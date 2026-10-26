@@ -31,16 +31,15 @@ class StatusDWCount extends Status {
                 if (event instanceof EventActionDone) {
                     check();
                     if (setOff) {
-                        belongTo.doInteractive(interactive -> {
+                        belongTo.doInteractive(skill2, interactive -> {
                             List<Character> list = new CharacterFinder(belongTo)
                                     .filterEnemy()
                                     .getList();
-                            interactive.attack(skill2, list,
+                            interactive.attack(list,
                                     c -> AttackInfo
                                             .createRealAttack(belongTo, skill2, c, count * 3000)
                             );
                         });
-                        skill2.useDone();
                         setOff = false;
                     }
                 }

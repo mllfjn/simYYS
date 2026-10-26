@@ -25,14 +25,14 @@ class Skill5 extends Skill {
     @Override
     public Optional<Character> usePrivate(BattlePane bp) {
         Character belongTo = getBelongTo();
-        Interactive interactive = belongTo.getInteractive();
+        Interactive interactive = belongTo.getInteractive(this);
 
         List<Character> targets = new CharacterFinder(belongTo)
                 .filterEnemy()
                 .getList();
 
-        interactive.attackTypical(this, targets, 80, AttackType.QUN_TI);
-        interactive.attackTypical(this, targets, 80, AttackType.QUN_TI);
+        interactive.attackTypical(targets, 80, AttackType.QUN_TI);
+        interactive.attackTypical(targets, 80, AttackType.QUN_TI);
 
 
         return Optional.empty();

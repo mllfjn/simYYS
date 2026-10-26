@@ -6,6 +6,7 @@ import com.mllfjn.simyys.character.CharacterSummonBase;
 import com.mllfjn.simyys.character.list.mob.multiplayer.ClearHpHandler;
 import com.mllfjn.simyys.character.list.mob.multiplayer.StatusRecordDamage;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
+import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.skill.Skill1PuGongBase;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
@@ -24,6 +25,8 @@ public class HouZi extends CharacterSummonBase {
 
     private final StatusAdder<?> adder;
 
+    private final Skill skillDuoDong = Skill.getInstance("多动");
+
     public HouZi(DiZhenNian owner) {
         super(owner.bp, CharacterName, owner.team);
         this.owner = owner;
@@ -39,8 +42,8 @@ public class HouZi extends CharacterSummonBase {
                         ? Status.of("猴子-拉条检测", this, c)
                         .runOn(Trigger.LOCATION_CHANGED, triggerParam -> {
                             if (((ParamLocationChange) triggerParam).isFromIncrease) {
-                                doInteractive(interactive ->
-                                        getPuGong().ifPresent(skill1 -> {
+                                getPuGong().ifPresent(skill1 ->
+                                        doInteractive(skill1, interactive -> {
                                             skill1.usePrivate(interactive, c);
                                             skill1.log(c);
                                         })
@@ -58,7 +61,7 @@ public class HouZi extends CharacterSummonBase {
     public void afterRound() {
         super.afterRound();
         if (RateController.otherWhether(CharacterName, "多动", bp.calc, 50)) {
-            doInteractive(interactive -> interactive.getNewRound(this));
+            doInteractive(skillDuoDong, interactive -> interactive.getNewRound(this));
         }
     }
 
