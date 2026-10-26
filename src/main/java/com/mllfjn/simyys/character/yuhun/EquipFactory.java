@@ -71,6 +71,7 @@ public class EquipFactory {
         putEquipMetaSingle(300051, LongChe.YuHunName, LongChe.class);
         putEquipMetaSingle(300050, TuZhiZhu.YuHunName, TuZhiZhu.class);
         putEquipMetaSingle(300091, YeHuangHun.YuHunName, YeHuangHun.class);
+        putEquipMetaSingle(300099, DaoHeSuiJian.EQUIP_NAME, DaoHeSuiJian.class);
     }
 
     public static void addOptions(Map<String, Map<String, List<String>>> map) {
