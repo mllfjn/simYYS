@@ -29,15 +29,15 @@ class Skill3 extends Skill {
     @Override
     public Optional<Character> usePrivate(BattlePane bp) {
         Character belongTo = getBelongTo();
-        Interactive interactive = belongTo.getInteractive();
+        Interactive interactive = belongTo.getInteractive(this);
         List<Character> targets = new CharacterFinder(belongTo)
                 .filterEnemy()
                 .getList();
         // 同时玩家有75%概率获得减防效果,两回合内减少50%防御
-        interactive.effect(this, targets, 75, true, StatusDefense.getSupplier());
+        interactive.effect(targets, 75, true, StatusDefense.getSupplier());
         // 对所有玩家造成2段伤害
-        interactive.attackTypical(this, targets, 100, AttackType.QUN_TI);
-        interactive.attackTypical(this, targets, 100, AttackType.QUN_TI);
+        interactive.attackTypical(targets, 100, AttackType.QUN_TI);
+        interactive.attackTypical(targets, 100, AttackType.QUN_TI);
 
         // 当场上有部下时,邀战所有部下
         List<Character> bx = new CharacterFinder(belongTo)

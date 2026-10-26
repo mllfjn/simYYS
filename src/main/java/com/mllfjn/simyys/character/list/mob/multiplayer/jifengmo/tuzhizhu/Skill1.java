@@ -22,7 +22,7 @@ class Skill1 extends Skill1PuGongBase {
 
     @Override
     public void usePrivate(Interactive interactive, Character target) {
-        interactive.attackTypical(this, target, 100, AttackType.DAN_TI);
+        interactive.attackTypical(target, 100, AttackType.DAN_TI);
         StatusTZZPoisoning.addTZZPoisoning(getBelongTo(), target, 5);
     }
 

@@ -19,11 +19,9 @@ public class StatusDiaoLing extends Status {
         Skill skill = Skill.getInstance(StatusName);
         // 回合结束时受到施加者攻击120%间接伤害
         runOn(Trigger.AFTER_ROUND_FIRST, _ -> {
-            from.doInteractive(
-                    interactive ->
-                            interactive.attackTypical(skill, belongTo, 120, AttackType.JIAN_JIE)
+            from.doInteractive(skill, interactive ->
+                            interactive.attackTypical(belongTo, 120, AttackType.JIAN_JIE)
             );
-            skill.useDone();
         });
     }
 

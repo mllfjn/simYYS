@@ -35,7 +35,7 @@ public class StatusConfusion extends Status implements CrowdControl {
 
         belongTo.getPuGong().ifPresent(
                 skill1 -> {
-                    skill1.usePrivate(belongTo.getInteractive(), target);
+                    skill1.usePrivate(belongTo.getInteractive(skill1), target);
                     skill1.useOver(target);
                 });
     }

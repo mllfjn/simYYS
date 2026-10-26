@@ -37,6 +37,7 @@ public class Interactive {
     private int attackCountTotal;
 
     private Character owner;
+    private Skill skill;
 
     // 思金神的神秘结算
     public final SkillQiMeng[] qiMeng = new SkillQiMeng[2];
@@ -47,17 +48,23 @@ public class Interactive {
         AttackInfo.LIMIT = 10000000;
     }
 
-    public void setOwner(Character owner) {
+    public void setOwner(Character owner, Skill skill) {
         this.owner = owner;
+        this.skill = skill;
     }
 
-    public void doInterActive(Character character, Consumer<Interactive> action) {
-        Character temp = owner;
-        owner = character;
+    public void doInterActive(Character character, Skill skill, Consumer<Interactive> action) {
+        Character tempCharacter = owner;
+        Skill tempSkill = this.skill;
+
+        this.owner = character;
+        this.skill = skill;
 
         action.accept(this);
+        skill.useDone();
 
-        owner = temp;
+        owner = tempCharacter;
+        this.skill = tempSkill;
     }
 
     public void display() {
@@ -92,7 +99,7 @@ public class Interactive {
     }
 
     // 普攻的对群体伤害
-    public AttackInfo[] attackTypical(Skill skill, List<Character> targets, double multiplier, AttackType attackType) {
+    public AttackInfo[] attackTypical(List<Character> targets, double multiplier, AttackType attackType) {
         qiMengCheck(skill);
 
         AttackInfo[] attackInfos = new AttackInfo[targets.size()];
@@ -114,14 +121,14 @@ public class Interactive {
     }
 
     // 普通的对单体伤害
-    public AttackInfo attackTypical(Skill skill, Character target, double multiplier, AttackType attackType) {
+    public AttackInfo attackTypical(Character target, double multiplier, AttackType attackType) {
         AttackInfo attackInfo = AttackInfo.createTypicalAttack(owner, skill, target, multiplier, attackType);
         attack(attackInfo);
         return attackInfo;
     }
 
     // 对群体伤害,需要指定AttackInfo
-    public void attack(Skill skill, List<Character> targets, Function<Character, AttackInfo> attackInfoGetter) {
+    public void attack(List<Character> targets, Function<Character, AttackInfo> attackInfoGetter) {
         qiMengCheck(skill);
 
         AttackInfo[] attackInfos = new AttackInfo[targets.size()];
@@ -283,29 +290,26 @@ public class Interactive {
             if (attackInfo.isCalEffectYuHun()) {
                 owner.forEachYuHun(yuHun -> {
                     if (yuHun instanceof YuHunAfterCauseAttack yca) {
-                        yca.action(attackInfo, this);
+                        yca.action(attackInfo);
                     }
                 });
 
                 if (target.alive) {
-                    Character temp = owner;
-                    setOwner(target);
                     target.forEachYuHun(yuHun -> {
                         if (yuHun instanceof YuHunAfterBeingAttack yaa) {
-                            yaa.action(attackInfo, this);
+                            yaa.action(attackInfo);
                         }
                     });
-                    setOwner(temp);
                 }
             }
         }
     }
 
-    public HealInfo healTypical(Skill skill, Character target, int multiplier) {
-        return healTypical(skill, List.of(target), multiplier)[0];
+    public HealInfo healTypical(Character target, int multiplier) {
+        return healTypical(List.of(target), multiplier)[0];
     }
 
-    public HealInfo[] healTypical(Skill skill, List<Character> targets, int multiplier) {
+    public HealInfo[] healTypical(List<Character> targets, int multiplier) {
         HealInfo[] healInfos = new HealInfo[targets.size()];
         for (int i = 0; i < targets.size(); i++) {
             healInfos[i] = HealInfo.createTypicalHeal(owner, skill, targets.get(i), multiplier);
@@ -321,7 +325,7 @@ public class Interactive {
         return healInfos;
     }
 
-    public HealInfo[] heal(Skill skill, List<Character> targets
+    public HealInfo[] heal(List<Character> targets
             , Function<Character, HealInfo> healInfoSupplier) {
         HealInfo[] healInfos = new HealInfo[targets.size()];
         for (int i = 0; i < targets.size(); i++) {
@@ -372,7 +376,7 @@ public class Interactive {
 
     }
 
-    public void recovery(Skill skill, Character target, double num) {
+    public void recovery(Character target, double num) {
         HealInfo healInfo = HealInfo.createRecovery(owner, skill, target, num);
         TraceableNumber traceableNumber = healInfo.getTraceableNumber();
 
@@ -385,7 +389,7 @@ public class Interactive {
         addNumberRecord(target, customText);
     }
 
-    public EffectInfo[] effect(Skill skill, List<Character> targets, int baseRate, int additionRate, boolean calHit
+    public EffectInfo[] effect(List<Character> targets, int baseRate, int additionRate, boolean calHit
             , StatusSupplier statusSupplier) {
         if (targets.isEmpty()) {
             return null;
@@ -398,13 +402,13 @@ public class Interactive {
         return infos;
     }
 
-    public EffectInfo[] effect(Skill skill, List<Character> targets, int baseRate, boolean calHit,
+    public EffectInfo[] effect(List<Character> targets, int baseRate, boolean calHit,
                                StatusSupplier statusSupplier
     ) {
-        return effect(skill, targets, baseRate, 0, calHit, statusSupplier);
+        return effect(targets, baseRate, 0, calHit, statusSupplier);
     }
 
-    public EffectInfo effect(Skill skill, Character target, int baseRate, int additionRate, boolean calHit
+    public EffectInfo effect(Character target, int baseRate, int additionRate, boolean calHit
             , StatusSupplier statusSupplier) {
 
         EffectInfo info = RateController
@@ -414,10 +418,10 @@ public class Interactive {
         return info;
     }
 
-    public EffectInfo effect(Skill skill, Character target, int baseRate, boolean calHit,
+    public EffectInfo effect(Character target, int baseRate, boolean calHit,
                              StatusSupplier statusSupplier
     ) {
-        return effect(skill, target, baseRate, 0, calHit, statusSupplier);
+        return effect(target, baseRate, 0, calHit, statusSupplier);
     }
 
     private void effectBase(EffectInfo effectInfo, Character target, StatusSupplier statusSupplier) {

@@ -32,7 +32,7 @@ class Skill3 extends Skill {
     public Optional<Character> usePrivate(BattlePane bp) {
         Character belongTo = getBelongTo();
         int level = getLevel();
-        Interactive interactive = belongTo.getInteractive();
+        Interactive interactive = belongTo.getInteractive(this);
         // lv2-刀光伤害系数
         final int daoGuangMultiplier = level >= 2 ? 27 : 18;
         // lv3-雪爆伤害系数
@@ -66,7 +66,7 @@ class Skill3 extends Skill {
                         .filterEnemy()
                         .getList();
                 Character thisTarget = target;
-                interactive.attack(this, list, c -> {
+                interactive.attack(list, c -> {
                     AttackInfo attackInfo = AttackInfo
                             .createTypicalAttack(belongTo, this, c, xueBaoMultiplier, AttackType.QUN_TI);
                     if (increaseTarget && c == thisTarget) {
@@ -75,7 +75,7 @@ class Skill3 extends Skill {
                     return attackInfo;
                 });
             } else {
-                interactive.attackTypical(this, target, daoGuangMultiplier, AttackType.DAN_TI);
+                interactive.attackTypical(target, daoGuangMultiplier, AttackType.DAN_TI);
                 statusWLXR.addStack();
             }
         }

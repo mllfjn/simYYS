@@ -32,7 +32,7 @@ class Skill3 extends Skill {
     @Override
     public Optional<Character> usePrivate(BattlePane bp) {
         ShenShe shenShe = (ShenShe) getBelongTo();
-        Interactive interactive = shenShe.getInteractive();
+        Interactive interactive = shenShe.getInteractive(this);
         StatusSheShen sheShen = shenShe.getStatus(StatusSheShen.class).orElseThrow();
 
         // 破除一把天羽羽斩的镇压
@@ -50,7 +50,7 @@ class Skill3 extends Skill {
                 .getAutoOrElseRandom();
 
         if (target != null) {
-            target.addStatus(new StatusDuoHua(shenShe, target));
+            target.addStatus(new StatusDuoHua(shenShe, target, this));
         }
 
         // 若累计破除5把天羽羽斩,解放强大的邪力,将神堕之力(2)替换位蛇神之噬
@@ -80,14 +80,14 @@ class Skill3 extends Skill {
         List<Character> targets = new CharacterFinder(shenShe)
                 .filterEnemy()
                 .getList();
-        interactive.attackTypical(this, targets, multiplier, AttackType.QUN_TI);
+        interactive.attackTypical(targets, multiplier, AttackType.QUN_TI);
 
 
         // 回到本体
         sheShen.backToNormal();
         // lv2-释放时蛇神每剩余20%生命,为自身恢复12%生命
         if (getLevel() >= 2) {
-            interactive.recovery(this, shenShe, shenShe.getMaxHp() * 0.12 * times);
+            interactive.recovery(shenShe, shenShe.getMaxHp() * 0.12 * times);
         }
         return Optional.ofNullable(target);
     }

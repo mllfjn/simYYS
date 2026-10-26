@@ -47,8 +47,8 @@ class Skill8 extends PassiveSkill {
                     List<Character> list = new CharacterFinder(belongTo)
                             .filterTeammate()
                             .getList();
-                    belongTo.doInteractive(interactive ->
-                            interactive.healTypical(Skill8.this, list, 10 * shuYin)
+                    belongTo.doInteractive(Skill8.this, interactive ->
+                            interactive.healTypical(list, 10 * shuYin)
                     );
                 }
                 delete();

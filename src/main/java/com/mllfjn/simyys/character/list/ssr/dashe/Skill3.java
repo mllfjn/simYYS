@@ -16,7 +16,7 @@ class Skill3 extends Skill3Base {
 
     @Override
     void doUnique(Interactive interactive, List<Character> list) {
-        interactive.attackTypical(this, list, multiplier[getLevel()], AttackType.QUN_TI);
+        interactive.attackTypical(list, multiplier[getLevel()], AttackType.QUN_TI);
     }
 
     @Override

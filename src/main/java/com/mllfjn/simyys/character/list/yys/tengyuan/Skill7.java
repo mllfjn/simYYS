@@ -4,6 +4,7 @@ import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
+import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.ratecontroller.RateController;
 
@@ -20,7 +21,7 @@ class Skill7 extends PassiveSkill {
         belongTo.getLvYin().setSkill7(this);
         belongTo.bp.addStatusAdder(c ->
                 c.team != belongTo.team && c.isShiShen()
-                        ? new StatusUseSkillListener(belongTo, c)
+                        ? new StatusUseSkillListener(belongTo, c, this)
                         : null
         );
     }
@@ -37,28 +38,26 @@ class Skill7 extends PassiveSkill {
     void useLvYin(int count) {
         Character belongTo = getBelongTo();
         final double increase = 5 * count;
-        if (shuYin >= 3
-                || RateController.otherWhether(SkillName, "提升行动条效果作用于全体友方", belongTo.bp().calc,
-                shuYin * 100.0 / 3)
-        ) {
-            List<Character> list = new CharacterFinder(belongTo)
-                    .filterTeammate()
-                    .getList();
-            belongTo.doInteractive(interactive -> {
+        belongTo.doInteractive(this, interactive -> {
+            if (shuYin >= 3
+                    || RateController.otherWhether(SkillName, "提升行动条效果作用于全体友方", belongTo.bp().calc,
+                    shuYin * 100.0 / 3)
+            ) {
+                List<Character> list = new CharacterFinder(belongTo)
+                        .filterTeammate()
+                        .getList();
                 for (Character character : list) {
                     interactive.increaseLocation(character, increase);
                 }
-            });
-        } else {
-            Character locationMax = new CharacterFinder(belongTo)
-                    .filterTeammate()
-                    .get(Attribute.LOCATION, CharacterFinder.Criteria.MAX);
+            } else {
+                Character locationMax = new CharacterFinder(belongTo)
+                        .filterTeammate()
+                        .get(Attribute.LOCATION, CharacterFinder.Criteria.MAX);
 
-            belongTo.doInteractive(interactive -> {
                 interactive.increaseLocation(belongTo, increase);
                 interactive.increaseLocation(locationMax, increase);
-            });
-        }
+            }
+        });
     }
 
     @Override
@@ -67,10 +66,10 @@ class Skill7 extends PassiveSkill {
     }
 
     static class StatusUseSkillListener extends Status {
-        public StatusUseSkillListener(Character from, Character belongTo) {
+        public StatusUseSkillListener(Character from, Character belongTo, Skill skill) {
             super(SkillName + "使用技能监听", from, belongTo);
             runOn(Trigger.WILL_USE_SKILL, _ ->
-                    from.doInteractive(interactive -> interactive.increaseLocation(from, 10))
+                    from.doInteractive(skill, interactive -> interactive.increaseLocation(from, 10))
             );
         }
     }

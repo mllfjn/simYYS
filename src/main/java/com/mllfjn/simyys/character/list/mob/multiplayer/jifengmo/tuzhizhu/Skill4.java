@@ -43,8 +43,8 @@ class Skill4 extends Skill {
                 .filterEnemy()
                 .getList();
 
-        belongTo.doInteractive(interactive -> {
-            interactive.attackTypical(this, list, 100, AttackType.QUN_TI);
+        belongTo.doInteractive(this, interactive -> {
+            interactive.attackTypical(list, 100, AttackType.QUN_TI);
 
             for (Character character : list) {
                 StatusTZZPoisoning.addTZZPoisoning(belongTo, character, 1);
@@ -55,8 +55,8 @@ class Skill4 extends Skill {
                 }
             }
 
-            interactive.effect(this, list, 100, true, StatusTZZReduceSpeed.getSupplier());
-            interactive.effect(this, list, 20, true, StatusBind.getSupplier(1));
+            interactive.effect(list, 100, true, StatusTZZReduceSpeed.getSupplier());
+            interactive.effect(list, 20, true, StatusBind.getSupplier(1));
         });
 
         return Optional.empty();

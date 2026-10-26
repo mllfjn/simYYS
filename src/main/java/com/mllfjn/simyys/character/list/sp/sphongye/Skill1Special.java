@@ -25,7 +25,7 @@ class Skill1Special extends Skill1PuGongBase {
     public void usePrivate(Interactive interactive, Character target) {
         Character belongTo = getBelongTo();
         int level = getLevel();
-        interactive.attackTypical(this, target, multiplier[level], AttackType.DAN_TI);
+        interactive.attackTypical(target, multiplier[level], AttackType.DAN_TI);
 
         Character lastTarget = target;
         Comparator<Character> comparator = Comparator
@@ -44,7 +44,7 @@ class Skill1Special extends Skill1PuGongBase {
             }
 
             Character next = oTarget.get();
-            interactive.attackTypical(this, next, multiplier[level], AttackType.DAN_TI);
+            interactive.attackTypical(next, multiplier[level], AttackType.DAN_TI);
             lastTarget = next;
         }
 

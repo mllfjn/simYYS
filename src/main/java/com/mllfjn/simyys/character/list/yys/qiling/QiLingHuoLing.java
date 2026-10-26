@@ -5,7 +5,6 @@ import com.mllfjn.simyys.character.skill.CharacterFinder;
 import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.interactive.AttackType;
-import com.mllfjn.simyys.interactive.Interactive;
 
 import java.util.List;
 
@@ -16,14 +15,15 @@ class QiLingHuoLing {
     public static void install(Character character) {
         character.bp.addPriorityMove(character, () -> character.bp.gainGuiHuo(character, 2));
         Status.of(QiLingName + "回合结束监听", character)
-                .runOn(Trigger.AFTER_ROUND_FIRST, _ -> {
-                    Interactive interactive = character.getInteractive();
-                    List<Character> targets = new CharacterFinder(character)
-                            .filterEnemy()
-                            .getList();
-                    for (int i = 0; i < 3; i++) {
-                        interactive.attackTypical(SKILL, targets, 100, AttackType.QUN_TI);
-                    }
-                }).addTo();
+                .runOn(Trigger.AFTER_ROUND_FIRST, _ ->
+                        character.doInteractive(SKILL, interactive -> {
+                            List<Character> targets = new CharacterFinder(character)
+                                    .filterEnemy()
+                                    .getList();
+                            for (int i = 0; i < 3; i++) {
+                                interactive.attackTypical(targets, 100, AttackType.QUN_TI);
+                            }
+                        })
+                ).addTo();
     }
 }

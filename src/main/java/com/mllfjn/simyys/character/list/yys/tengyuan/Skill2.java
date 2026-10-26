@@ -47,18 +47,18 @@ class Skill2 extends Skill {
     @Override
     public Optional<Character> usePrivate(BattlePane bp) {
         TengYuanDaoZhang belongTo = (TengYuanDaoZhang) getBelongTo();
-        Interactive interactive = belongTo.getInteractive();
+        Interactive interactive = belongTo.getInteractive(this);
 
         Character target = new CharacterFinder(belongTo)
                 .filterEnemy()
                 .getPriorAuto(Attribute.HP, CharacterFinder.Criteria.MIN);
 
         for (int i = 0; i < 2; i++) {
-            interactive.attackTypical(this, target, 80, AttackType.DAN_TI);
+            interactive.attackTypical(target, 80, AttackType.DAN_TI);
             interactive.decreaseLocation(target, 5);
         }
 
-        interactive.attackTypical(this, target, chargeMultiplier, AttackType.DAN_TI);
+        interactive.attackTypical(target, chargeMultiplier, AttackType.DAN_TI);
         interactive.decreaseLocation(target, chargeDecrease);
 
         if (getLvYin) {

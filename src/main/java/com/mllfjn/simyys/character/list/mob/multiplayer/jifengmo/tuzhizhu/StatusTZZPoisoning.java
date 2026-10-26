@@ -18,11 +18,10 @@ class StatusTZZPoisoning extends Status {
         duration(StatusDurationType.CHI_XU, duration);
         enableStack(3);
         runOn(Trigger.BEFORE_ROUND, _ ->
-                from.doInteractive(interactive -> {
+                from.doInteractive(SKILL, interactive -> {
                     for (int i = 0; i < getStack(); i++) {
-                        interactive.attackTypical(SKILL, belongTo, 10, AttackType.DAN_TI);
+                        interactive.attackTypical(belongTo, 10, AttackType.DAN_TI);
                     }
-                    SKILL.useDone();
                 })
         );
         addTo();

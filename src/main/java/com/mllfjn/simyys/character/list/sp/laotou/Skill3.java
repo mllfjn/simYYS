@@ -29,7 +29,7 @@ class Skill3 extends Skill {
     @Override
     public Optional<Character> usePrivate(BattlePane bp) {
         LaoTou belongTo = (LaoTou) getBelongTo();
-        Interactive interactive = belongTo.getInteractive();
+        Interactive interactive = belongTo.getInteractive(this);
         int level = getLevel();
 
         // 二技能需要确认是否释放过三
@@ -40,7 +40,7 @@ class Skill3 extends Skill {
                 .filterSummon(false)
                 .filterSelf()
                 .getPriorAuto(Attribute.ATTACK, CharacterFinder.Criteria.MAX);
-        interactive.recovery(this, target, belongTo.getMaxHp() * multiplier[level] / 100);
+        interactive.recovery(target, belongTo.getMaxHp() * multiplier[level] / 100);
 
         target.getStatus(StatusYuHunTransfer.class).ifPresentOrElse(statusYHT -> {
             // 若目标未处于控制效果,则使其获得新的回合并在该回合结束后移除御魂转移效果

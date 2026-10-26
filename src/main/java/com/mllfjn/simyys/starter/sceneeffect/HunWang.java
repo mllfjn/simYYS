@@ -206,8 +206,8 @@ public class HunWang {
                             .filterTeammate()
                             .filterSelf()
                             .getList();
-                    attacker.doInteractive(interactive ->
-                            interactive.attack(skill, list, c -> {
+                    attacker.doInteractive(skill, interactive ->
+                            interactive.attack(list, c -> {
                                 AttackInfo aInfo = AttackInfo.createGuDingAttack(attacker, skill, c, splashDamage);
                                 aInfo.setNotCalYuHun();
                                 if (attackInfo.getSkill() instanceof GuiLingGeJi.SkillGLGJ) {

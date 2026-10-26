@@ -81,7 +81,7 @@ class SpecialYaoQin extends YaoQin {
                     .displayNameAndDuration()
                     .addTo();
 
-            belongTo.getInteractive().getNewRound(target);
+            belongTo.getInteractive(this).getNewRound(target);
 
             return Optional.of(target);
         }

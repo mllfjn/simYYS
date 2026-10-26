@@ -22,7 +22,7 @@ class Skill2 extends PassiveSkill {
         status.runOn(Trigger.AFTER_ROUND, _ -> {
             // 自身回合结束时，击退全体敌方目标10%行动条
             // lv2-击退行动条效果提升至15%
-            laoTou.doInteractive(interactive -> {
+            laoTou.doInteractive(this, interactive -> {
                 List<Character> enemy = new CharacterFinder(laoTou)
                         .filterEnemy()
                         .getList();

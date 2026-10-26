@@ -34,29 +34,29 @@ class Skill2 extends Skill {
     @Override
     public Optional<Character> usePrivate(BattlePane bp) {
         Character belongTo = getBelongTo();
-        Interactive interactive = belongTo.getInteractive();
+        Interactive interactive = belongTo.getInteractive(this);
 
         List<Character> targets = new CharacterFinder(belongTo)
                 .filterEnemy()
                 .getList();
 
         // 对全体敌方单位分别造成2段伤害
-        interactive.attackTypical(this, targets, 100, AttackType.QUN_TI);
-        interactive.attackTypical(this, targets, 50, AttackType.QUN_TI);
+        interactive.attackTypical(targets, 100, AttackType.QUN_TI);
+        interactive.attackTypical(targets, 50, AttackType.QUN_TI);
 
         // 随后喷射毒雾，对全体敌方造成高额伤害
-        interactive.attackTypical(this, targets, 100, AttackType.QUN_TI);
+        interactive.attackTypical(targets, 100, AttackType.QUN_TI);
 
         // 同时有100%概率附加3回合的毒伤、禁疗、抵抗降低、攻击降低和速度降低效果
         // 这里的五种效果是可以分别抵抗的
-        interactive.effect(this, targets, 100, true, StatusDuShang.getSupplier());
-        interactive.effect(this, targets, 100, true, StatusJinLiao.getSupplier());
-        interactive.effect(this, targets, 100, true, StatusResist.getSupplier());
-        interactive.effect(this, targets, 100, true, StatusAttack.getSupplier());
-        interactive.effect(this, targets, 100, true, StatusSpeed.getSupplier());
+        interactive.effect(targets, 100, true, StatusDuShang.getSupplier());
+        interactive.effect(targets, 100, true, StatusJinLiao.getSupplier());
+        interactive.effect(targets, 100, true, StatusResist.getSupplier());
+        interactive.effect(targets, 100, true, StatusAttack.getSupplier());
+        interactive.effect(targets, 100, true, StatusSpeed.getSupplier());
 
         // 25%概率附加1回合的混乱效果
-        interactive.effect(this, targets, 25, 0, true
+        interactive.effect(targets, 25, 0, true
                 , StatusConfusion.getSupplier(1));
 
         statusDWCount.setOff();
@@ -75,10 +75,10 @@ class Skill2 extends Skill {
             duration(StatusDurationType.CHI_XU, 3);
             displayNameAndDuration();
             runOn(Trigger.BEFORE_ROUND, _ ->
-                    from.doInteractive(interactive -> {
-                        interactive.attackTypical(skill, belongTo, 33, AttackType.DAN_TI);
-                        skill.useDone();
-                    }));
+                    from.doInteractive(skill, interactive -> {
+                        interactive.attackTypical(belongTo, 33, AttackType.DAN_TI);
+                    })
+            );
         }
 
         public static StatusSupplier getSupplier() {

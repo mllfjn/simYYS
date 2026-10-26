@@ -42,7 +42,7 @@ class Skill3 extends Skill {
     @Override
     public Optional<Character> usePrivate(BattlePane bp) {
         XunXiangXing belongTo = ((XunXiangXing) getBelongTo());
-        Interactive interactive = belongTo.getInteractive();
+        Interactive interactive = belongTo.getInteractive(this);
         List<Character> list = new CharacterFinder(belongTo)
                 .filterEnemy()
                 .getList();
@@ -58,7 +58,7 @@ class Skill3 extends Skill {
             increasement = 1;
         }
 
-        interactive.attack(this, list, c -> {
+        interactive.attack(list, c -> {
             AttackInfo attackInfo = AttackInfo.createJianJieAttack(belongTo, this, c, belongTo.getAttack());
             attackInfo.setMultiplier(multiplier[getLevel()]);
             if (increaseDamage) {

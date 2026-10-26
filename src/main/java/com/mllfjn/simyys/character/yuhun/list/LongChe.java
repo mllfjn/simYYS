@@ -10,6 +10,8 @@ import com.mllfjn.simyys.ratecontroller.RateController;
 public class LongChe extends Equip implements YuHunUnfullMark, YuHunHitFeedBack {
     public static final String YuHunName = "胧车";
 
+    private static final Skill SKILL = Skill.getInstance(YuHunName);
+
     private boolean triggered = false;
 
     @Override
@@ -25,7 +27,7 @@ public class LongChe extends Equip implements YuHunUnfullMark, YuHunHitFeedBack 
                     triggered = true;
                     Skill causeSkill = info.getSkill();
                     LongChe.this.yuHunEffect();
-                    character.doInteractive(interactive ->
+                    character.doInteractive(SKILL, interactive ->
                             interactive.increaseLocation(character, 30)
                     );
                     causeSkill.addSkillEndListener(() -> triggered = false);

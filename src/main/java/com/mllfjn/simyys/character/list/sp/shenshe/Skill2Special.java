@@ -45,7 +45,7 @@ class Skill2Special extends Skill {
             yys.die();
         }
         // 获得新回合
-        shenShe.doInteractive(interactive -> interactive.getNewRound(shenShe));
+        shenShe.doInteractive(this, interactive -> interactive.getNewRound(shenShe));
         // 将审判仪式(3)替换位终焉裁决
         shenShe.removeSkill(3);
         shenShe.addSkill(new Skill3Special(shenShe));

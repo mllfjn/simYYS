@@ -48,9 +48,9 @@ class Skill3Special extends Skill {
                 .filterEnemy()
                 .getList();
         double defense = belongTo.getDefence();
-        belongTo.doInteractive(interactive -> {
+        belongTo.doInteractive(this, interactive -> {
             for (int i = 0; i < 3; i++) {
-                interactive.attack(this, list, c -> {
+                interactive.attack(list, c -> {
                     AttackInfo attackInfo = new AttackInfo(belongTo, this, c, AttackType.QUN_TI, defense);
                     attackInfo.setMultiplier(600);
                     return attackInfo;

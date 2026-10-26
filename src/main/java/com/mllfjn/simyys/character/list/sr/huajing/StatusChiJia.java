@@ -18,12 +18,12 @@ class StatusChiJia extends Status {
             List<Character> list = new CharacterFinder(belongTo)
                     .filterEnemy()
                     .getList();
-            belongTo.doInteractive(interactive -> {
+            belongTo.doInteractive(skill2, interactive -> {
                 for (Character character : list) {
                     character.sealPassiveSkill();
                 }
                 double attack = belongTo.getAttack();
-                interactive.attack(skill2, list, c -> {
+                interactive.attack(list, c -> {
                     AttackInfo attackInfo = AttackInfo.createRealAttack(belongTo, skill2, c,
                             Math.min(attack, c.getMaxHp() * skill2.getCoefficient())
                     );
@@ -35,11 +35,10 @@ class StatusChiJia extends Status {
                 }
             });
             reduceStack();
-            skill2.useDone();
 
         });
         runOn(Trigger.AFTER_ROUND, _ ->
-                from.doInteractive(interactive -> interactive.increaseLocation(belongTo, 20))
+                from.doInteractive(skill2, interactive -> interactive.increaseLocation(belongTo, 20))
         );
     }
 

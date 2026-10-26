@@ -18,7 +18,7 @@ public abstract class Skill3Base extends Skill {
     @Override
     public Optional<Character> usePrivate(BattlePane bp) {
         DaShe belongTo = (DaShe) getBelongTo();
-        Interactive interactive = belongTo.getInteractive();
+        Interactive interactive = belongTo.getInteractive(this);
         List<Character> list = new CharacterFinder(belongTo)
                 .filterEnemy()
                 .getList();

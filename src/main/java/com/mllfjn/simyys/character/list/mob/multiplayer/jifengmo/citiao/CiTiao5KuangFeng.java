@@ -18,7 +18,7 @@ public class CiTiao5KuangFeng {
                     Character attacker = interactiveInfo.getAttacker();
                     // 自身（指玩家，这里是对面的队伍）回合内造成伤害时，额外对其造成真实伤害，伤害量等同于该次伤害的20%
                     if (attacker.isInRound() && interactiveInfo.getSkill() != skill) {
-                        character.doInteractive(interactive -> interactive
+                        character.doInteractive(skill, interactive -> interactive
                                 .attack(AttackInfo.createRealAttack(attacker, skill, character,
                                         interactiveInfo.getTraceableNumber().getNumber() * 0.2)));
                     }

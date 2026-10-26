@@ -71,7 +71,7 @@ class Skill3 extends Skill {
     @Override
     public Optional<Character> usePrivate(BattlePane bp) {
         BoYa boYa = (BoYa) getBelongTo();
-        Interactive interactive = boYa.getInteractive();
+        Interactive interactive = boYa.getInteractive(this);
 
         List<Character> list = new CharacterFinder(boYa)
                 .filterTeammate()

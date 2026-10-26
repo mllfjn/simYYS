@@ -28,7 +28,7 @@ class Skill1 extends Skill1PuGongBase {
         if (status != null) {
             status.add(target);
         }
-        interactive.attackTypical(this, target, multiplier[getLevel()], AttackType.DAN_TI);
+        interactive.attackTypical(target, multiplier[getLevel()], AttackType.DAN_TI);
         if (status != null) {
             belongTo.removeStatus(status);
         }

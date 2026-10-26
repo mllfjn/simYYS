@@ -62,8 +62,8 @@ class Skill7 extends PassiveSkill {
                         List<Character> targets = new CharacterFinder(belongTo)
                                 .filterEnemy()
                                 .getList();
-                        belongTo.doInteractive(interactive ->
-                                interactive.attackTypical(Skill7.this, targets, mul, AttackType.QUN_TI));
+                        belongTo.doInteractive(Skill7.this, interactive ->
+                                interactive.attackTypical(targets, mul, AttackType.QUN_TI));
                         listener = null;
                         belongTo.bp.log.addSkill(sb.toString());
                         return true;
@@ -77,8 +77,8 @@ class Skill7 extends PassiveSkill {
                 @Override
                 public boolean onBattleAction(BattleEvent event) {
                     if (event instanceof EventActionDone) {
-                        belongTo.doInteractive(interactive ->
-                                interactive.attackTypical(Skill7.this, target, mul, AttackType.DAN_TI));
+                        belongTo.doInteractive(Skill7.this, interactive ->
+                                interactive.attackTypical(target, mul, AttackType.DAN_TI));
                         listener = null;
                         belongTo.bp.log.addSkill(sb.toString());
                         return true;

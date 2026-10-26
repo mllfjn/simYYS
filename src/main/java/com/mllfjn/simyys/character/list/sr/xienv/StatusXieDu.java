@@ -44,7 +44,7 @@ class StatusXieDu extends Status {
         if (!from.alive) {
             from.reset(belongTo.bp);
         }
-        from.doInteractive(interactive -> interactive.attack(info));
+        from.doInteractive(SKILL, interactive -> interactive.attack(info));
         if (stack < 5) {
             stack++;
             if (stack == 5 && skill2.canCount()) {
@@ -78,9 +78,9 @@ class StatusXieDu extends Status {
                 .getList();
         list.remove(belongTo);
         double average = receivedDamage / list.size() * 0.6;
-        from.doInteractive(interactive -> {
+        from.doInteractive(SKILL, interactive -> {
             double limit = from.getAttack() * 8;
-            interactive.attack(SKILL, list, (target) -> {
+            interactive.attack(list, (target) -> {
                 AttackInfo attackInfo = AttackInfo.createJianJieAttack(from, SKILL, target, average);
                 attackInfo.setLimit(limit);
                 return attackInfo;

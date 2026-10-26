@@ -39,7 +39,7 @@ public class GuiLingGeJi extends Equip implements YuHunUnfullMark, YuHunAfterCau
     }
 
     @Override
-    public void action(AttackInfo attackInfo, Interactive interactive) {
+    public void action(AttackInfo attackInfo) {
         if (record().count < 5) {
             record().count++;
             attackInfo.addNote(YuHunName + "计数:" + record().count);
@@ -51,7 +51,7 @@ public class GuiLingGeJi extends Equip implements YuHunUnfullMark, YuHunAfterCau
             AttackInfo aInfo = AttackInfo.createRealAttack(character, skill, target,
                     Math.min(target.getMaxHp() * 0.2, character.getAttack() * 2.55)
             );
-            interactive.attack(aInfo);
+            character.doInteractive(skill, interactive -> interactive.attack(aInfo));
             yuHunEffect();
         }
     }

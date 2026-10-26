@@ -25,7 +25,7 @@ class StatusPiCaoRouHou extends Status {
                     .getFirst();
             Skill skill = Skill.getInstance(StatusName);
             AttackInfo attackInfo = AttackInfo.createRealAttack(enemyYYS, skill, belongTo, 5000000);
-            enemyYYS.doInteractive(interactive -> interactive.attack(attackInfo));
+            enemyYYS.doInteractive(skill, interactive -> interactive.attack(attackInfo));
         });
         runOn(Trigger.AFTER_ATTACK, triggerParam -> {
             AttackInfo attackInfo = ((ParamAttackInfo) triggerParam).getAttackInfo();

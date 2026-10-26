@@ -55,7 +55,7 @@ class Skill4 extends Skill {
             if (level >= 4) {
                 status.attribute(Attribute.SPEED, 30);
                 if (level >= 5) {
-                    belongTo.doInteractive(interactive ->
+                    belongTo.doInteractive(this, interactive ->
                             interactive.increaseLocation(belongTo, 70));
                 }
             }
@@ -67,7 +67,7 @@ class Skill4 extends Skill {
         return Optional.empty();
     }
 
-    static class YinFenShen extends CharacterSummonBase {
+    class YinFenShen extends CharacterSummonBase {
         private static final String CharacterName = "影分身";
 
         private final int extraMultiplier;
@@ -86,7 +86,7 @@ class Skill4 extends Skill {
 
         public void usedSkill(YingFenShenCopy skill, Character target) {
             if (times == 2) {
-                doInteractive(interactive ->
+                doInteractive(Skill4.this, interactive ->
                         skill.copy(this, target, interactive, extraMultiplier)
                 );
                 times = 0;

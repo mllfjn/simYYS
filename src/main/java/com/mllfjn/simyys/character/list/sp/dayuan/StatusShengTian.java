@@ -1,15 +1,16 @@
 package com.mllfjn.simyys.character.list.sp.dayuan;
 
 import com.mllfjn.simyys.character.Character;
+import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.Trigger;
 import com.mllfjn.simyys.character.status.triggerParam.ParamLocationChange;
 
 // 该状态在结缘目标身上,belongTo是结缘目标,from是大缘
 abstract class StatusShengTian extends Status {
-    public StatusShengTian(DaYuan from, Character belongTo) {
+    public StatusShengTian(DaYuan from, Character belongTo, Skill skill) {
         super("胜天之缘-拉条", from, belongTo);
-        StatusCombined combined = new StatusCombined(belongTo, from, this);
+        StatusCombined combined = new StatusCombined(belongTo, from, this, skill);
 
         // 免疫推条
         runOn(Trigger.LOCATION_WILL_CHANGE, param -> {
@@ -22,7 +23,7 @@ abstract class StatusShengTian extends Status {
         // 回合结束后拉条对方,禁止再次触发,等待对方行动后允许拉条自己
         runOn(Trigger.AFTER_ROUND, _ -> {
             // 这里拉条来源必须要是from-大缘自己,因为大缘免疫其他目标拉条
-            from.doInteractive(interactive -> interactive.increaseLocation(from, 30));
+            from.doInteractive(skill, interactive -> interactive.increaseLocation(from, 30));
             disableAction(Trigger.AFTER_ROUND);
             combined.enableAction(Trigger.AFTER_ACTION);
         });
@@ -37,15 +38,15 @@ abstract class StatusShengTian extends Status {
 
 
 class StatusSTChi extends StatusShengTian {
-    public StatusSTChi(DaYuan from, Character belongTo) {
-        super(from, belongTo);
+    public StatusSTChi(DaYuan from, Character belongTo, Skill skill) {
+        super(from, belongTo, skill);
         display("缘·赤");
     }
 }
 
 class StatusSTQing extends StatusShengTian {
-    public StatusSTQing(DaYuan from, Character belongTo) {
-        super(from, belongTo);
+    public StatusSTQing(DaYuan from, Character belongTo, Skill skill) {
+        super(from, belongTo, skill);
         display("缘·青");
     }
 }

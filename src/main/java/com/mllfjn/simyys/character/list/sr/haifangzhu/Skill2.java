@@ -26,8 +26,8 @@ class Skill2 extends PassiveSkill {
             Character target = new CharacterFinder(belongTo)
                     .filterTeammate()
                     .get(Attribute.HP_PERCENT, CharacterFinder.Criteria.MIN);
-            belongTo.doInteractive(interactive ->
-                    interactive.heal(this, List.of(target),
+            belongTo.doInteractive(this, interactive ->
+                    interactive.heal(List.of(target),
                             _ ->
                                     HealInfo.createHeal(belongTo, this, target,
                                             attackInfo.getTraceableNumber().getNumber() * decay

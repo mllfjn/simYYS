@@ -15,7 +15,7 @@ class Skill1 extends Skill1PuGongBase {
 
     @Override
     public void usePrivate(Interactive interactive, Character target) {
-        interactive.attackTypical(this, target, multiplier[getLevel()], AttackType.DAN_TI);
+        interactive.attackTypical(target, multiplier[getLevel()], AttackType.DAN_TI);
         if (getLevel() >= 5) {
             StatusHuaFu.addStack(getBelongTo(), 1);
         }

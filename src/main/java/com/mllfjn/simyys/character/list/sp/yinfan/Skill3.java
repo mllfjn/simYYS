@@ -35,7 +35,7 @@ class Skill3 extends Skill {
     @Override
     public Optional<Character> usePrivate(BattlePane bp) {
         Character belongTo = getBelongTo();
-        Interactive interactive = belongTo.getInteractive();
+        Interactive interactive = belongTo.getInteractive(this);
 
         Character target = new CharacterFinder(belongTo)
                 .filterEnemy()
@@ -46,7 +46,7 @@ class Skill3 extends Skill {
                 .getList();
 
         // 对敌方全体造成攻击138%伤害
-        interactive.attackTypical(this, enemy, 138, AttackType.QUN_TI);
+        interactive.attackTypical(enemy, 138, AttackType.QUN_TI);
 
         List<Character> carriers = new CharacterFinder(belongTo)
                 .filterTeammate()

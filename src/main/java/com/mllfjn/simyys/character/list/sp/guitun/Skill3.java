@@ -33,7 +33,7 @@ class Skill3 extends Skill {
     public Optional<Character> usePrivate(BattlePane bp) {
         int level = getLevel();
         Character belongTo = getBelongTo();
-        Interactive interactive = belongTo.getInteractive();
+        Interactive interactive = belongTo.getInteractive(this);
         // 推条
         double decrease = level >= 4 ? 40 : 30;
         // 驱散增益数量
@@ -96,13 +96,13 @@ class Skill3 extends Skill {
                 character.removeSkill(skill1Special);
                 character.addSkill(skill1, true);
                 if (recovery && damage > 0) {
-                    belongTo.doInteractive(interactive -> {
+                    belongTo.doInteractive(Skill3.this, interactive -> {
                         List<Character> teammate = new CharacterFinder(belongTo())
                                 .filterTeammate()
                                 .getList();
                         double r = damage * 0.2;
                         for (Character c : teammate) {
-                            interactive.recovery(Skill3.this, c, r);
+                            interactive.recovery(c, r);
                         }
                     });
                 }

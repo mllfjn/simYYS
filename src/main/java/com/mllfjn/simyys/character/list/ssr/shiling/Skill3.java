@@ -108,12 +108,12 @@ class Skill3 extends Skill {
             if (level >= 4) {
                 Skill skill = Skill.getInstance(SkillName);
                 double num = from.getAttack() * 0.78;
-                from.doInteractive(interactive -> {
+                from.doInteractive(skill, interactive -> {
                     List<Character> targets = new CharacterFinder(belongTo)
                             .filterTeammate()
                             .getList();
                     for (Character target : targets) {
-                        interactive.recovery(skill, target, num);
+                        interactive.recovery(target, num);
                     }
                 });
             }
@@ -193,7 +193,7 @@ class Skill3 extends Skill {
                 extra = 0;
             }
 
-            belongTo.doInteractive(interactive -> {
+            belongTo.doInteractive(skill, interactive -> {
                 for (Character target : targets) {
                     AttackInfo attackInfo = AttackInfo.createRealAttack(belongTo, skill, target, numForeach);
                     attackInfo.setLimit(limit);

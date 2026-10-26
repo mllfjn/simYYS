@@ -37,7 +37,7 @@ class Skill3 extends Skill {
     @Override
     public Optional<Character> usePrivate(BattlePane bp) {
         DiShiTian belongTo = (DiShiTian) getBelongTo();
-        Interactive interactive = belongTo.getInteractive();
+        Interactive interactive = belongTo.getInteractive(this);
         List<Character> list = new CharacterFinder(belongTo)
                 .filterEnemy()
                 .getList();
@@ -49,15 +49,15 @@ class Skill3 extends Skill {
                 }
             }
         }
-        interactive.attackTypical(this, list, multiplier[getLevel()], AttackType.QUN_TI);
+        interactive.attackTypical(list, multiplier[getLevel()], AttackType.QUN_TI);
 
-        interactive.recovery(this, belongTo, belongTo.getAttack());
+        interactive.recovery(belongTo, belongTo.getAttack());
         Character character = new CharacterFinder(belongTo)
                 .filterTeammate()
                 // 改这个的话要改desc
                 .filterSelf()
                 .get(Attribute.HP_PERCENT, CharacterFinder.Criteria.MIN);
-        interactive.recovery(this, character, belongTo.getAttack());
+        interactive.recovery(character, belongTo.getAttack());
 
         return Optional.empty();
     }

@@ -105,7 +105,7 @@ class CharacterLDLL extends CharacterSummonBase {
             AttackInfo attackInfo = new AttackInfo(belongTo, this, target, AttackType.DAN_TI, belongTo.getMaxHp());
             attackInfo.setMultiplier(50);
             attackInfo.setFluctuationLimit(0);
-            belongTo.getInteractive().attack(attackInfo);
+            belongTo.getInteractive(this).attack(attackInfo);
             return Optional.of(target);
         }
     }

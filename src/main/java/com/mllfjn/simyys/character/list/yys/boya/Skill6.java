@@ -33,7 +33,7 @@ class Skill6 extends PassiveSkill {
                 .filterEnemy()
                 .get(Attribute.HP, CharacterFinder.Criteria.MAX);
 
-        belongTo.doInteractive(interactive -> {
+        belongTo.doInteractive(this, interactive -> {
             AttackInfo interactiveInfo = AttackInfo
                     .createTypicalAttack(belongTo, this, target, multiplier, AttackType.DAN_TI);
 

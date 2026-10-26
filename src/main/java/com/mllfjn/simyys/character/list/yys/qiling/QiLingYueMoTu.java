@@ -3,10 +3,13 @@ package com.mllfjn.simyys.character.list.yys.qiling;
 import com.mllfjn.simyys.character.Attribute;
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
+import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 
 class QiLingYueMoTu {
     static final String QiLingName = "月魔兔";
+
+    private static final Skill SKILL = Skill.getInstance(QiLingName);
 
     static void install(Character character) {
         character.bp.addPriorityMove(character, () -> character.addStatus(new StatusQLYMTListener(character)));
@@ -21,7 +24,7 @@ class QiLingYueMoTu {
                         .filterTeammate()
                         .filterSelf()
                         .get(Attribute.LOCATION, CharacterFinder.Criteria.MAX);
-                belongTo.doInteractive(interactive -> interactive.increaseLocation(target, 20));
+                belongTo.doInteractive(SKILL, interactive -> interactive.increaseLocation(target, 20));
             });
         }
     }

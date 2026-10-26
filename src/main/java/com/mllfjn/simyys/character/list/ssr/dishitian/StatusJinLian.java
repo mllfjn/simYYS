@@ -30,7 +30,7 @@ class StatusJinLianForMob extends StatusJinLian {
                 double finalNumber = number;
                 AttackInfo attackInfo = AttackInfo.createRealAttack(from, skill2, belongTo, finalNumber);
                 attackInfo.setNotCalYuHun();
-                from.doInteractive(interactive -> interactive.attack(attackInfo));
+                from.doInteractive(skill2, interactive -> interactive.attack(attackInfo));
             }
         });
     }

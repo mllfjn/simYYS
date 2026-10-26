@@ -13,10 +13,9 @@ class StatusTiJia extends Status {
         setStack(3);
         displayNameAndStack();
         runOn(Trigger.BEFORE_ROUND, _ -> {
-            from.doInteractive(interactive ->
-                    interactive.healTypical(skill3, belongTo, skill3.getMultiplier()))
-            ;
-            skill3.useDone();
+            from.doInteractive(skill3, interactive ->
+                    interactive.healTypical(belongTo, skill3.getMultiplier())
+            );
         });
         runOn(Trigger.BEFORE_ATTACK, param -> {
             AttackInfo attackInfo = ((ParamAttackInfo) param).getAttackInfo();
@@ -27,7 +26,7 @@ class StatusTiJia extends Status {
         });
         runOn(Trigger.AFTER_ROUND, _ -> {
             if (from.tiJiaIncrease()) {
-                from.doInteractive(interactive -> interactive.increaseLocation(belongTo, 20));
+                from.doInteractive(skill3, interactive -> interactive.increaseLocation(belongTo, 20));
             }
         });
     }

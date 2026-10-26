@@ -56,7 +56,7 @@ class Skill2 extends Skill {
                 .filterSelf()
                 .getAutoOrElseRandom();
 
-        belongTo.getInteractive().increaseLocation(target, 40);
+        belongTo.getInteractive(this).increaseLocation(target, 40);
         StatusHZBH.addStack(belongTo, target, level >= 2 ? 3 : 2, level >= 3);
 
         if (level >= 4) {

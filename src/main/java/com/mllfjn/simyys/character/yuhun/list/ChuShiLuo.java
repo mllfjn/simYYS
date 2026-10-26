@@ -26,8 +26,10 @@ public class ChuShiLuo extends Equip implements YuHunAfterBeingAttack {
     }
 
     @Override
-    public void action(AttackInfo attackInfo, Interactive interactive) {
-        interactive.recovery(skill, character, attackInfo.getTraceableNumber().getNumber() * 0.1);
+    public void action(AttackInfo attackInfo) {
+        getBelongTo().doInteractive(skill, interactive ->
+                interactive.recovery(character, attackInfo.getTraceableNumber().getNumber() * 0.1));
+        ;
     }
 
     private static class StatusChuShiLuo extends Status {

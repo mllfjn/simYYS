@@ -81,13 +81,12 @@ class Skill2 extends Skill {
                 List<Character> list = new CharacterFinder(belongTo)
                         .filterEnemy()
                         .getList();
-                belongTo.doInteractive(interactive -> interactive.attack(skill2, list, c -> {
+                belongTo.doInteractive(skill2, interactive -> interactive.attack(list, c -> {
                     AttackInfo attackInfo = AttackInfo
                             .createJianJieAttack(belongTo, skill2, c, belongTo.getAttack());
                     attackInfo.setMultiplier(43);
                     return attackInfo;
                 }));
-                skill2.useDone();
                 stack = 0;
             } else {
                 stack++;

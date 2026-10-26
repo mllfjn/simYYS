@@ -952,12 +952,12 @@ public abstract class Character implements Serializable {
 
     // 区别:getInteractive会将interactive的owner设为该角色且不再改变
     // doInteractive会在完成操作后将interactive的owner归位
-    public Interactive getInteractive() {
-        return bp.getInteractive(this);
+    public Interactive getInteractive(Skill skill) {
+        return bp.getInteractive(this, skill);
     }
 
-    public void doInteractive(Consumer<Interactive> action) {
-        bp.doInteractive(this, action);
+    public void doInteractive(Skill skill, Consumer<Interactive> action) {
+        bp.doInteractive(this, skill, action);
     }
 
     public void addYuHun(Equip equip) {

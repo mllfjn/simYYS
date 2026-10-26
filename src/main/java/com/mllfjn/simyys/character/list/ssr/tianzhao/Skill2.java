@@ -38,16 +38,15 @@ class Skill2 extends PassiveSkill {
                 tianZhao.bp.addOutRoundSkill(this, () -> {
                     tianZhao.setCopyTarget(copyTarget);
                     double coefficient = Coefficients[getLevel()];
-                    tianZhao.doInteractive(interactive ->
+                    tianZhao.doInteractive(this, interactive ->
                             copyList.forEach(copy ->
-                                    interactive.attackTypical(this, copy.target,
+                                    interactive.attackTypical(copy.target,
                                             copy.multiplier * coefficient,
                                             copy.attackType
                                     )
                             )
                     );
                     tianZhao.setCopyTarget(null);
-                    useDone();
                 });
             }
         }

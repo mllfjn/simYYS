@@ -115,15 +115,14 @@ class Skill2 extends PassiveSkill {
                     Skill3 skill3 = ((Skill3) from.getSkill(3).orElse(null));
                     boolean increasing = skill3 != null && skill3.isIncreasing(target);
 
-                    from.doInteractive(interactive -> {
+                    from.doInteractive(Skill2.this.skill, interactive -> {
                         double multiplier = 62;
                         for (int i = 0; i < 3; i++) {
-                            interactive.attackTypical(Skill2.this.skill, target, multiplier, AttackType.DAN_TI);
+                            interactive.attackTypical(target, multiplier, AttackType.DAN_TI);
                             if (increasing) {
                                 multiplier *= 1.23;
                             }
                         }
-                        Skill2.this.skill.useDone();
                     });
 
                     if (skill3 != null && getLevel() >= 5) {

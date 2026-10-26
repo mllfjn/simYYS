@@ -27,7 +27,7 @@ class Skill1Special extends Skill1PuGongBase {
         Character belongTo = getBelongTo();
         int level = getLevel();
 
-        AttackInfo attackInfo = interactive.attackTypical(this, target, MULTIPLIER[level], AttackType.DAN_TI);
+        AttackInfo attackInfo = interactive.attackTypical(target, MULTIPLIER[level], AttackType.DAN_TI);
         double damage = attackInfo.getTraceableNumber().getNumber();
         if (damage > 0) {
             List<Character> enemy = new CharacterFinder(belongTo)
@@ -35,7 +35,7 @@ class Skill1Special extends Skill1PuGongBase {
                     .getList();
             enemy.remove(target);
             double d = damage * RATIO[level];
-            interactive.attack(this, enemy, c -> {
+            interactive.attack(enemy, c -> {
                 AttackInfo info = AttackInfo.createRealAttack(belongTo, this, c, d);
                 info.setNotCalYuHun();
                 return info;

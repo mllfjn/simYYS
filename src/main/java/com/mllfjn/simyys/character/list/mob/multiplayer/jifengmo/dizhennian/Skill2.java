@@ -31,7 +31,7 @@ class Skill2 extends Skill {
                     AttackInfo info = AttackInfo
                             .createRealAttack(target, this, target, duration * 0.3 * target.getMaxHp());
                     info.setCanThroughShield(true);
-                    target.doInteractive(interactive -> interactive.attack(info));
+                    target.doInteractive(this, interactive -> interactive.attack(info));
                     // 红凝
                     Status.of("红凝", diZhenNian, target)
                             .display(() -> "红凝")

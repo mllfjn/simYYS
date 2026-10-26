@@ -25,8 +25,8 @@ class Skill8 extends PassiveSkill {
     }
 
     public void use(Character target) {
-        getBelongTo().doInteractive(interactive ->
-                interactive.attackTypical(this, target, 100, AttackType.DAN_TI));
+        getBelongTo().doInteractive(this, interactive ->
+                interactive.attackTypical(target, 100, AttackType.DAN_TI));
         log(target);
     }
 

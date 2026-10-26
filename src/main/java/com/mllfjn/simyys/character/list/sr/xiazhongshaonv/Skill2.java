@@ -32,10 +32,9 @@ class Skill2 extends PassiveSkill {
                         RandomStatus choose = RateController.choose("匣中少女-溢彩:为攻击者附加减益", buffs,
                                 v -> v.attribute.getText(), belongTo.bp.calc
                         );
-                        belongTo.doInteractive(interactive -> interactive.effect(Skill2.this, attacker,
-                                100, true,
-                                StatusRandomStatus.getSupplier(choose)
-                        ));
+                        belongTo.doInteractive(Skill2.this, interactive ->
+                                interactive.effect(attacker, 100, true, StatusRandomStatus.getSupplier(choose))
+                        );
                     }).addTo();
         }
     }

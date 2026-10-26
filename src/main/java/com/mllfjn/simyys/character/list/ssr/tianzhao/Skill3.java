@@ -32,7 +32,7 @@ class Skill3 extends Skill {
     @Override
     public Optional<Character> usePrivate(BattlePane bp) {
         Character belongTo = getBelongTo();
-        Interactive interactive = belongTo.getInteractive();
+        Interactive interactive = belongTo.getInteractive(this);
         int multiplier = Multipliers[getLevel()];
         Character target = new CharacterFinder(belongTo)
                 .filterEnemy()
@@ -42,11 +42,11 @@ class Skill3 extends Skill {
             List<Character> list = new CharacterFinder(belongTo)
                     .filterEnemy()
                     .getList();
-            interactive.attackTypical(this, list, multiplier, AttackType.QUN_TI);
+            interactive.attackTypical(list, multiplier, AttackType.QUN_TI);
         }
 
         for (int i = 0; i < 3; i++) {
-            interactive.attackTypical(this, target, multiplier, AttackType.DAN_TI);
+            interactive.attackTypical(target, multiplier, AttackType.DAN_TI);
         }
 
         Character tianHuiTarget = new CharacterFinder(belongTo)

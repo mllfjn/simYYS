@@ -42,12 +42,12 @@ class Skill2 extends PassiveSkill {
                     character.revive(belongTo.bp, character.getMaxHp());
                     double heal = stored * skill3.getAverageHeal();
                     stored = 0;
-                    belongTo.doInteractive(interactive -> {
+                    belongTo.doInteractive(Skill2.this, interactive -> {
                         List<Character> list = new CharacterFinder(belongTo)
                                 .filterTeammate()
                                 .filterSummon(false)
                                 .getList();
-                        interactive.heal(Skill2.this, list, c ->
+                        interactive.heal(list, c ->
                                 new HealInfo(belongTo, Skill2.this, c, heal)
                         );
                     });
@@ -77,8 +77,8 @@ class Skill2 extends PassiveSkill {
         if (loseHp > 0) {
             double useStore = Math.min(stored, loseHp * 0.3);
             stored -= useStore;
-            getBelongTo().doInteractive(interactive ->
-                    interactive.heal(this, List.of(character),
+            getBelongTo().doInteractive(this, interactive ->
+                    interactive.heal(List.of(character),
                             c -> new HealInfo(getBelongTo(), this, c, useStore)
                     )
             );
@@ -120,7 +120,7 @@ class Skill2 extends PassiveSkill {
                 c.isSummon()
                         ? null
                         : c.team == belongTo.team
-                        ? new StatusToTeammate(belongTo, c)
+                          ? new StatusToTeammate(belongTo, c)
                           : new StatusHealListener(belongTo, c)
         );
         belongTo.bp.addActionListener(listener);

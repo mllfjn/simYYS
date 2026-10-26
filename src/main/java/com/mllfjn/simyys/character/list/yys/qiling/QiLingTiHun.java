@@ -61,8 +61,8 @@ class QiLingTiHun {
                 List<Character> enemies = new CharacterFinder(belongTo)
                         .filterEnemy()
                         .getList();
-                belongTo.doInteractive(interactive ->
-                        interactive.attackTypical(SKILL, enemies, 100, AttackType.QUN_TI)
+                belongTo.doInteractive(SKILL, interactive ->
+                        interactive.attackTypical(enemies, 100, AttackType.QUN_TI)
                 );
                 // 并提升友方全体30%伤害,持续2回合
                 List<Character> teammates = new CharacterFinder(belongTo)

@@ -33,7 +33,7 @@ class Skill2Special extends Skill {
 
         target.die();
         skill2.convert(belongTo);
-        belongTo.getInteractive().getNewRound(belongTo);
+        belongTo.getInteractive(this).getNewRound(belongTo);
         Status.of(SkillName, belongTo)
                 .attribute(Attribute.SPEED, 30.0)
                 .runOn(Trigger.WHEN_ATTACK, param ->

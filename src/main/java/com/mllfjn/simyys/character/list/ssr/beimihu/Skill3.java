@@ -36,13 +36,13 @@ class Skill3 extends Skill {
     @Override
     public Optional<Character> usePrivate(BattlePane bp) {
         BeiMiHu belongTo = (BeiMiHu) getBelongTo();
-        Interactive interactive = belongTo.getInteractive();
+        Interactive interactive = belongTo.getInteractive(this);
         List<Character> targets = new CharacterFinder(belongTo)
                 .filterEnemy()
                 .getList();
 
         for (int i = 0; i < 2; i++) {
-            interactive.attack(this, targets, character -> {
+            interactive.attack(targets, character -> {
                 AttackInfo info = AttackInfo
                         .createTypicalAttack(belongTo, this, character, multiplier, AttackType.QUN_TI);
                 if (getLevel() >= 5) {

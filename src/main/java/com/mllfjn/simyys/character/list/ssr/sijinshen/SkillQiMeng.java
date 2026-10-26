@@ -73,7 +73,7 @@ public class SkillQiMeng extends Skill {
     public void takeAction() {
         if (!attackInfos.isEmpty()) {
             Character belongTo = getBelongTo();
-            belongTo.doInteractive(interactive -> {
+            belongTo.doInteractive(this, interactive -> {
                 for (AttackInfo attackInfo : attackInfos) {
                     if (attackInfo.getTarget().alive) {
                         interactive.attack(AttackInfo
@@ -94,8 +94,9 @@ public class SkillQiMeng extends Skill {
         }
     }
 
-    Optional<Character> getMaxAttacker() {
-        return zSZHCarriers.stream().max(Comparator.comparing(Attribute.ATTACK.getGetter()));
+    void maxAttackerGetNewRound() {
+        zSZHCarriers.stream().max(Comparator.comparing(Attribute.ATTACK.getGetter())).ifPresent(c ->
+                getBelongTo().doInteractive(this, interactive -> interactive.getNewRound(c)));
     }
 
     boolean isEffective() {

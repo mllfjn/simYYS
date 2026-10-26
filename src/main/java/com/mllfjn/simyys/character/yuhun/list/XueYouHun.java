@@ -21,10 +21,12 @@ public class XueYouHun extends Equip implements YuHunAfterCauseAttack, YuHunHitF
     }
 
     @Override
-    public void action(AttackInfo attackInfo, Interactive interactive) {
+    public void action(AttackInfo attackInfo) {
         Character target = attackInfo.getTarget();
-        interactive.effect(skill, target, isHaveReduceSpeed(target) ? 30 : 15, true,
-                StatusFrozen.getSupplier(1)
+        character.doInteractive(skill, interactive ->
+                interactive.effect(target, isHaveReduceSpeed(target) ? 30 : 15,
+                        true, StatusFrozen.getSupplier(1)
+                )
         );
     }
 

@@ -2,6 +2,7 @@ package com.mllfjn.simyys.character.list.mob.multiplayer.jifengmo.citiao;
 
 import com.mllfjn.simyys.character.Character;
 import com.mllfjn.simyys.character.skill.CharacterFinder;
+import com.mllfjn.simyys.character.skill.Skill;
 import com.mllfjn.simyys.character.status.*;
 import com.mllfjn.simyys.character.status.triggerParam.ParamAttackInfo;
 import com.mllfjn.simyys.utils.Utils;
@@ -12,6 +13,8 @@ public class CiTiao7JiXing {
     public static final String CiTiaoName = "疾行";
 
     public static void install(Character character) {
+        Skill skill = Skill.getInstance(CiTiaoName);
+
         character.bp.addPriorityMove(character, () -> {
             List<Character> targets = new CharacterFinder(character)
                     .filterEnemy()
@@ -25,7 +28,7 @@ public class CiTiao7JiXing {
                                     .mul(1.2, CiTiaoName);
                         })
                         .runOn(Trigger.AFTER_ACTION, _ ->
-                                target.doInteractive(interactive ->
+                                target.doInteractive(skill, interactive ->
                                         interactive.increaseLocation(target, 20)
                                 )
                         )

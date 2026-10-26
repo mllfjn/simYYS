@@ -17,8 +17,8 @@ class Skill2 extends PassiveSkill {
 
     void madeAttack(Character target) {
         if (isActive()) {
-            getBelongTo().doInteractive(interactive ->
-                    interactive.effect(this, target, 60, true,
+            getBelongTo().doInteractive(this, interactive ->
+                    interactive.effect(target, 60, true,
                             new StatusSupplier(StatusZhuYin.StatusName, StatusZhuYin.class,
                                     (_, to) ->
                                             to.getStatus(StatusZhuYin.class)
@@ -47,9 +47,9 @@ class Skill2 extends PassiveSkill {
             runOn(Trigger.USED_SKILL, param -> {
                 ParamUseSkill pus = (ParamUseSkill) param;
                 if (pus.getCost() > 0) {
-                    from.doInteractive(interactive ->
-                            interactive.attack(AttackInfo
-                                    .createJianJieAttack(from, Skill2.this, belongTo, from.getAttack())
+                    from.doInteractive(Skill2.this, interactive ->
+                            interactive.attack(
+                                    AttackInfo.createJianJieAttack(from, Skill2.this, belongTo, from.getAttack())
                             )
                     );
                     Status.of(StatusName + "减速", from, belongTo)

@@ -18,11 +18,10 @@ class StatusFenHuo extends Status {
         duration(StatusDurationType.CHI_XU, 1);
         // 这个状态在技能里显示焚火,但是在状态栏显示蛇袭
         display("蛇袭");
-        beforeDelete(() -> from.doInteractive(interactive -> {
+        beforeDelete(() -> from.doInteractive(skill, interactive -> {
             AttackInfo attackInfo = AttackInfo.createJianJieAttack(from, skill, belongTo, from.getAttack());
             attackInfo.setMultiplier(multiplier);
             interactive.attack(attackInfo);
-            this.skill.useDone();
         }));
     }
 

@@ -76,11 +76,11 @@ class Skill2 extends PassiveSkill {
                     if (number > 0) {
                         double maxRecovery = number * (Skill2.this.getLevel() >= 3 ? 0.3 : 0.2);
                         double loseHP = belongTo.getMaxHp() - belongTo.getHp();
-                        belongTo.doInteractive(interactive -> {
+                        belongTo.doInteractive(SKILL, interactive -> {
                             if (maxRecovery <= loseHP) {
-                                interactive.recovery(SKILL, belongTo, maxRecovery);
+                                interactive.recovery(belongTo, maxRecovery);
                             } else {
-                                interactive.recovery(SKILL, belongTo, loseHP);
+                                interactive.recovery(belongTo, loseHP);
                                 List<Character> list = new CharacterFinder(belongTo)
                                         .filterTeammate()
                                         .filterSelf()
@@ -88,7 +88,7 @@ class Skill2 extends PassiveSkill {
                                 if (!list.isEmpty()) {
                                     double averageOverflow = (maxRecovery - loseHP) / list.size();
                                     for (Character c : list) {
-                                        interactive.recovery(SKILL, c, averageOverflow);
+                                        interactive.recovery(c, averageOverflow);
                                     }
                                 }
                             }

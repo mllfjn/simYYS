@@ -37,9 +37,7 @@ class StatusXinYang extends Status {
                 character.addStatus(new StatusShield(belongTo, character, shield));
             }
             if (getNewRoundWhenXinYangRemoved) {
-                ((SiJinShen) belongTo).qm.getMaxAttacker().ifPresent(c ->
-                        belongTo.doInteractive(interactive -> interactive.getNewRound(c))
-                );
+                ((SiJinShen) belongTo).qm.maxAttackerGetNewRound();
             }
         }
     }
