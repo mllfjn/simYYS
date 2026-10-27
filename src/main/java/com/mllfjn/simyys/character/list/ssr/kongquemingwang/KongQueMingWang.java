@@ -37,6 +37,8 @@ public class KongQueMingWang extends CharacterShiShenBase {
 
         addSkill(skill1Special, true);
         addSkill(skill3Special, true);
+
+        skill3Special.firstUse = true;
     }
 
     void stopKaiPing() {
