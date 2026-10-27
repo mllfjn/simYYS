@@ -32,6 +32,7 @@ import com.mllfjn.simyys.character.list.ssr.datiangou.DaTianGou;
 import com.mllfjn.simyys.character.list.ssr.dishitian.DiShiTian;
 import com.mllfjn.simyys.character.list.ssr.geye.GeYe;
 import com.mllfjn.simyys.character.list.ssr.guiqie.GuiQie;
+import com.mllfjn.simyys.character.list.ssr.kongquemingwang.KongQueMingWang;
 import com.mllfjn.simyys.character.list.ssr.shenwuyue.ShenWuYue;
 import com.mllfjn.simyys.character.list.ssr.shijiamei.ShiJiaMei;
 import com.mllfjn.simyys.character.list.ssr.shiling.ShiLing;
@@ -118,6 +119,7 @@ public class CharacterFactory {
         putCharacterMeta(ssrMap, 325, DaShe.CharacterName, DaShe.class);
         putCharacterMeta(ssrMap, 609, XiaoYe.CharacterName, XiaoYe.class);
         putCharacterMeta(ssrMap, 344, YunWaiJing.CharacterName, YunWaiJing.class);
+        putCharacterMeta(ssrMap, 550, KongQueMingWang.CharacterName, KongQueMingWang.class);
 
         List<CharacterMeta> srMap = new ArrayList<>();
         characterMapList.put("SR", srMap);

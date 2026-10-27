@@ -36,6 +36,10 @@ public class StatusAdder<T extends Status> implements Serializable {
         addedStatuses.clear();
     }
 
+    public void removeStatus(T status) {
+        addedStatuses.remove(status);
+    }
+
     public List<T> getList() {
         return addedStatuses;
     }

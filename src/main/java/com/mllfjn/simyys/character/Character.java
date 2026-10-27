@@ -5,6 +5,7 @@ import com.mllfjn.simyys.TeamPane;
 import com.mllfjn.simyys.character.list.mob.multiplayer.InfoDisplay;
 import com.mllfjn.simyys.character.list.ssr.beimihu.StatusShiZhiHui;
 import com.mllfjn.simyys.character.list.ssr.beimihu.StatusShiZhiXi;
+import com.mllfjn.simyys.character.list.ssr.kongquemingwang.StatusJiaoXie;
 import com.mllfjn.simyys.character.propertygetter.*;
 import com.mllfjn.simyys.character.skill.PassiveSkill;
 import com.mllfjn.simyys.character.skill.Skill;
@@ -588,12 +589,18 @@ public abstract class Character implements Serializable {
     }
 
     public Optional<Skill1PuGongBase> getPuGong() {
+        if (isHaveStatus(StatusJiaoXie.class)) {
+            return Optional.empty();
+        }
+
         if (skills.size() < 2) {
             return Optional.empty();
         }
+
         if (skills.get(1) instanceof Skill1PuGongBase s1) {
             return Optional.of(s1);
         }
+
         return Optional.empty();
     }
 
@@ -743,17 +750,21 @@ public abstract class Character implements Serializable {
         setHp(getHp() + num);
     }
 
-    public void deleteStatusIf(Predicate<Status> predicate) {
+    public void deleteStatusIf(Predicate<Status> predicate, boolean dispel) {
         new ArrayList<>(getStatuses()).forEach(status -> {
             if (predicate.test(status)) {
-                status.delete();
+                if (dispel) {
+                    status.dispel();
+                } else {
+                    status.delete();
+                }
             }
         });
     }
 
     public void dispelAllDebuff() {
         deleteStatusIf(status -> status.statusType == StatusType.DEBUFF
-                && status.statusForm == StatusForm.ZHUANG_TAI);
+                && status.statusForm == StatusForm.ZHUANG_TAI, true);
     }
 
     public void dispelDeBuff(int count) {
@@ -770,7 +781,7 @@ public abstract class Character implements Serializable {
                 .choose(name + "驱散减益状态", debuffs, Status::getName, bp.calc, count);
 
         for (Status status : tobeDelete) {
-            status.delete();
+            status.dispel();
         }
     }
 
@@ -831,11 +842,11 @@ public abstract class Character implements Serializable {
     }
 
     public void removeAllCrowControl() {
-        deleteStatusIf(status -> status instanceof CrowdControl);
+        deleteStatusIf(status -> status instanceof CrowdControl, true);
     }
 
     public void removeAllDeBuff() {
-        deleteStatusIf(status -> status.statusType == StatusType.DEBUFF);
+        deleteStatusIf(status -> status.statusType == StatusType.DEBUFF, false);
     }
 
     public CharacterIcon getCharacterIcon() {
@@ -1047,7 +1058,7 @@ public abstract class Character implements Serializable {
         statusRun(Trigger.DIE, null);
         // 通过老头死亡时可以叠一层伤魂鸟判断，应该先触发死亡，再执行
         dieHandle();
-        deleteStatusIf(status -> !status.isRetainAfterDie());
+        deleteStatusIf(status -> !status.isRetainAfterDie(), false);
 
         if (sealPassiveSkillCount == 0) {
             for (Skill skill : skills) {

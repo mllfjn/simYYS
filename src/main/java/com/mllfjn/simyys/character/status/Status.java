@@ -294,7 +294,7 @@ public class Status implements Serializable {
         }
     }
 
-    public final void setStack(int stack) {
+    public void setStack(int stack) {
         this.stack = stack;
     }
 
@@ -393,6 +393,20 @@ public class Status implements Serializable {
             beforeDelete.run();
         }
         belongTo.getStatuses().remove(this);
+    }
+
+    private SerialRunnable beforeDispel;
+
+    public final Status beforeDispel(SerialRunnable beforeDispel) {
+        this.beforeDispel = beforeDispel;
+        return this;
+    }
+
+    public final void dispel() {
+        delete();
+        if (beforeDispel != null) {
+            beforeDispel.run();
+        }
     }
 
     // =============================免死===================================

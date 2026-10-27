@@ -34,8 +34,8 @@ public class QingNvFang extends Equip {
 
                 // 受到致命伤害时,移除所有状态和印记
                 belongTo.deleteStatusIf(status ->
-                        status.statusForm == StatusForm.ZHUANG_TAI || status.statusForm == StatusForm.YIN_JI
-                );
+                        status.statusForm == StatusForm.ZHUANG_TAI || status.statusForm == StatusForm.YIN_JI,
+                        false);
                 // 恢复100%生命
 //            belongTo.doInteractive(interactive -> interactive.recovery(belongTo, belongTo.getMaxHp()));
                 // 因为游戏里触发没有显示,所以不用interactive直接改生命
