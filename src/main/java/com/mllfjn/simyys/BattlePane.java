@@ -612,6 +612,10 @@ public class BattlePane {
         interactive.doInterActive(character, skill, action);
     }
 
+    public void doInteractiveNoAutoUseDone(Character character, Skill skill, Consumer<Interactive> action) {
+        interactive.doInteractiveNoAutoUseDone(character, skill, action);
+    }
+
     public boolean canSummon(int team) {
         return situation.teamPane[team].canSummon();
     }
