@@ -116,7 +116,7 @@ class Skill2 extends Skill {
         }
 
         private void transform() {
-            belongTo.deleteStatusIf(status -> status.statusType != StatusType.SPECIAL);
+            belongTo.deleteStatusIf(status -> status.statusType != StatusType.SPECIAL, false);
             belongTo.addStatus(new StatusGuiHai(belongTo));
             ((LuWan) belongTo).skill2Special = new Skill2Special(belongTo);
         }
