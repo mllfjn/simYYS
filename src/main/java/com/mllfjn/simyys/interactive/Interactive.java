@@ -54,6 +54,11 @@ public class Interactive {
     }
 
     public void doInterActive(Character character, Skill skill, Consumer<Interactive> action) {
+        doInteractiveNoAutoUseDone(character, skill, action);
+        skill.useDone();
+    }
+
+    public void doInteractiveNoAutoUseDone(Character character, Skill skill, Consumer<Interactive> action) {
         Character tempCharacter = owner;
         Skill tempSkill = this.skill;
 
@@ -61,7 +66,6 @@ public class Interactive {
         this.skill = skill;
 
         action.accept(this);
-        skill.useDone();
 
         owner = tempCharacter;
         this.skill = tempSkill;

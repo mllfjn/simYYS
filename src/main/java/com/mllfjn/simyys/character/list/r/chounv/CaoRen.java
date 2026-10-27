@@ -14,6 +14,8 @@ public class CaoRen extends CharacterSummonBase {
 
     private final Character bind;
 
+    private Skill fromSkill;
+
     public CaoRen(Character chouNv, Character target, int level) {
         super(chouNv.bp, CharacterName, target.team);
         this.bind = target;
@@ -29,8 +31,13 @@ public class CaoRen extends CharacterSummonBase {
         Status status = Status.of(CharacterName, chouNv, this);
         status.duration(StatusDurationType.CHI_XU, 3)
                 .runOn(Trigger.AFTER_ATTACK, triggerParam -> {
-                    double number = ((ParamAttackInfo) triggerParam).getAttackInfo().getTraceableNumber().getNumber();
-                    chouNv.doInteractive(skill, interactive ->
+                    AttackInfo attackInfo = ((ParamAttackInfo) triggerParam).getAttackInfo();
+                    if (fromSkill == null) {
+                        fromSkill = attackInfo.getSkill();
+                        fromSkill.addSkillEndListener(skill::useDone);
+                    }
+                    double number = attackInfo.getTraceableNumber().getNumber();
+                    chouNv.doInteractiveNoAutoUseDone(skill, interactive ->
                             interactive.attack(AttackInfo.createChuanDaoAttack(chouNv, skill, bind, number)));
                 })
                 .display(() -> "剩余回合" + status.getDuration())

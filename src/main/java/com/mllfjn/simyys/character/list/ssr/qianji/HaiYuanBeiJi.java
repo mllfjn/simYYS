@@ -114,51 +114,54 @@ class HaiYuanBeiJi extends CharacterSummonBase {
             });
         }
     }
-}
 
-class StatusChaoSheng extends Status implements IgnoreDebuff {
-    private final static String StatusName = "潮声";
+    static class StatusChaoSheng extends Status implements IgnoreDebuff {
+        private final static String StatusName = "潮声";
 
-    public StatusChaoSheng(Character character, int level) {
-        super(StatusName, character, character, StatusType.BUFF, StatusForm.YIN_JI);
-        enableStack(7);
+        public StatusChaoSheng(Character character, int level) {
+            super(StatusName, character, character, StatusType.BUFF, StatusForm.YIN_JI);
+            enableStack(7);
 
-        // lv5-海原贝戟被召唤时,立刻获得3层潮声
-        if (level >= 5) {
-            stack = 3;
+            // lv5-海原贝戟被召唤时,立刻获得3层潮声
+            if (level >= 5) {
+                stack = 3;
+            }
+            displayNameAndStack();
         }
-        displayNameAndStack();
-    }
 
-    @Override
-    public void addStack(int count) {
-        stack += count;
-        while (stack >= 7) {
-            stack -= 7;
-            belongTo.bp.gainGuiHuo(belongTo, 3);
-            List<Character> teammate = new CharacterFinder(belongTo)
-                    .filterTeammate()
-                    .getList();
-            for (Character character : teammate) {
-                StatusQianJiZengShang.addStack(character);
+        @Override
+        public void addStack(int count) {
+            stack += count;
+            while (stack >= 7) {
+                stack -= 7;
+                belongTo.bp.gainGuiHuo(belongTo, 3);
+                List<Character> teammate = new CharacterFinder(belongTo)
+                        .filterTeammate()
+                        .getList();
+                for (Character character : teammate) {
+                    StatusQianJiZengShang.addStack(character);
+                }
             }
         }
     }
+
+    static class StatusQianJiZengShang extends Status {
+        public StatusQianJiZengShang(Character character) {
+            super("金剑", character, character, StatusType.BUFF, StatusForm.YIN_JI);
+            attribute(Attribute.ZENG_SHANG, _ -> 15.0 * stack);
+            enableStack(5);
+            displayNameAndStack();
+        }
+
+        public static void addStack(Character character) {
+            character.getStatus(StatusQianJiZengShang.class)
+                    .ifPresentOrElse(
+                            StatusQianJiZengShang::addStack,
+                            () -> character.addStatus(new StatusQianJiZengShang(character))
+                    );
+        }
+    }
 }
 
-class StatusQianJiZengShang extends Status {
-    public StatusQianJiZengShang(Character character) {
-        super("金剑", character, character, StatusType.BUFF, StatusForm.YIN_JI);
-        attribute(Attribute.ZENG_SHANG, _ -> 15.0 * stack);
-        enableStack(5);
-        displayNameAndStack();
-    }
 
-    public static void addStack(Character character) {
-        character.getStatus(StatusQianJiZengShang.class)
-                .ifPresentOrElse(
-                        StatusQianJiZengShang::addStack,
-                        () -> character.addStatus(new StatusQianJiZengShang(character))
-                );
-    }
-}
+

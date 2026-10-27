@@ -971,6 +971,10 @@ public abstract class Character implements Serializable {
         bp.doInteractive(this, skill, action);
     }
 
+    public void doInteractiveNoAutoUseDone(Skill skill, Consumer<Interactive> action) {
+        bp.doInteractiveNoAutoUseDone(this, skill, action);
+    }
+
     public void addYuHun(Equip equip) {
         equipSet.add(equip);
         if (equip instanceof YuHunSealResponse sr) {

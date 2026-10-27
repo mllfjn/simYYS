@@ -86,6 +86,8 @@ public abstract class Skill implements Serializable {
         if (skillEndListeners != null && !skillEndListeners.isEmpty()) {
             skillEndListeners.forEach(SkillEndListener::run);
             skillEndListeners.clear();
+
+//            System.out.println("Skill:\n" + this.getClass().getSimpleName() + "#" + this.hashCode() + "useDone");
         }
     }
 
@@ -202,6 +204,8 @@ public abstract class Skill implements Serializable {
             skillEndListeners = new ArrayList<>();
         }
         skillEndListeners.add(new SkillEndListener(runnable));
+
+//        System.out.println("Skill:\n" + this.getClass().getSimpleName() + "#" + this.hashCode() + "addedListener");
     }
 
     private SkillCostResult getCostResult() {
